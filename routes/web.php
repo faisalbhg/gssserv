@@ -31,6 +31,8 @@ use App\Http\Livewire\ItemProductGroups;
 use App\Http\Livewire\SalesItems;
 use App\Http\Livewire\Checklists;
 use App\Http\Livewire\Invoices;
+use App\Http\Controllers\InvoiceExportPDFController;
+
 
 use App\Http\Controllers\QrCodeController;
 
@@ -67,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/jobs-report', Finance::class)->name('customer-jobs-report');
     Route::get('/jobs-invoice', Invoices::class)->name('customer-jobs-invoices');
     Route::get('/jobs-accounts-filter/{filter}', Finance::class)->name('customer-jobs-filter');
+    Route::get('/download-invoice', [InvoiceExportPDFController::class, 'invoiceExportPDF'])->name('invoiceexportPDF');
 
 
     Route::get('/billing', Billing::class)->name('billing');

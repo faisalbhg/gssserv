@@ -94,7 +94,7 @@
 
     <table width="100%" style="border-collapse: collapse;border-bottom:1px solid #eee;">
         <tr>
-            <th class="column-header">Sl No. / الرقم </th>
+            <th class="column-header">Sl No. /<span style="direction: rtl; text-align: right;"> الرقم </span></th>
             <th class="column-header">Description / الوصف</th>
             <th class="column-header">Unit Price Exl / س</th>
             <th class="column-header">Discount % / خصم</th>

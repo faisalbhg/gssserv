@@ -26,7 +26,7 @@
                                         <b><p class="text-sm">Code: <b>KF332</b></p>
                                     </div>
                                     <a href="javascript:;" class="btn btn-sm bg-gradient-secondary ms-auto">Print</a>
-                                    <a href="javascript:;" wire:click="downloadInvoice()" class="btn btn-sm bg-gradient-danger ms-auto">Download</a>
+                                    <a href="{{ url('download-invoice') }}" target="_blank" class="btn btn-sm bg-gradient-danger ms-auto">Download</a>
                                 </div>
                             </div>
                             <div class="card-body p-3 pt-0">

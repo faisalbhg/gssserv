@@ -41,6 +41,9 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
+/* PDF Config */
+
+
 /*
 |--------------------------------------------------------------------------
 | Return The Application

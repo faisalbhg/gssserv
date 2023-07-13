@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 
+
 class Finance extends Component
 {
     use WithPagination;
@@ -219,7 +220,9 @@ class Finance extends Component
 
     public function downloadInvoice()
     {
-        $pdf = Pdf::loadView('invoices');
+        $data = [];
+        $pdf = Pdf::loadView('pdf.invoice', $data);
         return $pdf->download('invoice.pdf');
+
     }
 }
