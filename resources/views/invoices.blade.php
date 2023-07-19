@@ -4,7 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{$jobInvoiceDetails->job_number}} :: Invoice</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{asset('favicon/apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{asset('favicon/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{asset('favicon/favicon-16x16.png')}}">
+    <link rel="manifest" href="{{asset('favicon/site.webmanifest')}}">
+    <title>PDF Invoice</title>
     <style>
         body {font-family: DejaVu Sans, sans-serif;font-size:13px;}
         .container{max-width: 680px; margin:0 auto;}
@@ -27,25 +31,30 @@
                     <img width="175" src="https://gsstations.ae/wp-content/uploads/2021/08/Grand-Service-Stations_logo-1.svg" alt="" />
                 </div>
             </td>
-          <td width="300px"><div style="background: #fff;border-left: 15px solid #fff;padding-left: 30px;font-size: 26px;font-weight: bold;letter-spacing: -1px;height: 90px;line-height: 90px;">TAX INVOICE</div></td>
-          <td></td>
+            <td width="300px">
+                <div style="background: #fff;border-left: 15px solid #fff;padding-left: 30px;font-size: 26px;font-weight: bold;letter-spacing: -1px;height: 90px;line-height: 90px;">TAX INVOICE</div>
+            </td>
+            <td>
+                @if($jobInvoiceDetails->payment_status==1)
+                <img width="100" src="{{ asset('img/paid-invoice-sticker.png')}}">
+                @endif
+            </td>
         </tr>
     </table> 
     <br>
   
     <table width="100%" style="border-collapse: collapse;">
         <tr>
-          <td widdth="50%" style="background:#eee;padding:10px;">
-            <strong>Grand Service Station (LL.C) (BR)</strong><br>
-            Bur Dubai, Satwa<br>
-            Tel: 04-3434333, Fax: 04-3431449<br>
-            <strong>VAT Reg. No: 100066315100003</strong><br>
-            
-          </td>
-          <td style="background:#eee;padding:10px;">
-            <strong>Job No.: {{$jobInvoiceDetails->job_number}}</strong><br>
-            <strong>Job Date: {{ \Carbon\Carbon::parse($jobInvoiceDetails->job_date_time)->format('dS M Y H:i A') }}</strong><br>
-          </td>
+            <td widdth="50%" style="background:#eee;padding:10px;">
+                <strong>Grand Service Station (LL.C) (BR)</strong><br>
+                Bur Dubai, Satwa<br>
+                Tel: 04-3434333, Fax: 04-3431449<br>
+                <strong>VAT Reg. No: 100066315100003</strong><br>
+            </td>
+            <td style="background:#eee;padding:10px;">
+                <strong>Job No.: {{$jobInvoiceDetails->job_number}}</strong><br>
+                <strong>Job Date: {{ \Carbon\Carbon::parse($jobInvoiceDetails->job_date_time)->format('dS M Y H:i A') }}</strong><br>
+            </td>
         </tr>
     </table>
     <table width="100%">
@@ -87,7 +96,8 @@
     </table>
     <table width="100%" style="border-top:0px solid #eee;border-bottom:1px solid #eee;padding:0 0 8px 0">
         <tr>
-          <td>Payment Methode: <strong>{{config('global.payment.type')[$jobInvoiceDetails->payment_type]}}</strong><br>
+          <td><h3>Checkout details</h3>
+            Payment Methode: <strong>{{config('global.payment.type')[$jobInvoiceDetails->payment_type]}}</strong><br>
         </tr>
     </table>
     

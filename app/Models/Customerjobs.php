@@ -45,4 +45,19 @@ class Customerjobs extends Model
         'created_at',
         'uppdated_at',
     ];
+
+    public function customerInfo()
+    {
+        return $this->belongsTo(Customers::class, 'customer_id', 'id')->with(['customertype']);
+    }
+
+    public function customerVehicle()
+    {
+        return $this->belongsTo(CustomerVehicle::class,'vehicle_id','id');
+    }
+
+    public function customerJobServices()
+    {
+        return $this->hasMany(Customerjobservices::class,'job_id','id');
+    }
 }

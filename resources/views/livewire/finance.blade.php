@@ -176,7 +176,9 @@
       </div>
     </div>
   </div>
+    @if($showInvoiceModel)
     @include('components.modals.viewInvoiceModal')
+    @endif
     </div>
 </main>
 

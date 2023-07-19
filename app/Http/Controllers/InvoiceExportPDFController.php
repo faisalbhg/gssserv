@@ -9,16 +9,33 @@ use App\Http\Requests\UpdateInvoiceExportPDFRequest;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use App\Models\Customerjobs;
+use App\Models\Customerjobservices;
+use App\Models\Customerjoblogs;
+
 
 
 class InvoiceExportPDFController extends Controller
 {
-
-    public function invoiceExportPDF()
+    public function showinvoice($job_number)
     {
+        $data['jobInvoiceDetails'] = Customerjobs::select('customerjobs.*')
+            ->with(['customerInfo','customerVehicle','customerJobServices'])
+            ->orderBy('customerjobs.id','DESC')
+            ->where(['customerjobs.job_number'=>$job_number])
+            ->first();
+        return view('invoices',$data);
 
-        $categories = [];
-        $pdf = PDF::loadView('pdf.invoices', ['categories' => $categories]);
+    }
+
+    public function invoiceExportPDF($job_number)
+    {
+        $data['jobInvoiceDetails'] = Customerjobs::select('customerjobs.*')
+            ->with(['customerInfo','customerVehicle','customerJobServices'])
+            ->orderBy('customerjobs.id','DESC')
+            ->where(['customerjobs.job_number'=>$job_number])
+            ->first();
+        $pdf = PDF::loadView('pdf.invoices', $data);
         return $pdf->download('invoce' . rand(1, 1000) . '.pdf');
     }
 

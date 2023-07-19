@@ -30,6 +30,7 @@ class Finance extends Component
 
     public $showUpdateModel = false;
     public $paymentFilterTab;
+    public $jobInvoiceDetails =[], $showInvoiceModel=false;
 
 
     function mount( Request $request) {
@@ -208,13 +209,13 @@ class Finance extends Component
 
     public function viewInvoice($job_number)
     {
-        $job = Customerjobs::select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
-            ->join('customers','customers.id','=','customerjobs.customer_id')
-            ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
+        $this->jobInvoiceDetails = Customerjobs::select('customerjobs.*')
+            ->with(['customerInfo','customerVehicle','customerJobServices'])
             ->orderBy('customerjobs.id','DESC')
             ->where(['customerjobs.job_number'=>$job_number])
             ->first();
-        //dd($job);
+        //dd($this->jobInvoiceDetails);
+        $this->showInvoiceModel=true;
         $this->dispatchBrowserEvent('showInvoiceView');
     }
 

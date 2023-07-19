@@ -68,8 +68,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/job-accounts/{job_number}',Finance::class)->name('customer-jobs-report');
     Route::get('/jobs-report', Finance::class)->name('customer-jobs-report');
     Route::get('/jobs-invoice', Invoices::class)->name('customer-jobs-invoices');
+    Route::get('/invoice/{job_number}', [InvoiceExportPDFController::class, 'showinvoice'])->name('customer-jobs-invoices');
     Route::get('/jobs-accounts-filter/{filter}', Finance::class)->name('customer-jobs-filter');
-    Route::get('/download-invoice', [InvoiceExportPDFController::class, 'invoiceExportPDF'])->name('invoiceexportPDF');
+    Route::get('/download-invoice/{job_number}', [InvoiceExportPDFController::class, 'invoiceExportPDF'])->name('invoiceexportPDF');
 
 
     Route::get('/billing', Billing::class)->name('billing');
