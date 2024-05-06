@@ -11,5 +11,9 @@ class Customertype extends Model
 
     protected $guarded = [];
 
+    public function customersList()
+    {
+        return $this->hasMany(Customers::class,'customer_type','id');
+    }
     
 }

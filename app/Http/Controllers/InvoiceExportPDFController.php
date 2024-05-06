@@ -19,11 +19,14 @@ class InvoiceExportPDFController extends Controller
 {
     public function showinvoice($job_number)
     {
+        //Customerjobs::where(['customerjobs.job_number'=>$job_number]);
+
         $data['jobInvoiceDetails'] = Customerjobs::select('customerjobs.*')
-            ->with(['customerInfo','customerVehicle','customerJobServices'])
+            ->with(['customerInfo','customerVehicle','customerJobServices','cashierDetails'])
             ->orderBy('customerjobs.id','DESC')
             ->where(['customerjobs.job_number'=>$job_number])
             ->first();
+        dd($data);
         return view('invoices',$data);
 
     }
@@ -31,7 +34,7 @@ class InvoiceExportPDFController extends Controller
     public function invoiceExportPDF($job_number)
     {
         $data['jobInvoiceDetails'] = Customerjobs::select('customerjobs.*')
-            ->with(['customerInfo','customerVehicle','customerJobServices'])
+            ->with(['customerInfo','customerVehicle','customerJobServices','cashierDetails'])
             ->orderBy('customerjobs.id','DESC')
             ->where(['customerjobs.job_number'=>$job_number])
             ->first();

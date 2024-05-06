@@ -196,7 +196,9 @@
       </div>
     </div>
   </div>
+  @if($updateService)
   @include('components.modals.updateservice')
+  @endif
   @include('components.modals.addServiceItems')
   @include('components.modals.showQwChecklistModel');
     </div>

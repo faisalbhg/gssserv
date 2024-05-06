@@ -30,16 +30,17 @@
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4 d-flex justify-content-end" id="navbar">
 
-                <div class="nav-item d-flex align-itel-left">
+                <!-- <div class="nav-item d-flex align-itel-left">
                     <a href="{{ route('dashboard') }}"
                         class="btn btn-primary active mb-0 text-white" role="button" aria-pressed="true">
                         New Car
                     </a>
-                </div>
+                </div> -->
                 
                 <ul class="navbar-nav justify-content-end">
                     <li class="nav-item px-2  d-flex align-items-center">
                         <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
+                            {{Session::get('user')->name}}
                             <livewire:auth.logout />
                         </a>
                     </li>

@@ -44,6 +44,8 @@ class Customerjobs extends Model
         'is_blocked',
         'created_at',
         'uppdated_at',
+        'payment_updated_by',
+        'payment_updated_at',
     ];
 
     public function customerInfo()
@@ -56,8 +58,12 @@ class Customerjobs extends Model
         return $this->belongsTo(CustomerVehicle::class,'vehicle_id','id');
     }
 
+    public function cashierDetails(){
+        return $this->belongsTo(User::class,'payment_updated_by','id');
+    }
+
     public function customerJobServices()
     {
-        return $this->hasMany(Customerjobservices::class,'job_id','id');
+        return $this->hasMany(Customerjobservices::class,'job_id','id')->with(['customerJobServiceLogs']);
     }
 }

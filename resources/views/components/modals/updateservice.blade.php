@@ -43,9 +43,13 @@
                                                     <hr class="horizontal dark mt-3">
                                                 </div>
                                                 <div class="p-md-0 pt-3">
-                                                    <p class="text-sm mb-0">Name: {{$name}}</p>
-                                                    <p class="text-sm mb-0">Mobile: <a href="tel:{{$mobile}}">{{$mobile}}</a></p>
-                                                    <p class="text-sm mb-0">Email: {{$email}}</p>
+                                                    <p class="text-sm mb-0">Name: {{$jobCustomerInfo->name}}</p>
+                                                    <p class="text-sm mb-0">Mobile: <a href="tel:{{$mobile}}">{{$jobCustomerInfo->mobile}}</a></p>
+                                                    <p class="text-sm mb-0">Email: {{$jobCustomerInfo->email}}</p>
+                                                    <p class="text-sm mb-0">Customer Type: {{$jobCustomerInfo->customertype['customer_type']}}</p>
+                                                    @if($jobCustomerInfo->customer_id_image)
+                                                    <a href="{{url('storage/'.$jobCustomerInfo->customer_id_image)}}" target="_blank"><img src="{{url('storage/'.$jobCustomerInfo->customer_id_image)}}" alt="..." class="avatar shadow"></a>
+                                                    @endif
                                                     <hr class="horizontal dark mt-3">
                                                 </div>
 
@@ -368,9 +372,13 @@
                                                     </div>
                                                     @endif
                                                     @if($services->job_status!=4)
-                                                    <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateQwService('{{$services}}')">
-                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                    </a>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateQwService('{{$services}}')">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                     @endif
                                                 @endif
 
@@ -391,7 +399,7 @@
                                                                         @if($services->pre_finishing==null)
                                                                         <div class="col-md-6">
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','pre_finishing','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','pre_finishing','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                                                     <span class="btn-inner--text">Start</span>
                                                                                 </button>
@@ -401,7 +409,7 @@
                                                                         <div class="col-md-6">
                                                                             <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->pre_finishing_time_in)->format('dS M Y H:i A') }}</label>
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','pre_finishing','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','pre_finishing','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
                                                                                     <span class="btn-inner--text">Stop</span>
                                                                                 </button>
@@ -428,7 +436,7 @@
                                                                         @if($services->finishing==null)
                                                                         <div class="col-md-12">
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','finishing','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','finishing','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                                                     <span class="btn-inner--text">Start</span>
                                                                                 </button>
@@ -438,7 +446,7 @@
                                                                         <div class="col-md-12">
                                                                             <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->finishing_time_in)->format('dS M Y H:i A') }}</label>
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','finishing','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','finishing','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
                                                                                     <span class="btn-inner--text">Stop</span>
                                                                                 </button>
@@ -465,7 +473,7 @@
                                                                         @if($services->glazing==null)
                                                                         <div class="col-md-12">
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','glazing','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','glazing','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                                                     <span class="btn-inner--text">Start</span>
                                                                                 </button>
@@ -475,7 +483,7 @@
                                                                         <div class="col-md-12">
                                                                             <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->glazing_time_in)->format('dS M Y H:i A') }}</label>
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','glazing','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','glazing','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
                                                                                     <span class="btn-inner--text">Stop</span>
                                                                                 </button>
@@ -502,7 +510,7 @@
                                                                         @if($services->seat_cleaning==null)
                                                                         <div class="col-md-12">
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','seat_cleaning','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','seat_cleaning','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                                                     <span class="btn-inner--text">Start</span>
                                                                                 </button>
@@ -512,7 +520,7 @@
                                                                         <div class="col-md-12">
                                                                             <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->seat_cleaning_time_in)->format('dS M Y H:i A') }}</label>
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','seat_cleaning','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','seat_cleaning','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
                                                                                     <span class="btn-inner--text">Stop</span>
                                                                                 </button>
@@ -536,20 +544,20 @@
                                                                 </div>
                                                                 <div class="card-body text-center pt-0">
                                                                     <div class="row">
-                                                                        @if($services->interior_cleaning==null)
+                                                                        @if($services->interior==null)
                                                                         <div class="col-md-12">
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','interior_cleaning','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','interior','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                                                     <span class="btn-inner--text">Start</span>
                                                                                 </button>
                                                                             </div>
                                                                         </div>
-                                                                        @elseif($services->interior_cleaning == 1)
+                                                                        @elseif($services->interior == 1)
                                                                         <div class="col-md-12">
                                                                             <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->interior_cleaning_time_in)->format('dS M Y H:i A') }}</label>
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','interior_cleaning','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','interior','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
                                                                                     <span class="btn-inner--text">Stop</span>
                                                                                 </button>
@@ -576,7 +584,7 @@
                                                                         @if($services->oil_change==null)
                                                                         <div class="col-md-12">
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','oil_change','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','oil_change','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                                                     <span class="btn-inner--text">Start</span>
                                                                                 </button>
@@ -586,7 +594,7 @@
                                                                         <div class="col-md-12">
                                                                             <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label>
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','oil_change','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','oil_change','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
                                                                                     <span class="btn-inner--text">Stop</span>
                                                                                 </button>
@@ -613,7 +621,7 @@
                                                                         @if($services->wash_service==null)
                                                                         <div class="col-md-12">
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','wash_service','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','wash_service','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                                                     <span class="btn-inner--text">Start</span>
                                                                                 </button>
@@ -623,7 +631,7 @@
                                                                         <div class="col-md-12">
                                                                             <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label>
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','wash_service','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','wash_service','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
                                                                                     <span class="btn-inner--text">Stop</span>
                                                                                 </button>
@@ -653,7 +661,7 @@
                                                                         @if($services->oil_change==null)
                                                                         <div class="col-md-12">
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','oil_change','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','oil_change','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                                                     <span class="btn-inner--text">Start</span>
                                                                                 </button>
@@ -663,7 +671,7 @@
                                                                         <div class="col-md-12">
                                                                             <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label>
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','oil_change','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','oil_change','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
                                                                                     <span class="btn-inner--text">Stop</span>
                                                                                 </button>
@@ -690,7 +698,7 @@
                                                                         @if($services->wash_service==null)
                                                                         <div class="col-md-12">
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','wash_service','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','wash_service','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                                                     <span class="btn-inner--text">Start</span>
                                                                                 </button>
@@ -700,7 +708,7 @@
                                                                         <div class="col-md-12">
                                                                             <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label>
                                                                             <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','wash_service','{{$services}}')">
+                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','wash_service','{{$services->id}}')">
                                                                                     <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
                                                                                     <span class="btn-inner--text">Stop</span>
                                                                                 </button>
@@ -721,22 +729,57 @@
                                                     </div>
                                                     @endif
                                                     @if($services->job_status!=4)
-                                                        @if($services->service_group_code=='GS')
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            @if($services->service_group_code=='GS')
 
-                                                        <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateGSService('{{$services}}')">
-                                                            <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                        </a>
-                                                        @elseif($services->service_group_code=='QL')
-                                                        <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateQLService('{{$services}}')">
-                                                            <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                        </a>
-                                                        @endif
+                                                            <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateGSService({{$services->id}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                            </a>
+                                                            @elseif($services->service_group_code=='QL')
+                                                            <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateQLService('{{$services}}')">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                            </a>
+                                                            @endif
+                                                        </div>
+
+                                                    </div>
                                                     @endif
 
                                                     
                                                 
 
                                                 @endif
+                                                <div class="row">
+                                                    <div class="col-md-12" >
+                                                        <div class="card h-100 my-2">
+                                                            <div class="card-header pb-0">
+                                                                <h6>Service History overview</h6>
+                                                                <!-- <p class="text-sm">
+                                                                    <span class="font-weight-bold">#{{$job_number}}</span>
+                                                                </p> -->
+                                                                <hr class="m-0">
+                                                            </div>
+                                                            <div class="card-body p-3">
+                                                                <div class="timeline timeline-one-side">
+                                                                    @forelse( $services->customerJobServiceLogs as $logs)
+                                                                    <div class="timeline-block mb-3">
+                                                                        <span class="timeline-step">
+                                                                            <i class="fa fa-arrow-up text-success text-gradient"></i>
+                                                                        </span>
+                                                                        <div class="timeline-content">
+                                                                            <span class="badge badge-sm {{config('global.job_status_text_class')[$logs->job_status]}}">{{config('global.job_status')[$logs->job_status]}}</span>
+                                                                            <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{ \Carbon\Carbon::parse($job_date_time)->format('d M Y H:i A') }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    @empty
+                                                                    <p class="text-danger">Empty..!</p>
+                                                                    @endforelse
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </li>
                                             @empty
                                             <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
@@ -751,34 +794,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12" style="display:none;">
-                                <div class="card h-100 my-2">
-                                    <div class="card-header pb-0">
-                                        <h6>Service History overview</h6>
-                                        <p class="text-sm">
-                                            <span class="font-weight-bold">#{{$job_number}}</span>
-                                        </p>
-                                        <hr class="m-0">
-                                    </div>
-                                    <div class="card-body p-3">
-                                        <div class="timeline timeline-one-side">
-                                            @forelse( $customerjoblogs as $logs)
-                                            <div class="timeline-block mb-3">
-                                                <span class="timeline-step">
-                                                    <i class="fa fa-arrow-up text-success text-gradient"></i>
-                                                </span>
-                                                <div class="timeline-content">
-                                                    <span class="badge badge-sm {{config('global.job_status_text_class')[$logs->job_status]}}">{{config('global.job_status')[$logs->job_status]}}</span>
-                                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{ \Carbon\Carbon::parse($job_date_time)->format('d M Y H:i A') }}</p>
-                                                </div>
-                                            </div>
-                                            @empty
-                                            <p class="text-danger">Empty..!</p>
-                                            @endforelse
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                     

@@ -52,7 +52,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreign('job_id')->references('id')->on('customerjobs');
             $table->foreign('service_group_id')->references('id')->on('services_groups');
-            $table->foreign('service_type_id')->references('id')->on('services_types');
+            $table->foreign('service_type_id')->references('id')->on('service_masters');
         });
     }
 

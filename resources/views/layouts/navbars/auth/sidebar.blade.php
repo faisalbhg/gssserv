@@ -39,10 +39,10 @@
                     <span class="nav-link-text ms-1">Dashboard</span>
                 </a>
             </li>
-            <li class="nav-item mt-2">
+            <li class="nav-item mt-2 {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['operation']) ? 'd-none': ''}}">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Operation</h6>
             </li>
-            <li class="nav-item pb-2">
+            <li class="nav-item pb-2 {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['operation']) ? 'd-none': ''}}">
                 <a class="nav-link {{ in_array(request()->route()->getName(),['customer-jobs','customer-jobs-filter']) ? 'active' : ' ' }}"
                     href="{{ route('customer-jobs') }}">
                     <div
@@ -54,10 +54,10 @@
                 </a>
             </li>
 
-            <li class="nav-item mt-2">
+            <li class="nav-item mt-2 {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['finance']) ? 'd-none': ''}}">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Finance</h6>
             </li>
-            <li class="nav-item pb-2">
+            <li class="nav-item pb-2 {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['finance']) ? 'd-none': ''}}">
                 <a class="nav-link {{ Route::currentRouteName() == 'customer-jobs-report' ? 'active' : '' }}"
                     href="{{ route('customer-jobs-report') }}">
                     <div
@@ -70,7 +70,7 @@
             </li>
 
 
-            <li class="nav-item mt-2">
+            <li class="nav-item mt-2 {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['administrator']) ? 'd-none': ''}}">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Administration</h6>
             </li>
             <!-- <li class="nav-item">
@@ -105,28 +105,35 @@
                 </a>
             </li> -->
 
-            <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#serviceMenu" class="nav-link {{ in_array(request()->route()->getName(),['services-list','services-types','services-groups','stations-list','departments-list','sections-list','checklist']) ? 'active' : ' ' }}" aria-controls="laravelExamples" role="button" aria-expanded="false">
+            <li class="nav-item {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['administrator']) ? 'd-none': ''}}">
+                <a data-bs-toggle="collapse" href="#serviceMenu" class="nav-link {{ in_array(request()->route()->getName(),['services-prices-list','services-master-list','services-section-group','services-groups','stations-list','departments-list','sections-list','checklist','customer-types']) ? 'active' : ' ' }}" aria-controls="laravelExamples" role="button" aria-expanded="false">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i style="font-size: 1rem;" class="fa-solid fa-lg fa-gear ps-2 pe-2 text-center
-                        {{ in_array(request()->route()->getName(),['services-list','services-types','services-groups','stations-list','departments-list','sections-list','checklist']) ? 'text-white' : 'text-dark' }}"></i>
+                        {{ in_array(request()->route()->getName(),['services-prices-list','services-master-list','services-section-group','services-groups','stations-list','departments-list','sections-list','checklist','customer-types']) ? 'text-white' : 'text-dark' }}"></i>
                     </div>
                     <span class="nav-link-text ms-1"> Services </span>
                 </a>
-                <div class="collapse {{ in_array(request()->route()->getName(),['services-list','services-types','services-groups','stations-list','departments-list','sections-list','checklist']) ? 'show' : '' }}" id="serviceMenu" style="">
+                <div class="collapse {{ in_array(request()->route()->getName(),['services-prices-list','services-master-list','services-section-group','services-groups','stations-list','departments-list','sections-list','checklist','customer-types']) ? 'show' : '' }}" id="serviceMenu" style="">
                     <ul class="nav ms-4 ps-3">
+                        
                         <li class="nav-item ">
-                            <a class="nav-link {{ Route::currentRouteName() == 'services-list' ? 'active' : '' }}" href="{{ route('services-list') }}">
+                            <a class="nav-link {{ Route::currentRouteName() == 'services-prices-list' ? 'active' : '' }}" href="{{ route('services-prices-list') }}">
                                 <span class="sidenav-mini-icon"> D </span>
-                                <span class="sidenav-normal"> Services List</span>
+                                <span class="sidenav-normal"> Services Pricing List</span>
                             </a>
                         </li>
-                        <!-- <li class="nav-item {{ Route::currentRouteName() == 'services-types' ? 'active' : '' }}">
-                            <a class="nav-link " href="{{ route('services-types') }}">
+                        <li class="nav-item ">
+                            <a class="nav-link {{ Route::currentRouteName() == 'services-master-list' ? 'active' : '' }}" href="{{ route('services-master-list') }}">
                                 <span class="sidenav-mini-icon"> D </span>
-                                <span class="sidenav-normal"> Services Type </span>
+                                <span class="sidenav-normal"> Services Master List</span>
                             </a>
-                        </li> -->
+                        </li>
+                        <li class="nav-item {{ Route::currentRouteName() == 'services-section-group' ? 'active' : '' }}">
+                            <a class="nav-link " href="{{ route('services-section-group') }}">
+                                <span class="sidenav-mini-icon"> D </span>
+                                <span class="sidenav-normal"> Services Section Group </span>
+                            </a>
+                        </li>
                         <li class="nav-item {{ Route::currentRouteName() == 'services-groups' ? 'active' : '' }}">
                             <a class="nav-link " href="{{ route('services-groups') }}">
                                 <span class="sidenav-mini-icon"> D </span>
@@ -157,11 +164,17 @@
                                 <span class="sidenav-normal"> Checklist </span>
                             </a>
                         </li>
+                        <li class="nav-item {{ Route::currentRouteName() == 'customer-types' ? 'active' : '' }}">
+                            <a class="nav-link " href="{{ route('customer-types') }}">
+                                <span class="sidenav-mini-icon"> C </span>
+                                <span class="sidenav-normal"> Customer Types </span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['administrator']) ? 'd-none': ''}}">
                 <a data-bs-toggle="collapse" href="#serviceItemsMenu" class="nav-link {{ in_array(request()->route()->getName(),['sales-items-list','item-product-groups','services-item-categories','services-brands']) ? 'active' : ' ' }}" aria-controls="laravelExamples" role="button" aria-expanded="false">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i style="font-size: 1rem;" class="fa-solid fa-shopping-cart fa-gear ps-2 pe-2 text-center
@@ -200,7 +213,7 @@
             </li>
             
 
-            <li class="nav-item">
+            <li class="nav-item {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['administrator']) ? 'd-none': ''}}">
                 <a data-bs-toggle="collapse" href="#usersMenu" class="nav-link {{ in_array(request()->route()->getName(),['customers-list','user-management']) ? 'active' : ' ' }}" aria-controls="laravelExamples" role="button" aria-expanded="false">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i style="font-size: 1rem;" class="fas fa-lg fa-user ps-2 pe-2 text-center

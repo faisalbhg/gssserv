@@ -39,6 +39,16 @@
                                                         @error('email') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                                     </div>
                                                 </div>
+                                                @if($showpasswordinput)
+                                                <div class="col-md-12">
+                                                    <div class="form-group openDiv">
+                                                        <label for="emailInput">Password</label>
+                                                        <input type="password" class="form-control" wire:model="password" name="password" placeholder="Password" id="passwordInput">
+                                                        @error('password') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                                    </div>
+                                                </div>
+                                                @endif
+                                                
                                                 <div class="col-md-12">
                                                     <div class="form-group openName">
                                                         <label for="phoneInput">Phone</label>

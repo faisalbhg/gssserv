@@ -106,6 +106,33 @@ class Finance extends Component
         Customerjobs::where(['job_number'=>$job_number])->update(['payment_status'=>$payment_status]);
     }
 
+    public function updatePaymentMethode($job_number, $payment_type)
+    {
+        if($payment_type==1)
+        {
+            $customerjobs = Customerjobs::with(['customerInfo'])->where(['job_number'=>$job_number])->first();
+            $paymentLink = $this->sendPaymentLink($customerjobs);
+            $paymentResponse = (array)json_decode($paymentLink->data);
+            $mobileNumber = '971'.substr($customerjobs->customerInfo['mobile'], -9);
+            if(array_key_exists('payment_link', $paymentResponse))
+            {
+                $response = Http::withBasicAuth('20092622', 'buhaleeba@123')->post("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_link'])."&CountryCode=ALL");
+
+
+                $customerjobId = Customerjobs::where(['job_number'=>$job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send','job_create_status'=>1]);
+                session()->flash('success', "Successfully send payment link..! ");
+                
+            }
+            else
+            {
+                session()->flash('error', $paymentResponse['response_message']);
+
+            }
+        }
+
+        Customerjobs::where(['job_number'=>$job_number])->update(['payment_type'=>$payment_type]);
+    }
+
     public function updateService($services)
     {
         $services = json_decode($services);
@@ -225,5 +252,48 @@ class Finance extends Component
         $pdf = Pdf::loadView('pdf.invoice', $data);
         return $pdf->download('invoice.pdf');
 
+    }
+
+    public function sendPaymentLink($customerjobs)
+    {
+        $exp_date = Carbon::now('+10:00')->format('Y-m-d\TH:i:s\Z');
+        $order_billing_name = $customerjobs->customerInfo['name'];
+        $order_billing_phone = $customerjobs->customerInfo['mobile'];
+        $order_billing_email = $customerjobs->customerInfo['email']; 
+        $total = round(($customerjobs->grand_total * 100),2);
+        $merchant_reference = $customerjobs->job_number;
+        $order_billing_phone = str_replace(' ', '', $order_billing_phone);
+        if($order_billing_phone[0] != 0 and $order_billing_phone[1] != 0)
+        {
+            if($order_billing_phone[0] == '+')
+            {
+                $order_billing_phone = substr_replace($order_billing_phone, '00', 0, 1);
+            }
+            else
+            {
+               $order_billing_phone = preg_replace('/0/', '00971', $order_billing_phone, 1);
+            }
+        }
+
+        $arrData    = [
+            'service_command'=>'PAYMENT_LINK',
+            'access_code'=>'CIjX6aY6Yc0FgGktyo4I',
+            'merchant_identifier'=>'WQNoWgPx',
+            'merchant_reference'=>$merchant_reference,
+            'amount'=>$total,
+            'currency'=>'AED',
+            'language'=>'en',
+            'customer_email'=>$order_billing_email,
+            'request_expiry_date'=>$exp_date,
+            'notification_type'=>'EMAIL,SMS',
+            'order_description'=>'GSS Service #'.$merchant_reference,
+            'customer_name'=>$order_billing_name,
+            'customer_phone'=>$order_billing_phone,
+            'return_url'=>url('order-response'),
+        ];
+
+        
+        $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post('http://172.23.25.95/gssapi/api/new-payment-link',$arrData);
+        return json_decode($response);
     }
 }

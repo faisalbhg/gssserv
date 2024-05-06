@@ -68,4 +68,9 @@ class Customerjobservices extends Model
         'wash_service_time_in',
         'wash_service_time_out'
     ];
+
+    public function customerJobServiceLogs()
+    {
+        return $this->hasMany(Customerjoblogs::class,'customer_job_service_id','id');
+    }
 }

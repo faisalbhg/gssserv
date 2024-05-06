@@ -32,6 +32,10 @@ use App\Http\Livewire\SalesItems;
 use App\Http\Livewire\Checklists;
 use App\Http\Livewire\Invoices;
 use App\Http\Controllers\InvoiceExportPDFController;
+use App\Http\Livewire\ServicesSectionGroup;
+use App\Http\Livewire\ServicesMasterList;
+use App\Http\Livewire\ServicesPriceList;
+use App\Http\Livewire\CustomerTypes;
 
 
 use App\Http\Controllers\QrCodeController;
@@ -87,8 +91,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/vehiclestatus/{name}', Jobstatus::class)->name('vehicle-status');
     Route::get('/customers', Customer::class)->name('customers-list');
 
-    Route::get('/services',Service::class)->name('services-list');
-    Route::get('/services-types',Servicestypes::class)->name('services-types');
+    Route::get('/services-prices-list',ServicesPriceList::class)->name('services-prices-list');
+    Route::get('/services-master-list',ServicesMasterList::class)->name('services-master-list');
+    Route::get('/services-section-group',ServicesSectionGroup::class)->name('services-section-group');
     Route::get('/services-groups',Servicesgroups::class)->name('services-groups');
 
     Route::get('/service-brand-list',Brands::class)->name('services-brands');
@@ -97,6 +102,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/sales-items-list',SalesItems::class)->name('sales-items-list');
     
     Route::get('checklist',Checklists::class)->name('checklist');
+
+    Route::get('customer-types',CustomerTypes::class)->name('customer-types');
     
 });
 

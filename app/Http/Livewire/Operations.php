@@ -55,6 +55,7 @@ class Operations extends Component
     public $serviceItemsList = [];
 
     public $frontSideBumperCheck, $frontSideGrillCheck, $frontSideNumberPlateCheck, $frontSideHeadLampsCheck, $frontSideFogLampsCheck, $frontSideHoodCheck, $rearSideBumperCheck, $rearSideMufflerCheck, $rearSideNumberPlateCheck, $rearSideTrunkCheck, $rearSideLightsCheck, $rearSideRoofTopCheck, $leftSideWheelCheck, $leftSideFenderCheck, $leftSideSideMirrorCheck, $leftSideDoorGlassInOutCheck, $leftSideDoorHandleCheck, $leftSideSideStepperCheck, $rightSideWheelCheck, $rightSideFenderCheck, $rightSideSideMirrorCheck, $rightSideDoorGlassInOutCheck, $rightSideDoorHandleCheck, $rightSideSideStepperCheck, $innerCabinSmellCheck, $innerCabinWindshieldFRRRCheck, $innerCabinSteeringWheelCheck, $innerCabinGearKnobCheck, $innerCabinCentreConsoleCheck, $innerCabinAshTryCheck, $innerCabinDashboardCheck, $innerCabinACVentsFRRRCheck, $innerCabinInteriorTrimCheck, $innerCabinFloorMatCheck, $innerCabinRearViewMirrorCheck, $innerCabinLuggageCompCheck, $innerCabinRoofTopCheck;
+    public $jobCustomerInfo,$updateService=false;
 
 
     
@@ -220,7 +221,9 @@ class Operations extends Component
 
     public function updateGSService($services)
     {
-        $services = json_decode($services);
+        $services = Customerjobservices::find($services);
+        
+
         $jobServiceId = $services->id;
         $this->job_status = $services->job_status+1;
         $this->job_departent = $services->job_departent+1;
@@ -358,13 +361,8 @@ class Operations extends Component
 
     public function customerJobUpdate($job_number)
     {
-        $job = Customerjobs::select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
-            ->join('customers','customers.id','=','customerjobs.customer_id')
-            ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
-            ->orderBy('customerjobs.id','DESC')
-            ->where(['customerjobs.job_number'=>$job_number])
-            ->first();
-        //dd($job);
+        $this->updateService=true;
+        $job = Customerjobs::with(['customerInfo','customerJobServices'])->where(['job_number'=>$job_number])->first();
         $this->job_number = $job->job_number;
         $this->job_date_time = $job->job_date_time;
         $this->customerDetails = true;
@@ -374,10 +372,10 @@ class Operations extends Component
         $this->plate_number = $job->plate_number;
         $this->chassis_number = $job->chassis_number;
         $this->vehicle_km = $job->vehicle_km;
-        $this->name = $job->name;
-        $this->email = $job->email;
-        $this->mobile = $job->mobile;
-        $this->customerType = $job->customerType;
+        $this->name = $job->customerInfo['name'];
+        $this->email = $job->customerInfo['email'];
+        $this->mobile = $job->customerInfo['mobile'];
+        $this->customerType = $job->customerInfo->customertype['customer_type'];
         $this->payment_status = $job->payment_status;
         $this->payment_type = $job->payment_type;
         $this->job_status = $job->job_status;
@@ -386,8 +384,10 @@ class Operations extends Component
         $this->vat = $job->vat;
         $this->grand_total = $job->grand_total;
 
-        $this->customerjobservices = Customerjobservices::where(['job_number'=>$job->job_number])->get();
-        $this->customerjoblogs = Customerjoblogs::where(['job_number'=>$job->job_number])->orderBy('id','DESC')->get();
+        $this->jobCustomerInfo = $job->customerInfo;
+
+        $this->customerjobservices = $job->customerJobServices;
+        //dd($this->customerjobservices);
 
         
         $this->dispatchBrowserEvent('showServiceUpdate');
@@ -398,7 +398,7 @@ class Operations extends Component
     public function checkPaymentStatus($job_number)
     {
         $arrData['order_number'] = $job_number;
-        $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post('http://172.23.25.95/gssapi/api/check-payment-status',$arrData);
+        $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post('http://172.23.140.170/gssapi/api/check-payment-status',$arrData);
         if(json_decode($response)->payment_status!=0)
         {
             Customerjobs::where(['job_number'=>$job_number])->update(['payment_status'=>json_decode($response)->payment_status]);
@@ -725,6 +725,7 @@ class Operations extends Component
                 'job_departent'=>1,
                 'payment_status'=>0,
                 'created_by'=>Session::get('user')->id,
+                'payment_updated_by'=>Session::get('user')->id,
             ];
         Customerjobs::where(['job_number'=>$job_number])->update($customerJobUpdate);
 
@@ -786,6 +787,11 @@ class Operations extends Component
         $this->dispatchBrowserEvent('showPaymentPannel');
     }
 
+    public function completePaymnet($mode, $job_number)
+    {
+        //
+    }
+
     public function removeService($service)
     {
         $service = json_decode($service);
@@ -815,7 +821,8 @@ class Operations extends Component
 
     public function clickQlOperation($in_out,$up_ser,$service)
     {
-        $service = (array)json_decode($service);
+        $service = Customerjobservices::find($service);
+        
         if($in_out=='start')
         {
             $serviceUpdate = [$up_ser.'_time_in' => Carbon::now()];
@@ -838,6 +845,7 @@ class Operations extends Component
         Customerjoblogs::create($serviceJobUpdateLog);
 
         $this->customerjobservices = Customerjobservices::where(['job_number'=>$service['job_number']])->get();
+        //dd($this->customerjobservices);
     }
 
 }

@@ -10,6 +10,7 @@ class CustomerBasket extends Model
     use HasFactory;
 
     protected $fillable = [
+
         'customer_id',
         'vehicle_id',
         'service_type_id',
@@ -27,14 +28,18 @@ class CustomerBasket extends Model
         'category_id',
         'category_name',
         'item_group_id',
+        'item_group_name',
         'product_group_id',
         'section_id',
         'station_id',
         'department_id',
         'price',
         'quantity',
+        'save_type',
         'created_by',
         'updated_by',
+        'created_at',
+        'updated_at',
     ];
 
     public function serviceItems()
@@ -52,5 +57,15 @@ class CustomerBasket extends Model
     public function productGroup()
     {
         return $this->belongsTo(ItemProductGroup::class,'product_group_id','id');
+    }
+
+    public function customerInfo()
+    {
+        return $this->belongsTo(Customers::class,'customer_id','id')->with(['customertype']);
+    }
+
+    public function vehicleInfo()
+    {
+        return $this->belongsTo(CustomerVehicle::class,'vehicle_id','id');
     }
 }

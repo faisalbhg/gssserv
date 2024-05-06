@@ -20,6 +20,12 @@ return [
             '2'=>"Pay By Card",
             '3'=>"Cash Payment",
         ],
+        'type_class'=>[
+            '0'=>'bg-gradient-secondary',
+            '1'=>'bg-gradient-info',
+            '2'=>'bg-gradient-success',
+            '3'=>'bg-gradient-primary',
+        ],
         'icons'=>[
             '0'=>"fa-solid fa-basket-shopping",
             '1'=>"fa-solid fa-file-invoice-dollar",
@@ -194,6 +200,23 @@ return [
         "4"=>"Sales",
         "5"=>"Finance",
         "6"=>"Security",
+    ],
+    "user_type_access"=>[
+        "administrator"=>[
+            "1"
+        ],
+        "operation"=>[
+            "1","2","4","5"
+        ],
+        "finance"=>[
+            "1","5"
+        ],
+    ],
+    "sorting"=>[
+        "1"=>"Latest",
+        "2"=>"Oldest",
+        "3"=>"Low Price",
+        "4"=>"Hight Price",
     ],
 
 ]
