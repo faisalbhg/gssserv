@@ -89,7 +89,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            'schema'=>'labor'
+            'schema'=>'labor',
+            'encrypt' => 'yes',
+            'trust_server_certificate' => true,
         ],
 
     ],
