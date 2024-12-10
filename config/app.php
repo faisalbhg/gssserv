@@ -58,9 +58,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://172.23.25.95/gss/public/'),
+    'url' => env('APP_URL', 'http://172.23.25.95/gss/'),
 
-    'asset_url' => env('ASSET_URL', "http://172.23.25.95/gss/public/assets/"),
+    'asset_url' => env('ASSET_URL', "http://172.23.25.95/gss/assets/"),
 
     /*
     |--------------------------------------------------------------------------
