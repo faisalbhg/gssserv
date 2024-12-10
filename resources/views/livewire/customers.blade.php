@@ -50,9 +50,6 @@
                                             Email
                                         </th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Customer Type
-                                        </th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Created At
                                         </th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -70,7 +67,6 @@
                                             <span class="exploder badge badge-sm bg-gradient-primary">
                                                 <i class="fas fa-eye text-secondary text-white"></i> Show
                                             </span>
-                                            
                                         </td>
                                         <td class="ps-4">
                                             <p class="text-xs font-weight-bold mb-0">{{$customer->id}}</p>
@@ -83,9 +79,6 @@
                                         </td>
                                         <td class="text-center">
                                             <p class="text-xs font-weight-bold mb-0">{{$customer->email}}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{$customer->customertype['customer_type']}}</p>
                                         </td>
                                         <td class="text-center">
                                             <span class="text-secondary text-xs font-weight-bold">{{ \Carbon\Carbon::parse($customer->created_at)->format('dS M Y H:i A') }}</span>

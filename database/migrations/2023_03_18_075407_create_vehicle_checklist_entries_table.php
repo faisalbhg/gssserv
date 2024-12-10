@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('vehicle_checklist_entries', function (Blueprint $table) {
             $table->id();
             $table->string('job_number');
-            $table->unsignedBigInteger('job_id');
+            $table->integer('job_id');
             $table->text('checklist')->nullable();
             $table->integer('fuel')->nullable();
             $table->text('scratches_found')->nullable();
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->integer('updated_by')->nullable();
             $table->timestamps();
 
-            $table->foreign('job_id')->references('id')->on('customerjobs');
+            //$table->foreign('job_id')->references('id')->on('customerjobs');
         });
     }
 

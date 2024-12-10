@@ -28,7 +28,7 @@
 
     <link href="{{asset('css/nucleo-svg.css')}}" rel="stylesheet" />
     <!-- CSS Files -->
-    <link id="pagestyle" href="{{asset('css/soft-ui-dashboard.css?v=0.3')}}" rel="stylesheet" />
+    <link id="pagestyle" href="{{asset('css/soft-ui-dashboard.css?v=0.4')}}" rel="stylesheet" />
     <!-- Alpine -->
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
     <style type="text/css">
@@ -59,8 +59,8 @@
             border: 0 solid currentColor;
         }
         .la-ball-beat {
-            width: 54px;
-            height: 18px;
+            /*width: 54px;
+            height: 18px;*/
         }
         .la-ball-beat > div {
             width: 10px;
@@ -169,6 +169,31 @@
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
+
+    
+
+    <script>
+        window.onload = function() {
+            /*Livewire.hook('message.sent', () => {
+                window.dispatchEvent(
+                    new CustomEvent('loading', { detail: { loading: true }})
+                );
+            })
+            Livewire.hook('message.processed', (message, component) => {
+                window.dispatchEvent(
+                    new CustomEvent('loading', { detail: { loading: false }})
+                );
+            })*/
+        }
+    </script>
+
+    <div x-data="{ loading: false }" x-show="loading" @loading.window="loading = $event.detail.loading">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: #170b2a; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <img src="{{ asset('img/animated_car.gif') }}" width="200">
+            </div>
+        </div>
+    </div>
 
     {{ $slot }}
 

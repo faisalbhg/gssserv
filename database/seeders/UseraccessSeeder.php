@@ -17,10 +17,10 @@ class UseraccessSeeder extends Seeder
     public function run()
     {
         Useraccess::create([
-            'user_id' => 1,
-            'user_group' => 1,
+            'user_id' => 4,
+            'user_group' => 11,
             'privilege_id'=>1,
-            'station_id'=>1
+            'station_id'=>13
         ]);
     }
 }

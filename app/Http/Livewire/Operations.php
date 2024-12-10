@@ -4,9 +4,9 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 
-use App\Models\Customerjobs;
-use App\Models\Customerjobservices;
-use App\Models\Customerjoblogs;
+use App\Models\CustomerJobCards;
+use App\Models\CustomerJobCardServices;
+use App\Models\CustomerJobCardServiceLogs;
 
 use App\Models\Customers;
 use App\Models\Services;
@@ -16,6 +16,9 @@ use App\Models\StateList;
 use App\Models\ServiceItemsPrice;
 use App\Models\CustomerVehicle;
 use App\Models\ServicesJobUpdate;
+use App\Models\JobcardChecklistEntries;
+use App\Models\ServiceChecklist;
+use App\Models\TenantMasterCustomers;
 
 use Carbon\Carbon;
 use Session;
@@ -56,6 +59,9 @@ class Operations extends Component
 
     public $frontSideBumperCheck, $frontSideGrillCheck, $frontSideNumberPlateCheck, $frontSideHeadLampsCheck, $frontSideFogLampsCheck, $frontSideHoodCheck, $rearSideBumperCheck, $rearSideMufflerCheck, $rearSideNumberPlateCheck, $rearSideTrunkCheck, $rearSideLightsCheck, $rearSideRoofTopCheck, $leftSideWheelCheck, $leftSideFenderCheck, $leftSideSideMirrorCheck, $leftSideDoorGlassInOutCheck, $leftSideDoorHandleCheck, $leftSideSideStepperCheck, $rightSideWheelCheck, $rightSideFenderCheck, $rightSideSideMirrorCheck, $rightSideDoorGlassInOutCheck, $rightSideDoorHandleCheck, $rightSideSideStepperCheck, $innerCabinSmellCheck, $innerCabinWindshieldFRRRCheck, $innerCabinSteeringWheelCheck, $innerCabinGearKnobCheck, $innerCabinCentreConsoleCheck, $innerCabinAshTryCheck, $innerCabinDashboardCheck, $innerCabinACVentsFRRRCheck, $innerCabinInteriorTrimCheck, $innerCabinFloorMatCheck, $innerCabinRearViewMirrorCheck, $innerCabinLuggageCompCheck, $innerCabinRoofTopCheck;
     public $jobCustomerInfo,$updateService=false;
+    public $jobcardDetails, $showaddServiceItems=false;
+    public $showVehicleImageDetails=false;
+    public $checkListDetails, $checklistLabels, $vehicleSidesImages, $vehicleCheckedChecklist, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature;
 
 
     
@@ -78,17 +84,18 @@ class Operations extends Component
 
     public function render()
     {
-        $customerjobs = Customerjobs::
-            select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
-            
-            ->join('customers','customers.id','=','customerjobs.customer_id')
-            ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
-            ->orderBy('customerjobs.id','DESC')
-            ->where('customerjobs.job_number', 'like', "%{$this->search}%")
-            ->whereIn('customerjobs.job_status', $this->filter)
-            ->paginate(20);
-        
-        $getCountSalesJob = Customerjobs::select(
+
+        //dd(JobcardChecklistEntries::get());
+
+        /*CustomerJobCardServices::where('job_number','!=',null)->update(['job_status'=>1,'job_departent'=>1]);
+        CustomerJobCards::where('payment_status','=',null)->update(['payment_status'=>1,'payment_status'=>1]);
+        dd(CustomerJobCards::where('job_number','!=',null)->get());*/
+        //CustomerJobCards::where('job_number','=','LL00004-PSOF-241107-PP0003517')->update(['payment_status'=>0,'payment_type'=>1]);
+
+
+        $customerjobs = CustomerJobCards::with(['customerInfo'])->orderBy('id','DESC')->paginate(10);
+        //dd($customerjobs);
+        $getCountSalesJob = CustomerJobCards::select(
             array(
                 \DB::raw('count(DISTINCT(customer_id)) customers'),
                 \DB::raw('count(job_number) jobs'),
@@ -101,6 +108,17 @@ class Operations extends Component
                 \DB::raw('SUM(grand_total) as saletotal'),
             )
         )->first();
+
+        /*$customerjobs = Customerjobs::
+            select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
+            
+            ->join('customers','customers.id','=','customerjobs.customer_id')
+            ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
+            
+            ->where('customerjobs.job_number', 'like', "%{$this->search}%")
+            ->whereIn('customerjobs.job_status', $this->filter)
+            ->paginate(20);*/
+        
         
         $data['getCountSalesJob'] = $getCountSalesJob;
         $data['customerjobs'] = $customerjobs;
@@ -121,7 +139,7 @@ class Operations extends Component
 
 
     public function resendPaymentLink($job_number){
-        $customerjobs = Customerjobs::
+        $customerjobs = CustomerJobCards::
             select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
             ->join('customers','customers.id','=','customerjobs.customer_id')
             ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
@@ -134,12 +152,17 @@ class Operations extends Component
     public function updatePayment($job_number, $payment_status)
     {
         $this->payment_status = $payment_status;
-        Customerjobs::where(['job_number'=>$job_number])->update(['payment_status'=>$payment_status]);
+        CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_status'=>$payment_status]);
     }
 
     public function updateQwService($services)
     {
-        $services = json_decode($services);
+        /*CustomerJobCardServices::where('job_number','!=',null)->update(['job_status'=>1,'job_departent'=>1]);
+        CustomerJobCards::where('job_number','!=',null)->update(['job_status'=>1,'job_departent'=>1]);
+        dd(CustomerJobCards::where(['job_number'=>$services['job_number']])->get());
+        */
+        //dd($services);
+        //$services = json_decode($services);
         /*$validatedData = $this->validate([
             'frontSideBumperCheck' => 'required',
             'frontSideGrillCheck' => 'required',
@@ -179,49 +202,65 @@ class Operations extends Component
             'innerCabinLuggageCompCheck' => 'required',
             'innerCabinRoofTopCheck' => 'required',
         ]);*/
-
-        $jobServiceId = $services->id;
-        $this->job_status = $services->job_status+1;
-        $this->job_departent = $services->job_departent+1;
+        //dd($validatedData);
+        $jobServiceId = $services['id'];
+        $this->job_status = $services['job_status']+1;
+        $this->job_departent = $services['job_departent']+1;
         
         $serviceJobUpdate = [
-            'job_status'=>$services->job_status+1,
-            'job_departent'=>$services->job_status+1,
+            'job_status'=>$services['job_status']+1,
+            'job_departent'=>$services['job_status']+1,
         ];
-        Customerjobservices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
+        //dd($serviceJobUpdate);
+        CustomerJobCardServices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
 
         $serviceJobUpdateLog = [
-            'job_number'=>$services->job_number,
-            'customer_job_service_id'=>$jobServiceId,
-            'job_status'=>$services->job_status+1,
-            'job_departent'=>$services->job_departent+1,
+            'job_number'=>$services['job_number'],
+            'customer_job__card_service_id'=>$jobServiceId,
+            'job_status'=>$services['job_status']+1,
+            'job_departent'=>$services['job_departent']+1,
             'job_description'=>json_encode($this),
+            'created_by'=>Session::get('user')->id,
         ];
-        Customerjoblogs::create($serviceJobUpdateLog);
+        CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
+
+        $getCountSalesJobStatus = CustomerJobCardServices::select(
+            array(
+                \DB::raw('count(case when job_status = 0 then job_status end) new'),
+                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
+                \DB::raw('count(case when job_status = 2 then job_status end) work_finished'),
+                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
+                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+            )
+        )->where(['job_number'=>$services['job_number']])->first();
+        //dd($getCountSalesJobStatus);
+        if($getCountSalesJobStatus->working_progress>0){
+            $mainSTatus=1;
+        }
+        else if($getCountSalesJobStatus->work_finished>0){
+            $mainSTatus=2;
+        }
+        else if($getCountSalesJobStatus->ready_to_deliver>0){
+            $mainSTatus=3;
+        }
+        else if($getCountSalesJobStatus->delivered>0){
+            $mainSTatus=4;
+        }
+        //dd($mainSTatus);
+        $mianJobUpdate = [
+            'job_status'=>$mainSTatus,
+            'job_departent'=>$mainSTatus,
+        ];
+        CustomerJobCards::where(['job_number'=>$services['job_number']])->update($mianJobUpdate);
         
-        $customerJobServiceDetails = Customerjobservices::where(['job_number'=>$services->job_number])->get();
-        $mainJobStatus=true;
-        foreach($customerJobServiceDetails as $service)
-        {
-            if($service->job_status==1)
-            {
-                $mainJobStatus=false;
-                break;
-            }
-            else
-            {
-                $mainJobStatus = true;
-            }
-        }
-        if($mainJobStatus==true){
-            Customerjobs::where(['job_number'=>$services->job_number])->update($serviceJobUpdate);
-        }
-        $this->customerjobservices = Customerjobservices::where(['job_number'=>$services->job_number])->get();
+        $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$services['job_number']])->first();
+        $this->jobcardDetails = $job;
+        $this->customerjobservices = $job->customerJobServices;
     }
 
     public function updateGSService($services)
     {
-        $services = Customerjobservices::find($services);
+        $services = CustomerJobCardServices::find($services);
         
 
         $jobServiceId = $services->id;
@@ -232,7 +271,7 @@ class Operations extends Component
             'job_status'=>$services->job_status+1,
             'job_departent'=>$services->job_status+1,
         ];
-        Customerjobservices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
+        CustomerJobCardServices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
 
         $serviceJobUpdateLog = [
             'job_number'=>$services->job_number,
@@ -243,7 +282,7 @@ class Operations extends Component
         ];
         Customerjoblogs::create($serviceJobUpdateLog);
         
-        $customerJobServiceDetails = Customerjobservices::where(['job_number'=>$services->job_number])->get();
+        $customerJobServiceDetails = CustomerJobCardServices::where(['job_number'=>$services->job_number])->get();
         $mainJobStatus=true;
         foreach($customerJobServiceDetails as $service)
         {
@@ -260,7 +299,7 @@ class Operations extends Component
         if($mainJobStatus==true){
             Customerjobs::where(['job_number'=>$services->job_number])->update($serviceJobUpdate);
         }
-        $this->customerjobservices = Customerjobservices::where(['job_number'=>$services->job_number])->get();
+        $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$services->job_number])->get();
     }
     public function updateQLService($services)
     {
@@ -273,7 +312,7 @@ class Operations extends Component
             'job_status'=>$services->job_status+1,
             'job_departent'=>$services->job_status+1,
         ];
-        Customerjobservices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
+        CustomerJobCardServices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
 
         $serviceJobUpdateLog = [
             'job_number'=>$services->job_number,
@@ -284,7 +323,7 @@ class Operations extends Component
         ];
         Customerjoblogs::create($serviceJobUpdateLog);
         
-        $customerJobServiceDetails = Customerjobservices::where(['job_number'=>$services->job_number])->get();
+        $customerJobServiceDetails = CustomerJobCardServices::where(['job_number'=>$services->job_number])->get();
         $mainJobStatus=true;
         foreach($customerJobServiceDetails as $service)
         {
@@ -301,7 +340,7 @@ class Operations extends Component
         if($mainJobStatus==true){
             Customerjobs::where(['job_number'=>$services->job_number])->update($serviceJobUpdate);
         }
-        $this->customerjobservices = Customerjobservices::where(['job_number'=>$services->job_number])->get();
+        $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$services->job_number])->get();
     }
 
     public function updateService($services)
@@ -323,7 +362,7 @@ class Operations extends Component
                 'job_status'=>$services->job_status+1,
                 'job_departent'=>$services->job_status+1,
             ];
-            Customerjobservices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
+            CustomerJobCardServices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
 
             $serviceJobUpdateLog = [
                 'job_number'=>$services->job_number,
@@ -334,7 +373,7 @@ class Operations extends Component
             ];
             Customerjoblogs::create($serviceJobUpdateLog);
             
-            $customerJobServiceDetails = Customerjobservices::where(['job_number'=>$services->job_number])->get();
+            $customerJobServiceDetails = CustomerJobCardServices::where(['job_number'=>$services->job_number])->get();
             $mainJobStatus=true;
             foreach($customerJobServiceDetails as $service)
             {
@@ -351,18 +390,56 @@ class Operations extends Component
             if($mainJobStatus==true){
                 Customerjobs::where(['job_number'=>$services->job_number])->update($serviceJobUpdate);
             }
-            $this->customerjobservices = Customerjobservices::where(['job_number'=>$services->job_number])->get();
+            $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$services->job_number])->get();
 
         }
         
         
     }
-
+    public function openVehicleImageDetails(){
+        $this->showVehicleImageDetails=true;
+    }
+    public function closeVehicleImageDetails()
+    {
+        $this->showVehicleImageDetails=false;
+    }
 
     public function customerJobUpdate($job_number)
     {
+        $this->showVehicleImageDetails=false;
         $this->updateService=true;
-        $job = Customerjobs::with(['customerInfo','customerJobServices'])->where(['job_number'=>$job_number])->first();
+        
+        $job = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo'])->where(['job_number'=>$job_number])->first();
+        //dd($job);
+        $this->jobcardDetails = $job;
+        if($this->jobcardDetails->checklistInfo!=null){
+            $this->checkListDetails=$this->jobcardDetails->checklistInfo;
+            $this->checklistLabels = ServiceChecklist::get();
+            $this->vehicleCheckedChecklist = json_decode($this->jobcardDetails->checklistInfo['checklist'],true);
+            $this->vehicleSidesImages = json_decode($this->jobcardDetails->checklistInfo['vehicle_image'],true);
+            $this->turn_key_on_check_for_fault_codes = $this->checkListDetails['turn_key_on_check_for_fault_codes'];
+            $this->start_engine_observe_operation = $this->checkListDetails['start_engine_observe_operation'];
+            $this->reset_the_service_reminder_alert = $this->checkListDetails['reset_the_service_reminder_alert'];
+            $this->stick_update_service_reminder_sticker_on_b_piller = $this->checkListDetails['stick_update_service_reminder_sticker_on_b_piller'];
+            $this->interior_cabin_inspection_comments = $this->checkListDetails['interior_cabin_inspection_comments'];
+            $this->check_power_steering_fluid_level = $this->checkListDetails['check_power_steering_fluid_level'];
+            $this->check_power_steering_tank_cap_properly_fixed = $this->checkListDetails['check_power_steering_tank_cap_properly_fixed'];
+            $this->check_brake_fluid_level = $this->checkListDetails['check_brake_fluid_level'];
+            $this->brake_fluid_tank_cap_properly_fixed = $this->checkListDetails['brake_fluid_tank_cap_properly_fixed'];
+            $this->check_engine_oil_level = $this->checkListDetails['check_engine_oil_level'];
+            $this->check_radiator_coolant_level = $this->checkListDetails['check_radiator_coolant_level'];
+            $this->check_radiator_cap_properly_fixed = $this->checkListDetails['check_radiator_cap_properly_fixed'];
+            $this->top_off_windshield_washer_fluid = $this->checkListDetails['top_off_windshield_washer_fluid'];
+            $this->check_windshield_cap_properly_fixed = $this->checkListDetails['check_windshield_cap_properly_fixed'];
+            $this->underHoodInspectionComments = $this->checkListDetails['underHoodInspectionComments'];
+            $this->check_for_oil_leaks_engine_steering = $this->checkListDetails['check_for_oil_leaks_engine_steering'];
+            $this->check_for_oil_leak_oil_filtering = $this->checkListDetails['check_for_oil_leak_oil_filtering'];
+            $this->check_drain_lug_fixed_properly = $this->checkListDetails['check_drain_lug_fixed_properly'];
+            $this->check_oil_filter_fixed_properly = $this->checkListDetails['check_oil_filter_fixed_properly'];
+            $this->ubi_comments = $this->checkListDetails['ubi_comments'];
+            //dd($this->checkListDetails);
+        }
+        
         $this->job_number = $job->job_number;
         $this->job_date_time = $job->job_date_time;
         $this->customerDetails = true;
@@ -375,7 +452,7 @@ class Operations extends Component
         $this->name = $job->customerInfo['name'];
         $this->email = $job->customerInfo['email'];
         $this->mobile = $job->customerInfo['mobile'];
-        $this->customerType = $job->customerInfo->customertype['customer_type'];
+        //$this->customerType = $job->customerInfo->customertype['customer_type'];
         $this->payment_status = $job->payment_status;
         $this->payment_type = $job->payment_type;
         $this->job_status = $job->job_status;
@@ -388,7 +465,7 @@ class Operations extends Component
 
         $this->customerjobservices = $job->customerJobServices;
         //dd($this->customerjobservices);
-
+        //dd($this);
         
         $this->dispatchBrowserEvent('showServiceUpdate');
         $this->dispatchBrowserEvent('hideQwChecklistModel');
@@ -401,7 +478,7 @@ class Operations extends Component
         $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post('http://172.23.140.170/gssapi/api/check-payment-status',$arrData);
         if(json_decode($response)->payment_status!=0)
         {
-            Customerjobs::where(['job_number'=>$job_number])->update(['payment_status'=>json_decode($response)->payment_status]);
+            CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_status'=>json_decode($response)->payment_status]);
             session()->flash('paymentLinkStatusSuccess', 'Payment Link is not yet paid..!');
         }
         else
@@ -416,7 +493,7 @@ class Operations extends Component
         $this->showServiceGroup=true;
         $this->showServiceType=true;
 
-        $job = Customerjobs::select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
+        $job = CustomerJobCards::select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
             ->join('customers','customers.id','=','customerjobs.customer_id')
             ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
             ->orderBy('customerjobs.id','DESC')
@@ -431,7 +508,7 @@ class Operations extends Component
         $this->servicesGroups = ServicesGroup::where(['is_active'=>1])->get();
         
         
-
+        $this->showaddServiceItems=true;
         $this->dispatchBrowserEvent('hideServiceUpdate');
         $this->dispatchBrowserEvent('showAddServiceItems');
 
@@ -707,7 +784,7 @@ class Operations extends Component
         $customerId = $this->customer_id;
         $vehicleDetails = CustomerVehicle::find($customerVehicleId);
         
-        $jobDetails = Customerjobs::where(['job_number'=>$job_number])->first();
+        $jobDetails = CustomerJobCards::where(['job_number'=>$job_number])->first();
         $oldTotalPrice = $jobDetails->total_price;
         $oldGrandTotal = $jobDetails->grand_total;
         $oldVat = $jobDetails->vat;
@@ -727,7 +804,7 @@ class Operations extends Component
                 'created_by'=>Session::get('user')->id,
                 'payment_updated_by'=>Session::get('user')->id,
             ];
-        Customerjobs::where(['job_number'=>$job_number])->update($customerJobUpdate);
+        CustomerJobCards::where(['job_number'=>$job_number])->update($customerJobUpdate);
 
         foreach($cartDetails as $cartData)
         {
@@ -770,7 +847,7 @@ class Operations extends Component
                 $customerJobServiceData['service_type_name']=$cartData['name'];
             }
 
-            $customerJobServiceId = Customerjobservices::create($customerJobServiceData);
+            $customerJobServiceId = CustomerJobCardservices::create($customerJobServiceData);
 
             Customerjoblogs::create([
                 'job_number'=>$this->job_number,
@@ -797,7 +874,7 @@ class Operations extends Component
         $service = json_decode($service);
         dd($service);
         $customerJobServiceUpdate = ['is_removed'=>1];
-        Customerjobservices::find($service->id)->update($customerJobServiceUpdate);
+        CustomerJobCardServices::find($service->id)->update($customerJobServiceUpdate);
 
         /*$oldTotalPrice = $service->total_price*$service->quantity;
         $oldGrandTotal = $service->grand_total;
@@ -816,12 +893,12 @@ class Operations extends Component
         Customerjobs::where(['job_number'=>$job_number])->update($customerJobUpdate);*/
 
 
-        $this->customerjobservices = Customerjobservices::where(['job_number'=>$service->job_number])->get();
+        $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service->job_number])->get();
     }
 
     public function clickQlOperation($in_out,$up_ser,$service)
     {
-        $service = Customerjobservices::find($service);
+        $service = CustomerJobCardServices::find($service);
         
         if($in_out=='start')
         {
@@ -833,7 +910,7 @@ class Operations extends Component
             $serviceUpdate = [$up_ser.'_time_in' => Carbon::now()];
             $serviceUpdate = [$up_ser => 2];
         }
-        Customerjobservices::find($service['id'])->update($serviceUpdate);
+        CustomerJobCardServices::find($service['id'])->update($serviceUpdate);
         
         $serviceJobUpdateLog = [
             'job_number'=>$service['job_number'],
@@ -844,7 +921,7 @@ class Operations extends Component
         ];
         Customerjoblogs::create($serviceJobUpdateLog);
 
-        $this->customerjobservices = Customerjobservices::where(['job_number'=>$service['job_number']])->get();
+        $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service['job_number']])->get();
         //dd($this->customerjobservices);
     }
 

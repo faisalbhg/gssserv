@@ -20,13 +20,8 @@
                     </a>
                 </li>
             </ul>
-            <nav aria-label="breadcrumb">
-                <!-- <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5  px-4">
-                    <li class="breadcrumb-item text-sm text-dark active text-capitalize" aria-current="page">
-                        {{ str_replace('-', ' ', Route::currentRouteName()) }}</li>
-                </ol> -->
-                <h6 class="font-weight-bolder mb-0 text-capitalize  px-4">
-                    {{ str_replace('-', ' ', Route::currentRouteName()) }}</h6>
+            <nav aria-label="breadcrumb" class="d-xl-block d-md-none d-sm-none d-xs-none">
+                <h6 class="font-weight-bolder mb-0 text-capitalize  px-4">{{ str_replace('-', ' ', Route::currentRouteName()) }}</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4 d-flex justify-content-end" id="navbar">
 
@@ -38,23 +33,6 @@
                 </div> -->
                 
                 <ul class="navbar-nav justify-content-end">
-                    <li class="nav-item px-2  d-flex align-items-center">
-                        <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
-                            {{Session::get('user')->name}}
-                            <livewire:auth.logout />
-                        </a>
-                    </li>
-                    <!-- <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-                            <div class="sidenav-toggler-inner">
-                                <i class="sidenav-toggler-line"></i>
-                                <i class="sidenav-toggler-line"></i>
-                                <i class="sidenav-toggler-line"></i>
-                            </div>
-                        </a>
-                    </li> -->
-                    
-
                     <li class="nav-item px-1 dropdown pe-2 d-flex align-items-center">
                         <a href="javascript:;" class="nav-link text-primary p-0 " id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-bell cursor-pointer"></i>
@@ -77,15 +55,22 @@
                         </ul>
                     </li>
                     
-                    <li class="nav-item px-3 d-flex align-items-center {{ Route::currentRouteName() == 'dashboard' ? '' : 'd-none' }}"  >
-                        <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                            <i class="fa-solid fa-cart-shopping fixed-plugin-button-nav cursor-pointer cartitemcount"></i>
-                        </div>
+                    <li class="nav-item px-3 d-flex align-items-center"  >
+                        <a class="nav-link" href="{{ route('job-card') }}">
+                            <button class="btn btn-icon btn-sm btn-3 bg-gradient-primary" type="button" wire:click="newVehicleOpen">
+                                <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fa-solid fa-car fa-xl"></i></span>
+                                <span class="btn-inner--text">New Job</span>
+                            </button>
+                        </a>
                     </li>
 
                     
                 </ul>
             </div>
         </div>
+    </nav>
+    <nav aria-label="breadcrumb" class="d-xl-none mt-2">
+        <h6 class="font-weight-bolder mb-0 text-capitalize  px-4">{{ str_replace('-', ' ', Route::currentRouteName()) }}</h6>
+        <hr class="horizontal dark mt-0">
     </nav>
 

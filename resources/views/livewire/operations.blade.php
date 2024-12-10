@@ -120,11 +120,8 @@
                 <thead>
                   <tr>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Customer</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Job Number</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Time</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Job</th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Pricec</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Payment Status</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Payment Type</th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2 align-middle text-center">Status</th>
                     <!-- <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Department</th> -->
                     <th></th>
@@ -134,33 +131,45 @@
                   @forelse( $customerjobs as $jobs)
                   <tr wire:click="customerJobUpdate('{{$jobs->job_number}}')">
                     <td>
-                      <div class="d-flex px-2">
+                      <div class="d-flex px-3 py-1">
                         <div>
-                          <img src="{{url('storage/'.$jobs->vehicle_image)}}" class="avatar avatar-md me-2">
+                          <img src="{{url('storage/'.$jobs->vehicle_image)}}" class="avatar me-3" alt="avatar image">
                         </div>
-                        <div class="my-auto">
-                          <h6 class="mb-0 text-sm">{{$jobs->make}} - <small>{{$jobs->model}} ({{$jobs->plate_number}})</small></h6>
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{$jobs->make}} - <small>{{$jobs->model}} </small></h6>
+                          <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">{{$jobs->plate_number}}</span></p>
                           <hr class="m-0">
-                          <p class="text-sm text-dark mb-0">{{$jobs->name}}({{$jobs->customerType}})<br>{{$jobs->email}}<br>{{$jobs->mobile}}</p>
+                          <p class="text-sm text-dark mb-0">{{$jobs->customerInfo['TenantName']}}
+                            <br>{{$jobs->customerInfo['Email']}}
+                            <br>{{$jobs->customerInfo['Mobile']}}
+                          </p>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <p class="text-sm font-weight-bold mb-0">{{$jobs->job_number}}</p>
-                    </td>
-                    <td>
-                      <p class="text-sm font-weight-bold mb-0">{{ \Carbon\Carbon::parse($jobs->job_date_time)->format('dS M Y H:i A') }}</p>
+                      <div class="d-flex px-3 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{$jobs->job_number}}</h6>
+                          <p class="text-sm font-weight-bold mb-0">{{ \Carbon\Carbon::parse($jobs->job_date_time)->format('dS M Y H:i A') }}</p>
+                        </div>
+                      </div>
                     </td>
                     
                     <td>
-                      <p class="text-sm font-weight-bold mb-0">AED {{round($jobs->grand_total,2)}}</p>
+                      <div class="d-flex px-3 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">AED {{round($jobs->grand_total,2)}}</span></p>
+                          <hr class="my-1">
+                          <span class="badge badge-sm {{config('global.payment.status_class')[$jobs->payment_status]}}">{{config('global.payment.status')[$jobs->payment_status]}}</span>
+                          @if($jobs->payment_type!=null)
+                          <p class="text-sm text-gradient {{config('global.payment.text_class')[$jobs->payment_type]}}  font-weight-bold mb-0">{{config('global.payment.type')[$jobs->payment_type]}}</p>
+                          @endif
+
+                        </div>
+                      </div>
+                      <p class="text-sm font-weight-bold mb-0"></p>
                     </td>
-                    <td>
-                      <span class="badge badge-sm {{config('global.payment.status_class')[$jobs->payment_status]}}">{{config('global.payment.status')[$jobs->payment_status]}}</span>
-                    </td>
-                    <td>
-                      <p class="text-sm text-gradient {{config('global.payment.text_class')[$jobs->payment_type]}}  font-weight-bold mb-0">{{config('global.payment.type')[$jobs->payment_type]}}</p>
-                    </td>
+                    
                     <td class="align-middle text-center">
 
                       <span class="badge badge-sm {!!config('global.jobs.status_btn_class')[$jobs->job_status]!!}">{{config('global.jobs.status')[$jobs->job_status]}}</span>
@@ -199,7 +208,9 @@
   @if($updateService)
   @include('components.modals.updateservice')
   @endif
+  @if($showaddServiceItems)
   @include('components.modals.addServiceItems')
+  @endif
   @include('components.modals.showQwChecklistModel');
     </div>
 </main>

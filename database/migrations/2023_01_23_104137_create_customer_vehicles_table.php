@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('customer_vehicles', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('vehicle_type');
+            $table->integer('customer_id');
+            $table->integer('vehicle_type');
             $table->string('make');
             $table->string('vehicle_image');
             $table->string('model')->nullable();
@@ -33,8 +33,6 @@ return new class extends Migration
             $table->integer('is_active')->nullable();
             $table->integer('is_blocked')->nullable();
             $table->timestamps();
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
-            $table->foreign('vehicle_type')->references('id')->on('vehicletypes')->onDelete('cascade');
         });
     }
 

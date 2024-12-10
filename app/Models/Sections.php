@@ -9,7 +9,9 @@ class Sections extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+    protected $table = 'property';
+
+    /*protected $fillable = [
         'section_code',
         'section_name',
         'section_description',
@@ -17,5 +19,7 @@ class Sections extends Model
         'is_delete',
         'created_at',
         'uppdated_at',
-    ];
+    ];*/
+
+    //PropertyCode,DevelopmentCode,PropertyNo,PropertyName,Operations
 }

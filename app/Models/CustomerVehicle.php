@@ -24,6 +24,7 @@ class CustomerVehicle extends Model
         'vehicle_km',
         'plate_number_image',
         'chaisis_image',
+        'is_active',
         'created_by',
         'updated_by',
         'created_at',
@@ -38,6 +39,17 @@ class CustomerVehicle extends Model
      * Example: return $this->belongsTo(Post::class, 'post_id', 'id');
      * 
      */
+
+    public function customerInfoMaster()
+    {
+        return $this->belongsTo(TenantMasterCustomers::class,'customer_id','TenantId');
+    }
+
+    public function customerInfo()
+    {
+        return $this->belongsTo(Customers::class,'customer_id','id');
+    }
+
     public function user()
     {
         return $this->belongsTo(Customers::class);

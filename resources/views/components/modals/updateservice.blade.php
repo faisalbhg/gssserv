@@ -1,6 +1,6 @@
 <style>
     .modal-dialog {
-        max-width: 100%;
+        max-width: 90%;
     }
     .modal{
         z-index: 99999;
@@ -11,114 +11,248 @@
 <div wire:ignore.self class="modal fade" id="serviceUpdateModal" tabindex="-1" role="dialog" aria-labelledby="serviceUpdateModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
        <div class="modal-content">
-            <div class="modal-header">
-
-                <h5 class="modal-title" id="serviceUpdateModalLabel">#{{$job_number}}</h5>
-                <button wire:click="addNewServiceItem('{{$job_number}}')" type="button" class="btn bg-gradient-info btn-sm float-end mb-0">Add New Service/Items</button>
-                                        </h6>
+            <div class="modal-header" style="display:inline !important;">
+                <div class="d-sm-flex justify-content-between">
+                    <div>
+                      <h5 class=" modal-title" id="serviceUpdateModalLabel">#{{$jobcardDetails->job_number}}</h5>
+                    </div>
+                    <div class="d-flex">
+                      <button wire:click="addNewServiceItem('{{$jobcardDetails->job_number}}')" type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end">Add New Service/Items</button>
+                      <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
+                    </div>
+                </div>
+                
             </div>
+            
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-12 mt-0">
+                    <div class="col-md-6">
+                        <a href="javascript:;" class="">
+                            <div class="card card-background mb-4" style="align-items: inherit;">
+                                <!-- move-on-hover-->
+                                <div class="full-background" style="background-image: url('{{url("storage/".$jobcardDetails->vehicle_image)}}')"></div>
+                                <div class="card-body pt-5">
+                                    @if($jobCustomerInfo['TenantName'])
+                                        <h4 class="text-white mb-0 pb-0 text-white">{{$jobCustomerInfo['TenantName']}}</h4>
+                                        <p class="mt-0 pt-0 text-white"><small>{{$jobCustomerInfo['Mobile']}}<br> {{$jobCustomerInfo['Email']}}</small></p>
+                                        <!--ID image-->
+                                    @else
+                                    Guest
+                                    @endif
+                                    <hr class="horizontal dark mt-3">
+                                    <p class="mb-0 text-white">{{$jobcardDetails->make}}, {{$jobcardDetails->model}}</p>
+                                    <p class="text-white">{{$jobcardDetails->plate_number}}</p>
+                                    <p class="mb-0 text-white">Chassis Number: {{$jobcardDetails->chassis_number}}</p>
+                                    <p class="text-white">K.M Reading: {{$jobcardDetails->vehicle_km}}</p>
+                                    <ul class="list-group">
+                                        <!-- Job Status -->
+                                        <li class="list-group-item border-0  p-2 mb-2 bg-transparent border-radius-lg">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$job_status]}} shadow text-center m-2">
+                                                        <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
+                                                    </div>
+                                                    @if($jobcardDetails->job_status)
+                                                    <h6 class="my-2 text-sm text-white">
+                                                        Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$jobcardDetails->job_status]}} pb-2">{{config('global.jobs.status')[$jobcardDetails->job_status]}}</span> 
+                                                    </h6>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <!-- Payment Status -->
+                                        <li class="list-group-item border-0  p-2 mb-2 bg-transparent border-radius-lg">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    
+                                                    <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.payment.status_class')[$jobcardDetails->payment_status]}} shadow text-center m-2">
+                                                        <i class="{{config('global.payment.icons')[$jobcardDetails->payment_type]}} opacity-10" aria-hidden="true"></i>
+                                                    </div>
+                                                    <h6 class="my-2 text-sm text-white">
+                                                        Payment Status: <span class="text-sm {{config('global.payment.text_class')[$jobcardDetails->payment_type]}} pb-2">{{config('global.payment.type')[$jobcardDetails->payment_type]}}</span> - <span class=" {{config('global.payment.status_class')[$jobcardDetails->payment_status]}} text-gradient text-sm">{{config('global.payment.status')[$jobcardDetails->payment_status]}}</span>
+                                                    </h6>
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+
+                                                    @if($jobcardDetails->payment_status==0 && $jobcardDetails->payment_type!=1)
+                                                    <div class=" float-start">
+                                                        @foreach(config('global.payment.status_update') as $pskey => $paymentStatus)
+                                                        <button wire:click="updatePayment('{{$job_number}}','{{$pskey}}')" class="btn btn-sm {{config('global.payment.status_class')[$pskey]}} btn-sm px-2">{{config('global.payment.status_update')[$pskey]}}</button>
+                                                        @endforeach
+                                                    </div>
+                                                    @else
+                                                    <div class=" float-start">
+                                                        @if($jobcardDetails->payment_type==1 && $jobcardDetails->payment_status==0)
+                                                        <button type="button" wire:click="resendPaymentLink('{{$job_number}}')" class="mt-2 btn btn-sm bg-gradient-success px-2">Re send Payment link</button>
+                                                        <button type="button" wire:click="checkPaymentStatus('{{$jobcardDetails->job_number}}','1')" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button>
+                                                        @endif
+                                                        @if ($message = Session::get('paymentLinkStatusSuccess'))
+                                                            <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
+                                                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                                    <span aria-hidden="true">×</span>
+                                                                </button>
+                                                            </div>
+                                                        @endif
+                                                        @if ($message = Session::get('paymentLinkStatusError'))
+                                                            <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                                    <span aria-hidden="true">×</span>
+                                                                </button>
+                                                            </div>
+
+                                                        @endif
+
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <!-- CheckList Status -->
+                                        @if($jobcardDetails->checklistInfo!=null)
+                                        <li class="list-group-item border-0  p-2 mb-2 bg-transparent border-radius-lg">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex">
+                                                        @if($showVehicleImageDetails)
+                                                        <button type="button" class="btn btn-sm bg-gradient-danger mb-0 me-2" wire:click="closeVehicleImageDetails">
+                                                        Close Vehicle images and checklists
+                                                        </button>
+                                                        @else
+                                                        <button type="button" class="btn btn-sm bg-gradient-primary mb-0 me-2" wire:click="openVehicleImageDetails">
+                                                        Show Vehicle images and checklists
+                                                        </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="float-start icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center m-2">
+                                                        <i class="fa-solid fa-gas-pump opacity-10" aria-hidden="true"></i>
+                                                    </div>
+                                                    <h6 class="my-2 text-sm text-white">
+                                                        Fuel: <span class="text-sm  pb-2">{{config('global.fuel')[$jobcardDetails->checklistInfo['fuel']]}}</span>
+                                                    </h6>
+                                                    
+                                                </div>
+                                            </div>
+                                        </li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="card card-profile card-plain py-2">
+                                <div class="card card-profile card-plain">
                                     <div class="row">
-                                        <div class="col-xxs-4 col-xs-4 col-sm-3 col-md-3 col-lg-3 col-xl-3 col-xxl-3">
-                                            <a href="javascript:;">
-                                                <div class="position-relative">
-                                                <div class="blur-shadow-image">
-                                                    <img class="w-100 rounded-3 shadow-lg" src="{{url('storage/'.$vehicle_image)}}">
-                                                </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                        <div class="col-xxs-8 col-xs-8 col-sm-9 col-md-9 col-lg-9 col-xl-9 col-xxl-9">
+                                        <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <div class="card-body p-0 text-left">
-                                                <div class="p-md-0 pt-0">
-                                                    <h5 class="font-weight-bolder mb-0">{{$make}}</h5>
-                                                    <p class="text-sm font-weight-bold mb-0">{{$model}} ({{$plate_number}})</p>
-                                                    <p class="text-sm mb-0">Chassis Number: {{$chassis_number}}</p>
-                                                    <p class="text-sm mb-3">K.M Reading: {{$vehicle_km}}</p>
-                                                    <hr class="horizontal dark mt-3">
-                                                </div>
-                                                <div class="p-md-0 pt-3">
-                                                    <p class="text-sm mb-0">Name: {{$jobCustomerInfo->name}}</p>
-                                                    <p class="text-sm mb-0">Mobile: <a href="tel:{{$mobile}}">{{$jobCustomerInfo->mobile}}</a></p>
-                                                    <p class="text-sm mb-0">Email: {{$jobCustomerInfo->email}}</p>
-                                                    <p class="text-sm mb-0">Customer Type: {{$jobCustomerInfo->customertype['customer_type']}}</p>
-                                                    @if($jobCustomerInfo->customer_id_image)
-                                                    <a href="{{url('storage/'.$jobCustomerInfo->customer_id_image)}}" target="_blank"><img src="{{url('storage/'.$jobCustomerInfo->customer_id_image)}}" alt="..." class="avatar shadow"></a>
-                                                    @endif
-                                                    <hr class="horizontal dark mt-3">
-                                                </div>
-
-
-                                                <div class="p-md-0 pt-0">
-                                                    <p class="text-sm font-weight-bolder font-weight-bold mb-0">Grand Total: {{config('global.CURRENCY')}} {{round(($total_price+$vat),2)}}</p>
-                                                    <hr class="horizontal dark mt-3">
-                                                </div>
-                                                
-                                                
                                                 <ul class="list-group">
-                                                    <li class="list-group-item border-0  p-2 mb-2 bg-gray-100 border-radius-lg">
+                                                    <li class="list-group-item border-0  p-2 mb-2 border-radius-lg">
                                                         <div class="row">
                                                             <div class="col-md-12">
-                                                                <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$job_status]}} shadow text-center m-2">
-                                                                    <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
-                                                                </div>
-                                                                <h6 class="my-2 text-sm">
-                                                                    Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$job_status]}} pb-2">{{config('global.jobs.status')[$job_status]}}</span> 
-                                                                </h6>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="list-group-item border-0  p-2 mb-2 bg-gray-100 border-radius-lg">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.payment.status_class')[$payment_status]}} shadow text-center m-2">
-                                                                    <i class="{{config('global.payment.icons')[$payment_type]}} opacity-10" aria-hidden="true"></i>
-                                                                </div>
-                                                                <h6 class="my-2 text-sm">
-                                                                    Payment Status: <span class="text-sm {{config('global.payment.text_class')[$payment_type]}} pb-2">{{config('global.payment.type')[$payment_type]}}</span> - <span class=" {{config('global.payment.status_class')[$payment_status]}} text-gradient text-sm">{{config('global.payment.status')[$payment_status]}}</span>
-                                                                </h6>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                @if($payment_status==0 && $payment_type!=1)
-                                                                <div class=" float-start">
-                                                                    @foreach(config('global.payment.status_update') as $pskey => $paymentStatus)
-                                                                    <button wire:click="updatePayment('{{$job_number}}','{{$pskey}}')" class="btn btn-sm {{config('global.payment.status_class')[$pskey]}} btn-sm px-2">{{config('global.payment.status_update')[$pskey]}}</button>
-                                                                    @endforeach
-                                                                </div>
-                                                                @else
-                                                                <div class=" float-end">
-                                                                    @if($payment_type==1 && $payment_status==0)
-                                                                    <button type="button" wire:click="resendPaymentLink('{{$job_number}}')" class="mt-2 btn btn-sm bg-gradient-success px-2">Re send Payment link</button>
-                                                                    <button type="button" wire:click="checkPaymentStatus('{{$job_number}}','1')" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button>
-                                                                    @endif
-                                                                    @if ($message = Session::get('paymentLinkStatusSuccess'))
-                                                                        <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
-                                                                            <span class="alert-icon"><i class="ni ni-like-2"></i></span>
-                                                                            <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
-                                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                                                                <span aria-hidden="true">×</span>
-                                                                            </button>
+                                                                <div class="card h-100 mb-4">
+                                                                    <div class="card-header pb-0 p-2">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <h6 class="mb-0">Billing Summary</h6>
+                                                                            </div>
+                                                                            <div class="col-md-6 d-flex justify-content-end align-items-center">
+                                                                                <i class="far fa-calendar-alt me-2" aria-hidden="true"></i>
+                                                                                <small>{{ \Carbon\Carbon::parse($job_date_time)->format('dS M Y H:i A') }}</small>
+                                                                            </div>
                                                                         </div>
-                                                                    @endif
-                                                                    @if ($message = Session::get('paymentLinkStatusError'))
-                                                                        <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
-                                                                            <span class="alert-icon"><i class="ni ni-like-2"></i></span>
-                                                                            <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
-                                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                                                                <span aria-hidden="true">×</span>
-                                                                            </button>
-                                                                        </div>
-                                                                    @endif
+                                                                    </div>
+                                                                    <div class="card-body pt-4 p-2">
+                                                                        <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Items/Services</h6>
+                                                                        <ul class="list-group">
+                                                                            <?php $discountPS=0;?>
+                                                                            @foreach($customerjobservices as $serviceItems)
+                                                                            <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                                                                <div class="d-flex align-items-center">
+                                                                                    <button class="btn btn-icon-only btn-rounded  mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                                                                                    <div class="d-flex flex-column">
+                                                                                        <h6 class="mb-1 text-dark text-sm">{{$serviceItems->item_name}}</h6>
+                                                                                        <span class="text-xs">{{$serviceItems->item_code}}<br>{{$serviceItems->department_code}}-</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
+                                                                                {{config('global.CURRENCY')}} {{round($serviceItems->grand_total,2)}}
+                                                                                </div>
+                                                                            </li>
+                                                                            <?php $discountPS = $discountPS+$serviceItems->discount_amount; ?>
+                                                                            @endforeach
+                                                                            
+                                                                        </ul>
+                                                                        <h6 class="text-uppercase text-body text-xs font-weight-bolder my-3">Other</h6>
+                                                                        <ul class="list-group">
+                                                                            <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                                                                <div class="d-flex align-items-center">
+                                                                                    <button class="btn btn-icon-only btn-rounded mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                                                                                    <div class="d-flex flex-column">
+                                                                                        <h6 class="mb-1 text-dark text-sm">Total Price</h6>
+                                                                                        <span class="text-xs">total price description</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
+                                                                                {{config('global.CURRENCY')}} {{$total_price}}
+                                                                                </div>
+                                                                            </li>
+                                                                            @if($discountPS>0)
+                                                                            <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                                                                <div class="d-flex align-items-center">
+                                                                                    <button class="btn btn-icon-only btn-rounded mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                                                                                    <div class="d-flex flex-column">
+                                                                                        <h6 class="mb-1 text-dark text-sm">Discount</h6>
+                                                                                        <span class="text-xs">discount description</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
+                                                                                {{config('global.CURRENCY')}} {{round($discountPS,2)}}
+                                                                                </div>
+                                                                            </li>
+                                                                            @endif
+                                                                            <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                                                                <div class="d-flex align-items-center">
+                                                                                    <button class="btn btn-icon-only btn-rounded mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                                                                                    <div class="d-flex flex-column">
+                                                                                        <h6 class="mb-1 text-dark text-sm">Vat</h6>
+                                                                                        <span class="text-xs">Vat 5%</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
+                                                                                {{config('global.CURRENCY')}} {{round($vat,2)}}
+                                                                                </div>
+                                                                            </li>
+                                                                            <hr class="horizontal dark mt-3">
 
+                                                                            <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                                                                <div class="d-flex align-items-center">
+                                                                                    <button class="btn btn-icon-only btn-rounded mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                                                                                    <div class="d-flex flex-column">
+                                                                                        <h6 class="mb-1 text-dark text-md">Grand Total</h6>
+                                                                                        <span class="text-xs"></span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="d-flex align-items-center text-success text-gradient text-md font-weight-bold">
+                                                                                {{config('global.CURRENCY')}} {{round(($total_price+$vat),2)}}
+                                                                                </div>
+                                                                            </li>
+                                                                            
+                                                                            
+                                                                        </ul>
+                                                                    </div>
                                                                 </div>
-                                                                @endif
                                                             </div>
                                                         </div>
                                                     </li>
@@ -128,85 +262,594 @@
                                     </div>
                                 </div>
                             </div>
-                        
-                            <div class="col-md-12">
-                                <div class="card ">
-                                    <div class="card-header pb-0 px-3">
-                                        <h6 class="mb-0">Services Information
+                        </div>
+                    </div>
+                </div>
+                @if($showVehicleImageDetails)
+                <div class="row">
+                    <div class="col-12 col-md-6 col-xl-4 my-4">
+                        <div class="card h-100">
+                            <div class="card-header pb-0 p-3">
+                                
+                            </div>
+                            <div class="card-body p-3">
+                                <h6 class="mb-0">Check List</h6>
+                                <ul class="list-group">
+                                    @foreach($checklistLabels as $clKey => $checklist)
+                                    <li class="list-group-item border-0 px-0">
+                                        <div class="form-check form-switch ps-0">
+                                            <input class="form-check-input ms-auto" type="checkbox" id="checkList{{ str_replace(" ","",$checklist->checklist_label) }}" disabled @if(isset($vehicleCheckedChecklist[$checklist->id])) checked="" @endif>
+                                            <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="checkList{{ str_replace(" ","",$checklist->checklist_label) }}">{{$checklist->checklist_label}}</label>
+                                        </div>
+                                    </li>
+                                    @endforeach
+                                    <p>Note: Minor surface scratches defects, stone chipping, scratches on glasses etc. are included</p>
+                                </ul>
+                                <hr class="horizontal gray-light my-4 mb-4">
+                                <h6 class="mb-0">Vehicle Scratches Found</h6>
+                                <p class="text-sm">{{$checkListDetails->scratches_found}}</p>
+
+                                <h6 class="mt-3">Vehicle Scratches Not Found</h6>
+                                <p class="text-sm">{{$checkListDetails->scratches_notfound}}</p>
+                                <hr class="horizontal gray-light my-4 mb-4">
+                            </div>
+                        </div>
+                    </div>
+                    @if($checkListDetails['turn_key_on_check_for_fault_codes'] || $checkListDetails['start_engine_observe_operation'] || $checkListDetails['reset_the_service_reminder_alert'] || $checkListDetails['stick_update_service_reminder_sticker_on_b_piller'] || $checkListDetails['interior_cabin_inspection_comments'])
+                    <div class="col-12 col-md-6 col-xl-4 my-4">
+                        <div class="card h-100">
+                            <div class="card-header pb-0 p-3">
+                                
+                            </div>
+                            <div class="card-body p-3">
+                                <h6 class="mt-4 mb-0">Interior Cabin Inspection</h6>
+                                <div class="row"> 
+                                    <label>Turn key on - check for fault codes</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="turn_key_on_check_for_fault_codes" value="1" id="turn_key_on_check_for_fault_codes1" disabled>
+                                            <label class="custom-control-label" for="turn_key_on_check_for_fault_codes1">Good</label>
+                                        </div>
                                     </div>
-                                    <hr class="mt-0">
-                                    <div class="card-body pt-0 p-3">
-                                        <ul class="list-group">
-                                            @forelse( $customerjobservices as $services)
-                                            <li class="list-group-item border-0  p-4 mb-2 bg-gray-100 border-radius-lg">
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center mx-2">
-                                                            @if($services->service_item)
-                                                            <i class="fa-solid fa-shopping-cart  opacity-10" aria-hidden="true"></i>@else
-                                                            <i class="{{config('global.job_status_icon')[$services->job_status]}} opacity-10" aria-hidden="true"></i>
-                                                            @endif
-                                                        </div>
-                                                        <h6 class="mb-3 text-md">
-                                                            @if($services->quantity>1)
-                                                            {{$services->quantity.' x '}}
-                                                            @endif
-                                                            @if($services->service_item)
-                                                            {{$services->item_name}}
-                                                            @else
-                                                            {{$services->service_type_name}}
-                                                            @endif
-                                                            @if(!$services->service_item)
-                                                            <span class=" bg-gradient-dark text-gradient text-sm font-weight-bold">({{$services->service_group_name}})</span>
-                                                            @endif
-                                                        </h6>
-                                                        <!-- <p class="text-sm font-weight-bold mb-0">
-                                                            <span class="mb-2 text-xs">Price: <span class="text-dark ms-2 font-weight-bold">AED {{round($services->total_price,2)}}</span></span>
-                                                        </p>
-                                                        <p class="text-sm font-weight-bold mb-0">
-                                                            <span class="text-xs">VAT: <span class="text-dark ms-2 font-weight-bold">AED {{round($services->vat,2)}}</span></span>
-                                                        </p>
-                                                        <p class="text-sm font-weight-bold mb-2">
-                                                            <span class="text-md text-dark">Grand Total: <span class="text-dark ms-2 font-weight-bold">AED {{round($services->grand_total,2)}}</span></span>
-                                                        </p> -->
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <h6 class="text-md font-weight-bolder font-weight-bold mb-2">
-                                                            @if($services->service_item)
-                                                            <span class="text-sm {{config('global.item_status_text_class')[$services->job_status]}} text-gradient pb-2 px-0">{{config('global.item_status')[$services->job_status]}}</span> 
-                                                            @else
-                                                            <span class="badge text-sm {{config('global.jobs.status_btn_class')[$services->job_status]}} text-gradient pb-2 px-0">{{config('global.jobs.status')[$services->job_status]}}</span> 
-                                                            @endif
-                                                        </h6>
-                                                        @if($services->is_removed==1)
-                                                        <span class="mt-4 badge badge-md bg-gradient-danger"> <i class="fas fa-trash text-white me-2" aria-hidden="true"></i> Removeed</span>
-                                                        @else
-                                                            @if($services->service_item)
-                                                                @if($services->job_status==1)
-                                                                <a class="btn btn-link text-dark px-3 mb-0 float-end" wire:click="removeService('{{$services}}')"><span class="mt-4 badge badge-md bg-gradient-danger"> <i class="fas fa-trash text-white me-2" aria-hidden="true"></i> Remove Now</span></a>
-                                                                @endif
-                                                                @if($services->job_status==3)
-                                                                <span class="mt-2 badge badge-md {{config('global.item_status_text_class')[$services->job_status]}} float-end">{{config('global.item_status')[$services->job_status]}}</span>
-                                                                @else
-                                                                <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateService('{{$services}}')"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Update to: <span class="mt-4 badge badge-md {{config('global.item_status_text_class')[$services->job_status+1]}}">{{config('global.item_status')[$services->job_status+1]}}</span></a>
-                                                                @endif
-                                                            @else
-                                                                @if($services->job_status==0)
-                                                                <a class="btn btn-link text-dark px-3 mb-0 float-end" wire:click="removeService('{{$services}}')"><span class="mt-4 badge badge-md bg-gradient-danger"> <i class="fas fa-trash text-white me-2" aria-hidden="true"></i> Remove</span></a>
-                                                                @endif
-                                                                @if($services->job_status==4)
-                                                                <span class="mt-2 mb-2 badge badge-md {{config('global.jobs.status_btn_class')[$services->job_status]}} ">{{config('global.jobs.status')[$services->job_status]}}</span>
-                                                                @endif
-                                                            @endif
-                                                        @endif
-                                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="turn_key_on_check_for_fault_codes" value="2" id="turn_key_on_check_for_fault_codes2" disabled>
+                                            <label class="custom-control-label" for="turn_key_on_check_for_fault_codes2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="turn_key_on_check_for_fault_codes" value="3" id="turn_key_on_check_for_fault_codes3" disabled>
+                                            <label class="custom-control-label" for="turn_key_on_check_for_fault_codes3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('turn_key_on_check_for_fault_codes') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Start Engine - observe operation</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="start_engine_observe_operation" value="1" id="start_engine_observe_operation1" disabled>
+                                            <label class="custom-control-label" for="start_engine_observe_operation1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="start_engine_observe_operation" value="2" id="start_engine_observe_operation2" disabled>
+                                            <label class="custom-control-label" for="start_engine_observe_operation2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="start_engine_observe_operation" value="3" id="start_engine_observe_operation3" disabled>
+                                            <label class="custom-control-label" for="start_engine_observe_operation3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('start_engine_observe_operation') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Reset the Service Reminder Alert</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="reset_the_service_reminder_alert" value="1" id="reset_the_service_reminder_alert1" disabled>
+                                            <label class="custom-control-label" for="reset_the_service_reminder_alert1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="reset_the_service_reminder_alert" value="2" id="reset_the_service_reminder_alert2" disabled>
+                                            <label class="custom-control-label" for="reset_the_service_reminder_alert2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="reset_the_service_reminder_alert" value="3" id="reset_the_service_reminder_alert3" disabled>
+                                            <label class="custom-control-label" for="reset_the_service_reminder_alert3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('reset_the_service_reminder_alert') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Stick & Update Service Reminder Sticker on B-Piller</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="stick_update_service_reminder_sticker_on_b_piller" value="1" id="stick_update_service_reminder_sticker_on_b_piller1" disabled>
+                                            <label class="custom-control-label" for="stick_update_service_reminder_sticker_on_b_piller1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="stick_update_service_reminder_sticker_on_b_piller" value="2" id="stick_update_service_reminder_sticker_on_b_piller2" disabled>
+                                            <label class="custom-control-label" for="stick_update_service_reminder_sticker_on_b_piller2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="stick_update_service_reminder_sticker_on_b_piller" value="3" id="stick_update_service_reminder_sticker_on_b_piller3" disabled>
+                                            <label class="custom-control-label" for="stick_update_service_reminder_sticker_on_b_piller3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('stick_update_service_reminder_sticker_on_b_piller') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Comments</label>
+                                    <div class="col-md-12">
+                                        <div class="form-check mb-3 ps-0">
+                                            <textarea class="form-control" id="interior_cabin_inspection_comments" wire:model="interior_cabin_inspection_comments" disabled rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @if($checkListDetails['check_power_steering_fluid_level'] || $checkListDetails['check_power_steering_tank_cap_properly_fixed'] || $checkListDetails['check_brake_fluid_level'] || $checkListDetails['brake_fluid_tank_cap_properly_fixed'] || $checkListDetails['check_engine_oil_level'] || $checkListDetails['check_radiator_cap_properly_fixed'] || $checkListDetails['top_off_windshield_washer_fluid']
+                     || $checkListDetails['check_windshield_cap_properly_fixed']
+                     || $checkListDetails['underHoodInspectionComments'])
+                    <div class="col-12 col-md-6 col-xl-4 my-4">
+                        <div class="card h-100">
+                            <div class="card-header text-left pt-4 pb-3">
+                                <h5 class="font-weight-bold mt-2">Under Hood Inspection</h5>
+                            </div>
+                            <div class="card-body text-left pt-0">
+                                <div class="row"> 
+                                    <label>Check Power Steering Fluid Level</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_fluid_level" value="1" id="check_power_steering_fluid_level1" disabled>
+                                            <label class="custom-control-label" for="check_power_steering_fluid_level1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_fluid_level" value="2" id="check_power_steering_fluid_level2" disabled>
+                                            <label class="custom-control-label" for="check_power_steering_fluid_level2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_fluid_level" value="3" id="check_power_steering_fluid_level3" disabled>
+                                            <label class="custom-control-label" for="check_power_steering_fluid_level3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_power_steering_fluid_level') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check Power Steering tank Cap properly fixed</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_tank_cap_properly_fixed" value="1" id="check_power_steering_tank_cap_properly_fixed1" disabled>
+                                            <label class="custom-control-label" for="check_power_steering_tank_cap_properly_fixed1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_tank_cap_properly_fixed" value="2" id="check_power_steering_tank_cap_properly_fixed2" disabled>
+                                            <label class="custom-control-label" for="check_power_steering_tank_cap_properly_fixed2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_tank_cap_properly_fixed" value="3" id="check_power_steering_tank_cap_properly_fixed3" disabled>
+                                            <label class="custom-control-label" for="check_power_steering_tank_cap_properly_fixed3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_power_steering_tank_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check Brake fluid level</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_brake_fluid_level" value="1" id="check_brake_fluid_level1" disabled>
+                                            <label class="custom-control-label" for="check_brake_fluid_level1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_brake_fluid_level" value="2" id="check_brake_fluid_level2" disabled>
+                                            <label class="custom-control-label" for="check_brake_fluid_level2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_brake_fluid_level" value="3" id="check_brake_fluid_level3" disabled>
+                                            <label class="custom-control-label" for="check_brake_fluid_level3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_brake_fluid_level') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check Brake fluid tank Cap properly fixed</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="brake_fluid_tank_cap_properly_fixed" value="1" id="brake_fluid_tank_cap_properly_fixed1" disabled>
+                                            <label class="custom-control-label" for="brake_fluid_tank_cap_properly_fixed1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="brake_fluid_tank_cap_properly_fixed" value="2" id="brake_fluid_tank_cap_properly_fixed2" disabled>
+                                            <label class="custom-control-label" for="brake_fluid_tank_cap_properly_fixed2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="brake_fluid_tank_cap_properly_fixed" value="3" id="brake_fluid_tank_cap_properly_fixed3" disabled>
+                                            <label class="custom-control-label" for="brake_fluid_tank_cap_properly_fixed3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('brake_fluid_tank_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check Engine Oil Level</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_engine_oil_level" value="1" id="check_engine_oil_level1" disabled>
+                                            <label class="custom-control-label" for="check_engine_oil_level1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_engine_oil_level" value="2" id="check_engine_oil_level2" disabled>
+                                            <label class="custom-control-label" for="check_engine_oil_level2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_engine_oil_level" value="3" id="check_engine_oil_level3" disabled>
+                                            <label class="custom-control-label" for="check_engine_oil_level3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_engine_oil_level') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check Radiator Coolant Level</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_radiator_coolant_level" value="1" id="check_radiator_coolant_level1" disabled>
+                                            <label class="custom-control-label" for="check_radiator_coolant_level1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_radiator_coolant_level" value="2" id="check_radiator_coolant_level2" disabled>
+                                            <label class="custom-control-label" for="check_radiator_coolant_level2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_radiator_coolant_level" value="3" id="check_radiator_coolant_level3" disabled>
+                                            <label class="custom-control-label" for="check_radiator_coolant_level3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_radiator_coolant_level') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check Radiator Cap properly fixed</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_radiator_cap_properly_fixed" value="1" id="check_radiator_cap_properly_fixed1" disabled>
+                                            <label class="custom-control-label" for="check_radiator_cap_properly_fixed1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_radiator_cap_properly_fixed" value="2" id="check_radiator_cap_properly_fixed2" disabled>
+                                            <label class="custom-control-label" for="check_radiator_cap_properly_fixed2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_radiator_cap_properly_fixed" value="3" id="check_radiator_cap_properly_fixed3" disabled>
+                                            <label class="custom-control-label" for="check_radiator_cap_properly_fixed3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_radiator_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Top off windshield washer fluid</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="top_off_windshield_washer_fluid" value="1" id="top_off_windshield_washer_fluid1" disabled>
+                                            <label class="custom-control-label" for="top_off_windshield_washer_fluid1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="top_off_windshield_washer_fluid" value="2" id="top_off_windshield_washer_fluid2" disabled>
+                                            <label class="custom-control-label" for="top_off_windshield_washer_fluid2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="top_off_windshield_washer_fluid" value="3" id="top_off_windshield_washer_fluid3" disabled>
+                                            <label class="custom-control-label" for="top_off_windshield_washer_fluid3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('top_off_windshield_washer_fluid') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check windshield Cap properly fixed</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_windshield_cap_properly_fixed" value="1" id="check_windshield_cap_properly_fixed1" disabled>
+                                            <label class="custom-control-label" for="check_windshield_cap_properly_fixed1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_windshield_cap_properly_fixed" value="2" id="check_windshield_cap_properly_fixed2" disabled>
+                                            <label class="custom-control-label" for="check_windshield_cap_properly_fixed2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_windshield_cap_properly_fixed" value="3" id="check_windshield_cap_properly_fixed3" disabled>
+                                            <label class="custom-control-label" for="check_windshield_cap_properly_fixed3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_windshield_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Comments</label>
+                                    <div class="col-md-12">
+                                        <div class="form-check mb-3 ps-0">
+                                            <textarea class="form-control" id="underHoodInspectionComments" wire:model="underHoodInspectionComments" disabled rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @if($checkListDetails['check_for_oil_leaks_engine_steering'] || $checkListDetails['check_for_oil_leak_oil_filtering'] || $checkListDetails['check_drain_lug_fixed_properly'] || $checkListDetails['check_oil_filter_fixed_properly'] || $checkListDetails['ubi_comments'])
+                    <div class="col-12 col-md-6 col-xl-4 my-4">
+                        <div class="card h-100">
+                            <div class="card-header text-left pt-4 pb-3">
+                                <h5 class="font-weight-bold mt-2">Under Body Inspection</h5>
+                            </div>
+                            <div class="card-body text-left pt-0">
+                                <div class="row"> 
+                                    <label>Check for Oil leaks - Engine, Steering</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leaks_engine_steering" value="1" id="check_for_oil_leaks_engine_steering1" disabled>
+                                            <label class="custom-control-label" for="check_for_oil_leaks_engine_steering1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leaks_engine_steering" value="2" id="check_for_oil_leaks_engine_steering2" disabled>
+                                            <label class="custom-control-label" for="check_for_oil_leaks_engine_steering2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leaks_engine_steering" value="3" id="check_for_oil_leaks_engine_steering3" disabled>
+                                            <label class="custom-control-label" for="check_for_oil_leaks_engine_steering3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_for_oil_leaks_engine_steering') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check for Oil Leak - Oil Filtering</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leak_oil_filtering" value="1" id="check_for_oil_leak_oil_filtering1" disabled>
+                                            <label class="custom-control-label" for="check_for_oil_leak_oil_filtering1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leak_oil_filtering" value="2" id="check_for_oil_leak_oil_filtering2" disabled>
+                                            <label class="custom-control-label" for="check_for_oil_leak_oil_filtering2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leak_oil_filtering" value="3" id="check_for_oil_leak_oil_filtering3" disabled>
+                                            <label class="custom-control-label" for="check_for_oil_leak_oil_filtering3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_for_oil_leak_oil_filtering') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check Drain Plug fixed properly</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_drain_lug_fixed_properly" value="1" id="check_drain_lug_fixed_properly1" disabled>
+                                            <label class="custom-control-label" for="check_drain_lug_fixed_properly1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_drain_lug_fixed_properly" value="2" id="check_drain_lug_fixed_properly2" disabled>
+                                            <label class="custom-control-label" for="check_drain_lug_fixed_properly2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_drain_lug_fixed_properly" value="3" id="check_drain_lug_fixed_properly3" disabled>
+                                            <label class="custom-control-label" for="check_drain_lug_fixed_properly3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_drain_lug_fixed_properly') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Check Oil Filter fixed properly</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_oil_filter_fixed_properly" value="1" id="check_oil_filter_fixed_properly1" disabled>
+                                            <label class="custom-control-label" for="check_oil_filter_fixed_properly1">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_oil_filter_fixed_properly" value="2" id="check_oil_filter_fixed_properly2" disabled>
+                                            <label class="custom-control-label" for="check_oil_filter_fixed_properly2">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" wire:model="check_oil_filter_fixed_properly" value="3" id="check_oil_filter_fixed_properly3" disabled>
+                                            <label class="custom-control-label" for="check_oil_filter_fixed_properly3">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                    @error('check_oil_filter_fixed_properly') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="row"> 
+                                    <label>Comments</label>
+                                    <div class="col-md-12">
+                                        <div class="form-check mb-3 ps-0">
+                                            <textarea class="form-control" id="ubi_comments" wire:model="ubi_comments" rows="3" disabled></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    
+                    
+                
+                    <div class="col-12 col-md-12 col-xl-6 my-4">
+                        <div class="card">
+                            <div class="card-header text-center pt-4 pb-3">
+                                <h5 class="font-weight-bold mt-2">Vehicle Sides Images</h5>
+                            </div>
+                            
+                            
+                            <div class="card-body text-left pt-0">
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <img class="w-75 float-end" id="img1" src="@if($vehicleSidesImages['vImageR1']) {{ url('storage/'.$vehicleSidesImages['vImageR1'])}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img1')" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <img class="w-75 float-start" id="img2" src="@if ($vehicleSidesImages['vImageR2']) {{ url('storage/'.$vehicleSidesImages['vImageR2']) }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img2')" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img class="w-75 float-end" id="img3" src="@if ($vehicleSidesImages['vImageF']) {{ url('storage/'.$vehicleSidesImages['vImageF']) }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img3')" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <img class="w-75 float-start" id="img4" src="@if ($vehicleSidesImages['vImageB']) {{ url('storage/'.$vehicleSidesImages['vImageB']) }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img4')" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img class="w-75 float-end" id="img5" src="@if ($vehicleSidesImages['vImageL1']) {{ url('storage/'.$vehicleSidesImages['vImageL1']) }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img5')" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <img class="w-75 float-start" id="img6" src="@if ($vehicleSidesImages['vImageL2']) {{ url('storage/'.$vehicleSidesImages['vImageL2']) }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img6')" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- <h6 class="mb-0">Services Information</h6>
+                         <hr class="mt-0">
+                         --><ul class="list-group">
+                            @forelse( $customerjobservices as $services)
+                            <li class="list-group-item border-0  p-2 mb-2 border-radius-lg">
+                                <div class="card">
+                                    <div class="card-body p-2">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="d-none float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center mx-2">
+                                                    @if($services->service_item)
+                                                    <i class="fa-solid fa-shopping-cart  opacity-10" aria-hidden="true"></i>@else
+                                                    <i class="{{config('global.job_status_icon')[$services->job_status]}} opacity-10" aria-hidden="true"></i>
+                                                    @endif
                                                 </div>
-                                                <hr class="horizontal dark mt-0 mb-3">
-                                                @if($services->service_group_code=='QW')
-                                                    @if($services->job_status==1)
-                                                    <div class="row">
-                                                        <div class="col-md-4">
+                                                <h6 class="mb-0 text-md">
+                                                    @if($services->quantity>1)
+                                                    {{$services->quantity.' x '}}
+                                                    @endif
+                                                    @if($services->service_item)
+                                                    {{$services->item_name}}
+                                                    @else
+                                                    {{$services->item_name}}
+                                                    @endif
+                                                    @if(!$services->service_item)
+                                                    <span class=" bg-gradient-dark text-gradient text-sm font-weight-bold">({{$services->department_code}})</span>
+                                                    @endif
+                                                </h6>
+                                                <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$job_status]}} shadow text-center m-2">
+                                                    <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
+                                                </div>
+                                                @if($services->job_status)
+                                                <h6 class="my-2 text-sm">
+                                                    Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
+                                                </h6>
+                                                @endif
+                                                
+                                                <!-- <p class="text-sm font-weight-bold mb-0">
+                                                    <span class="mb-2 text-xs">Price: <span class="text-dark ms-2 font-weight-bold">AED {{round($services->total_price,2)}}</span></span>
+                                                </p>
+                                                <p class="text-sm font-weight-bold mb-0">
+                                                    <span class="text-xs">VAT: <span class="text-dark ms-2 font-weight-bold">AED {{round($services->vat,2)}}</span></span>
+                                                </p>
+                                                <p class="text-sm font-weight-bold mb-2">
+                                                    <span class="text-md text-dark">Grand Total: <span class="text-dark ms-2 font-weight-bold">AED {{round($services->grand_total,2)}}</span></span>
+                                                </p> -->
+                                            </div>
+                                            <div class="col-md-4">
+                                                @if($services->job_status!=4)
+                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateQwService({{$services}})">
+                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                </a>
+                                                @endif
+                                                @if($services->is_removed==1)
+                                                <span class="mt-4 badge badge-md bg-gradient-danger"> <i class="fas fa-trash text-white me-2" aria-hidden="true"></i> Removeed</span>
+                                                @else
+                                                
+                                                    @if($services->is_removed==0 && $services->job_status==0)
+                                                    <a class="btn btn-link text-dark px-3 mb-0 float-end" wire:click="removeService('{{$services}}')"><span class="mt-4 badge badge-md bg-gradient-danger"> <i class="fas fa-trash text-white me-2" aria-hidden="true"></i> Remove</span></a>
+                                                    @endif
+                                                    @if($services->job_status==4)
+                                                    <span class="mt-2 mb-2 badge badge-md {{config('global.jobs.status_btn_class')[$services->job_status]}} ">{{config('global.jobs.status')[$services->job_status]}}</span>
+                                                    @endif
+                                                    
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <hr class="horizontal dark mt-0 mb-1">
+                                        @if($services->department_code=='PP/00035')
+
+                                            @if($services->job_status==1)
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="card m-2">
+                                                        <div class="card-header p-2">
                                                             <h4 class="mb-2 text-sm text-left">Front Side</h4>
+                                                        </div>
+                                                        <div class="card-body p-2">
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox" id="frontSideBumperCheck" wire:model="frontSideBumperCheck" >
                                                                 <label class="form-check-label" for="frontSideBumperCheck">Bumper</label>
@@ -231,8 +874,13 @@
                                                                 <input class="form-check-input" type="checkbox" id="frontSideHoodCheck" wire:model="frontSideHoodCheck" >
                                                                 <label class="form-check-label" for="frontSideHoodCheck">Hood</label>
                                                             </div>
-
+                                                        </div>
+                                                    </div>
+                                                    <div class="card m-2">
+                                                        <div class="card-header p-2">
                                                             <h4 class="mt-3 text-sm text-left">Rear Side</h4>
+                                                        </div>
+                                                        <div class="card-body p-2">
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox" id="rearSideBumperCheck" wire:model="rearSideBumperCheck" >
                                                                 <label class="form-check-label" for="rearSideBumperCheck">Bumper</label>
@@ -258,8 +906,14 @@
                                                                 <label class="form-check-label" for="rearSideRoofTopCheck">Roof Top</label>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="card m-2">
+                                                        <div class="card-header p-2">
                                                             <h4 class="mb-2 text-sm text-left">Left Side</h4>
+                                                        </div>
+                                                        <div class="card-body p-2">
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox" id="leftSideWheelCheck" wire:model="leftSideWheelCheck" >
                                                                 <label class="form-check-label" for="leftSideWheelCheck">Wheel</label>
@@ -284,8 +938,14 @@
                                                                 <input class="form-check-input" type="checkbox" id="leftSideSideStepperCheck" wire:model="leftSideSideStepperCheck" >
                                                                 <label class="form-check-label" for="leftSideSideStepperCheck">Side Stepper</label>
                                                             </div>
+                                                        </div>
+                                                    </div>
 
+                                                    <div class="card">
+                                                        <div class="card-header p-2">
                                                             <h4 class="mt-3 text-sm text-lefft">Right Side</h4>
+                                                        </div>
+                                                        <div class="card-body p-2">
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox" id="rightSideWheelCheck" wire:model="rightSideWheelCheck" >
                                                                 <label class="form-check-label" for="rightSideWheelCheck">Wheel</label>
@@ -311,8 +971,14 @@
                                                                 <label class="form-check-label" for="rightSideSideStepperCheck">Side Stepper</label>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="card m-2">
+                                                        <div class="card-header p-2">
                                                             <h4 class="mb-2 text-sm text-left">Inner Cabin</h4>
+                                                        </div>
+                                                        <div class="card-body p-2">
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox" id="innerCabinSmellCheck" wire:model="innerCabinSmellCheck" >
                                                                 <label class="form-check-label" for="innerCabinSmellCheck">Smell</label>
@@ -365,440 +1031,425 @@
                                                                 <input class="form-check-input" type="checkbox" id="innerCabinRoofTopCheck" wire:model="innerCabinRoofTopCheck" >
                                                                 <label class="form-check-label" for="innerCabinRoofTopCheck">Roof Top</label>
                                                             </div>
-                                                            <!-- <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateQwService('{{$services}}')">
-                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                            </a> -->
                                                         </div>
                                                     </div>
-                                                    @endif
-                                                    @if($services->job_status!=4)
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateQwService('{{$services}}')">
-                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    @endif
-                                                @endif
-
-
-                                                
-                                                @if( ($services->service_group_code=='GS' || $services->service_group_code=='QL')) 
-                                                    @if($services->job_status==1)
-                                                    <div class="row">
-                                                        @if($services->service_group_code=='GS')
-                                                        
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card">
-                                                                <div class="card-header text-center pt-4 pb-3">
-                                                                    <h5 class="font-weight-bold mt-2">Pre-Finishing</h5>
-                                                                </div>
-                                                                <div class="card-body text-center pt-0">
-                                                                    <div class="row">
-                                                                        @if($services->pre_finishing==null)
-                                                                        <div class="col-md-6">
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','pre_finishing','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                                    <span class="btn-inner--text">Start</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @elseif($services->pre_finishing == 1)
-                                                                        <div class="col-md-6">
-                                                                            <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->pre_finishing_time_in)->format('dS M Y H:i A') }}</label>
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','pre_finishing','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                                                                    <span class="btn-inner--text">Stop</span>
-                                                                                </button>
-                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        @else
-                                                                        <div class="col-md-12">
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->pre_finishing_time_in)->format('dS M Y H:i A') }}</label></p>
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->pre_finishing_time_out)->format('dS M Y H:i A') }}</label></p>
-                                                                        </div>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card">
-                                                                <div class="card-header text-center pt-4 pb-3">
-                                                                    <h5 class="font-weight-bold mt-2">Finishing</h5>
-                                                                </div>
-                                                                <div class="card-body text-center pt-0">
-                                                                    <div class="row">
-                                                                        @if($services->finishing==null)
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','finishing','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                                    <span class="btn-inner--text">Start</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @elseif($services->finishing == 1)
-                                                                        <div class="col-md-12">
-                                                                            <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->finishing_time_in)->format('dS M Y H:i A') }}</label>
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','finishing','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                                                                    <span class="btn-inner--text">Stop</span>
-                                                                                </button>
-                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        @else
-                                                                        <div class="col-md-12">
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->finishing_time_in)->format('dS M Y H:i A') }}</label></p>
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->finishing_time_out)->format('dS M Y H:i A') }}</label></p>
-                                                                        </div>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card">
-                                                                <div class="card-header text-center pt-4 pb-3">
-                                                                    <h5 class="font-weight-bold mt-2">Glazing</h5>
-                                                                </div>
-                                                                <div class="card-body text-center pt-0">
-                                                                    <div class="row">
-                                                                        @if($services->glazing==null)
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','glazing','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                                    <span class="btn-inner--text">Start</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @elseif($services->glazing == 1)
-                                                                        <div class="col-md-12">
-                                                                            <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->glazing_time_in)->format('dS M Y H:i A') }}</label>
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','glazing','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                                                                    <span class="btn-inner--text">Stop</span>
-                                                                                </button>
-                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        @else
-                                                                        <div class="col-md-12">
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->glazing_time_in)->format('dS M Y H:i A') }}</label></p>
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->glazing_time_out)->format('dS M Y H:i A') }}</label></p>
-                                                                        </div>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card">
-                                                                <div class="card-header text-center pt-4 pb-3">
-                                                                    <h5 class="font-weight-bold mt-2">Seat Cleaning</h5>
-                                                                </div>
-                                                                <div class="card-body text-center pt-0">
-                                                                    <div class="row">
-                                                                        @if($services->seat_cleaning==null)
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','seat_cleaning','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                                    <span class="btn-inner--text">Start</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @elseif($services->seat_cleaning == 1)
-                                                                        <div class="col-md-12">
-                                                                            <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->seat_cleaning_time_in)->format('dS M Y H:i A') }}</label>
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','seat_cleaning','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                                                                    <span class="btn-inner--text">Stop</span>
-                                                                                </button>
-                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        @else
-                                                                        <div class="col-md-12">
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->seat_cleaning_time_in)->format('dS M Y H:i A') }}</label></p>
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->seat_cleaning_time_out)->format('dS M Y H:i A') }}</label></p>
-                                                                        </div>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card">
-                                                                <div class="card-header text-center pt-4 pb-3">
-                                                                    <h5 class="font-weight-bold mt-2">Interior Cleaning</h5>
-                                                                </div>
-                                                                <div class="card-body text-center pt-0">
-                                                                    <div class="row">
-                                                                        @if($services->interior==null)
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','interior','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                                    <span class="btn-inner--text">Start</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @elseif($services->interior == 1)
-                                                                        <div class="col-md-12">
-                                                                            <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->interior_cleaning_time_in)->format('dS M Y H:i A') }}</label>
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','interior','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                                                                    <span class="btn-inner--text">Stop</span>
-                                                                                </button>
-                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        @else
-                                                                        <div class="col-md-12">
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->interior_cleaning_time_in)->format('dS M Y H:i A') }}</label></p>
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->interior_cleaning_time_out)->format('dS M Y H:i A') }}</label></p>
-                                                                        </div>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card">
-                                                                <div class="card-header text-center pt-4 pb-3">
-                                                                    <h5 class="font-weight-bold mt-2">Oil Change</h5>
-                                                                </div>
-                                                                <div class="card-body text-center pt-0">
-                                                                    <div class="row">
-                                                                        @if($services->oil_change==null)
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','oil_change','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                                    <span class="btn-inner--text">Start</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @elseif($services->oil_change == 1)
-                                                                        <div class="col-md-12">
-                                                                            <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label>
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','oil_change','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                                                                    <span class="btn-inner--text">Stop</span>
-                                                                                </button>
-                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        @else
-                                                                        <div class="col-md-12">
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label></p>
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->oil_change_time_out)->format('dS M Y H:i A') }}</label></p>
-                                                                        </div>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card">
-                                                                <div class="card-header text-center pt-4 pb-3">
-                                                                    <h5 class="font-weight-bold mt-2">Wash Service</h5>
-                                                                </div>
-                                                                <div class="card-body text-center pt-0">
-                                                                    <div class="row">
-                                                                        @if($services->wash_service==null)
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','wash_service','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                                    <span class="btn-inner--text">Start</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @elseif($services->wash_service == 1)
-                                                                        <div class="col-md-12">
-                                                                            <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label>
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','wash_service','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                                                                    <span class="btn-inner--text">Stop</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @else
-                                                                        <div class="col-md-12">
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label></p>
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->wash_service_time_out)->format('dS M Y H:i A') }}</label></p>
-                                                                        </div>
-
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        
-                                                        @endif
-                                                        
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card">
-                                                                <div class="card-header text-center pt-4 pb-3">
-                                                                    <h5 class="font-weight-bold mt-2">Oil Change</h5>
-                                                                </div>
-                                                                <div class="card-body text-center pt-0">
-                                                                    <div class="row">
-                                                                        @if($services->oil_change==null)
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','oil_change','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                                    <span class="btn-inner--text">Start</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @elseif($services->oil_change == 1)
-                                                                        <div class="col-md-12">
-                                                                            <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label>
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','oil_change','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                                                                    <span class="btn-inner--text">Stop</span>
-                                                                                </button>
-                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        @else
-                                                                        <div class="col-md-12">
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label></p>
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->oil_change_time_out)->format('dS M Y H:i A') }}</label></p>
-                                                                        </div>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card">
-                                                                <div class="card-header text-center pt-4 pb-3">
-                                                                    <h5 class="font-weight-bold mt-2">Wash Service</h5>
-                                                                </div>
-                                                                <div class="card-body text-center pt-0">
-                                                                    <div class="row">
-                                                                        @if($services->wash_service==null)
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','wash_service','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                                    <span class="btn-inner--text">Start</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @elseif($services->wash_service == 1)
-                                                                        <div class="col-md-12">
-                                                                            <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label>
-                                                                            <div class="form-group">
-                                                                                <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','wash_service','{{$services->id}}')">
-                                                                                    <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                                                                    <span class="btn-inner--text">Stop</span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        @else
-                                                                        <div class="col-md-12">
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label></p>
-                                                                            <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->wash_service_time_out)->format('dS M Y H:i A') }}</label></p>
-                                                                        </div>
-
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    
-                                                    </div>
-                                                    @endif
-                                                    @if($services->job_status!=4)
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            @if($services->service_group_code=='GS')
-
-                                                            <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateGSService({{$services->id}})">
-                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                            </a>
-                                                            @elseif($services->service_group_code=='QL')
-                                                            <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateQLService('{{$services}}')">
-                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                            </a>
-                                                            @endif
-                                                        </div>
-
-                                                    </div>
-                                                    @endif
 
                                                     
-                                                
+                                                </div>
+                                            </div>
+                                            @endif
 
-                                                @endif
-                                                <div class="row">
-                                                    <div class="col-md-12" >
-                                                        <div class="card h-100 my-2">
-                                                            <div class="card-header pb-0">
-                                                                <h6>Service History overview</h6>
-                                                                <!-- <p class="text-sm">
-                                                                    <span class="font-weight-bold">#{{$job_number}}</span>
-                                                                </p> -->
-                                                                <hr class="m-0">
-                                                            </div>
-                                                            <div class="card-body p-3">
-                                                                <div class="timeline timeline-one-side">
-                                                                    @forelse( $services->customerJobServiceLogs as $logs)
-                                                                    <div class="timeline-block mb-3">
-                                                                        <span class="timeline-step">
-                                                                            <i class="fa fa-arrow-up text-success text-gradient"></i>
-                                                                        </span>
-                                                                        <div class="timeline-content">
-                                                                            <span class="badge badge-sm {{config('global.job_status_text_class')[$logs->job_status]}}">{{config('global.job_status')[$logs->job_status]}}</span>
-                                                                            <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{ \Carbon\Carbon::parse($job_date_time)->format('d M Y H:i A') }}</p>
-                                                                        </div>
+                                        @endif
+
+
+                                        
+                                        @if( ($services->department_code=='PP/00036' || $services->department_code=='PP/00037')) 
+                                            @if($services->job_status==1)
+                                            <div class="row">
+                                                @if($services->department_code=='PP/00036')
+                                                
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-header text-center pt-4 pb-3">
+                                                            <h5 class="font-weight-bold mt-2">Pre-Finishing</h5>
+                                                        </div>
+                                                        <div class="card-body text-center pt-0">
+                                                            <div class="row">
+                                                                @if($services->pre_finishing==null)
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','pre_finishing','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                            <span class="btn-inner--text">Start</span>
+                                                                        </button>
                                                                     </div>
-                                                                    @empty
-                                                                    <p class="text-danger">Empty..!</p>
-                                                                    @endforelse
                                                                 </div>
+                                                                @elseif($services->pre_finishing == 1)
+                                                                <div class="col-md-12">
+                                                                    <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->pre_finishing_time_in)->format('dS M Y H:i A') }}</label>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','pre_finishing','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                                                            <span class="btn-inner--text">Stop</span>
+                                                                        </button>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->pre_finishing_time_in)->format('dS M Y H:i A') }}</label></p>
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->pre_finishing_time_out)->format('dS M Y H:i A') }}</label></p>
+                                                                </div>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </li>
-                                            @empty
-                                            <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
-                                                <div class="d-flex flex-column">
-                                                    <h6 class="mb-3 text-sm text-danger">Empty..!</h6>
-                                                    
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-header text-center pt-4 pb-3">
+                                                            <h5 class="font-weight-bold mt-2">Finishing</h5>
+                                                        </div>
+                                                        <div class="card-body text-center pt-0">
+                                                            <div class="row">
+                                                                @if($services->finishing==null)
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','finishing','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                            <span class="btn-inner--text">Start</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @elseif($services->finishing == 1)
+                                                                <div class="col-md-12">
+                                                                    <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->finishing_time_in)->format('dS M Y H:i A') }}</label>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','finishing','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                                                            <span class="btn-inner--text">Stop</span>
+                                                                        </button>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->finishing_time_in)->format('dS M Y H:i A') }}</label></p>
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->finishing_time_out)->format('dS M Y H:i A') }}</label></p>
+                                                                </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </li>
-                                            @endforelse
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-header text-center pt-4 pb-3">
+                                                            <h5 class="font-weight-bold mt-2">Glazing</h5>
+                                                        </div>
+                                                        <div class="card-body text-center pt-0">
+                                                            <div class="row">
+                                                                @if($services->glazing==null)
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','glazing','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                            <span class="btn-inner--text">Start</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @elseif($services->glazing == 1)
+                                                                <div class="col-md-12">
+                                                                    <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->glazing_time_in)->format('dS M Y H:i A') }}</label>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','glazing','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                                                            <span class="btn-inner--text">Stop</span>
+                                                                        </button>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->glazing_time_in)->format('dS M Y H:i A') }}</label></p>
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->glazing_time_out)->format('dS M Y H:i A') }}</label></p>
+                                                                </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-header text-center pt-4 pb-3">
+                                                            <h5 class="font-weight-bold mt-2">Seat Cleaning</h5>
+                                                        </div>
+                                                        <div class="card-body text-center pt-0">
+                                                            <div class="row">
+                                                                @if($services->seat_cleaning==null)
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','seat_cleaning','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                            <span class="btn-inner--text">Start</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @elseif($services->seat_cleaning == 1)
+                                                                <div class="col-md-12">
+                                                                    <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->seat_cleaning_time_in)->format('dS M Y H:i A') }}</label>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','seat_cleaning','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                                                            <span class="btn-inner--text">Stop</span>
+                                                                        </button>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->seat_cleaning_time_in)->format('dS M Y H:i A') }}</label></p>
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->seat_cleaning_time_out)->format('dS M Y H:i A') }}</label></p>
+                                                                </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-header text-center pt-4 pb-3">
+                                                            <h5 class="font-weight-bold mt-2">Interior Cleaning</h5>
+                                                        </div>
+                                                        <div class="card-body text-center pt-0">
+                                                            <div class="row">
+                                                                @if($services->interior==null)
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','interior','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                            <span class="btn-inner--text">Start</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @elseif($services->interior == 1)
+                                                                <div class="col-md-12">
+                                                                    <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->interior_cleaning_time_in)->format('dS M Y H:i A') }}</label>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','interior','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                                                            <span class="btn-inner--text">Stop</span>
+                                                                        </button>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->interior_cleaning_time_in)->format('dS M Y H:i A') }}</label></p>
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->interior_cleaning_time_out)->format('dS M Y H:i A') }}</label></p>
+                                                                </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-header text-center pt-4 pb-3">
+                                                            <h5 class="font-weight-bold mt-2">Oil Change</h5>
+                                                        </div>
+                                                        <div class="card-body text-center pt-0">
+                                                            <div class="row">
+                                                                @if($services->oil_change==null)
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','oil_change','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                            <span class="btn-inner--text">Start</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @elseif($services->oil_change == 1)
+                                                                <div class="col-md-12">
+                                                                    <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','oil_change','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                                                            <span class="btn-inner--text">Stop</span>
+                                                                        </button>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label></p>
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->oil_change_time_out)->format('dS M Y H:i A') }}</label></p>
+                                                                </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-header text-center pt-4 pb-3">
+                                                            <h5 class="font-weight-bold mt-2">Wash Service</h5>
+                                                        </div>
+                                                        <div class="card-body text-center pt-0">
+                                                            <div class="row">
+                                                                @if($services->wash_service==null)
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','wash_service','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                            <span class="btn-inner--text">Start</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @elseif($services->wash_service == 1)
+                                                                <div class="col-md-12">
+                                                                    <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','wash_service','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                                                            <span class="btn-inner--text">Stop</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label></p>
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->wash_service_time_out)->format('dS M Y H:i A') }}</label></p>
+                                                                </div>
+
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                @endif
+                                                
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-header text-center pt-4 pb-3">
+                                                            <h5 class="font-weight-bold mt-2">Oil Change</h5>
+                                                        </div>
+                                                        <div class="card-body text-center pt-0">
+                                                            <div class="row">
+                                                                @if($services->oil_change==null)
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','oil_change','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                            <span class="btn-inner--text">Start</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @elseif($services->oil_change == 1)
+                                                                <div class="col-md-12">
+                                                                    <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','oil_change','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                                                            <span class="btn-inner--text">Stop</span>
+                                                                        </button>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->oil_change_time_in)->format('dS M Y H:i A') }}</label></p>
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->oil_change_time_out)->format('dS M Y H:i A') }}</label></p>
+                                                                </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-header text-center pt-4 pb-3">
+                                                            <h5 class="font-weight-bold mt-2">Wash Service</h5>
+                                                        </div>
+                                                        <div class="card-body text-center pt-0">
+                                                            <div class="row">
+                                                                @if($services->wash_service==null)
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','wash_service','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                            <span class="btn-inner--text">Start</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @elseif($services->wash_service == 1)
+                                                                <div class="col-md-12">
+                                                                    <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','wash_service','{{$services->id}}')">
+                                                                            <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                                                            <span class="btn-inner--text">Stop</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label></p>
+                                                                    <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->wash_service_time_out)->format('dS M Y H:i A') }}</label></p>
+                                                                </div>
+
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             
-                                        </ul>
+                                            </div>
+                                            @endif
+                                            @if($services->job_status!=4)
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    @if($services->service_group_code=='PP/00036')
+
+                                                    <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateGSService({{$services->id}})">
+                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                    </a>
+                                                    @elseif($services->service_group_code=='PP/00037')
+                                                    <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateQLService('{{$services}}')">
+                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                    </a>
+                                                    @endif
+                                                </div>
+
+                                            </div>
+                                            @endif
+                                        @endif
+                                        <div class="row">
+                                            <div class="col-md-12" >
+                                                <div class="card h-100 my-2">
+                                                    <div class="card-header p-2">
+                                                        <h6>Service History overview</h6>
+                                                        <!-- <p class="text-sm">
+                                                            <span class="font-weight-bold">#{{$job_number}}</span>
+                                                        </p> -->
+                                                        <hr class="m-0">
+                                                    </div>
+                                                    <div class="card-body p-2">
+                                                        <div class="timeline timeline-one-side">
+                                                            @forelse( $services->customerJobServiceLogs as $logs)
+                                                            <div class="timeline-block mb-3">
+                                                                <span class="timeline-step">
+                                                                    <i class="fa fa-arrow-up text-success text-gradient"></i>
+                                                                </span>
+                                                                <div class="timeline-content">
+                                                                    <span class="badge badge-sm {{config('global.job_status_text_class')[$logs->job_status]}}">{{config('global.job_status')[$logs->job_status]}}</span>
+                                                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{ \Carbon\Carbon::parse($job_date_time)->format('d M Y H:i A') }}</p>
+                                                                </div>
+                                                            </div>
+                                                            @empty
+                                                            <p class="text-danger">Empty..!</p>
+                                                            @endforelse
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                        </div>
+                            </li>
+                            @empty
+                            <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                                <div class="d-flex flex-column">
+                                    <h6 class="mb-3 text-sm text-danger">Empty..!</h6>
+                                    
+                                </div>
+                            </li>
+                            @endforelse
+                        </ul>
                     </div>
-                    
-
+                </div>
+                <div class="row">
                     <div class="d-none col-xxs-12 col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 mb-4">
                         <div class="row">
                             <div class="col-md-12 mb-4">
@@ -968,13 +1619,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                <!-- <button type="submit" class="btn bg-gradient-primary">Submit</button> -->
             </div>
        </div>
     </div>

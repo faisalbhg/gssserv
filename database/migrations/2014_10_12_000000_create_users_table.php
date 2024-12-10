@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('phone')->nullable();
             $table->unsignedBigInteger('station_id');
+            $table->string('station_code');
             $table->unsignedBigInteger('user_type');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

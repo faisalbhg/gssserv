@@ -7,6 +7,7 @@ use App\Http\Livewire\Auth\ResetPassword;
 use App\Http\Livewire\Auth\SignUp;
 use App\Http\Livewire\Auth\Login;
 use App\Http\Livewire\Dashboard;
+use App\Http\Livewire\HomePage;
 use App\Http\Livewire\Billing;
 use App\Http\Livewire\Profile;
 use App\Http\Livewire\Tables;
@@ -36,6 +37,7 @@ use App\Http\Livewire\ServicesSectionGroup;
 use App\Http\Livewire\ServicesMasterList;
 use App\Http\Livewire\ServicesPriceList;
 use App\Http\Livewire\CustomerTypes;
+use App\Http\Livewire\Jobcard;
 
 
 use App\Http\Controllers\QrCodeController;
@@ -62,8 +64,11 @@ Route::get('/login/forgot-password', ForgotPassword::class)->name('forgot-passwo
 Route::get('/reset-password/{id}',ResetPassword::class)->name('reset-password')->middleware('signed');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', Dashboard::class)->name('dashboard');
-    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    //Route::get('/', Dashboard::class)->name('dashboard');
+    //Route::get('/dashboard', Dashboard::class)->name('dashboard');
+
+    Route::get('/', HomePage::class)->name('dashboard');
+    Route::get('/dashboard', HomePage::class)->name('dashboard');
 
     Route::get('/customer-job-update/{job_number}',Operations::class)->name('customer-jobs');
     Route::get('/jobs', Operations::class)->name('customer-jobs');
@@ -105,6 +110,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('customer-types',CustomerTypes::class)->name('customer-types');
     
+    Route::get('job-card',Jobcard::class)->name('job-card');
+    Route::get('/job-card/{customer_id}/{vehicle_id}',Jobcard::class)->name('pending-job-card-creation');
+    Route::get('/job-card/{job_number}',Jobcard::class)->name('pending-job-card');
+    
+
 });
 
 Route::get('qr/{name}', [QrCodeController::class, 'qrcode']);

@@ -88,17 +88,17 @@ return [
             '4'=>'fa-solid fa-flag-checkered',
         ],
         'status_text_class' => [
-            '0'=>'text-danger',
-            '1'=>'text-primary',
-            '2'=>'text-info',
-            '3'=>'text-success',
+            '0'=>'text-dark',
+            '1'=>'text-danger',
+            '2'=>'text-warning',
+            '3'=>'text-info',
             '4'=>'text-success',
         ],
         'status_btn_class' => [
-            '0'=>'bg-gradient-danger',
-            '1'=>'bg-gradient-primary',
-            '2'=>'bg-gradient-info',
-            '3'=>'bg-gradient-success',
+            '0'=>'bg-gradient-dark',
+            '1'=>'bg-gradient-danger',
+            '2'=>'bg-gradient-warning',
+            '3'=>'bg-gradient-info',
             '4'=>'bg-gradient-success',
         ],
         'status_perc' => [
@@ -109,10 +109,17 @@ return [
             '4'=>'100%',
         ],
         'status_perc_class' => [
-            '0'=>'bg-gradient-default',
-            '1'=>'bg-gradient-primary',
-            '2'=>'bg-gradient-info',
-            '3'=>'bg-gradient-success',
+            '0'=>'bg-gradient-dark',
+            '1'=>'bg-gradient-danger',
+            '2'=>'bg-gradient-warning',
+            '3'=>'bg-gradient-info',
+            '4'=>'bg-gradient-success',
+        ],
+        'job_status_bg' => [
+            '0'=>'bg-gradient-dark',
+            '1'=>'bg-gradient-danger',
+            '2'=>'bg-gradient-warning',
+            '3'=>'bg-gradient-info',
             '4'=>'bg-gradient-success',
         ],
     ],
@@ -203,13 +210,13 @@ return [
     ],
     "user_type_access"=>[
         "administrator"=>[
-            "1"
+            "13"
         ],
         "operation"=>[
-            "1","2","4","5"
+            "13","14","15","16"
         ],
         "finance"=>[
-            "1","5"
+            "13","16"
         ],
     ],
     "sorting"=>[
@@ -218,6 +225,19 @@ return [
         "3"=>"Low Price",
         "4"=>"Hight Price",
     ],
+    //'bhr-paymenkLink_payment_url'=>'https://bhr.ae/payment-app/api/pbl-payment-panel',
+    'paymenkLink_payment_url'=>'http://172.23.25.95/gssapi/api/new-payment-link',
+    
+    'sms'=>[
+        "1"=>[
+            "name"=>"mshastra",
+            "url"=>"https://mshastra.com/sendurlcomma.aspx",
+            "sms_url"=>"https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE",
+            "profileid"=>"20092622",
+            "password"=>"buhaleeba@123",
+            "senderid"=>"BuhaleebaRE",
+        ]
+    ]
 
 ]
   
