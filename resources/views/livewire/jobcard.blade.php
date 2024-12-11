@@ -22,14 +22,6 @@
             </button>
         </div>
         @endif
-        
-
-
-
-
-
-
-
 
         @if($searchby)
         <div class="d-flex mt-0 mb-3 mx-0">
@@ -62,7 +54,7 @@
             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 mb-xl-2 my-2">
                 <a href="javascript:;" class="">
                     <div class="card card-background move-on-hover">
-                        <div class="full-background" style="background-image: url('{{url("storage/".$selectedVehicleInfo["vehicle_image"])}}')"></div>
+                        <div class="full-background" style="background-image: url('{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}')"></div>
                         <div class="card-body pt-5">
                             <h4 class="text-white mb-0 pb-0">
                                 @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
@@ -199,21 +191,32 @@
                                             </div>
                                             <div class="col-6 text-center">
                                                 <div class="row">
-                                                    <div class="row mb-0">
-                                                        @if($selectedDiscountTitle)
-                                                        <label class="badge bg-gradient-success text-light text-bold text-lg mb-0" style="white-space: normal; text-transform: capitalize;">{{str_replace("_"," ",strtolower($selectedDiscountTitle))}}</label>
-                                                        @endif
+                                                    
+                                                    @if($selectedDiscountTitle)
+                                                    <label class="badge bg-gradient-success text-light text-bold text-lg mb-0" style="white-space: normal; text-transform: capitalize;">{{str_replace("_"," ",strtolower($selectedDiscountTitle))}}</label>
+                                                    @endif
 
-                                                        @if($searchStaffId)
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <label for="employeeId">Employee Id</label>
-                                                                <input type="text" class="form-control" wire:model="employeeId" id="employeeId" placeholder="Staff/Employee Id">
-                                                                @error('employeeId') <span class="text-danger">{{ $message }}</span> @enderror
+                                                    @if($searchStaffId)
+                                                        <p class="badge bg-gradient-danger text-light text-bold text-lg mb-0">{{$staffavailable}}</p>
+                                                        <div class="row mb-0">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="employeeId">Employee Id</label>
+                                                                    <input type="text" class="form-control" wire:model="employeeId" id="employeeId" placeholder="Staff/Employee Id">
+                                                                    @error('employeeId') <span class="text-danger">{{ $message }}</span> @enderror
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <button type="button" class="btn bg-gradient-primary" wire:click="checkStaffDiscountGroup()">Check Employee</button>
                                                             </div>
                                                         </div>
-                                                        @else
-                                                        <div class="col-md-12">
+                                                        
+                                                    @else
+                                                        <div class="row mb-0">
+                                                            <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label for="discountCardImgae">Discount Card Imgae</label>
                                                                     <input type="file" class="form-control" wire:model.defer="discount_card_imgae">
@@ -238,12 +241,14 @@
                                                                     @error('discount_card_validity') <span class="text-danger">{{ $message }}</span> @enderror
                                                                 </div>
                                                             </div>
-                                                        @endif
-                                                    </div>
+                                                        </div>
+                                                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn bg-gradient-primary" wire:click="saveSelectedDiscountGroup()">Save changes</button>
+                                                    @endif
+                                                    
                                                 </div>
 
-                                                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn bg-gradient-primary" wire:click="saveSelectedDiscountGroup()">Save changes</button>
+                                                
                                             </div>
                                             
                                         </div>
