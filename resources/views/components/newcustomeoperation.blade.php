@@ -213,7 +213,7 @@
                         <div class="col-xl-3 col-md-6 mb-xl-0 my-4">
                             <a href="javascript:;" wire:click="selectVehicle({{$customer->TenantId}}, {{$customer->id}})" class="">
                                 <div class="card card-background move-on-hover">
-                                    <div class="full-background" style="background-image: url('{{url("public/storage/".$customer->vehicle_image)}}')"></div>
+                                    <div class="full-background" style="background-image: url('{{url("storage/".$customer->vehicle_image)}}')"></div>
                                     <div class="card-body pt-5">
                                         <h4 class="text-white mb-0 pb-0">
                                             @if($customer->TenantName)

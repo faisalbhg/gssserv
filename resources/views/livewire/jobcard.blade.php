@@ -54,7 +54,7 @@
             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 mb-xl-2 my-2">
                 <a href="javascript:;" class="">
                     <div class="card card-background move-on-hover">
-                        <div class="full-background" style="background-image: url('{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}')"></div>
+                        <div class="full-background" style="background-image: url('{{url("storage/".$selectedVehicleInfo["vehicle_image"])}}')"></div>
                         <div class="card-body pt-5">
                             <h4 class="text-white mb-0 pb-0">
                                 @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
