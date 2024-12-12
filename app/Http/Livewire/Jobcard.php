@@ -42,6 +42,8 @@ use App\Models\CustomerJobCardServiceLogs;
 use App\Models\ServicePackage;
 use App\Models\ServicePackageDetail;
 use App\Models\TenantMasterCustomers;
+use App\Models\WorkOrderJob;
+use App\Models\Landlord;
 
 use Carbon\Carbon;
 use Session;
@@ -113,6 +115,8 @@ class Jobcard extends Component
 
 
     public function render(){
+
+        //dd(Session::get('user'));
 
         /*dd(TenantMasterCustomers::get());
         CustomerDiscountGroup::query()->delete();
@@ -979,7 +983,7 @@ class Jobcard extends Component
                 $this->employeeId,
             ]); 
             $customerStaffIdResult = (array)$customerStaffIdCheck[0];
-            dd($customerStaffIdResult);
+            //dd($customerStaffIdResult);
             $proceeddisctount=true;
         }
 
@@ -1163,6 +1167,8 @@ class Jobcard extends Component
     
 
     public function createJob(){
+
+        
         //dd($this->customerSignature);
         //save checklist
         
@@ -1254,7 +1260,9 @@ class Jobcard extends Component
             'discount_amount'*/
         }
         $customerjobId = CustomerJobCards::create($customerjobData);
-        $this->job_number = str_replace("/","",$this->station).'-PSOF-'.Carbon::now()->format('y').Carbon::now()->format('m').Carbon::now()->format('d').'-'.str_replace("/","",$this->service_group_code).$customerjobId->id;
+            $this->job_number = 'JOB-'.Session::get('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $customerjobId->id);;
+
+
         CustomerJobCards::where(['id'=>$customerjobId->id])->update(['job_number'=>$this->job_number]);
 
         //dd($cartDetails);
@@ -1316,8 +1324,20 @@ class Jobcard extends Component
                 'created_by'=>Session::get('user')->id,
                 'created_at'=>Carbon::now(),
             ]);
+            
+
+            
 
         }
+
+        WorkOrderJob::create(
+                [
+                    "DocumentCode"=>$this->job_number,
+                    "DocumentDate"=>$customerjobData['job_date_time'],
+                    "Status"=>"A",
+                    "LandlordCode"=>Session::get('user')->station_code,
+                ]
+            );
 
         $vehicle_image=[];
         //dd($vehicle_image);
@@ -1397,8 +1417,10 @@ class Jobcard extends Component
         
         $mobileNumber = '971'.substr($customerjobs->customerInfo['mobile'], -9);
         //$mobileNumber = substr($customerjobs->mobile, -9);
+        $paymentmode = null;
         if($mode=='link')
         {
+            $paymentmode = "O";
             //dd($customerjobs);
             $paymentLink = $this->sendPaymentLink($customerjobs);
             $paymentResponse = json_decode((string) $paymentLink->getBody()->getContents(), true);
@@ -1409,6 +1431,8 @@ class Jobcard extends Component
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
                 //"http://mshastra.com/sendurlcomma.aspx?user=profileid&pwd=xxxx&senderid=ABC&CountryCode=91&mobileno=9911111111&msgtext=Hello"
                 $response = Http::withBasicAuth(env('SMS_PROFILE_ID'), env('SMS_PASSWORD'))->post(env('SMS_URL')."?user=".env('SMS_PROFILE_ID')."&pwd=".env('SMS_PASSWORD')."&senderid=".env('SMS_SENDER_ID')."&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link'])."&CountryCode=ALL");
+
+
 
 
                 $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send','job_create_status'=>1]);
@@ -1432,6 +1456,7 @@ class Jobcard extends Component
         }
         else if($mode=='card')
         {
+            $paymentmode = "O";
             $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>2,'payment_request'=>'card payment','job_create_status'=>1]);
 
             $response = Http::withBasicAuth(env('SMS_PROFILE_ID'), env('SMS_PASSWORD'))->post(env('SMS_URL')."?user=".env('SMS_PROFILE_ID')."&pwd=".env('SMS_PASSWORD')."&senderid=".env('SMS_SENDER_ID')."&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Complete your payment and proceed. Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
@@ -1448,9 +1473,15 @@ class Jobcard extends Component
         }
         else if($mode=='cash')
         {
+            $paymentmode = "C";
             $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>3,'payment_request'=>'cash payment','job_create_status'=>1]);
+
+            //http://mshastra.com/sendurlcomma.aspx?user=profileid&pwd=xxxx&senderid=ABC&CountryCode=91&mobileno=9911111111&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass').""
             
-            $response = Http::withBasicAuth(env('SMS_PROFILE_ID'), env('SMS_PASSWORD'))->post(env('SMS_URL')."?user=".env('SMS_PROFILE_ID')."&pwd=".env('SMS_PASSWORD')."&senderid=".env('SMS_SENDER_ID')."&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
+            $response = Http::withBasicAuth('20092622', 'buhaleeba@123')->post("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."");
+
+            /*$response = Http::withBasicAuth('20093421', 'GSS@123')->post("https://mshastra.com/sendurlcomma.aspx?user=20093421&pwd=GSS@123&senderid=GSSCARWASH&mobileno=971566993709&msgtext=".urlencode('Job Id #'.$job_number.' is processing'));*/
+            //dd($response);
             
             CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->delete();
 
@@ -1461,6 +1492,16 @@ class Jobcard extends Component
             $this->showPayLaterCheckout=false;
             $this->selectedCustomerVehicle=false;
         }
+
+        DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.Session::get('user')->id.'", @stationcode  = "'.Session::get('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ', [
+                $job_number,
+                Session::get('user')->id,
+                Session::get('user')->station_code,
+                $paymentmode,
+                $customerjobs->customer_id
+            ]);
+
+
     }
 
     public function sendPaymentLink($customerjobs)

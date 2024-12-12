@@ -44,7 +44,7 @@ class User extends Authenticatable
 
     public function stationName()
     {
-        return $this->belongsTo(Stationcode::class,'station_id','id');
+        return $this->belongsTo(Landlord::class,'station_id','StationID');
     }
     
 
