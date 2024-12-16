@@ -44,6 +44,8 @@ use App\Models\ServicePackageDetail;
 use App\Models\TenantMasterCustomers;
 use App\Models\WorkOrderJob;
 use App\Models\Landlord;
+use App\Models\InventoryItemMaster;
+use App\Models\InventorySalesPrices;
 
 use Carbon\Carbon;
 use Session;
@@ -93,6 +95,7 @@ class Jobcard extends Component
     public $selectedPackage, $selectedPackageItems;
     public $selectServiceItems;
     public $staffavailable;
+    public $quickLubeItemsList,$serviceItemsList, $quickLubeItemSearch='', $qlSearchItems=false;
 
     function mount( Request $request) {
         $vehicle_id = $request->vehicle_id;
@@ -115,7 +118,7 @@ class Jobcard extends Component
 
 
     public function render(){
-
+        //dd(CustomerServiceCart::get());
         //dd(Session::get('user'));
 
         /*dd(TenantMasterCustomers::get());
@@ -230,8 +233,51 @@ class Jobcard extends Component
             $this->listCustomerDiscontGroups = CustomerDiscountGroup::where(['customer_id'=>$this->customer_id,'is_active'=>1])->get();
         }
         $this->servicePackage = ServicePackage::with(['packageDetails'])->get();
+
+        //QuickLubbeItems
+        if($this->qlSearchItems)
+        {
+            if($this->customerDiscontGroupCode){
+
+                $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1)->where('ItemName','like',"%{$this->quickLubeItemSearch}%")->get();
+                $qlItemPriceLists = [];
+                foreach($quickLubeItemsNormalList as $key => $qlItemsList)
+                {
+                    $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
+                    $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlItemsList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+                    //dd($sectionServicePriceLists[$key]);
+                }
+                $this->quickLubeItemsList = $qlItemPriceLists;
+                //dd($this->sectionServiceLists);
+
+                /*$this->sectionServiceLists = LaborItemMaster::join('Labor.SalesPrice as lsp', 'lsp.ServiceItemId', '=', 'Labor.ItemMaster.ItemId')->where(['Labor.ItemMaster.SectionCode'=>$this->propertyCode,'lsp.CustomerGroupCode'=>$this->customerDiscontGroupCode])->get();*/
+                
+            }
+            else{
+                $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1)->where('ItemName','like',"%{$this->quickLubeItemSearch}%")->get();
+                $qlItemPriceLists = [];
+                foreach($quickLubeItemsNormalList as $key => $qlItemsList)
+                {
+                    $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
+                    $qlItemPriceLists[$key]['discountDetails']=null;
+                }
+                $this->quickLubeItemsList = $qlItemPriceLists;
+                
+            }
+        }
+
+
+
         $this->dispatchBrowserEvent('loadServiceGroups');
         return view('livewire.jobcard');
+    }
+
+    public function searchQuickLubeItem(){
+        if($this->quickLubeItemSearch)
+        {
+            $this->qlSearchItems=true;
+        }
+        
     }
 
     public function openPendingVehicle($customer_id, $vehicle_id){
@@ -545,7 +591,9 @@ class Jobcard extends Component
         $this->mobile = $customers->customerInfoMaster['Mobile'];
         $this->name = $customers->customerInfoMaster['TenantName'];
         $this->email = $customers->customerInfoMaster['Email'];
+
         $this->cartItems = CustomerServiceCart::where(['customer_id'=>$customerId,'vehicle_id'=>$vehicleId])->get();
+        //dd($this->cartItems);
         $this->cartItemCount = count($this->cartItems); 
         if(count($this->cartItems)>0)
         {
@@ -555,7 +603,7 @@ class Jobcard extends Component
         {
             $this->cardShow=false;
         }
-        $pendingjob = Customerjobs::where(['job_create_status'=>0,'customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->first();
+        $pendingjob = CustomerJobCards::where(['job_create_status'=>0,'customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->first();
         if($pendingjob)
         {
             $this->job_number = $pendingjob->job_number;
@@ -601,6 +649,8 @@ class Jobcard extends Component
         $this->showSectionsList=true;
         $this->selectPackageMenu=false;
         $this->selectServiceItems=false;
+
+        
         $this->dispatchBrowserEvent('scrolltop');
     }
 
@@ -787,6 +837,7 @@ class Jobcard extends Component
                 'vehicle_id'=>$this->selected_vehicle_id,
                 'item_id'=>$servicePrice->ItemId,
                 'item_code'=>$servicePrice->ItemCode,
+                'cart_item_type'=>1,
                 'company_code'=>$servicePrice->CompanyCode,
                 'category_id'=>$servicePrice->CategoryId,
                 'sub_category_id'=>$servicePrice->SubCategoryId,
@@ -803,7 +854,7 @@ class Jobcard extends Component
                 'created_at'=>Carbon::now(),
             ];
             if($this->extra_note!=null){
-               $cartInsert['extra_note']=isset($this->extra_note[$serviceId])?$this->extra_note[$serviceId]:null; 
+               $cartInsert['extra_note']=isset($this->extra_note[$servicePrice->ItemId])?$this->extra_note[$servicePrice->ItemId]:null; 
             }
             if($discountPrice!=null){
                 $cartInsert['price_id']=$discountPrice->PriceID;
@@ -842,6 +893,77 @@ class Jobcard extends Component
         ]);*/
         session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
     }
+
+
+    public function addtoCartItem($items,$discount)
+    {
+        $items = json_decode($items);
+        //dd($items);
+        $discountPrice = json_decode($discount);
+        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'item_id'=>$items->ItemId]);
+        if($customerBasketCheck->count())
+        {
+            $customerBasketCheck->increment('quantity', 1);
+        }
+        else
+        {
+            $cartInsert = [
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->selected_vehicle_id,
+                'item_id'=>$items->ItemId,
+                'item_code'=>$items->ItemCode,
+                'company_code'=>$items->CompanyCode,
+                'category_id'=>$items->CategoryId,
+                'sub_category_id'=>$items->SubCategoryId,
+                'brand_id'=>$items->BrandId,
+                'bar_code'=>$items->BarCode,
+                'item_name'=>$items->ItemName,
+                'cart_item_type'=>2,
+                'description'=>$items->Description,
+                'division_code'=>"LL/00004",
+                'department_code'=>"PP/00037",
+                'section_code'=>"U-000225",
+                'unit_price'=>$items->UnitPrice,
+                'quantity'=>1,
+                'created_by'=>Session::get('user')->id,
+                'created_at'=>Carbon::now(),
+            ];
+            if($this->extra_note!=null){
+               $cartInsert['extra_note']=isset($this->extra_note[$servicePrice->ItemId])?$this->extra_note[$servicePrice->ItemId]:null; 
+            }
+            if($discountPrice!=null){
+                $cartInsert['price_id']=$discountPrice->PriceID;
+                $cartInsert['customer_group_id']=$discountPrice->CustomerGroupId;
+                $cartInsert['customer_group_code']=$discountPrice->CustomerGroupCode;
+                $cartInsert['min_price']=$discountPrice->MinPrice;
+                $cartInsert['max_price']=$discountPrice->MaxPrice;
+                $cartInsert['start_date']=$discountPrice->StartDate;
+                $cartInsert['end_date']=$discountPrice->EndDate;
+                $cartInsert['discount_perc']=$discountPrice->DiscountPerc;
+            }
+            CustomerServiceCart::insert($cartInsert);
+        }
+        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id, 'vehicle_id'=>$this->selected_vehicle_id])->get();
+        $this->cartItemCount = count($this->cartItems); 
+        if(count($this->cartItems))
+        {
+            $this->cardShow=true;
+            $this->showCartSummary=true;
+        }
+        else
+        {
+            $this->cardShow=false;
+        }
+        //dd($this->sectionServiceLists);
+        /*$this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'success',
+            'message' => 'Added to Cart Successfully',
+            'text' => 'service added..!',
+            'cartitemcount'=>\Cart::getTotalQuantity()
+        ]);*/
+        session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
+    }
+
 
     public function removeCart($id)
     {
@@ -1299,6 +1421,7 @@ class Jobcard extends Component
             $customerJobServiceData['section_code']=$cartData->section_code;
             $customerJobServiceData['station']=$this->station;
             $customerJobServiceData['extra_note']=$cartData->extra_note;
+            $customerJobServiceData['service_item_type']=$cartData->cart_item_type;
             //dd($customerJobServiceData);
 
             if($this->customerDiscontGroupCode)
@@ -1402,6 +1525,7 @@ class Jobcard extends Component
 
     public function completePaymnet($mode){
         $this->successPage=false;
+        //dd($this->job_number);
         if($this->job_number==Null){
             $this->createJob();
         }
@@ -1414,8 +1538,9 @@ class Jobcard extends Component
         ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
         ->where(['customerjobs.job_number'=>$job_number])
         ->take(5)->first();*/
-        
-        $mobileNumber = '971'.substr($customerjobs->customerInfo['mobile'], -9);
+
+
+        $mobileNumber = '971'.substr($customerjobs->customerInfo['Mobile'], -9);
         //$mobileNumber = substr($customerjobs->mobile, -9);
         $paymentmode = null;
         if($mode=='link')
@@ -1476,9 +1601,11 @@ class Jobcard extends Component
             $paymentmode = "C";
             $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>3,'payment_request'=>'cash payment','job_create_status'=>1]);
 
+            $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
+
             //http://mshastra.com/sendurlcomma.aspx?user=profileid&pwd=xxxx&senderid=ABC&CountryCode=91&mobileno=9911111111&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass').""
             
-            $response = Http::withBasicAuth('20092622', 'buhaleeba@123')->post("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."");
+            //$response = Http::withBasicAuth('20093421', 'GSS@123')->post("https://mshastra.com/sendurlcomma.aspx?user=20093421&pwd=GSS@123&senderid=GSSCARWASH&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."");
 
             /*$response = Http::withBasicAuth('20093421', 'GSS@123')->post("https://mshastra.com/sendurlcomma.aspx?user=20093421&pwd=GSS@123&senderid=GSSCARWASH&mobileno=971566993709&msgtext=".urlencode('Job Id #'.$job_number.' is processing'));*/
             //dd($response);
@@ -1492,14 +1619,11 @@ class Jobcard extends Component
             $this->showPayLaterCheckout=false;
             $this->selectedCustomerVehicle=false;
         }
-
-        DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.Session::get('user')->id.'", @stationcode  = "'.Session::get('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ', [
-                $job_number,
-                Session::get('user')->id,
-                Session::get('user')->station_code,
-                $paymentmode,
-                $customerjobs->customer_id
-            ]);
+        try {
+            DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.Session::get('user')->id.'", @stationcode  = "'.Session::get('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ');
+        } catch (\Exception $e) {
+            //return $e->getMessage();
+        }
 
 
     }
@@ -1634,6 +1758,11 @@ class Jobcard extends Component
         $this->showSectionsList=false;
         $this->showServiceSectionsList=false;
         $this->showPackageList=false;
+
+        $this->serviceItemsList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1)->get();
+        //dd($this->serviceItemsList);
     }
+
+    
     
 }

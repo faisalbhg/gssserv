@@ -22,6 +22,7 @@ class CustomerServiceCart extends Model
         'item_name',
         'description',
         'extra_note',
+        'cart_item_type',
         'quantity_per_purchase',
         'division_code',
         'department_code',

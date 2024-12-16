@@ -106,9 +106,9 @@
                             </button>
                             <hr class="horizontal dark mt-3">
                             <button type="button" class="btn btn-outline-dark">
-                                <p class="text-sm mb-0">Name: {{$qrdata->name}}</p>
-                                <p class="text-sm mb-0">Mobile: <a href="tel:{{$qrdata->mobile}}">{{$qrdata->mobile}}</a></p>
-                                <p class="text-sm mb-0">Email: {{$qrdata->email}}</p>
+                                <p class="text-sm mb-0">Name: {{$qrdata->customerInfo['Name']}}</p>
+                                <p class="text-sm mb-0">Mobile: <a href="tel:{{$qrdata->mobile}}">{{$qrdata->customerInfo['Mobile']}}</a></p>
+                                <p class="text-sm mb-0">Email: {{$qrdata->customerInfo['Email']}}</p>
                             </button>
 
                           </div>

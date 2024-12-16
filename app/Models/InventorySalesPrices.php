@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InventoryItemMaster extends Model
+class InventorySalesPrices extends Model
 {
     use HasFactory;
+    
+    protected $table = 'Inventory.SalesPrice';
+    protected $primaryKey = 'PriceID';
 
-    protected $table = 'Inventory.ItemMaster';
-    protected $primaryKey = 'ItemId';
+
 }

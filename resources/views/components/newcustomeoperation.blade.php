@@ -320,12 +320,11 @@
                     </div>
                 </div>
             @endif
-        @endif
-
-        
+        @endif        
     </div>
     @if($showSectionsList)
         <div class="row mt-2 mb-2">
+            
             @foreach($sectionsLists as $sectionsList)
             <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3 my-2 cursor-pointer" wire:click="getSectionServices({{$sectionsList}})">
                 <!--  aria-hidden="true" data-bs-toggle="modal" data-bs-target="#exampleModal"-->
@@ -350,19 +349,21 @@
                 </div>
             </div>
             @endforeach
-        </div>
+            @if($service_group_id==37)
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Search Quick Lube Items</label>
+                            <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
+                        </div>
+                        <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Search</button>
+                    </div>
 
-        @if($showServiceSectionsList)
-        <!-- Modal -->
-        <style type="text/css">
-            .modal-body{
-                max-height: calc(100vh - 300px);
-                overflow-y: auto;
-            }
-        </style>
-        <div class="modal fade" id="servicePriceModal" tabindex="-1" role="dialog" aria-labelledby="servicePriceModalLabel" aria-hidden="true" wire:ignore.self style="z-index:99999;" >
-            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:90%;">
-                <div class="modal-content">
+                </div>
+                @endif
+                @if($qlSearchItems)
+
+                <div class="row mt-4">
                     @if (session()->has('cartsuccess'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <span class="alert-icon text-light"><i class="ni ni-like-2"></i></span>
@@ -372,58 +373,149 @@
                             </button>
                         </div>
                     @endif
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="servicePriceModalLabel">{{$service_group_name}} - {{$selectedSectionName}}</h5>
-                        <button type="button" class="btn-close text-dark " style="font-size: 2.125rem !important;" data-bs-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true" class="text-xl">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body py-0">
-                        <div class="row">
-                            @foreach($sectionServiceLists as $sectionServiceList)
-                            <div class="col-md-6">
-                                <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
-                                <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
-                                <div class="bg-gray-100 my-3 p-2">
-                                    <div class="d-flex">
-                                        <h6>{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</h6>
-                                        <div class="ms-auto">
-                                            @if(!empty($discountDetails))
-                                                <span class="badge bg-gradient-info">{{round($discountDetails->DiscountPerc,2)}}%off</span>
-                                            @endif
-                                            
-                                        </div>
-                                    </div>
-                                    
-                                    
-                                    <p class="d-none text-sm mb-0">The website was initially built in PHP, I need a professional ruby programmer to shift it.</p>
-                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea >
-                                    <div class="d-flex border-radius-lg p-0 mt-2">
-                                        
-                                        <h4 class="my-auto me-2" @if($discountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($priceDetails->UnitPrice,2)}}
-                                        </h4>
-                                        @if($discountDetails != null)
-                                        <h4 class="my-auto">
-                                        <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($priceDetails->UnitPrice-(($discountDetails->DiscountPerc/100)*$priceDetails->UnitPrice),2) }}
-                                        </h4>
-                                        
+                    @forelse($quickLubeItemsList as $quickLubeItem)
+                        <?php $qlItemPriceDetails = $quickLubeItem['priceDetails']; ?>
+                        <?php $qlItemDiscountDetails = $quickLubeItem['discountDetails']; ?>
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-header text-center pt-4 pb-3">
+                                    <h6 class="font-weight-normal mt-2" style="text-transform: capitalize;">
+                                        {{ strtolower($qlItemPriceDetails->ItemName)}}
+                                    </h6>
+                                    <div class="ms-auto">
+                                        @if(!empty($qlItemDiscountDetails))
+                                            <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc,2)}}%off</span>
                                         @endif
-
-                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
+                                        
                                     </div>
                                 </div>
+                                <div class="card-body text-lg-left text-center pt-0">
+                                    
+                                    <h4 class="my-auto me-2" @if($qlItemDiscountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($qlItemPriceDetails->UnitPrice,2)}}
+                                    </h4>
+
+                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$qlItemPriceDetails->ItemId}}"></textarea >
+
+                                    @if($qlItemDiscountDetails != null)
+                                    <h4 class="my-auto">
+                                    <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($qlItemPriceDetails->UnitPrice-(($qlItemDiscountDetails->DiscountPerc/100)*$qlItemPriceDetails->UnitPrice),2) }}
+                                    </h4>
+                                    
+                                    @endif
+
+                                    <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartItem('{{$qlItemPriceDetails}}','{{$qlItemDiscountDetails}}')">Add Now</a>
+
+
+                                </div>
                             </div>
-                            @endforeach
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                        <!-- <button type="button" class="btn bg-gradient-primary">Save changes</button> -->
+                    @empty
+                        
+                    @endforelse 
+                </div>
+            
+            @endif
+        </div>
+
+        @if($showServiceSectionsList)
+            <!-- Modal -->
+            <style type="text/css">
+                .modal-body{
+                    max-height: calc(100vh - 300px);
+                    overflow-y: auto;
+                }
+            </style>
+            <div class="modal fade" id="servicePriceModal" tabindex="-1" role="dialog" aria-labelledby="servicePriceModalLabel" aria-hidden="true" wire:ignore.self style="z-index:99999;" >
+                <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:90%;">
+                    <div class="modal-content">
+                        @if (session()->has('cartsuccess'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <span class="alert-icon text-light"><i class="ni ni-like-2"></i></span>
+                                <span class="alert-text text-light"><strong>Success!</strong> {{ Session::get('cartsuccess') }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="servicePriceModalLabel">{{$service_group_name}} - {{$selectedSectionName}}</h5>
+                            <button type="button" class="btn-close text-dark " style="font-size: 2.125rem !important;" data-bs-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true" class="text-xl">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body py-0">
+                            <div class="row">
+                                @foreach($sectionServiceLists as $sectionServiceList)
+                                <div class="col-md-6">
+                                    <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
+                                    <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
+                                    <div class="bg-gray-100 my-3 p-2">
+                                        <div class="d-flex">
+                                            <h6>{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</h6>
+                                            <div class="ms-auto">
+                                                @if(!empty($discountDetails))
+                                                    <span class="badge bg-gradient-info">{{round($discountDetails->DiscountPerc,2)}}%off</span>
+                                                @endif
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                        <p class="d-none text-sm mb-0">The website was initially built in PHP, I need a professional ruby programmer to shift it.</p>
+                                        <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea >
+                                        <div class="d-flex border-radius-lg p-0 mt-2">
+                                            
+                                            <h4 class="my-auto me-2" @if($discountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($priceDetails->UnitPrice,2)}}
+                                            </h4>
+                                            @if($discountDetails != null)
+                                            <h4 class="my-auto">
+                                            <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($priceDetails->UnitPrice-(($discountDetails->DiscountPerc/100)*$priceDetails->UnitPrice),2) }}
+                                            </h4>
+                                            
+                                            @endif
+
+                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                            <!-- <button type="button" class="btn bg-gradient-primary">Save changes</button> -->
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @endif
+    @endif
+
+    @if($selectServiceItems)
+    <div class="row mt-4">
+        @forelse($serviceItemsList as $servicesItem)
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                  <div class="card-header text-center pt-4 pb-3">
+                    <h4 class="font-weight-normal mt-2">
+                      {{$servicesItem->ItemName}}
+                    </h4>
+                    <h4 class="font-weight-bold mt-2">
+                      <small>AED</small>{{round($servicesItem->UnitPrice,2)}}
+                    </h4>
+                  </div>
+                  <div class="card-body text-lg-left text-center pt-0">
+                    <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block mt-3 mb-0" wire:click="addtoCartItem('{{$servicesItem}}')">
+                      Buy Now
+                      <i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+        @empty
+            
+        @endforelse 
+    </div>
     @endif
     @if($showPackageList)
     <div class="row mt-4">
@@ -950,20 +1042,20 @@
 
             <div class="card mb-3">
                 <div class="card-header text-left pt-4 pb-3">
-                    <h5 class="font-weight-bold mt-2">Scratches</h5>
+                    <h5 class="font-weight-bold mt-2 d-none">Scratches</h5>
                 </div>
                 <div class="card-body text-left pt-0">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="textareaScratchesFound">Scratches Found</label>
+                                <label for="textareaScratchesFound">Found</label>
                                 <textarea class="form-control" id="scratchesFound" wire:model="scratchesFound" rows="3"></textarea>
                                 @error('scratchesFound') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="textareaScratchesNotFound">Scratches Not Found</label>
+                                <label for="textareaScratchesNotFound">Not Found</label>
                                 <textarea class="form-control" id="scratchesNotFound" wire:model="scratchesNotFound" rows="3"></textarea>
                                 @error('scratchesNotFound') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>

@@ -13,11 +13,7 @@ class QrCodeController extends Controller
 {
     public function qrcode($job_number)
     {
-        $customerjobs = CustomerJobCards::
-            select('customer_job_cards.*','customers.name','customers.email','customers.mobile')
-            ->join('customers','customers.id','=','customer_job_cards.customer_id')
-            ->where(['customer_job_cards.job_number'=>$job_number])
-            ->take(5)->first();
+        $customerjobs = CustomerJobCards::with(['customerInfo'])->where(['job_number'=>$job_number])->first();
         $data['qrdata'] = $customerjobs;
         //dd($data); 
         return view('qrcode',$data);

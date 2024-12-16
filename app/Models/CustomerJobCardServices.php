@@ -22,6 +22,7 @@ class CustomerJobCardServices extends Model
         'item_name',
         'description',
         'extra_note',
+        'service_item_type',
         'division_code',
         'department_code',
         'section_code',
