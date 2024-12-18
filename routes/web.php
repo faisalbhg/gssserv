@@ -38,7 +38,7 @@ use App\Http\Livewire\ServicesMasterList;
 use App\Http\Livewire\ServicesPriceList;
 use App\Http\Livewire\CustomerTypes;
 use App\Http\Livewire\Jobcard;
-
+use App\Http\Livewire\Mechanical;
 
 use App\Http\Controllers\QrCodeController;
 
@@ -114,7 +114,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/job-card/{customer_id}/{vehicle_id}',Jobcard::class)->name('pending-job-card-creation');
     Route::get('/job-card/{job_number}',Jobcard::class)->name('pending-job-card');
     
-
+    Route::get('mechanical',Mechanical::class)->name('mechanical');
 });
 
 Route::get('qr/{name}', [QrCodeController::class, 'qrcode']);

@@ -59,11 +59,32 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
+                                            <label for="plateEmirates">Country</label>
+                                            <select class="form-control  " wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
+                                                @foreach($countryLists as $country)
+                                                <option value="{{$country->CountryCode}}">{{$country->CountryName}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
                                             <label for="plateEmirates">Plate Emirates</label>
                                             <select class="form-control  " wire:model="plate_state" name="plate_state" id="plateEmirates" style="padding:0.5rem 0.3rem !important;" >
                                                 <option value="">-Emirates-</option>
                                                 @foreach($stateList as $state)
-                                                <option value="{{$state->state_name}}">{{$state->state_name}}</option>
+                                                <option value="{{$state->StateCode}}">{{$state->StateName}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 d-none">
+                                        <div class="form-group">
+                                            <label for="plateCategory">Plate Category</label>
+                                            <select class="form-control  " wire:model="plate_category" name="plate_category" id="plateCategory" style="padding:0.5rem 0.3rem !important;" >
+                                                <option value="">-Category-</option>
+                                                @foreach($plateEmiratesCategories as $plateCategory)
+                                                <option value="{{$plateCategory->id}}">{{$plateCategory->plateCategoryTitle}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -71,9 +92,15 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="plateCode">Plate Code</label>
-                                            <input style="padding:0.5rem 0.3rem !important;" type="text" id="plateCode" class="form-control @error('plate_code') btn-outline-danger @enderror" wire:model="plate_code" name="plate_code" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="2" placeholder="Code">
+                                            <select class="form-control  " wire:model="plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
+                                                <option value="">-Code-</option>
+                                                @foreach($plateEmiratesCodes as $plateCode)
+                                                <option value="{{$plateCode->id}}">{{$plateCode->plateColorTitle}}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
+                                    
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="plateNumber">Plate Number</label>
@@ -127,7 +154,7 @@
                                     <select class="form-control selectSearch" id="vehicleMakeInput" wire:model="make" >
                                         <option value="">-Select-</option>
                                         @foreach($listVehiclesMake as $vehicleName)
-                                        <option value="{{$vehicleName->vehicle_make}}">{{$vehicleName->vehicle_make}}</option>
+                                        <option value="{{$vehicleName['name']}}">{{$vehicleName['name']}}</option>
                                         @endforeach
                                     </select>
                                     @error('make') <span class="text-danger">{{ $message }}</span> @enderror
@@ -328,7 +355,7 @@
             @foreach($sectionsLists as $sectionsList)
             <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3 my-2 cursor-pointer" wire:click="getSectionServices({{$sectionsList}})">
                 <!--  aria-hidden="true" data-bs-toggle="modal" data-bs-target="#exampleModal"-->
-                <div class="card bg-gradient-dark">
+                <div class="card bg-gradient-primary">
                     <div class="card-body ">
                         <div class="row">
                             <div class="col-8 p-0">
@@ -350,16 +377,43 @@
             </div>
             @endforeach
             @if($service_group_id==37)
+
+                
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Search Quick Lube Items</label>
                             <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
                         </div>
+                        
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="seachByCategory">Search Category</label>
+                            <select class="form-control" id="seachByCategory" wire:model="ql_search_category">
+                                <option value="">-Select-</option>
+                                @foreach($itemCategories as $itemCategory)
+                                <option value="{{$itemCategory->CategoryId}}">{{$itemCategory->Description}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="seachByBrand">Search Brand</label>
+                            <select class="form-control" id="seachByBrand" wire:model="ql_search_brand">
+                                <option value="">-Select-</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mt-3 my-auto ">
                         <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Search</button>
                     </div>
-
                 </div>
+                
                 @endif
                 @if($qlSearchItems)
 

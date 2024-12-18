@@ -55,6 +55,17 @@
                         </ul>
                     </li>
                     
+                    
+
+                    <li class="nav-item px-3 d-flex align-items-center"  >
+                        <a class="nav-link" href="{{ route('mechanical') }}">
+                            <button class="btn btn-icon btn-sm btn-3 bg-gradient-danger" type="button" wire:click="newMechanicalJob">
+                                <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fa-solid fa-tools fa-xl"></i></span>
+                                <span class="btn-inner--text">Mechanical</span>
+                            </button>
+                        </a>
+                    </li>
+
                     <li class="nav-item px-3 d-flex align-items-center"  >
                         <a class="nav-link" href="{{ route('job-card') }}">
                             <button class="btn btn-icon btn-sm btn-3 bg-gradient-primary" type="button" wire:click="newVehicleOpen">
@@ -63,7 +74,6 @@
                             </button>
                         </a>
                     </li>
-
                     
                 </ul>
             </div>

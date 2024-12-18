@@ -1,5 +1,15 @@
 @push('custom_css')
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style type="text/css">
+    .select2-container--default .select2-selection--single{
+        border: 1px solid #d2d6da !important;
+        border-radius: 0.5rem !important;
+    }
+    .select2-container .select2-selection--single
+    {
+        height: 40px;
+    }
+</style>
 @endpush
 
 <main class="main-content position-relative  border-radius-lg">

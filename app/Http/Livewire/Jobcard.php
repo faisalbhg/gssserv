@@ -46,6 +46,11 @@ use App\Models\WorkOrderJob;
 use App\Models\Landlord;
 use App\Models\InventoryItemMaster;
 use App\Models\InventorySalesPrices;
+use App\Models\Country;
+use App\Models\PlateCategories;
+use App\Models\PlateEmiratesCategory;
+use App\Models\PlateCode;
+use App\Models\ItemCategories;
 
 use Carbon\Carbon;
 use Session;
@@ -69,11 +74,11 @@ class Jobcard extends Component
 
     //FormValues
     public $customer_id, $name, $email, $customer_type=23, $customer_id_image;
-    public $mobile, $plate_state, $plate_code, $plate_number;
+    public $mobile, $plate_country = 'AE', $plate_state, $plateEmiratesCategories=[], $plateEmiratesCodes=[], $plate_category, $plate_code, $plate_number;
     public $plate_number_final, $vehicle_image,$listVehiclesMake, $vehicle_type, $make, $vehiclesModelList, $model, $chassis_number,$vehicle_km,$plate_number_image,$chaisis_image, $selected_vehicle_id, $propertyCode;
 
     //ListValues
-    public $customers, $stateList, $customerTypeList, $vehicleTypesList, $servicesGroupList;
+    public $customers, $countryLists, $stateList, $customerTypeList, $vehicleTypesList, $servicesGroupList;
 
     //Service and itemms
     public $showServiceType = false, $showServicesitems = false, $selectServicesitems = false, $showServiceSectionsList=false;
@@ -95,7 +100,7 @@ class Jobcard extends Component
     public $selectedPackage, $selectedPackageItems;
     public $selectServiceItems;
     public $staffavailable;
-    public $quickLubeItemsList,$serviceItemsList, $quickLubeItemSearch='', $qlSearchItems=false;
+    public $quickLubeItemsList,$serviceItemsList, $quickLubeItemSearch='', $qlSearchItems=false, $itemCategories=[], $ql_search_category;
 
     function mount( Request $request) {
         $vehicle_id = $request->vehicle_id;
@@ -118,6 +123,9 @@ class Jobcard extends Component
 
 
     public function render(){
+        
+        $this->dispatchBrowserEvent('selectSearchEvent'); 
+        //dd(InventoryItemMaster::with(['categoryInfo'])->paginate('1'));
         //dd(CustomerServiceCart::get());
         //dd(Session::get('user'));
 
@@ -129,16 +137,67 @@ class Jobcard extends Component
         
         
         //Get all state List
-        $this->stateList = StateList::all();
+        $this->countryLists = Country::all();
+        $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
+        if($this->plate_state)
+        {
+            switch ($this->plate_state) {
+                case '1':
+                    $this->plate_category = '242';
+                    break;
+                case '2':
+                    $this->plate_category = '1';
+                    break;
+                case '3':
+                    $this->plate_category = '103';
+                    break;
+                case '4':
+                    $this->plate_category = '122';
+                    break;
+                case '5':
+                    $this->plate_category = '134';
+                    break;
+                case '6':
+                    $this->plate_category = '147';
+                    break;
+                case '7':
+                    $this->plate_category = '169';
+                    break;
+                
+                default:
+                    $this->plate_category = '242';
+                    break;
+            }
+            
+            $this->plateEmiratesCategories = PlateEmiratesCategory::where([
+                    'plateEmiratesId'=>$this->plate_state,'is_active'=>1,
+                ])->get();
+            
+            if($this->plate_category){
+                $this->plateEmiratesCodes = PlateCode::where([
+                    'plateEmiratesId'=>$this->plate_state,'plateCategoryId'=>$this->plate_category,'is_active'=>1,
+                ])->get();
+            }
+            
+
+        }
+        else
+        {
+            //dd('11');
+        }
 
         //Get all veicle type list
         $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
-
+        
         //Get Vehicle Make List
-        $this->listVehiclesMake = Vehicles::select('vehicle_name AS vehicle_make')->get();
+        //$this->listVehiclesMake = Vehicles::select('vehicle_name AS vehicle_make')->get();
+        $vehicleResponse = Http::withHeaders(["api_token"=>"c8721f38-08af-4e14-ad3a-8968996f53c7","api_secret"=>"1f611e590d0af867bc99ebb17f10cb74"])->get("https://carapi.app/api/makes")->body();
+        $vehicleResponse = json_decode($vehicleResponse,true);
+        $this->listVehiclesMake = $vehicleResponse['data'];
 
         $this->vehiclesModel=[];
         if($this->make){
+            
             $vehicleResponse = Http::get("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/all-vehicles-model/records?select=model,make&where=make%20like%20%22".$this->make."%22&limit=100");
             $vehicleResponse = $vehicleResponse->body();
             $vehicleResponse = json_decode($vehicleResponse);
@@ -149,6 +208,7 @@ class Jobcard extends Component
             $vehicleResponse = Http::get("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/all-vehicles-model/records?select=model,make&where=make%20like%20%22".$this->edit_make."%22&limit=100");
             $vehicleResponse = $vehicleResponse->body();
             $vehicleResponse = json_decode($vehicleResponse);
+            dd($vehicleResponse);
             $this->vehiclesModel = (array)$vehicleResponse->results;
         }
 
@@ -235,35 +295,37 @@ class Jobcard extends Component
         $this->servicePackage = ServicePackage::with(['packageDetails'])->get();
 
         //QuickLubbeItems
+        if($this->service_group_id==37)
+        {
+            $this->itemCategories = ItemCategories::get();
+
+        }
         if($this->qlSearchItems)
         {
-            if($this->customerDiscontGroupCode){
-
-                $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1)->where('ItemName','like',"%{$this->quickLubeItemSearch}%")->get();
-                $qlItemPriceLists = [];
-                foreach($quickLubeItemsNormalList as $key => $qlItemsList)
-                {
-                    $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
-                    $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlItemsList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
-                    //dd($sectionServicePriceLists[$key]);
-                }
-                $this->quickLubeItemsList = $qlItemPriceLists;
-                //dd($this->sectionServiceLists);
-
-                /*$this->sectionServiceLists = LaborItemMaster::join('Labor.SalesPrice as lsp', 'lsp.ServiceItemId', '=', 'Labor.ItemMaster.ItemId')->where(['Labor.ItemMaster.SectionCode'=>$this->propertyCode,'lsp.CustomerGroupCode'=>$this->customerDiscontGroupCode])->get();*/
-                
+            $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
+            if($this->ql_search_category){
+                $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['CategoryId'=>$this->ql_search_category]);
             }
-            else{
-                $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1)->where('ItemName','like',"%{$this->quickLubeItemSearch}%")->get();
-                $qlItemPriceLists = [];
-                foreach($quickLubeItemsNormalList as $key => $qlItemsList)
+            if($this->quickLubeItemSearch){
+                $quickLubeItemsNormalList = $quickLubeItemsNormalList->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
+            }
+            $quickLubeItemsNormalList=$quickLubeItemsNormalList->get();
+            $qlItemPriceLists = [];
+            foreach($quickLubeItemsNormalList as $key => $qlItemsList)
+            {
+                $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
+                if($this->customerDiscontGroupCode){
+                    $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlItemsList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+                }
+                else
                 {
-                    $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
                     $qlItemPriceLists[$key]['discountDetails']=null;
                 }
-                $this->quickLubeItemsList = $qlItemPriceLists;
-                
+                //dd($sectionServicePriceLists[$key]);
             }
+            $this->quickLubeItemsList = $qlItemPriceLists;
+            //dd($this->quickLubeItemsList);
+            $this->dispatchBrowserEvent('scrolltop');
         }
 
 
@@ -273,11 +335,7 @@ class Jobcard extends Component
     }
 
     public function searchQuickLubeItem(){
-        if($this->quickLubeItemSearch)
-        {
-            $this->qlSearchItems=true;
-        }
-        
+        $this->qlSearchItems=true;
     }
 
     public function openPendingVehicle($customer_id, $vehicle_id){

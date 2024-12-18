@@ -11,4 +11,10 @@ class InventoryItemMaster extends Model
 
     protected $table = 'Inventory.ItemMaster';
     protected $primaryKey = 'ItemId';
+
+    
+    public function categoryInfo()
+    {
+        return $this->belongsTo(ItemCategories::class,'CategoryId','CategoryId');
+    }
 }
