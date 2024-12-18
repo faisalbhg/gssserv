@@ -25,42 +25,49 @@ class HomePage extends Component
     public function render()
     {
         //Get Pending Customer
-        $this->pendingCustomersCart =  CustomerServiceCart::with(['customerInfo','vehicleInfo'])->where(['created_by'=>Session::get('user')->id])->get();
-        //dd($this->pendingCustomersCart);
-
-        $getCountSalesJobStatus = CustomerJobCards::select(
-            array(
-                \DB::raw('count(DISTINCT(customer_id)) customers'),
-                \DB::raw('count(job_number) jobs'),
-                \DB::raw('count(case when job_status = 0 then job_status end) new'),
-                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
-                \DB::raw('count(case when job_status = 2 then job_status end) work_finished'),
-                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
-                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
-                \DB::raw('count(case when job_status in (0,1,2,3,4) then job_status end) total'),
-                \DB::raw('SUM(grand_total) as saletotal'),
-            )
-        );
-        $customerjobsQuery = CustomerJobCards::with(['customerInfo']);
-        if($this->selected_date)
+        if(Session::get('user')->id)
         {
+            $this->pendingCustomersCart =  CustomerServiceCart::with(['customerInfo','vehicleInfo'])->where(['created_by'=>Session::get('user')->id])->get();
+            //dd($this->pendingCustomersCart);
 
-            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 00:00:00');
-            $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 23:59:59');
-            $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$startDate, $endDate]);
-            $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);
+            $getCountSalesJobStatus = CustomerJobCards::select(
+                array(
+                    \DB::raw('count(DISTINCT(customer_id)) customers'),
+                    \DB::raw('count(job_number) jobs'),
+                    \DB::raw('count(case when job_status = 0 then job_status end) new'),
+                    \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
+                    \DB::raw('count(case when job_status = 2 then job_status end) work_finished'),
+                    \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
+                    \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+                    \DB::raw('count(case when job_status in (0,1,2,3,4) then job_status end) total'),
+                    \DB::raw('SUM(grand_total) as saletotal'),
+                )
+            );
+            $customerjobsQuery = CustomerJobCards::with(['customerInfo']);
+            if($this->selected_date)
+            {
 
-            //$getCountSalesJobStatus = $getCountSalesJobStatus->where(['job_date_time'=>$this->selected_date]);
-            //$customerjobsQuery = $customerjobsQuery->where(['job_date_time'=>$this->selected_date]);
+                $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 00:00:00');
+                $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 23:59:59');
+                $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$startDate, $endDate]);
+                $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);
+
+                //$getCountSalesJobStatus = $getCountSalesJobStatus->where(['job_date_time'=>$this->selected_date]);
+                //$customerjobsQuery = $customerjobsQuery->where(['job_date_time'=>$this->selected_date]);
+            }
+            $this->getCountSalesJob = $getCountSalesJobStatus->first();
+
+            if($this->filterJobStatus)
+            {
+                $customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
+            }
+            $this->customerjobsLists = $customerjobsQuery->get();
+            return view('livewire.home-page');
         }
-        $this->getCountSalesJob = $getCountSalesJobStatus->first();
-
-        if($this->filterJobStatus)
+        else
         {
-            $customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
+            return redirect()->to('login');
         }
-        $this->customerjobsLists = $customerjobsQuery->get();
-        return view('livewire.home-page');
     }
 
     public function getSelectedDate( $date ) {
