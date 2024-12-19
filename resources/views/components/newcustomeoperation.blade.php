@@ -380,7 +380,32 @@
 
                 
                 <div class="row">
-                    
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="kmRange">KM Range</label>
+                            <select class="form-control" id="kmRange" wire:model="ql_km_range">
+                                <option value="">-Select-</option>
+                                <option value="1">5K</option>
+                                <option value="2">10K</option>
+                                <option value="3">15K</option>
+                                <option value="4">20K</option>
+                                <option value="5">25K</option>
+                            </select>
+                            @error('ql_km_range') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="seachByBrand">Brand</label>
+                            <select class="form-control" id="seachByBrand" wire:model="ql_search_brand">
+                                <option value="">-Select-</option>
+                                @foreach($qlBrandsLists as $qlBrand)
+                                <option value="{{$qlBrand->BrandId}}">{{$qlBrand->Description}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="seachByCategory">Category</label>
@@ -403,24 +428,15 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="seachByBrand">Brand</label>
-                            <select class="form-control" id="seachByBrand" wire:model="ql_search_brand">
-                                <option value="">-Select-</option>
-                                @foreach($qlBrandsLists as $qlBrand)
-                                <option value="{{$qlBrand->BrandId}}">{{$qlBrand->Description}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
+
+                    
                 </div>
 
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
                             <!-- <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control"> -->
-                            <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Search</button>
+                            <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Apply & Search Item</button>
                         </div>
                         
                     </div>

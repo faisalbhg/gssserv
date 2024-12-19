@@ -103,7 +103,7 @@ class Jobcard extends Component
     public $selectedPackage, $selectedPackageItems;
     public $selectServiceItems;
     public $staffavailable;
-    public $quickLubeItemsList,$serviceItemsList=[], $quickLubeItemSearch='', $qlSearchItems=false, $itemQlCategories=[], $itemQlSubCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand;
+    public $quickLubeItemsList,$serviceItemsList=[], $quickLubeItemSearch='', $qlSearchItems=false, $itemQlCategories=[], $itemQlSubCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
     public $item_search_category, $itemCategories=[], $item_search_subcategory, $itemSubCategories =[], $item_search_brand, $itemBrandsLists=[], $itemSearchName;
 
     function mount( Request $request) {
@@ -290,6 +290,20 @@ class Jobcard extends Component
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1])->get();
 
         }
+        
+
+
+
+        $this->dispatchBrowserEvent('loadServiceGroups');
+        return view('livewire.jobcard');
+    }
+
+    public function searchQuickLubeItem(){
+        $validatedData = $this->validate([
+            'ql_km_range' => 'required',
+        ]);
+        
+        $this->qlSearchItems=true;
         if($this->qlSearchItems)
         {
             $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
@@ -299,6 +313,7 @@ class Jobcard extends Component
             if($this->ql_search_subcategory){
                 $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['SubCategoryId'=>$this->ql_search_subcategory]);
             }
+            //dd($this->ql_search_brand);
             if($this->ql_search_brand){
                 $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['BrandId'=>$this->ql_search_brand]);
             }
@@ -323,15 +338,6 @@ class Jobcard extends Component
             //dd($this->quickLubeItemsList);
             $this->dispatchBrowserEvent('scrolltop');
         }
-
-
-
-        $this->dispatchBrowserEvent('loadServiceGroups');
-        return view('livewire.jobcard');
-    }
-
-    public function searchQuickLubeItem(){
-        $this->qlSearchItems=true;
     }
 
     public function openPendingVehicle($customer_id, $vehicle_id){
