@@ -386,8 +386,8 @@
                             <label for="seachByCategory">Category</label>
                             <select class="form-control" id="seachByCategory" wire:model="ql_search_category">
                                 <option value="">-Select-</option>
-                                @foreach($itemCategories as $itemCategory)
-                                <option value="{{$itemCategory->CategoryId}}">{{$itemCategory->Description}}</option>
+                                @foreach($itemQlCategories as $itemQlCategory)
+                                <option value="{{$itemQlCategory->CategoryId}}">{{$itemQlCategory->Description}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -397,8 +397,8 @@
                             <label for="seachBySubCategory">Sub Category</label>
                             <select class="form-control" id="seachBySubCategory" wire:model="ql_search_subcategory">
                                 <option value="">-Select-</option>
-                                @foreach($itemSubCategories as $itemSubCategory)
-                                <option value="{{$itemSubCategory->SubCategoryId}}">{{$itemSubCategory->Description}}</option>
+                                @foreach($itemQlSubCategories as $itemQlSubCategory)
+                                <option value="{{$itemQlSubCategory->SubCategoryId}}">{{$itemQlSubCategory->Description}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -560,6 +560,54 @@
     @endif
 
     @if($selectServiceItems)
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="seachByItemCategory">Category</label>
+                <select class="form-control" id="seachByItemCategory" wire:model="item_search_category">
+                    <option value="">-Select-</option>
+                    @foreach($itemCategories as $itemCategory)
+                    <option value="{{$itemCategory->CategoryId}}">{{$itemCategory->Description}}</option>
+                    @endforeach
+                </select>
+                @error('item_search_category') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="seachByItemSubCategory">Sub Category</label>
+                <select class="form-control" id="seachByItemSubCategory" wire:model="item_search_subcategory">
+                    <option value="">-Select-</option>
+                    @foreach($itemSubCategories as $itemSubCategory)
+                    <option value="{{$itemSubCategory->SubCategoryId}}">{{$itemSubCategory->Description}}</option>
+                    @endforeach
+                </select>
+                @error('item_search_subcategory') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="seachByItemBrand">Brand</label>
+                <select class="form-control" id="seachByItemBrand" wire:model="item_search_brand">
+                    <option value="">-Select-</option>
+                    @foreach($itemBrandsLists as $itemBrand)
+                    <option value="{{$itemBrand->BrandId}}">{{$itemBrand->Description}}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="seachByItemBrand">Items Name</label>
+                <input type="text" wire:model.defer="itemSearchName" name="" class="form-control">
+                <button class=" mt-2 btn bg-gradient-info" wire:click="dearchServiceItems">Search</button>
+            </div>
+            
+        </div>
+    </div>
     <div class="row mt-4">
         @forelse($serviceItemsList as $servicesItem)
             <div class="col-md-4 mb-4">

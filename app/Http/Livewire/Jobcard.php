@@ -60,6 +60,7 @@ use Illuminate\Support\Facades\Http;
 use LaravelPayfort\Facades\Payfort;
 use Illuminate\Support\Facades\Hash;
 
+
 use DB;
 
 
@@ -102,7 +103,8 @@ class Jobcard extends Component
     public $selectedPackage, $selectedPackageItems;
     public $selectServiceItems;
     public $staffavailable;
-    public $quickLubeItemsList,$serviceItemsList, $quickLubeItemSearch='', $qlSearchItems=false, $itemCategories=[], $itemSubCategories =[], $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand;
+    public $quickLubeItemsList,$serviceItemsList=[], $quickLubeItemSearch='', $qlSearchItems=false, $itemQlCategories=[], $itemQlSubCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand;
+    public $item_search_category, $itemCategories=[], $item_search_subcategory, $itemSubCategories =[], $item_search_brand, $itemBrandsLists=[], $itemSearchName;
 
     function mount( Request $request) {
         $vehicle_id = $request->vehicle_id;
@@ -281,9 +283,9 @@ class Jobcard extends Component
         //QuickLubbeItems
         if($this->service_group_id==37)
         {
-            $this->itemCategories = ItemCategories::with(['subCategoryList'])->get();
+            $this->itemQlCategories = ItemCategories::with(['subCategoryList'])->get();
             if($this->ql_search_category){
-                $this->itemSubCategories = InventorySubCategory::where(['CategoryId'=>$this->ql_search_category])->get();
+                $this->itemQlSubCategories = InventorySubCategory::where(['CategoryId'=>$this->ql_search_category])->get();
             }
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1])->get();
 
@@ -1578,20 +1580,12 @@ class Jobcard extends Component
 
     public function completePaymnet($mode){
         $this->successPage=false;
-        //dd($this->job_number);
         if($this->job_number==Null){
             $this->createJob();
         }
         $job_number = $this->job_number;
         
         $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle'])->where(['job_number'=>$this->job_number])->first();
-        /*$customerjobs = Customerjobs::
-        select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
-        ->join('customers','customers.id','=','customerjobs.customer_id')
-        ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
-        ->where(['customerjobs.job_number'=>$job_number])
-        ->take(5)->first();*/
-
 
         $mobileNumber = '971'.substr($customerjobs->customerInfo['Mobile'], -9);
         //$mobileNumber = substr($customerjobs->mobile, -9);
@@ -1599,7 +1593,6 @@ class Jobcard extends Component
         if($mode=='link')
         {
             $paymentmode = "O";
-            //dd($customerjobs);
             $paymentLink = $this->sendPaymentLink($customerjobs);
             $paymentResponse = json_decode((string) $paymentLink->getBody()->getContents(), true);
             $merchant_reference = $paymentResponse['merchant_reference'];
@@ -1607,11 +1600,8 @@ class Jobcard extends Component
             if(array_key_exists('payment_redirect_link', $paymentResponse))
             {
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
-                //"http://mshastra.com/sendurlcomma.aspx?user=profileid&pwd=xxxx&senderid=ABC&CountryCode=91&mobileno=9911111111&msgtext=Hello"
-                $response = Http::withBasicAuth(env('SMS_PROFILE_ID'), env('SMS_PASSWORD'))->post(env('SMS_URL')."?user=".env('SMS_PROFILE_ID')."&pwd=".env('SMS_PASSWORD')."&senderid=".env('SMS_SENDER_ID')."&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link'])."&CountryCode=ALL");
-
-
-
+                
+                $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link'])."&CountryCode=ALL");
 
                 $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send','job_create_status'=>1]);
 
@@ -1637,7 +1627,7 @@ class Jobcard extends Component
             $paymentmode = "O";
             $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>2,'payment_request'=>'card payment','job_create_status'=>1]);
 
-            $response = Http::withBasicAuth(env('SMS_PROFILE_ID'), env('SMS_PASSWORD'))->post(env('SMS_URL')."?user=".env('SMS_PROFILE_ID')."&pwd=".env('SMS_PASSWORD')."&senderid=".env('SMS_SENDER_ID')."&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Complete your payment and proceed. Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
+            $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Complete your payment and proceed. Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
 
             CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->delete();
 
@@ -1656,13 +1646,6 @@ class Jobcard extends Component
 
             $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
 
-            //http://mshastra.com/sendurlcomma.aspx?user=profileid&pwd=xxxx&senderid=ABC&CountryCode=91&mobileno=9911111111&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass').""
-            
-            //$response = Http::withBasicAuth('20093421', 'GSS@123')->post("https://mshastra.com/sendurlcomma.aspx?user=20093421&pwd=GSS@123&senderid=GSSCARWASH&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."");
-
-            /*$response = Http::withBasicAuth('20093421', 'GSS@123')->post("https://mshastra.com/sendurlcomma.aspx?user=20093421&pwd=GSS@123&senderid=GSSCARWASH&mobileno=971566993709&msgtext=".urlencode('Job Id #'.$job_number.' is processing'));*/
-            //dd($response);
-            
             CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->delete();
 
             $this->successPage=true;
@@ -1722,8 +1705,8 @@ class Jobcard extends Component
 
         $arrData = [
                 "paymnet_link_expiry"=>Carbon::now()->addDays(1)->format('Y-m-d H:i:s'),
-                //"amount"=>$total,
-                "amount"=>1,
+                "amount"=>$total,
+                //"amount"=>1,
                 "emailAddress"=>$order_billing_email,
                 "firstName"=>$order_billing_name,
                 "customer_mobile"=>$order_billing_phone,
@@ -1734,8 +1717,9 @@ class Jobcard extends Component
                 "orderReference"=>$merchant_reference,
                 "description"=>"GSS Service #".$merchant_reference
             ];
-            dd($arrData);
+            //dd(config('global.paymenkLink_payment_url'));
         $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.paymenkLink_payment_url'),$arrData);
+        //dd($response);
         return $response;
     }
 
@@ -1813,9 +1797,41 @@ class Jobcard extends Component
         $this->showServiceSectionsList=false;
         $this->showPackageList=false;
         $this->qlSearchItems=false;
+    }
 
-        //$this->serviceItemsList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1)->get();
-        //dd($this->serviceItemsList);
+    public function dearchServiceItems(){
+        $validatedData = $this->validate([
+            'item_search_category' => 'required',
+            'item_search_subcategory' => 'required',
+        ]);
+        $inventoryItemMasterLists = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
+        if($this->item_search_category){
+            $inventoryItemMasterLists = $inventoryItemMasterLists->where(['CategoryId'=>$this->item_search_category]);
+        }
+        if($this->item_search_subcategory){
+            $inventoryItemMasterLists = $inventoryItemMasterLists->where(['SubCategoryId'=>$this->item_search_subcategory]);
+        }
+        if($this->item_search_brand){
+            $inventoryItemMasterLists = $inventoryItemMasterLists->where(['BrandId'=>$this->item_search_brand]);
+        }
+        if($this->itemSearch){
+            $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->itemSearchName}%");
+        }
+        $inventoryItemMasterLists=$inventoryItemMasterLists->get();
+        $itemPriceLists = [];
+        foreach($inventoryItemMasterLists as $key => $itemMasterList)
+        {
+            $itemPriceLists[$key]['priceDetails'] = $itemMasterList;
+            if($this->customerDiscontGroupCode){
+                $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$itemMasterList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+            }
+            else
+            {
+                $itemPriceLists[$key]['discountDetails']=null;
+            }
+            //dd($sectionServicePriceLists[$key]);
+        }
+        $this->serviceItemsList = $itemPriceLists;
     }
 
     
