@@ -380,16 +380,10 @@
 
                 
                 <div class="row">
+                    
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label>Search Quick Lube Items</label>
-                            <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
-                        </div>
-                        
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="seachByCategory">Search Category</label>
+                            <label for="seachByCategory">Category</label>
                             <select class="form-control" id="seachByCategory" wire:model="ql_search_category">
                                 <option value="">-Select-</option>
                                 @foreach($itemCategories as $itemCategory)
@@ -400,17 +394,35 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="seachByBrand">Search Brand</label>
+                            <label for="seachBySubCategory">Sub Category</label>
+                            <select class="form-control" id="seachBySubCategory" wire:model="ql_search_subcategory">
+                                <option value="">-Select-</option>
+                                @foreach($itemSubCategories as $itemSubCategory)
+                                <option value="{{$itemSubCategory->SubCategoryId}}">{{$itemSubCategory->Description}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="seachByBrand">Brand</label>
                             <select class="form-control" id="seachByBrand" wire:model="ql_search_brand">
                                 <option value="">-Select-</option>
+                                @foreach($qlBrandsLists as $qlBrand)
+                                <option value="{{$qlBrand->BrandId}}">{{$qlBrand->Description}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12 mt-3 my-auto ">
-                        <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Search</button>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <!-- <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control"> -->
+                            <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Search</button>
+                        </div>
+                        
                     </div>
                 </div>
                 
@@ -436,6 +448,7 @@
                                     <h6 class="font-weight-normal mt-2" style="text-transform: capitalize;">
                                         {{ strtolower($qlItemPriceDetails->ItemName)}}
                                     </h6>
+                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$qlItemPriceDetails->ItemId}}"></textarea >
                                     <div class="ms-auto">
                                         @if(!empty($qlItemDiscountDetails))
                                             <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc,2)}}%off</span>
@@ -448,7 +461,7 @@
                                     <h4 class="my-auto me-2" @if($qlItemDiscountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($qlItemPriceDetails->UnitPrice,2)}}
                                     </h4>
 
-                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$qlItemPriceDetails->ItemId}}"></textarea >
+                                    
 
                                     @if($qlItemDiscountDetails != null)
                                     <h4 class="my-auto">
@@ -464,7 +477,8 @@
                             </div>
                         </div>
                     @empty
-                        
+                        <div class="alert alert-danger text-white" role="alert">
+                            <strong>Empty!</strong> The Searched items are not in stock!</div>
                     @endforelse 
                 </div>
             

@@ -744,6 +744,10 @@
             $('#vehicleTypeInput').select2();
             $('#vehicleMakeInput').select2();
             $('#vehicleModelInput').select2();
+            $('#seachByCategory').select2();
+            $('#seachBySubCategory').select2();
+            $('#seachByBrand').select2();
+
             $('#customerTypeSelect').on('change', function (e) {
                 var customerTypeVal = $('#customerTypeSelect').select2("val");
                 @this.set('customer_type', customerTypeVal);
@@ -763,6 +767,18 @@
             $('#vehicleModelInput').on('change', function (e) {
                 var modelVal = $('#vehicleModelInput').select2("val");
                 @this.set('model', modelVal);
+            });
+            $('#seachByCategory').on('change', function (e) {
+                var catVal = $('#seachByCategory').select2("val");
+                @this.set('ql_search_category', catVal);
+            });
+            $('#seachBySubCategory').on('change', function (e) {
+                var subCatVal = $('#seachBySubCategory').select2("val");
+                @this.set('ql_search_subcategory', subCatVal);
+            });
+            $('#seachByBrand').on('change', function (e) {
+                var BrandVal = $('#seachByBrand').select2("val");
+                @this.set('ql_search_brand', BrandVal);
             });
         });
     });

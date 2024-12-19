@@ -11,4 +11,11 @@ class ItemCategories extends Model
 
     protected $table = 'Inventory.Category';
     protected $primaryKey = "CategoryId";
+
+    public function subCategoryList()
+    {
+        return $this->hasMany(InventorySubCategory::class,'CategoryId','CategoryId');
+    }
+
+    //InventorySubCategory
 }

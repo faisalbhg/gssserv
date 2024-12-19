@@ -51,6 +51,8 @@ use App\Models\PlateCategories;
 use App\Models\PlateEmiratesCategory;
 use App\Models\PlateCode;
 use App\Models\ItemCategories;
+use App\Models\InventorySubCategory;
+use App\Models\InventoryBrand;
 
 use Carbon\Carbon;
 use Session;
@@ -100,7 +102,7 @@ class Jobcard extends Component
     public $selectedPackage, $selectedPackageItems;
     public $selectServiceItems;
     public $staffavailable;
-    public $quickLubeItemsList,$serviceItemsList, $quickLubeItemSearch='', $qlSearchItems=false, $itemCategories=[], $ql_search_category;
+    public $quickLubeItemsList,$serviceItemsList, $quickLubeItemSearch='', $qlSearchItems=false, $itemCategories=[], $itemSubCategories =[], $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand;
 
     function mount( Request $request) {
         $vehicle_id = $request->vehicle_id;
@@ -123,7 +125,6 @@ class Jobcard extends Component
 
 
     public function render(){
-        
         $this->dispatchBrowserEvent('selectSearchEvent'); 
         //dd(InventoryItemMaster::with(['categoryInfo'])->paginate('1'));
         //dd(CustomerServiceCart::get());
@@ -242,43 +243,26 @@ class Jobcard extends Component
             
         }
 
-        
-
-
         //Get Service List Prices
-        if($this->propertyCode){
-            
-            if($this->customerDiscontGroupCode){
-
-                $sectionServiceLists = LaborItemMaster::where(['Labor.ItemMaster.SectionCode'=>$this->propertyCode])->get();
-                $sectionServicePriceLists = [];
-                foreach($sectionServiceLists as $key => $sectionServiceList)
-                {
-                    $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
+        if($this->propertyCode)
+        {
+            $sectionServiceLists = LaborItemMaster::where(['Labor.ItemMaster.SectionCode'=>$this->propertyCode]);
+            $sectionServiceLists = $sectionServiceLists->get();
+            $sectionServicePriceLists = [];
+            foreach($sectionServiceLists as $key => $sectionServiceList)
+            {
+                $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
+                if($this->customerDiscontGroupCode){
                     $sectionServicePriceLists[$key]['discountDetails'] = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
-                    //dd($sectionServicePriceLists[$key]);
                 }
-                $this->sectionServiceLists = $sectionServicePriceLists;
-                //dd($this->sectionServiceLists);
-
-                /*$this->sectionServiceLists = LaborItemMaster::join('Labor.SalesPrice as lsp', 'lsp.ServiceItemId', '=', 'Labor.ItemMaster.ItemId')->where(['Labor.ItemMaster.SectionCode'=>$this->propertyCode,'lsp.CustomerGroupCode'=>$this->customerDiscontGroupCode])->get();*/
-                
-            }
-            else{
-                $sectionServiceLists = LaborItemMaster::where(['Labor.ItemMaster.SectionCode'=>$this->propertyCode])->get();
-                $sectionServicePriceLists = [];
-                foreach($sectionServiceLists as $key => $sectionServiceList)
+                else
                 {
-                    $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
                     $sectionServicePriceLists[$key]['discountDetails']=null;
                 }
-                $this->sectionServiceLists = $sectionServicePriceLists;
-                
             }
-            //dd($this->sectionServiceLists);
+            $this->sectionServiceLists = $sectionServicePriceLists;
         }
-        //dd($this->selectedVehicleInfo);
-
+        
         if($this->sisterCompanies)
         {
             $this->laborCustomerGroupLists = LaborCustomerGroup::where(['GroupType'=>5])->get();
@@ -297,7 +281,11 @@ class Jobcard extends Component
         //QuickLubbeItems
         if($this->service_group_id==37)
         {
-            $this->itemCategories = ItemCategories::get();
+            $this->itemCategories = ItemCategories::with(['subCategoryList'])->get();
+            if($this->ql_search_category){
+                $this->itemSubCategories = InventorySubCategory::where(['CategoryId'=>$this->ql_search_category])->get();
+            }
+            $this->qlBrandsLists = InventoryBrand::where(['Active'=>1])->get();
 
         }
         if($this->qlSearchItems)
@@ -305,6 +293,12 @@ class Jobcard extends Component
             $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
             if($this->ql_search_category){
                 $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['CategoryId'=>$this->ql_search_category]);
+            }
+            if($this->ql_search_subcategory){
+                $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['SubCategoryId'=>$this->ql_search_subcategory]);
+            }
+            if($this->ql_search_brand){
+                $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['BrandId'=>$this->ql_search_brand]);
             }
             if($this->quickLubeItemSearch){
                 $quickLubeItemsNormalList = $quickLubeItemsNormalList->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
@@ -707,6 +701,7 @@ class Jobcard extends Component
         $this->showSectionsList=true;
         $this->selectPackageMenu=false;
         $this->selectServiceItems=false;
+        $this->qlSearchItems=false;
 
         
         $this->dispatchBrowserEvent('scrolltop');
@@ -1763,6 +1758,7 @@ class Jobcard extends Component
         $this->showPackageList=true;
         $this->selectPackageMenu=true;
         $this->selectServiceItems=false;
+        $this->qlSearchItems=false;
         //dd($this->showSectionsList);
 
         $this->service_group_id = null;
@@ -1816,8 +1812,9 @@ class Jobcard extends Component
         $this->showSectionsList=false;
         $this->showServiceSectionsList=false;
         $this->showPackageList=false;
+        $this->qlSearchItems=false;
 
-        $this->serviceItemsList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1)->get();
+        //$this->serviceItemsList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1)->get();
         //dd($this->serviceItemsList);
     }
 

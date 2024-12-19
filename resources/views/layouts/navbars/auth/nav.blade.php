@@ -1,5 +1,5 @@
 <main class="main-content mt-1 border-radius-lg">
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl shadow-none position-sticky blur shadow-blur mt-4 left-auto top-1 z-index-sticky" id="navbarBlur"
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl shadow-none position-sticky blur shadow-blur mt-1 left-auto z-index-sticky" id="navbarBlur"
         navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
             <ul class="navbar-nav justify-content-end">
@@ -57,14 +57,14 @@
                     
                     
 
-                    <li class="nav-item px-3 d-flex align-items-center"  >
+                    <!-- <li class="d-none nav-item px-3 d-flex align-items-center"  >
                         <a class="nav-link" href="{{ route('mechanical') }}">
                             <button class="btn btn-icon btn-sm btn-3 bg-gradient-danger" type="button" wire:click="newMechanicalJob">
                                 <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fa-solid fa-tools fa-xl"></i></span>
                                 <span class="btn-inner--text">Mechanical</span>
                             </button>
                         </a>
-                    </li>
+                    </li> -->
 
                     <li class="nav-item px-3 d-flex align-items-center"  >
                         <a class="nav-link" href="{{ route('job-card') }}">
