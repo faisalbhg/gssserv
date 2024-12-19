@@ -174,7 +174,7 @@
 
     <script>
         window.onload = function() {
-            /*Livewire.hook('message.sent', () => {
+            Livewire.hook('message.sent', () => {
                 window.dispatchEvent(
                     new CustomEvent('loading', { detail: { loading: true }})
                 );
@@ -183,7 +183,7 @@
                 window.dispatchEvent(
                     new CustomEvent('loading', { detail: { loading: false }})
                 );
-            })*/
+            })
         }
     </script>
 
