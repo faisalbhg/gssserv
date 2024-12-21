@@ -482,6 +482,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <input type="number" class="form-control w-30 m-auto" placeholder="Qty" wire:model="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" />
+                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartItem('{{$qlItemPriceDetails}}','{{$qlItemDiscountDetails}}')">Add Now</a>
                                         </div>
                                     </div>
                                 </div>
