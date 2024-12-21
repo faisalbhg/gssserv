@@ -21,6 +21,7 @@ class CustomerJobCards extends Model
         'plate_number',
         'chassis_number',
         'vehicle_km',
+        'ql_km_range',
         'station',
         'customer_discount_id',
         'discount_id',

@@ -5,7 +5,7 @@
                 <div class="card-body p-0">
                     <div class="row">
                         @if($showByMobileNumber)
-                            <div class="col-md-4">
+                            <div class="col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <label for="mobilenumberInput">Mobile Number </label>
                                     <div class="input-group mb-0">
@@ -17,14 +17,14 @@
                             </div>
                         @endif
                         @if ($showCustomerForm)
-                            <div class="col-md-4">
+                            <div class="col-md-4  col-sm-6">
                                 <div class="form-group openDiv">
                                     <label for="nameInput">Name</label>
                                     <input type="text" class="form-control" wire:model.defer="name" name="name" placeholder="Name" id="nameInput">
                                     @error('name') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4 col-sm-6">
                                 <div class="form-group openName">
                                     <label for="emailInput">Email</label>
                                     <input type="email" wire:model.defer="email" name="email" class="form-control" id="emailInput" placeholder="Email">
@@ -48,7 +48,7 @@
                             <div class="col-md-12">
                                 
                                 <div class="row mb-0">
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 col-sm-6">
                                         <div class="form-group">
                                             <label for="plateImage">Plate Imgae</label>
                                             <input type="file" class="form-control" wire:model="plate_number_image" id="plateImage">
@@ -57,7 +57,7 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 col-sm-6">
                                         <div class="form-group">
                                             <label for="plateEmirates">Country</label>
                                             <select class="form-control  " wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
@@ -67,18 +67,18 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 col-sm-6">
                                         <div class="form-group">
                                             <label for="plateEmirates">Plate Emirates</label>
                                             <select class="form-control  " wire:model="plate_state" name="plate_state" id="plateEmirates" style="padding:0.5rem 0.3rem !important;" >
                                                 <option value="">-Emirates-</option>
                                                 @foreach($stateList as $state)
-                                                <option value="{{$state->StateCode}}">{{$state->StateName}}</option>
+                                                <option value="{{$state->StateName}}">{{$state->StateName}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 d-none">
+                                    <div class="col-md-3 col-sm-6 d-none">
                                         <div class="form-group">
                                             <label for="plateCategory">Plate Category</label>
                                             <select class="form-control  " wire:model="plate_category" name="plate_category" id="plateCategory" style="padding:0.5rem 0.3rem !important;" >
@@ -89,19 +89,19 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 col-sm-6">
                                         <div class="form-group">
                                             <label for="plateCode">Plate Code</label>
                                             <select class="form-control  " wire:model="plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
                                                 <option value="">-Code-</option>
                                                 @foreach($plateEmiratesCodes as $plateCode)
-                                                <option value="{{$plateCode->id}}">{{$plateCode->plateColorTitle}}</option>
+                                                <option value="{{$plateCode->plateColorTitle}}">{{$plateCode->plateColorTitle}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
                                     
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 col-sm-6">
                                         <div class="form-group">
                                             <label for="plateNumber">Plate Number</label>
                                             <input style="padding:0.5rem 0.3rem !important;" type="number" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="plate_number" name="plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Number">
@@ -123,7 +123,7 @@
 
                         @if($otherVehicleDetailsForm)
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="exampleFormControlSelect2">Vehicle Picture</label>
                                     <input type="file" class="form-control" wire:model="vehicle_image">
@@ -136,7 +136,7 @@
                                 </div>
                                 
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleTypeInput">Vehicle Type</label>
                                     <select class="form-control selectSearch" id="vehicleTypeInput" wire:model="vehicle_type">
@@ -148,7 +148,7 @@
                                     @error('vehicle_type') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleMakeInput">Vehicle Make</label>
                                     <select class="form-control selectSearch" id="vehicleMakeInput" wire:model="make" >
@@ -160,14 +160,14 @@
                                     @error('make') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleModelInput">Vehicle Model</label>
 
                                     <select class="form-control" id="vehicleModelInput" wire:model="model">
                                         <option value="">-Select-</option>
                                         @foreach($vehiclesModel as $model)
-                                        <option value="{{$model->model}}">{{$model->model}}</option>
+                                        <option value="{{$model['Model_Name']}}">{{$model['Model_Name']}}</option>
                                         @endforeach
                                     </select>
                                      @error('model') <span class="text-danger">{{ $message }}</span> @enderror
@@ -177,7 +177,7 @@
                         @endif
                         <div class="row">
                             @if($searchByChaisisForm)
-                                <div class="col-md-3">
+                                <div class="col-md-3 col-sm-6">
                                     <div class="form-group">
                                         <label for="exampleFormControlSelect2">Chaisis Imgae</label>
                                         <input type="file" class="form-control" wire:model="chaisis_image">
@@ -186,7 +186,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 col-sm-6">
                                     <div class="form-group">
                                         <label for="chaisisNumberInput">Chaisis Number</label>
                                         <input type="text" class="form-control" id="chaisisNumberInput" wire:model.defer="chassis_number" name="chassis_number" placeholder="Chassis Number">
@@ -194,7 +194,7 @@
                                 </div>
                             @endif
                             @if($otherVehicleDetailsForm)
-                            <div class="col-md-3">
+                            <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleKmInput">K.M Reading</label>
                                     <input type="number" class="form-control" id="vehicleKmInput" wire:model.defer="vehicle_km" name="vehicle_km" placeholder="Chaisis Number">
@@ -237,7 +237,7 @@
                 <div class="card-body p-3">
                     <div class="row">
                         @foreach($customers as $customer)
-                        <div class="col-xl-3 col-md-6 mb-xl-0 my-4">
+                        <div class="col-xl-3 col-md-4 col-sm-6 mb-xl-0 my-4">
                             <a href="javascript:;" wire:click="selectVehicle({{$customer->TenantId}}, {{$customer->id}})" class="">
                                 <div class="card card-background move-on-hover">
                                     <div class="full-background" style="background-image: url('{{url("public/storage/".$customer->vehicle_image)}}')"></div>
@@ -380,7 +380,7 @@
 
                 
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 d-none">
                         <div class="form-group">
                             <label for="kmRange">KM Range</label>
                             <select class="form-control" id="kmRange" wire:model="ql_km_range">
@@ -395,6 +395,13 @@
                         </div>
                     </div>
 
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="seachByItemBrand">Items Name</label>
+                            <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
+                        </div>
+                        
+                    </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="seachByBrand">Brand</label>
@@ -485,10 +492,13 @@
                                     </h4>
                                     
                                     @endif
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <input type="number" class="form-control w-30 m-auto" placeholder="Qty" wire:model="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" />
 
-                                    <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartItem('{{$qlItemPriceDetails}}','{{$qlItemDiscountDetails}}')">Add Now</a>
-
-
+                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartItem('{{$qlItemPriceDetails}}','{{$qlItemDiscountDetails}}')">Add Now</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
