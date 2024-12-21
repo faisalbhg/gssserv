@@ -308,6 +308,7 @@ class Jobcard extends Component
 
         if($this->qlSearchItems)
         {
+            //dd($this->qlSearchItems);
             $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
             if($this->ql_search_category){
                 $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['CategoryId'=>$this->ql_search_category]);
@@ -349,9 +350,9 @@ class Jobcard extends Component
     }
 
     public function searchQuickLubeItem(){
-        $validatedData = $this->validate([
+        /*$validatedData = $this->validate([
             'ql_km_range' => 'required',
-        ]);
+        ]);*/
 
         $this->qlSearchItems=true;
         

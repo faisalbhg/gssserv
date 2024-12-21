@@ -400,7 +400,6 @@
                             <label for="seachByItemBrand">Items Name</label>
                             <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
                         </div>
-                        
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
@@ -435,23 +434,17 @@
                             </select>
                         </div>
                     </div>
-
-                    
                 </div>
-
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
                             <!-- <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control"> -->
                             <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Apply & Search Item</button>
                         </div>
-                        
                     </div>
                 </div>
-                
                 @endif
                 @if($qlSearchItems)
-
                 <div class="row mt-4">
                     @if (session()->has('cartsuccess'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -476,27 +469,19 @@
                                         @if(!empty($qlItemDiscountDetails))
                                             <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc,2)}}%off</span>
                                         @endif
-                                        
                                     </div>
                                 </div>
                                 <div class="card-body text-lg-left text-center pt-0">
-                                    
                                     <h4 class="my-auto me-2" @if($qlItemDiscountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($qlItemPriceDetails->UnitPrice,2)}}
                                     </h4>
-
-                                    
-
                                     @if($qlItemDiscountDetails != null)
                                     <h4 class="my-auto">
                                     <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($qlItemPriceDetails->UnitPrice-(($qlItemDiscountDetails->DiscountPerc/100)*$qlItemPriceDetails->UnitPrice),2) }}
                                     </h4>
-                                    
                                     @endif
                                     <div class="row">
                                         <div class="col-md-12">
                                             <input type="number" class="form-control w-30 m-auto" placeholder="Qty" wire:model="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" />
-
-                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartItem('{{$qlItemPriceDetails}}','{{$qlItemDiscountDetails}}')">Add Now</a>
                                         </div>
                                     </div>
                                 </div>
