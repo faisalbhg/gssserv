@@ -118,59 +118,62 @@ class Jobcard extends Component
 
     public function render(){
         //Get all state List
+        //dd($this);
         $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
-        if($this->plate_state)
+        if($this->showSearchByPlateNumber)
         {
-            //dd($this->plate_state);
-            switch ($this->plate_state) {
-                case 'Abu Dhabi':
-                    $plateStateCode = 1;
-                    $this->plate_category = '242';
-                    break;
-                case 'Dubai':
-                    $plateStateCode = 2;
-                    $this->plate_category = '1';
-                    break;
-                case 'Sharjah':
-                    $plateStateCode = 3;
-                    $this->plate_category = '103';
-                    break;
-                case 'Ajman':
-                    $plateStateCode = 4;
-                    $this->plate_category = '122';
-                    break;
-                case 'Umm Al-Qaiwain':
-                    $plateStateCode = 5;
-                    $this->plate_category = '134';
-                    break;
-                case 'Ras Al-Khaimah':
-                    $plateStateCode = 6;
-                    $this->plate_category = '147';
-                    break;
-                case 'Fujairah':
-                    $plateStateCode = 7;
-                    $this->plate_category = '169';
-                    break;
+            if($this->plate_state)
+            {
+                //dd($this->plate_state);
+                switch ($this->plate_state) {
+                    case 'Abu Dhabi':
+                        $plateStateCode = 1;
+                        $this->plate_category = '242';
+                        break;
+                    case 'Dubai':
+                        $plateStateCode = 2;
+                        $this->plate_category = '1';
+                        break;
+                    case 'Sharjah':
+                        $plateStateCode = 3;
+                        $this->plate_category = '103';
+                        break;
+                    case 'Ajman':
+                        $plateStateCode = 4;
+                        $this->plate_category = '122';
+                        break;
+                    case 'Umm Al-Qaiwain':
+                        $plateStateCode = 5;
+                        $this->plate_category = '134';
+                        break;
+                    case 'Ras Al-Khaimah':
+                        $plateStateCode = 6;
+                        $this->plate_category = '147';
+                        break;
+                    case 'Fujairah':
+                        $plateStateCode = 7;
+                        $this->plate_category = '169';
+                        break;
+                    
+                    default:
+                        $plateStateCode = 1;
+                        $this->plate_category = '242';
+                        break;
+                }
                 
-                default:
-                    $plateStateCode = 1;
-                    $this->plate_category = '242';
-                    break;
+                $this->plateEmiratesCategories = PlateEmiratesCategory::where([
+                        'plateEmiratesId'=>$plateStateCode,'is_active'=>1,
+                    ])->get();
+                //dd($plateStateCode);
+                if($this->plate_category){
+                    $this->plateEmiratesCodes = PlateCode::where([
+                        'plateEmiratesId'=>$plateStateCode,'plateCategoryId'=>$this->plate_category,'is_active'=>1,
+                    ])->get();
+                }
             }
-            
-            $this->plateEmiratesCategories = PlateEmiratesCategory::where([
-                    'plateEmiratesId'=>$plateStateCode,'is_active'=>1,
-                ])->get();
-            //dd($plateStateCode);
-            if($this->plate_category){
-                $this->plateEmiratesCodes = PlateCode::where([
-                    'plateEmiratesId'=>$plateStateCode,'plateCategoryId'=>$this->plate_category,'is_active'=>1,
-                ])->get();
-            }
-            
-
         }
-        else if($this->edit_plate_state)
+        
+        if($this->edit_plate_state)
         {
             switch ($this->edit_plate_state) {
                 case 'Abu Dhabi':
@@ -217,36 +220,43 @@ class Jobcard extends Component
                     'plateEmiratesId'=>$editPlateStateCode,'plateCategoryId'=>$this->edit_plate_category,'is_active'=>1,
                 ])->get();
             }
+
+        }
+        if($this->otherVehicleDetailsForm){
+            //Get all veicle type list
+            $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
+
+            //Get Vehicle Make List
+            $this->listVehiclesMake = VehicleMakes::get();
             
+            $this->vehiclesModelList=[];
+            if($this->make){
+                
+                $vehicleModelsResponse = Http::get("https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/".$this->make."?format=json")->body();
+                $vehicleModelsResults = json_decode($vehicleModelsResponse,true);
+                $this->vehiclesModelList = $vehicleModelsResults['Results'];
+            }
 
+            if($this->edit_make){
+                $vehicleModelsResponse = Http::get("https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/".$this->edit_make."?format=json")->body();
+                $vehicleModelsResults = json_decode($vehicleModelsResponse,true);
+                //dd($vehicleModelsResults);
+                $this->vehiclesModelList = $vehicleModelsResults['Results'];
+            }
+
+            if($this->add_make){
+                $vehicleResponse = Http::get("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/all-vehicles-model/records?select=model,make&where=make%20like%20%22".$this->add_make."%22&limit=100");
+                $vehicleResponse = $vehicleResponse->body();
+                $vehicleResponse = json_decode($vehicleResponse);
+                $this->vehiclesModelList = (array)$vehicleResponse->results;
+            }
         }
+        else
+        {
+            $this->vehicleTypesList=null;
+            $this->listVehiclesMake=null;
+            $this->vehiclesModelList=null;
 
-        //Get all veicle type list
-        $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
-
-        //Get Vehicle Make List
-        $this->listVehiclesMake = VehicleMakes::get();
-        
-        $this->vehiclesModel=[];
-        if($this->make){
-            
-            $vehicleModelsResponse = Http::get("https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/".$this->make."?format=json")->body();
-            $vehicleModelsResults = json_decode($vehicleModelsResponse,true);
-            $this->vehiclesModel = $vehicleModelsResults['Results'];
-        }
-
-        if($this->edit_make){
-            $vehicleModelsResponse = Http::get("https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/".$this->edit_make."?format=json")->body();
-            $vehicleModelsResults = json_decode($vehicleModelsResponse,true);
-            //dd($vehicleModelsResults);
-            $this->vehiclesModel = $vehicleModelsResults['Results'];
-        }
-
-        if($this->add_make){
-            $vehicleResponse = Http::get("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/all-vehicles-model/records?select=model,make&where=make%20like%20%22".$this->add_make."%22&limit=100");
-            $vehicleResponse = $vehicleResponse->body();
-            $vehicleResponse = json_decode($vehicleResponse);
-            $this->vehiclesModel = (array)$vehicleResponse->results;
         }
 
         $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>Session::get('user')->station_code])->get();
@@ -291,6 +301,7 @@ class Jobcard extends Component
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1])->get();
 
         }
+
 
 
         if($this->qlSearchItems)
@@ -647,7 +658,7 @@ class Jobcard extends Component
     }
 
     public function selectVehicle($customerId,$vehicleId){
-
+        $this->customers=null;
         $customers = CustomerVehicle::with('customerInfoMaster')->where(['is_active'=>1,'id'=>$vehicleId,'customer_id'=>$customerId])->first();
         //dd($customers);
 
@@ -699,6 +710,17 @@ class Jobcard extends Component
         $this->service_group_code = $service['department_code'];
         $this->station = $service['station_code'];
         $this->service_search='';
+
+        if($this->service_group_id==37 || $this->selectServiceItems)
+        {
+
+        }
+        else
+        {
+            $this->qlSearchItems=false;
+            //dd($this->qlSearchItems);
+        }
+
 
         $this->showVehicleDiv = false;
         $this->showSearchByPlateNumberDiv=false;
@@ -1630,7 +1652,8 @@ class Jobcard extends Component
                     'sessionId'=>$this->job_number,
                     'ItemCode'=>$cartData->item_code,
                     'ItemName'=>$cartData->item_name,
-                    'QuantityRequested'=>$cartData->quantity
+                    'QuantityRequested'=>$cartData->quantity,
+                    'Activity2Code'=>Session::get('user')->station_code
                 ]);
             }
             
@@ -1696,7 +1719,7 @@ class Jobcard extends Component
 
         try {
             //"LL/00004" 'department_code'=>"PP/00037", 'section_code'=>"U-000225",
-            DB::select('EXEC [Inventory].[MaterialRequisition.Update] @companyCode = "PF/00001", @documentCode = "", @documentDate = "'.$customerjobData['job_date_time'].'", @SessionId = "'.$this->job_number.'", @sourceType = "J", @sourceCode = "'.$this->job_number.'", @LandlordCode = "'.Session::get('user')->station_code.'", @propertyCode = "PP/00037", @UnitCode = "U-000225", @IsApprove = "1", @doneby = "'.Session::get('user')->id.'" ');
+            DB::select('EXEC [Inventory].[MaterialRequisition.Update] @companyCode = "PF/00001", @documentCode = "", @documentDate = "'.$customerjobData['job_date_time'].'", @SessionId = "'.$this->job_number.'", @sourceType = "J", @sourceCode = "'.$this->job_number.'", @LandlordCode = "'.Session::get('user')->station_code.'", @propertyCode = "", @UnitCode = "", @IsApprove = "1", @doneby = "'.Session::get('user')->id.'" ');
         } catch (\Exception $e) {
             //return $e->getMessage();
         }

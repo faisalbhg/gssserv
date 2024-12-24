@@ -18,7 +18,8 @@ class MaterialRequest extends Model
         'sessionId',
         'ItemCode',
         'ItemName',
-        'QuantityRequested'
+        'QuantityRequested',
+        'Activity2Code',
     ];
 
 }

@@ -166,7 +166,7 @@
 
                                     <select class="form-control" id="vehicleModelInput" wire:model="model">
                                         <option value="">-Select-</option>
-                                        @foreach($vehiclesModel as $model)
+                                        @foreach($vehiclesModelList as $model)
                                         <option value="{{$model['Model_Name']}}">{{$model['Model_Name']}}</option>
                                         @endforeach
                                     </select>
