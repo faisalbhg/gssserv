@@ -8,6 +8,10 @@ use App\Models\Customerjobs;
 use App\Models\Customerjobservices;
 use App\Models\Customerjoblogs;
 
+use App\Models\CustomerJobCards;
+use App\Models\CustomerJobCardServices;
+use App\Models\CustomerJobCardServiceLogs;
+
 use Carbon\Carbon;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Http;
@@ -20,11 +24,7 @@ class Jobstatus extends Component
     public function mount()
     {
         $job_number = \Route::current()->parameter('name');
-        $job = Customerjobs::
-            select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
-            ->join('customers','customers.id','=','customerjobs.customer_id')
-            ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
-            ->where(['customerjobs.job_number'=>$job_number])
+        $job = CustomerJobCards::with(['customerInfo'])->where(['job_number'=>$job_number])
             ->take(5)->first();
             //dd($job);
         $this->job_number = $job->job_number;
@@ -49,8 +49,8 @@ class Jobstatus extends Component
         $this->vat = $job->vat;
         $this->grand_total = $job->grand_total;
 
-        $this->customerjobservices = Customerjobservices::where(['job_number'=>$job->job_number])->get();
-        $this->customerjoblogs = Customerjoblogs::where(['job_number'=>$job->job_number])->orderBy('id','DESC')->get();
+        $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$job->job_number])->get();
+        $this->customerjoblogs = CustomerJobCardServiceLogs::where(['job_number'=>$job->job_number])->orderBy('id','DESC')->get();
     }
 
 

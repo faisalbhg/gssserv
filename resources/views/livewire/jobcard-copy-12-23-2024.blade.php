@@ -105,14 +105,6 @@
                                 <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle">New</button>
                                 <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
                                 <button class="btn bg-gradient-info btn-sm" wire:click.prevent="openServiceGroup">Services</button>
-                                <br>
-                                @if($customerDiscontGroupCode)
-                                <button class="btn bg-gradient-info text-white ms-0 py-1 px-3 m-0" wire:click.prevent="applyDiscountGroup()">Apply {{$customerDiscontGroupCode}} Discount Group</button> 
-                                <button type="button" wire:click="removeDiscount()" class="btn btn-danger btn-simple btn-lg mb-0 p-1">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-
-                                @endif
                             </div>
                         </div>
                     </div>
@@ -143,98 +135,128 @@
                             <div class="row mt-2">
                                 <div class="col-md-12">
                                 <div class="card">
-                                    <div class="card-header p-0">
-                                        @error('$selectedDiscountId') <span class="text-danger">{{ $message }}</span> @enderror
-                                        @if($selectedDiscountTitle)
-                                        <label class="badge bg-gradient-success text-light text-bold text-lg mb-0" style="white-space: normal; text-transform: capitalize;">{{str_replace("_"," ",strtolower($selectedDiscountTitle))}}</label>
-                                        <label class="badge bg-gradient-dark text-light text-bold text-lg mb-0 float-end cursor-pointer" style="white-space: normal; text-transform: capitalize;" wire:click="clickDiscountGroup()">View All Discount Group</label>
-                                        @endif
-                                    </div>
                                     <div class="card-body p-3">
-                                        @if($discountSearch)
                                         <div class="row">
                                             @foreach($laborCustomerGroupLists as $listCustDiscGrp)
                                             <div class="col-lg-2 col-sm-4 my-2">
-                                                @if($selectedDiscountId == $listCustDiscGrp->Id)
-                                                <div wire:click="selectDiscountGroup({{$listCustDiscGrp}})" class="card bg-primary h-100 cursor-pointer">
+                                                @if($customerDiscontGroupId == $listCustDiscGrp->id)
+                                                <div wire:click="selectAvailableCustDiscountGroup({{$listCustDiscGrp->id}})" class="card bg-primary h-100">
                                                     <div class="card-body">
-                                                        <p class="mt-4 mb-0 font-weight-bold text-white">{{str_replace("_"," ",$listCustDiscGrp->Title)}}</p>
+                                                        <p class="mt-4 mb-0 font-weight-bold text-white">{{str_replace("_"," ",$listCustDiscGrp->discount_title)}}</p>
+                                                        <p class="mt-4 mb-0 text-white">{{$listCustDiscGrp->discount_card_number}}</p>
+                                                        <span class="text-xs text-white">Expired in: <?php $end = \Carbon\Carbon::parse($listCustDiscGrp->discount_card_validity);?>
+                                                        {{ \Carbon\Carbon::now()->diffInDays($end) }} Days</span>
                                                     </div>
                                                 </div>
                                                 @else
-                                                <div wire:click="selectDiscountGroup({{$listCustDiscGrp}})" class="card h-100 cursor-pointer">
+                                                <div wire:click="selectAvailableCustDiscountGroup({{$listCustDiscGrp->id}})" class="card  h-100">
                                                     <div class="card-body">
-                                                        <p class="mt-4 mb-0 font-weight-bold">{{str_replace("_"," ",$listCustDiscGrp->Title)}}</p>
-                                                        
+                                                        <h4 class="mt-4 mb-0 font-weight-bold">{{str_replace("_"," ",$listCustDiscGrp->discount_title)}}</h4>
+                                                        <p class="mt-4 mb-0 font-weight-bold">{{$listCustDiscGrp->discount_card_number}}</p>
+                                                        <span class="text-xs">Expired in: <?php $end = \Carbon\Carbon::parse($listCustDiscGrp->discount_card_validity);?>
+                                                        {{ \Carbon\Carbon::now()->diffInDays($end) }} Days</span>
                                                     </div>
                                                 </div>
                                                 @endif
                                             </div>
                                             @endforeach
-                                        </div>
-                                        @else
-                                        <div class="row">
                                             
-                                            <div class="col-12">
-                                                
-                                                
+                                            
+                                            
+                                            
+                                        </div>
+                                        <hr class="horizontal dark my-2">
+                                        <div class="row">
+                                            <div class="d-flex align-items-center">
+                                                <h6 class="mb-0">
+                                                    <label class="badge @if($this->sisterCompanies) bg-gradient-secondary @else bg-gradient-dark @endif cursor-pointer" wire:click="discountGroupFilter('all')"> All Discount Group</label>
+                                                    <!-- <label class="badge @if($this->sisterCompanies) bg-gradient-dark @else bg-gradient-secondary @endif cursor-pointer" wire:click="discountGroupFilter('sister')"> Sister Companies</label> -->
+                                                </h6>
+                                            </div>
+                                            <div class="col-6">
+                                                @error('$selectedDiscountId') <span class="text-danger">{{ $message }}</span> @enderror
+                                                <div class="table-responsive" style="height:200px; overflow-y: scroll ;">
+                                                    <table class="table align-items-center mb-0">
+                                                        <tbody>
+                                                            @foreach($laborCustomerGroupLists as $laborCustomerGroupList)
+                                                            <tr  wire:click="selectDiscountGroup({{$laborCustomerGroupList}})">
+                                                                <td>
+                                                                    <div class="d-flex px-2 py-0">
+                                                                        @if($selectedDiscountId == $laborCustomerGroupList->Id)
+                                                                        <span class="badge bg-gradient-success me-3"> </span>
+                                                                        @else
+                                                                        <span class="badge bg-gradient-secondary me-3"> </span>
+                                                                        @endif
+                                                                        <div class="d-flex flex-column justify-content-center">
+                                                                            <h6 class="mb-0 text-sm">{{str_replace("_"," ",$laborCustomerGroupList->Title)}}</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <!-- <td class="align-middle text-center text-sm">
+                                                                    <span class="text-xs font-weight-bold"> 15% </span>
+                                                                </td> -->
+                                                            </tr>
+                                                            @endforeach
+                                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                             <div class="col-6 text-center">
                                                 <div class="row">
                                                     
-                                                    
+                                                    @if($selectedDiscountTitle)
+                                                    <label class="badge bg-gradient-success text-light text-bold text-lg mb-0" style="white-space: normal; text-transform: capitalize;">{{str_replace("_"," ",strtolower($selectedDiscountTitle))}}</label>
+                                                    @endif
 
-                                                    
-                                                    @if($discountForm)
-                                                        @if($searchStaffId)
-                                                            <p class="badge bg-gradient-danger text-light text-bold text-lg mb-0">{{$staffavailable}}</p>
-                                                            <div class="row mb-0">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group">
-                                                                        <label for="employeeId">Employee Id</label>
-                                                                        <input type="text" class="form-control" wire:model="employeeId" id="employeeId" placeholder="Staff/Employee Id">
-                                                                        @error('employeeId') <span class="text-danger">{{ $message }}</span> @enderror
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <button type="button" class="btn bg-gradient-primary" wire:click="checkStaffDiscountGroup()">Check Employee</button>
+                                                    @if($searchStaffId)
+                                                        <p class="badge bg-gradient-danger text-light text-bold text-lg mb-0">{{$staffavailable}}</p>
+                                                        <div class="row mb-0">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="employeeId">Employee Id</label>
+                                                                    <input type="text" class="form-control" wire:model="employeeId" id="employeeId" placeholder="Staff/Employee Id">
+                                                                    @error('employeeId') <span class="text-danger">{{ $message }}</span> @enderror
                                                                 </div>
                                                             </div>
-                                                        @endif
-                                                        @if($discountCardApplyForm)
-                                                            <div class="row mb-0">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group">
-                                                                        <label for="discountCardImgae">Discount Card Imgae</label>
-                                                                        <input type="file" class="form-control" wire:model.defer="discount_card_imgae">
-                                                                        @error('discount_card_imgae') <span class="text-danger">{{ $message }}</span> @enderror
-                                                                        @if ($discount_card_imgae)
-                                                                        <img class="img-fluid border-radius-lg w-30" src="{{ $discount_card_imgae->temporaryUrl() }}">
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group">
-                                                                        <label for="discountCardNumber">Discount Card Number</label>
-                                                                        <input type="text" class="form-control" wire:model="discount_card_number" placeholder="Discount Card Number">
-                                                                        @error('discount_card_number') <span class="text-danger">{{ $message }}</span> @enderror
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group">
-                                                                        <label for="discountCardValidity">Discount Card Validity</label>
-                                                                        <input type="date" class="form-control" id="discountCardValidity" wire:model="discount_card_validity" name="discountCardValidity" placeholder="Discount Card Validity">
-                                                                        @error('discount_card_validity') <span class="text-danger">{{ $message }}</span> @enderror
-                                                                    </div>
+                                                            <div class="col-md-4">
+                                                                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <button type="button" class="btn bg-gradient-primary" wire:click="checkStaffDiscountGroup()">Check Employee</button>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    @else
+                                                        <div class="row mb-0">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="discountCardImgae">Discount Card Imgae</label>
+                                                                    <input type="file" class="form-control" wire:model.defer="discount_card_imgae">
+                                                                    @error('discount_card_imgae') <span class="text-danger">{{ $message }}</span> @enderror
+                                                                    @if ($discount_card_imgae)
+                                                                    <img class="img-fluid border-radius-lg w-30" src="{{ $discount_card_imgae->temporaryUrl() }}">
+                                                                    @endif
                                                                 </div>
                                                             </div>
-                                                            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <button type="button" class="btn bg-gradient-primary" wire:click="saveSelectedDiscountGroup()">Save changes</button>
-                                                        @endif
+
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="discountCardNumber">Discount Card Number</label>
+                                                                    <input type="text" class="form-control" wire:model="discount_card_number" placeholder="Discount Card Number">
+                                                                    @error('discount_card_number') <span class="text-danger">{{ $message }}</span> @enderror
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="discountCardValidity">Discount Card Validity</label>
+                                                                    <input type="date" class="form-control" id="discountCardValidity" wire:model="discount_card_validity" name="discountCardValidity" placeholder="Discount Card Validity">
+                                                                    @error('discount_card_validity') <span class="text-danger">{{ $message }}</span> @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn bg-gradient-primary" wire:click="saveSelectedDiscountGroup()">Save changes</button>
                                                     @endif
                                                     
                                                 </div>
@@ -243,7 +265,6 @@
                                             </div>
                                             
                                         </div>
-                                        @endif
                                     </div>
                                 </div>
                                 </div>
@@ -284,7 +305,7 @@
                 </div>
             </div>
             
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 my-2">
+            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 my-2">
                 @if(count($cartItems)>0)
                     <div class="card card-profile card-plain">
                         <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Pricing Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
@@ -431,8 +452,8 @@
                                             <div class="form-group">
                                                 <label for="editPlateCountry">Country</label>
                                                 <select class="form-control  " wire:model="edit_plate_country"  id="editPlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
-                                                    @foreach(config('global.country') as $country)
-                                                    <option value="{{$country['CountryCode']}}">{{$country['CountryName']}}</option>
+                                                    @foreach($countryLists as $country)
+                                                    <option value="{{$country->CountryCode}}">{{$country->CountryName}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>

@@ -20,7 +20,7 @@
                                                     <a href="javascript:;">
                                                         <div class="position-relative">
                                                         <div class="blur-shadow-image">
-                                                            <img class="w-100 rounded-3 shadow-lg" src="{{url('storage/'.$vehicle_image)}}">
+                                                            <img class="w-100 rounded-3 shadow-lg" src="{{url('public/storage/'.$vehicle_image)}}">
                                                         </div>
                                                         </div>
                                                     </a>

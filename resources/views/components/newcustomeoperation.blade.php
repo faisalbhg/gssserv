@@ -61,8 +61,8 @@
                                         <div class="form-group">
                                             <label for="plateEmirates">Country</label>
                                             <select class="form-control  " wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
-                                                @foreach($countryLists as $country)
-                                                <option value="{{$country->CountryCode}}">{{$country->CountryName}}</option>
+                                                @foreach(config('global.country') as $country)
+                                                <option value="{{$country['CountryCode']}}">{{$country['CountryName']}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -154,7 +154,7 @@
                                     <select class="form-control selectSearch" id="vehicleMakeInput" wire:model="make" >
                                         <option value="">-Select-</option>
                                         @foreach($listVehiclesMake as $vehicleName)
-                                        <option value="{{$vehicleName['name']}}">{{$vehicleName['name']}}</option>
+                                        <option value="{{$vehicleName['vehicle_name']}}">{{$vehicleName['vehicle_name']}}</option>
                                         @endforeach
                                     </select>
                                     @error('make') <span class="text-danger">{{ $message }}</span> @enderror
@@ -285,7 +285,7 @@
 
             @if(!$servicesGroupList->isEmpty())
                 @foreach($servicesGroupList as $servicesGroup)
-                    <div class="col-sm-6 col-md-3 col-lg-2 col-xl-2 my-2">
+                    <div class="col-sm-4 col-md-3 col-lg-2 col-xl-2 my-2">
                         <div class="card h-100" >
                             <a wire:click="serviceGroupForm({{$servicesGroup}})" href="javascript:;">
                                 <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100" style="background-image: url('{{asset("img/".str_replace("/","",$servicesGroup->department_code).".jpg")}}');">
@@ -306,7 +306,7 @@
                         </div>
                     </div>
                 @endforeach
-                <div class="col-sm-6 col-md-3 col-lg-2 col-xl-2 my-2">
+                <div class="col-sm-4 col-md-3 col-lg-2 col-xl-2 my-2">
                     <div class="card h-100" >
                         <a wire:click="openServiceItems()" href="javascript:;">
                             <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100" style="background-image: url('{{asset("img/PP00039item.jpg")}}');">
@@ -326,7 +326,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-3 col-lg-2 col-xl-2 my-2">
+                <div class="col-sm-4 col-md-3 col-lg-2 col-xl-2 my-2">
                     <div class="card h-100" >
                         <a wire:click="openPackages()" href="javascript:;">
                             <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100" style="background-image: url('{{asset("img/service-item-products.jpg")}}');">
@@ -481,7 +481,7 @@
                                     @endif
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <input type="number" class="form-control w-30 m-auto" placeholder="Qty" wire:model="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" />
+                                            <input type="number" class="form-control w-30 m-auto" placeholder="Qty" wire:model.defer="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" />
                                             <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartItem('{{$qlItemPriceDetails}}','{{$qlItemDiscountDetails}}')">Add Now</a>
                                         </div>
                                     </div>
