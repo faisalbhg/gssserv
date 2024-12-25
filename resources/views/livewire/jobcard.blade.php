@@ -40,19 +40,19 @@
                     <a href="javascript:;">Search By: </a>
                 </h5>
                 <div class="px-2 position-relative ">
-                    <button wire:click="clickSearchBy('1')" class="btn @if($searchByMobileNumber) bg-gradient-primary @else bg-gradient-default @endif  mb-0" data-toggle="modal" data-target="#new-board-modal">
+                    <button wire:click="clickSearchBy('1')" class="btn @if($searchByMobileNumberBtn) bg-gradient-primary @else bg-gradient-default @endif  mb-0" data-toggle="modal" data-target="#new-board-modal">
                         Mobile Number
                     </button>
                     <hr class="vertical dark mt-2">
                 </div>
                 <div class="px-2 position-relative ">
-                    <button wire:click="clickSearchBy('2')" class="btn @if($searchByPlateNumber) bg-gradient-primary @else bg-gradient-default @endif mb-0" data-toggle="modal" data-target="#new-board-modal">
+                    <button wire:click="clickSearchBy('2')" class="btn @if($searchByPlateBtn) bg-gradient-primary @else bg-gradient-default @endif mb-0" data-toggle="modal" data-target="#new-board-modal">
                         Plate Number
                     </button>
                     <hr class="vertical dark mt-2">
                 </div>
                 <div class="px-2">
-                    <button wire:click="clickSearchBy('3')" class="btn @if($searchByChaisis) bg-gradient-primary @else bg-gradient-default @endif mb-0" data-toggle="modal" data-target="#new-board-modal">
+                    <button wire:click="clickSearchBy('3')" class="btn @if($searchByChaisisBtn) bg-gradient-primary @else bg-gradient-default @endif mb-0" data-toggle="modal" data-target="#new-board-modal">
                         Chaisis Number
                     </button>
                 </div>
@@ -104,15 +104,16 @@
                                 <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Edit Customer/Discount/Vehicle" wire:click="editCustomer()">Edit</button>
                                 <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle"  wire:click="addNewVehicle()">New Vehicle</button>
                                 <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
-                                <button class="btn bg-gradient-info btn-sm" wire:click.prevent="openServiceGroup">Services</button>
+                                <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
                                 <br>
                                 @if($customerDiscontGroupCode)
                                 <button class="btn bg-gradient-info text-white ms-0 py-1 px-3 m-0" wire:click.prevent="applyDiscountGroup()">Apply {{$customerDiscontGroupCode}} Discount Group</button> 
                                 <button type="button" wire:click="removeDiscount()" class="btn btn-danger btn-simple btn-lg mb-0 p-1">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
-
                                 @endif
+
+                                
                             </div>
                         </div>
                     </div>
@@ -145,46 +146,37 @@
                                 <div class="card">
                                     <div class="card-header p-0">
                                         @error('$selectedDiscountId') <span class="text-danger">{{ $message }}</span> @enderror
-                                        @if($selectedDiscountTitle)
-                                        <label class="badge bg-gradient-success text-light text-bold text-lg mb-0" style="white-space: normal; text-transform: capitalize;">{{str_replace("_"," ",strtolower($selectedDiscountTitle))}}</label>
-                                        <label class="badge bg-gradient-dark text-light text-bold text-lg mb-0 float-end cursor-pointer" style="white-space: normal; text-transform: capitalize;" wire:click="clickDiscountGroup()">View All Discount Group</label>
-                                        @endif
+                                        
                                     </div>
                                     <div class="card-body p-3">
                                         @if($discountSearch)
                                         <div class="row">
                                             @foreach($laborCustomerGroupLists as $listCustDiscGrp)
                                             <div class="col-lg-2 col-sm-4 my-2">
-                                                @if($selectedDiscountId == $listCustDiscGrp->Id)
-                                                <div wire:click="selectDiscountGroup({{$listCustDiscGrp}})" class="card bg-primary h-100 cursor-pointer">
-                                                    <div class="card-body">
-                                                        <p class="mt-4 mb-0 font-weight-bold text-white">{{str_replace("_"," ",$listCustDiscGrp->Title)}}</p>
-                                                    </div>
-                                                </div>
-                                                @else
                                                 <div wire:click="selectDiscountGroup({{$listCustDiscGrp}})" class="card h-100 cursor-pointer">
                                                     <div class="card-body">
                                                         <p class="mt-4 mb-0 font-weight-bold">{{str_replace("_"," ",$listCustDiscGrp->Title)}}</p>
                                                         
                                                     </div>
                                                 </div>
-                                                @endif
                                             </div>
                                             @endforeach
                                         </div>
                                         @else
                                         <div class="row">
-                                            
-                                            <div class="col-12">
-                                                
-                                                
+                                            @if($selectedDiscountTitle)
+                                            <div><label class="badge badge-sm bg-gradient-dark text-light text-bold text-sm mb-0 float-end cursor-pointer" style="white-space: normal; text-transform: capitalize;" wire:click="clickDiscountGroup()">View All Discount Group</label>
                                             </div>
+                                            <div class="col-lg-2 col-sm-4 my-2">
+                                                <div class="card bg-primary h-100 cursor-pointer">
+                                                    <div class="card-body">
+                                                        <p class="mt-4 mb-0 font-weight-bold text-white">{{str_replace("_"," ",strtolower($selectedDiscountTitle))}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
                                             <div class="col-6 text-center">
                                                 <div class="row">
-                                                    
-                                                    
-
-                                                    
                                                     @if($discountForm)
                                                         @if($searchStaffId)
                                                             <p class="badge bg-gradient-danger text-light text-bold text-lg mb-0">{{$staffavailable}}</p>
@@ -196,10 +188,8 @@
                                                                         @error('employeeId') <span class="text-danger">{{ $message }}</span> @enderror
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-4">
-                                                                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                                                </div>
-                                                                <div class="col-md-4">
+                                                                
+                                                                <div class="col-md-12">
                                                                     <button type="button" class="btn bg-gradient-primary" wire:click="checkStaffDiscountGroup()">Check Employee</button>
                                                                 </div>
                                                             </div>
@@ -312,7 +302,16 @@
                                                         <a href="#" class="p-0 text-danger bg-red-600" wire:click.prevent="removeCart('{{$item->id}}')"><i class="fa fa-trash"></i></a>
                                                     </div>
                                                     <div class="d-flex align-items-center text-sm">
-                                                        {{$item->quantity}} x
+                                                        @if($item->quantity>1)<span class="px-2 cursor-pointer" wire:click="cartSetDownQty({{ $item->id }})">
+                                                            <i class="fa-solid fa-square-minus fa-xl"></i>
+                                                        </span>
+                                                        @endif
+                                                        {{$item->quantity}}
+                                                        <span class="px-2 cursor-pointer" wire:click="cartSetUpQty({{ $item->id }})">
+                                                            <i class="fa-solid fa-square-plus fa-xl"></i>
+                                                        </span>
+
+                                                        
                                                         <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{round($item->unit_price,2)}}</button>
 
                                                         @if($item->customer_group_code)
@@ -373,338 +372,16 @@
             </div>
         </div>
         @endif
-        @if($editCustomerVehicle)
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card px-3 my-2" >
-                        <div class="card-body p-0">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="editMobilenumberInput">Mobile Number </label>
-                                        <div class="input-group mb-0">
-                                            <span class="input-group-text px-0">+971</span>
-                                            <input class="form-control" placeholder="Mobile Number" type="number" wire:model.defer="edit_mobile" name="edit_mobile" id="editMobilenumberInput">
-                                        </div>
-                                        @error('edit_mobile') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group openDiv">
-                                        <label for="editNameInput">Name</label>
-                                        <input type="text" class="form-control" wire:model.defer="edit_name" name="edit_name" placeholder="Name" id="editNameInput">
-                                        @error('edit_name') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group openName">
-                                        <label for="editEmailInput">Email</label>
-                                        <input type="email" wire:model.defer="edit_email" name="edit_email" class="form-control" id="editEmailInput" placeholder="Email">
-                                        @error('edit_email') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        
+        <div wire:loading wire:target="editCustomer,addNewVehicle,clickDiscountGroup,openServiceGroup,selectDiscountGroup,checkStaffDiscountGroup,openServiceGroup,applyDiscountGroup,removeDiscount,serviceGroupForm,openServiceItems,openPackages,getSectionServices,searchQuickLubeItem,addtoCartItem,addtoCart,dearchServiceItems,cartSetDownQty,cartSetUpQty">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card px-3 my-2" >
-                        <div class="card-body p-0">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="row mb-0">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="plateImage">Plate Imgae</label>
-                                                <input type="file" class="form-control" wire:model="edit_plate_number_image" id="plateImage">
-                                                @if ($plate_number_image)
-                                                <img class="img-fluid border-radius-lg w-30" src="{{url('storage/'.$plate_number_image)}}">
-                                                @endif
-                                                @if ($edit_plate_number_image)
-                                                    <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getPlateNumber('{{$edit_plate_number_image->temporaryUrl()}}')">Get Plate Number</button>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-sm-6">
-                                            <div class="form-group">
-                                                <label for="editPlateCountry">Country</label>
-                                                <select class="form-control  " wire:model="edit_plate_country"  id="editPlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
-                                                    @foreach(config('global.country') as $country)
-                                                    <option value="{{$country['CountryCode']}}">{{$country['CountryName']}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-3 col-sm-6">
-                                            <div class="form-group">
-                                                <label for="editplateEmirates">Plate Emirates</label>
-                                                <select class="form-control  " wire:model="edit_plate_state" name="edit_plate_state" id="editplateEmirates" style="padding:0.5rem 0.3rem !important;" >
-                                                    <option value="">-Emirates-</option>
-                                                    @foreach($stateList as $state)
-                                                    <option value="{{$state->StateName}}">{{$state->StateName}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-sm-6">
-                                            <div class="form-group">
-                                                <label for="editplateCode">Plate Code</label>
-                                                <select class="form-control  " wire:model="edit_plate_code" name="editplateCode" id="editplateCode" style="padding:0.5rem 0.3rem !important;" >
-                                                    <option value="">-Code-</option>
-                                                    @foreach($editplateEmiratesCodes as $editplateCode)
-                                                    <option value="{{$editplateCode->plateColorTitle}}">{{$editplateCode->plateColorTitle}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="editPlateNumber">Plate Number</label>
-                                                <input style="padding:0.5rem 0.3rem !important;" type="number" id="editPlateNumber" class="form-control @error('edit_plate_number') btn-outline-danger @enderror" wire:model="edit_plate_number" name="edit_plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Number">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="editVehicleImage">Vehicle Picture</label>
-                                        <input type="file" class="form-control" wire:model="edit_vehicle_image" name="edit_vehicle_image" id="editVehicleImage">
-                                        @error('edit_vehicle_image') <span class="text-danger">{{ $message }}</span> @enderror
-                                        @if ($vehicle_image)
-                                            <img class="img-fluid border-radius-lg w-30" src="{{url('public/storage/'.$vehicle_image)}}">
-                                        @endif
-                                        @if ($edit_vehicle_image)
-                                        <img class="img-fluid border-radius-lg w-30" src="{{ $edit_vehicle_image->temporaryUrl() }}">
-                                        @endif
-                                    </div>
-                                    
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="editVehicleTypeInput">Vehicle Type</label>
-                                        <select class="form-control selectSearch" id="editVehicleTypeInput" wire:model="edit_vehicle_type" name="edit_vehicle_type">
-                                            <option value="">-Select-</option>
-                                            @foreach($vehicleTypesList as $vehicleType)
-                                            <option value="{{$vehicleType->id}}">{{$vehicleType->type_name}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('edit_vehicle_type') <span class="text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="editVehicleMakeInput">Vehicle Make</label>
-                                        <select class="form-control selectSearch" id="editVehicleMakeInput" wire:model="edit_make" name="edit_make" >
-                                            <option value="">-Select-</option>
-                                            @foreach($listVehiclesMake as $vehicleName)
-                                            <option value="{{$vehicleName->vehicle_name}}">{{$vehicleName->vehicle_name}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('edit_make') <span class="text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="editVehicleModelInput">Vehicle Model</label>
-
-                                        <select class="form-control" id="editVehicleModelInput" wire:model="edit_model" name="edit_model">
-                                            <option value="">-Select-</option>
-                                            @foreach($vehiclesModelList as $model)
-                                            <option value="{{$model['Model_Name']}}">{{$model['Model_Name']}}</option>
-                                            @endforeach
-                                        </select>
-                                         @error('edit_model') <span class="text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="editChaisisImage">Chaisis Imgae</label>
-                                        <input type="file" class="form-control" wire:model="edit_chaisis_image" id="editChaisisImage">
-                                        @if ($edit_chaisis_image)
-                                            <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="editChaisisNumberInput">Chaisis Number</label>
-                                        <input type="text" class="form-control" id="editChaisisNumberInput" wire:model.defer="edit_chassis_number" name="edit_chassis_number" placeholder="Chassis Number">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="editVehicleKmInput">K.M Reading</label>
-                                        <input type="number" class="form-control" id="editVehicleKmInput" wire:model.defer="edit_vehicle_km" name="edit_vehicle_km" placeholder="Chaisis Number">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <button type="button" wire:click="updateVehicleCustomer()" class="btn btn-primary btn-sm">Update Vehicle</button>
-                                    <button type="button" wire:click="closeUpdateVehicleCustomer()" class="btn btn-default btn-sm">cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
-        @if($addNewCustomerVehicle)
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card px-3 my-2" >
-                        <div class="card-body p-0">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="row mb-0">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="addPlateImage">Plate Imgae</label>
-                                                <input type="file" class="form-control" wire:model="add_plate_number_image" name="add_plate_number_image" id="addPlateImage">
-                                                
-                                                @if ($add_plate_number_image)
-                                                    <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getPlateNumber('{{$add_plate_number_image->temporaryUrl()}}')">Get Plate Number</button>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-sm-6">
-                                            <div class="form-group">
-                                                <label for="addPlateCountry">Country</label>
-                                                <select class="form-control  " wire:model="add_plate_country"  id="addPlateCountry" name="addPlateCountry" aria-invalid="false"><option value="">Select</option>
-                                                    @foreach(config('global.country') as $country)
-                                                    <option value="{{$country['CountryCode']}}">{{$country['CountryName']}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="addPlateEmirates">Plate Emirates</label>
-                                                <select class="form-control  " wire:model="add_plate_state" name="add_plate_state" id="addPlateEmirates" style="padding:0.5rem 0.3rem !important;" >
-                                                    <option value="">-Emirates-</option>
-                                                    @foreach($stateList as $state)
-                                                    <option value="{{$state->StateName}}">{{$state->StateName}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-sm-6">
-                                            <div class="form-group">
-                                                <label for="addPlateCode">Plate Code</label>
-                                                <select class="form-control  " wire:model="add_plate_code" name="addPlateCode" id="addPlateCode" style="padding:0.5rem 0.3rem !important;" >
-                                                    <option value="">-Code-</option>
-                                                    @foreach($addplateEmiratesCodes as $addplateCode)
-                                                    <option value="{{$addplateCode->plateColorTitle}}">{{$addplateCode->plateColorTitle}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="addPlateNumber">Plate Number</label>
-                                                <input style="padding:0.5rem 0.3rem !important;" type="number" id="addPlateNumber" class="form-control @error('add_plate_number') btn-outline-danger @enderror" wire:model="add_plate_number" name="add_plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Number">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="addVehicleImage">Vehicle Picture</label>
-                                        <input type="file" class="form-control" wire:model="add_vehicle_image" name="add_vehicle_image" id="addVehicleImage">
-                                        @error('add_vehicle_image') <span class="text-danger">{{ $message }}</span> @enderror
-                                        @if ($vehicle_image)
-                                            <img class="img-fluid border-radius-lg w-30" src="{{url('storage/'.$vehicle_image)}}">
-                                        @endif
-                                        @if ($add_vehicle_image)
-                                        <img class="img-fluid border-radius-lg w-30" src="{{ $add_vehicle_image->temporaryUrl() }}">
-                                        @endif
-                                    </div>
-                                    
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="addVehicleTypeInput">Vehicle Type</label>
-                                        <select class="form-control selectSearch" id="addVehicleTypeInput" wire:model="add_vehicle_type" name="add_vehicle_type">
-                                            <option value="">-Select-</option>
-                                            @foreach($vehicleTypesList as $vehicleType)
-                                            <option value="{{$vehicleType->id}}">{{$vehicleType->type_name}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('add_vehicle_type') <span class="text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="addVehicleMakeInput">Vehicle Make</label>
-                                        <select class="form-control selectSearch" id="addVehicleMakeInput" wire:model="add_make" name="add_make" >
-                                            <option value="">-Select-</option>
-                                            @foreach($listVehiclesMake as $vehicleName)
-                                            <option value="{{$vehicleName->vehicle_name}}">{{$vehicleName->vehicle_name}}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('add_make') <span class="text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="addVehicleModelInput">Vehicle Model</label>
-
-                                        <select class="form-control" id="addVehicleModelInput" wire:model="add_model" name="add_model">
-                                            <option value="">-Select-</option>
-                                            @foreach($vehiclesModelList as $model)
-                                            <option value="{{$model->model}}">{{$model->model}}</option>
-                                            @endforeach
-                                        </select>
-                                         @error('add_model') <span class="text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="addChaisisImage">Chaisis Imgae</label>
-                                        <input type="file" class="form-control" wire:model="add_chaisis_image" id="addChaisisImage">
-                                        @if ($edit_chaisis_image)
-                                            <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="addChaisisNumberInput">Chaisis Number</label>
-                                        <input type="text" class="form-control" id="addChaisisNumberInput" wire:model.defer="add_chassis_number" name="add_chassis_number" placeholder="Chassis Number">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="addVehicleKmInput">K.M Reading</label>
-                                        <input type="number" class="form-control" id="addVehicleKmInput" wire:model.defer="add_vehicle_km" name="add_vehicle_km" placeholder="Chaisis Number">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <button type="button" wire:click="saveAddNewVehicleCustomer()" class="btn btn-primary btn-sm">Save Vehicle</button>
-                                    <button type="button" wire:click="closeAddNewVehicleCustomer()" class="btn btn-default btn-sm">cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
+        </div>
         @include('components.newcustomeoperation')
         @include('components.modals.customerSignatureModel')
     </div>
@@ -717,6 +394,15 @@
         $(document).ready(function(){
             $('html, body').animate({
                 scrollTop: $("#servceGroup").offset().top - 100
+            }, 100);
+        });
+    });
+
+
+    window.addEventListener('scrolltopQl',event=>{
+        $(document).ready(function(){
+            $('html, body').animate({
+                scrollTop: $("#serviceQlItems").offset().top - 100
             }, 100);
         });
     });

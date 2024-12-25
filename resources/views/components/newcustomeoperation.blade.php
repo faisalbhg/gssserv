@@ -385,7 +385,7 @@
             @endforeach
             @if($service_group_id==37)
                 @if($qlFilterOpen)
-                    <div class="row">
+                    <div class="row" id="serviceQlItems">
                         <div class="col-md-4 d-none">
                             <div class="form-group">
                                 <label for="kmRange">KM Range</label>
