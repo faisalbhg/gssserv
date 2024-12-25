@@ -75,7 +75,8 @@ class HomePage extends Component
         }
         else
         {
-            return redirect()->to('login');
+            //return redirect()->to('login');
+            return view('livewire.auth.login');
         }
     }
 
