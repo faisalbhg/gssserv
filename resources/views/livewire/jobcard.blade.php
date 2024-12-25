@@ -79,7 +79,7 @@
                                 <div class="p-md-0 pt-3">
                                     
                                     <h5 class="font-weight-bolder mb-0">{{$selectedVehicleInfo['plate_number_final']}}</h5>
-                                    <p class="text-uppercase text-sm font-weight-bold mb-2">{{$selectedVehicleInfo['make']}}, {{$selectedVehicleInfo['model']}}</p>
+                                    <p class="text-uppercase text-sm font-weight-bold mb-2">{{$selectedVehicleInfo->makeInfo['vehicle_name']}}, {{$selectedVehicleInfo->modelInfo['vehicle_model_name']}}</p>
                                 </div>
                                 @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
                                     @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])

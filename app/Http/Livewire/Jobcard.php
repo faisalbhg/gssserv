@@ -342,9 +342,11 @@ class Jobcard extends Component
         $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation'])->where(function ($query) {
                 $query->whereRelation('itemInformation', 'CategoryId', '=', $this->ql_search_category);
             })->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
+
         $qlMakeModelCatItmDetails = [];
         foreach($qlMakeModelCategoryItems as $key => $qlItemMakeModelItem){
-            foreach($qlItemMakeModelItem->itemInformation as $key => $qlMakeModelCatItm)
+            
+            foreach($qlItemMakeModelItem->itemInformation as $qlMakeModelCatItm)
             {
                 $qlMakeModelCatItmDetails[$key]['priceDetails'] = $qlMakeModelCatItm;
                 if($this->customerDiscontGroupCode){
@@ -357,6 +359,7 @@ class Jobcard extends Component
                 //dd($sectionServicePriceLists[$key]);
             }
         }
+        //dd($qlMakeModelCatItmDetails);
         $this->quickLubeItemsList = $qlMakeModelCatItmDetails;
         $this->dispatchBrowserEvent('scrolltopQl');
     }
@@ -686,7 +689,7 @@ class Jobcard extends Component
 
     public function selectVehicle($customerId,$vehicleId){
         $this->customers=null;
-        $customers = CustomerVehicle::with('customerInfoMaster')->where(['is_active'=>1,'id'=>$vehicleId,'customer_id'=>$customerId])->first();
+        $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo'])->where(['is_active'=>1,'id'=>$vehicleId,'customer_id'=>$customerId])->first();
         //dd($customers);
 
         $this->showForms=false;

@@ -56,5 +56,15 @@ class CustomerVehicle extends Model
     {
         return $this->belongsTo(Customers::class);
     }
+
+    public function makeInfo()
+    {
+        return $this->belongsTo(VehicleMakes::class,'make','id');
+    }
+
+    public function modelInfo()
+    {
+        return $this->belongsTo(VehicleModels::class,'model','id');
+    }
     
 }
