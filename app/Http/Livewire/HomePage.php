@@ -25,7 +25,7 @@ class HomePage extends Component
     public function render()
     {
         //Get Pending Customer
-        if(Session::get('user')->id)
+        if(Session::get('user'))
         {
             $this->pendingCustomersCart =  CustomerServiceCart::with(['customerInfo','vehicleInfo'])->where(['created_by'=>Session::get('user')->id])->get();
             //dd($this->pendingCustomersCart);

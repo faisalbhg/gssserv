@@ -407,7 +407,7 @@
                                 <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-sm-6">
                             <div class="form-group">
                                 <label for="seachByBrand">Brand</label>
                                 <select class="form-control" id="seachByBrand" wire:model="ql_search_brand">
@@ -418,7 +418,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-sm-6">
                             <div class="form-group">
                                 <label for="seachByCategory">Category</label>
                                 <select class="form-control" id="seachByCategory" wire:model="ql_search_category">
@@ -429,7 +429,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-sm-6">
                             <div class="form-group">
                                 <label for="seachBySubCategory">Sub Category</label>
                                 <select class="form-control" id="seachBySubCategory" wire:model="ql_search_subcategory">
@@ -442,7 +442,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-sm-6">
                             <div class="form-group">
                                 <!-- <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control"> -->
                                 <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Apply & Search Item</button>
