@@ -41,6 +41,7 @@ use App\Models\InventorySubCategory;
 use App\Models\InventoryBrand;
 use App\Models\MaterialRequest;
 use App\Models\VehicleMakes;
+use App\Models\VehicleModels;
 
 use Carbon\Carbon;
 use Session;
@@ -57,16 +58,16 @@ class Jobcard extends Component
 {
     use WithFileUploads;
     public $searchby=true, $searchByMobileNumber=false, $searchByPlateNumber=false, $searchByChaisis=false, $searchByChaisisForm=false, $showForms=false, $showSearchButton=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $showaddmorebtn=false, $showPackageList=false, $selectPackageMenu=false;
-    public $editCustomerAndVehicle=false, $showCustomerForm=false, $showVehicleAvailable=false, $showSearchByPlateNumber=false;
-    public $updateVehicleFormBtn = false, $otherVehicleDetailsForm=false, $selectedCustomerVehicle=false;
+    public $editCustomerAndVehicle=false, $showCustomerForm=false, $showVehicleAvailable=false, $showPlateNumber=false;
+    public $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $otherVehicleDetailsForm=false, $selectedCustomerVehicle=false;
     public $showServiceGroup = false, $showSectionsList=false, $selectedSectionName;
     public $showDiscountGroup=false, $showDiscountGroupForm=false, $updateDiscountGroupFormDiv=false, $showSaveCustomerButton=false, $sisterCompanies=false, $listCustomerDiscontGroups;
     public $selectedVehicleInfo;
 
     //FormValues
-    public $customer_id, $name, $email, $customer_type=23, $customer_id_image;
-    public $mobile, $plate_country = 'AE', $plate_state, $plateEmiratesCategories=[], $editPlateEmiratesCategories=[], $plateEmiratesCodes=[], $editplateEmiratesCodes=[], $plate_category, $plate_code, $plate_number;
-    public $plate_number_final, $vehicle_image,$listVehiclesMake, $vehicle_type, $make, $vehiclesModelList, $model, $chassis_number,$vehicle_km,$plate_number_image,$chaisis_image, $selected_vehicle_id, $propertyCode;
+    public $customer_id, $customer_code, $name, $email, $customer_type=23, $customer_id_image;
+    public $mobile, $plate_country = 'AE', $plate_state, $plateEmiratesCategories=[], $editPlateEmiratesCategories=[], $addPlateEmiratesCategories = [], $plateEmiratesCodes=[], $editplateEmiratesCodes=[], $addplateEmiratesCodes=[], $plate_category, $plate_code, $plate_number;
+    public $plate_number_final, $vehicle_image,$listVehiclesMake, $vehicle_type, $make, $vehiclesModelList=[], $model, $chassis_number,$vehicle_km,$plate_number_image,$chaisis_image, $selected_vehicle_id, $propertyCode;
 
     //ListValues
     public $customers, $countryLists, $stateList, $customerTypeList, $vehicleTypesList, $servicesGroupList;
@@ -85,16 +86,17 @@ class Jobcard extends Component
     public $servicePackage, $packagePriceUpdate, $servicePackageAddon, $showPackageAddons=false;
     public $showCartSummary=false, $editCustomerVehicle=false, $addNewCustomerVehicle=false;
     public $edit_mobile, $edit_name, $edit_email, $edit_plate_number_image, $edit_plate_country, $edit_plate_state, $edit_plate_category, $edit_plate_code, $edit_plate_number, $edit_vehicle_image, $edit_vehicle_type, $edit_make, $edit_model, $edit_chaisis_image, $edit_chassis_number, $edit_vehicle_km;
-    public $add_plate_number_image, $add_plate_country, $add_plate_state, $add_plate_code, $add_plate_number, $add_vehicle_image, $add_vehicle_type, $add_make, $add_model, $add_chaisis_image, $add_chassis_number, $add_vehicle_km;
+    public $add_plate_number_image, $add_plate_country = 'AE', $add_plate_state, $add_plate_category, $add_plate_code, $add_plate_number, $add_vehicle_image, $add_vehicle_type, $add_make, $add_model, $add_chaisis_image, $add_chassis_number, $add_vehicle_km;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
     public $totalDiscount;
     public $selectedPackage, $selectedPackageItems;
     public $selectServiceItems;
     public $staffavailable;
 
-    public $quickLubeItemsList,$serviceItemsList=[], $quickLubeItemSearch='', $qlSearchItems=false, $itemQlCategories=[], $itemQlSubCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
+    public $quickLubeItemsList,$serviceItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $qlSearchItems=false, $itemQlCategories=[], $itemQlSubCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
     public $item_search_category, $itemCategories=[], $item_search_subcategory, $itemSubCategories =[], $item_search_brand, $itemBrandsLists=[], $itemSearchName, $ql_item_qty;
     public $editTenantCode, $discountCardApplyForm=false, $discountForm=false, $discountSearch=false;
+    public $searchByMobileNumberBtn=false,$searchByPlateBtn=false, $searchByChaisisBtn=false;
 
     function mount( Request $request) {
         $vehicle_id = $request->vehicle_id;
@@ -117,14 +119,12 @@ class Jobcard extends Component
 
 
     public function render(){
-        //Get all state List
-        //dd($this);
-        $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
-        if($this->showSearchByPlateNumber)
+        if($this->showPlateNumber)
         {
+            //Get all state List
+            $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
             if($this->plate_state)
             {
-                //dd($this->plate_state);
                 switch ($this->plate_state) {
                     case 'Abu Dhabi':
                         $plateStateCode = 1;
@@ -171,100 +171,39 @@ class Jobcard extends Component
                     ])->get();
                 }
             }
-        }
-        
-        if($this->edit_plate_state)
-        {
-            switch ($this->edit_plate_state) {
-                case 'Abu Dhabi':
-                    $editPlateStateCode = 1;
-                    $this->edit_plate_category = '242';
-                    break;
-                case 'Dubai':
-                    $editPlateStateCode = 2;
-                    $this->edit_plate_category = '1';
-                    break;
-                case 'Sharjah':
-                    $editPlateStateCode = 3;
-                    $this->edit_plate_category = '103';
-                    break;
-                case 'Ajman':
-                    $editPlateStateCode = 4;
-                    $this->edit_plate_category = '122';
-                    break;
-                case 'Umm Al-Qaiwain':
-                    $editPlateStateCode = 5;
-                    $this->edit_plate_category = '134';
-                    break;
-                case 'Ras Al-Khaimah':
-                    $editPlateStateCode = 6;
-                    $this->edit_plate_category = '147';
-                    break;
-                case 'Fujairah':
-                    $editPlateStateCode = 7;
-                    $this->edit_plate_category = '169';
-                    break;
-                
-                default:
-                    $editPlateStateCode = 1;
-                    $this->edit_plate_category = '242';
-                    break;
-            }
-            
-            $this->editPlateEmiratesCategories = PlateEmiratesCategory::where([
-                    'plateEmiratesId'=>$editPlateStateCode,'is_active'=>1,
-                ])->get();
-            //dd($plateStateCode);
-            if($this->edit_plate_category){
-                $this->editplateEmiratesCodes = PlateCode::where([
-                    'plateEmiratesId'=>$editPlateStateCode,'plateCategoryId'=>$this->edit_plate_category,'is_active'=>1,
-                ])->get();
-            }
-
-        }
-        if($this->otherVehicleDetailsForm){
             //Get all veicle type list
             $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
-
             //Get Vehicle Make List
             $this->listVehiclesMake = VehicleMakes::get();
-            
-            $this->vehiclesModelList=[];
             if($this->make){
-                
-                $vehicleModelsResponse = Http::get("https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/".$this->make."?format=json")->body();
-                $vehicleModelsResults = json_decode($vehicleModelsResponse,true);
-                $this->vehiclesModelList = $vehicleModelsResults['Results'];
-            }
-
-            if($this->edit_make){
-                $vehicleModelsResponse = Http::get("https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/".$this->edit_make."?format=json")->body();
-                $vehicleModelsResults = json_decode($vehicleModelsResponse,true);
-                //dd($vehicleModelsResults);
-                $this->vehiclesModelList = $vehicleModelsResults['Results'];
-            }
-
-            if($this->add_make){
-                $vehicleResponse = Http::get("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/all-vehicles-model/records?select=model,make&where=make%20like%20%22".$this->add_make."%22&limit=100");
-                $vehicleResponse = $vehicleResponse->body();
-                $vehicleResponse = json_decode($vehicleResponse);
-                $this->vehiclesModelList = (array)$vehicleResponse->results;
+                $this->vehiclesModelList = VehicleModels::where(['vehicle_make_id'=>$this->make])->get();
             }
         }
         else
         {
-            $this->vehicleTypesList=null;
-            $this->listVehiclesMake=null;
-            $this->vehiclesModelList=null;
-
+            $this->stateList = Null;
+            $this->vehicleTypesList = Null;
+            $this->listVehiclesMake = Null;
+            $this->plateEmiratesCategories=[];
+            $this->plateEmiratesCodes=[];
         }
 
-        $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>Session::get('user')->station_code])->get();
+        if($this->selectedCustomerVehicle)
+        {
+            $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>Session::get('user')->station_code])->get();
+        }
+        else
+        {
+            $this->servicesGroupList = null;
+        }
 
-        //Get Service Group
         if($this->selected_vehicle_id && $this->service_group_code)
         {
             $this->sectionsLists = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')->where(['DevelopmentCode'=>$this->service_group_code])->get();
+        }
+        else
+        {
+            $this->sectionsLists = null;
         }
 
         //Get Service List Prices
@@ -286,23 +225,24 @@ class Jobcard extends Component
             }
             $this->sectionServiceLists = $sectionServicePriceLists;
         }
-        
-        
-        $this->servicePackage = ServicePackage::with(['packageDetails'])->get();
 
-        //QuickLubbeItems
-        //dd($this->service_group_id);
+
         if($this->service_group_id==37 || $this->selectServiceItems)
         {
+            $this->qlFilterOpen=true;
             $this->itemQlCategories = ItemCategories::with(['subCategoryList'])->get();
             if($this->ql_search_category){
                 $this->itemQlSubCategories = InventorySubCategory::where(['CategoryId'=>$this->ql_search_category])->get();
             }
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1])->get();
-
         }
-
-
+        else
+        {
+            $this->qlFilterOpen=false;
+            $this->itemQlCategories = [];
+            $this->itemQlSubCategories = [];
+            $this->qlBrandsLists = [];
+        }
 
         if($this->qlSearchItems)
         {
@@ -339,11 +279,13 @@ class Jobcard extends Component
             //dd($this->quickLubeItemsList);
             $this->dispatchBrowserEvent('scrolltop');
         }
-        
+        else
+        {
+            $this->quickLubeItemsList=null;
+        }
 
 
 
-        $this->dispatchBrowserEvent('loadServiceGroups');
         return view('livewire.jobcard');
     }
 
@@ -417,20 +359,29 @@ class Jobcard extends Component
                 $this->searchByMobileNumber=true;
                 $this->showByMobileNumber=true;
                 $this->showSearchByMobileNumber=true;
-                $this->showSearchByPlateNumber=false;
+                $this->showPlateNumber=false;
+                $this->searchByMobileNumberBtn=true;
+                $this->searchByPlateBtn=false;
+                $this->searchByChaisisBtn=false;
                 break;
             case '2':
                 $this->searchByPlateNumber=true;
                 $this->showSearchByMobileNumber=false;
-                $this->showSearchByPlateNumber=true;
+                $this->showPlateNumber=true;
                 $this->showSearchByPlateNumberButton=true;
+                $this->searchByMobileNumberBtn=false;
+                $this->searchByPlateBtn=true;
+                $this->searchByChaisisBtn=false;
                 break;
             case '3':
                 $this->searchByChaisis=true;
                 $this->searchByChaisisForm=true;
                 $this->showSearchByMobileNumber=false;
-                $this->showSearchByPlateNumber=false;
+                $this->showPlateNumber=false;
                 $this->showSearchByChaisisButton=true;
+                $this->searchByMobileNumberBtn=false;
+                $this->searchByPlateBtn=false;
+                $this->searchByChaisisBtn=true;
                 break;
             
             default:
@@ -449,7 +400,7 @@ class Jobcard extends Component
         {
             $this->showVehicleAvailable=true;
 
-            $this->showSearchByPlateNumber=false;
+            $this->showPlateNumber=false;
             $this->showByMobileNumber=true;
             $this->showCustomerForm=false;
             $this->numberPlateAddForm=false;
@@ -460,7 +411,7 @@ class Jobcard extends Component
         }
         else
         {
-            $this->showSearchByPlateNumber=true;
+            $this->showPlateNumber=true;
             $this->showVehicleAvailable=false;
             $this->showByMobileNumber=true;
             $this->showCustomerForm=true;
@@ -485,12 +436,12 @@ class Jobcard extends Component
         $this->getCustomerVehicleSearch('plate');
         if(count($this->customers)>0)
         {
-            $this->showSearchByPlateNumber=true;
+            $this->showPlateNumber=true;
             $this->showVehicleAvailable=true;
         }
         else
         {
-            $this->showSearchByPlateNumber=true;
+            $this->showPlateNumber=true;
             $this->showVehicleAvailable=false;
             $this->showByMobileNumber=true;
             $this->showCustomerForm=true;
@@ -517,7 +468,7 @@ class Jobcard extends Component
         }
         else
         {
-            $this->showSearchByPlateNumber=true;
+            $this->showPlateNumber=true;
             $this->showVehicleAvailable=false;
             $this->showByMobileNumber=true;
             $this->showCustomerForm=true;
@@ -589,6 +540,7 @@ class Jobcard extends Component
         $customerVehicleData['model']=$this->model;
         $customerVehicleData['plate_country']=$this->plate_country;
         $customerVehicleData['plate_state']=$this->plate_state;
+        $customerVehicleData['plate_category']=$this->plate_category;
         $customerVehicleData['plate_code']=$this->plate_code;
         $customerVehicleData['plate_number']=$this->plate_number;
         $customerVehicleData['plate_number_final']=$this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
@@ -711,16 +663,10 @@ class Jobcard extends Component
         $this->station = $service['station_code'];
         $this->service_search='';
 
-        if($this->service_group_id==37 || $this->selectServiceItems)
-        {
-
-        }
-        else
+        if($this->service_group_id !=37 || $this->qlSearchItems == true)
         {
             $this->qlSearchItems=false;
-            //dd($this->qlSearchItems);
         }
-
 
         $this->showVehicleDiv = false;
         $this->showSearchByPlateNumberDiv=false;
@@ -765,47 +711,58 @@ class Jobcard extends Component
 
 
     public function editCustomer(){
-        //dd($this->selectedVehicleInfo['customerInfoMaster']['TenantCode']);
-        $this->editTenantCode = $this->selectedVehicleInfo['customerInfoMaster']['TenantCode'];
+        
+
         $this->selectedCustomerVehicle=false;
-        $this->editCustomerVehicle=true;
-        $this->edit_mobile = $this->mobile;
-        $this->edit_name = $this->name;
-        $this->edit_email = $this->email;
-        $this->plate_number_image = $this->selectedVehicleInfo['plate_number_image'];
-        //$this->edit_plate_number_image = $this->selectedVehicleInfo['plate_number_image'];
-        //dd($this->edit_plate_country);
-        $this->edit_plate_country = $this->selectedVehicleInfo['plate_country'];
-        $this->edit_plate_category = $this->selectedVehicleInfo['plate_category'];
-        $this->edit_plate_state = $this->selectedVehicleInfo['plate_state'];
-        $this->edit_plate_code = $this->selectedVehicleInfo['plate_code'];
-        $this->edit_plate_number = $this->selectedVehicleInfo['plate_number'];
-        $this->vehicle_image = $this->selectedVehicleInfo['vehicle_image'];
-        $this->edit_vehicle_type = $this->selectedVehicleInfo['vehicle_type'];
-        $this->edit_make = $this->selectedVehicleInfo['make'];
-        $this->edit_model = $this->selectedVehicleInfo['model'];
-        //$this->edit_chaisis_image = $this->selectedVehicleInfo['chaisis_image'];
-        $this->edit_chassis_number = $this->selectedVehicleInfo['chassis_number'];
-        $this->edit_vehicle_km = $this->selectedVehicleInfo['vehicle_km'];
+        $this->showServiceGroup=false;
+        $this->showCheckList=false;
+        $this->showCheckout=false;
+        $this->showPayLaterCheckout=false;
+        $this->successPage=false;
+        $this->showSaveCustomerButton=false;
+
+        $this->mobile = $this->selectedVehicleInfo->customerInfoMaster['Mobile'];
+        $this->name = $this->selectedVehicleInfo->customerInfoMaster['TenantName'];
+        $this->email = $this->selectedVehicleInfo->customerInfoMaster['Email'];
+        $this->customer_id = $this->selectedVehicleInfo->customerInfoMaster['TenantId'];
+        $this->customer_code = $this->selectedVehicleInfo->customerInfoMaster['TenantCode'];
+        $this->plate_country = $this->selectedVehicleInfo->plate_country;
+        $this->plate_state = $this->selectedVehicleInfo->plate_state;
+        $this->plate_category = $this->selectedVehicleInfo->plate_category;
+        $this->plate_code = $this->selectedVehicleInfo->plate_code;
+        $this->plate_number = $this->selectedVehicleInfo->plate_number;
+        $this->vehicle_type = $this->selectedVehicleInfo->vehicle_type;
+        $this->make = $this->selectedVehicleInfo->make;
+        $this->model = $this->selectedVehicleInfo->model;
+        $this->chassis_number = $this->selectedVehicleInfo->chassis_number;
+        $this->vehicle_km = $this->selectedVehicleInfo->vehicle_km;
+        //dd($this->selectedVehicleInfo);
+
+        $this->showForms=true;
+        $this->showByMobileNumber=true;
+        $this->showCustomerForm=true;
+        $this->showPlateNumber=true;
+        $this->searchByChaisis=true;
+        $this->searchByChaisisForm=true;
+        $this->otherVehicleDetailsForm=true;
+        $this->updateVehicleFormBtn=true;
+        $this->cancelEdidAddFormBtn=true;
     }
 
     public function updateVehicleCustomer(){
-
-        
-
         $validatedData = $this->validate([
             //'edit_mobile' => 'required',
             //'edit_name' => 'required',
             //'edit_email' => 'required',
             //'edit_plate_number_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif|max:10048',
-            'edit_plate_country'=>'required',
-            'edit_plate_state'=>'required',
-            'edit_plate_code'=>'required',
-            'edit_plate_number'=>'required',
+            'plate_country'=>'required',
+            'plate_state'=>'required',
+            'plate_code'=>'required',
+            'plate_number'=>'required',
             //'edit_vehicle_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif|max:10048',
-            'edit_vehicle_type' => 'required',
-            'edit_make' => 'required',
-            'edit_model'=> 'required',
+            'vehicle_type' => 'required',
+            'make' => 'required',
+            'model'=> 'required',
         ]);
 
         /*$customerUpdateData['mobile'] = $this->edit_mobile;
@@ -821,83 +778,77 @@ class Jobcard extends Component
         //$insertCustmoerData['customer_type']=isset($this->customer_type)?$this->customer_type:'';
         $customerUpdateData['Active']=1;
         //dd($insertCustmoerData);*/
+        if($this->customer_code){
+            $tenantcode = $this->customer_code;
+            $tenantType = 'T';
+            $category = 'I';
+            $tenantName = isset($this->name)?$this->name:'';
+            $shortName = isset($this->name)?$this->name:'';
+            $mobile = isset($this->mobile)?$this->mobile:'';
+            $email = isset($this->email)?$this->email:'';
+            $active=1;
+            $categoryI=1;
+            $categoryC=1;
+            $paymethod=1;
+            $tenantCode_out= null ;
 
-        $tenantcode = $this->editTenantCode;
-        $tenantType = 'T';
-        $category = 'I';
-        $tenantName = isset($this->edit_name)?$this->edit_name:'';
-        $shortName = isset($this->edit_name)?$this->edit_name:'';
-        $mobile = isset($this->edit_mobile)?$this->edit_mobile:'';
-        $email = isset($this->edit_email)?$this->edit_email:'';
-        $active=1;
-        $categoryI=1;
-        $categoryC=1;
-        $paymethod=1;
-        $tenantCode_out= null ;
-
-        //Call Procedure for Customer Edit
-        $customerSaveResult = DB::select('EXEC CustomerManage @tenantcode = ?, @tenantType = ?, @category = ?, @tenantName = ?, @shortName = ?, @mobile = ?, @email = ?, @active = ?, @paymethod = ?, @tenantCode_out = ?', [
-            $tenantcode,
-            $tenantType,
-            $category,
-            $tenantName,
-            $shortName,
-            $mobile,
-            $email,
-            $active,
-            $paymethod,
-            $tenantCode_out,
-        ]); 
-        $customerSaveResult = (array)$customerSaveResult[0];
-        //$customerId = $customerSaveResult['TenantId'];
-
-
-
-        $imagename['edit_vehicle_image']='';
-        if($this->edit_vehicle_image)
-        {
-            $imagename['edit_vehicle_image'] = $this->edit_vehicle_image->store('vehicle', 'public');
-            $customerVehicleUpdate['vehicle_image']=$imagename['edit_vehicle_image'];
+            //Call Procedure for Customer Edit
+            $customerSaveResult = DB::select('EXEC CustomerManage @tenantcode = ?, @tenantType = ?, @category = ?, @tenantName = ?, @shortName = ?, @mobile = ?, @email = ?, @active = ?, @paymethod = ?, @tenantCode_out = ?', [
+                $tenantcode,
+                $tenantType,
+                $category,
+                $tenantName,
+                $shortName,
+                $mobile,
+                $email,
+                $active,
+                $paymethod,
+                $tenantCode_out,
+            ]); 
         }
+        if($this->selected_vehicle_id){
 
-        $imagename['edit_plate_number_image']='';
-        if($this->edit_plate_number_image)
-        {
-            $imagename['edit_plate_number_image'] = $this->edit_plate_number_image->store('plate_number', 'public');
-            $customerVehicleUpdate['plate_number_image']=$imagename['edit_plate_number_image'];
+            $imagename['vehicle_image']='';
+            if($this->vehicle_image)
+            {
+                $customerVehicleUpdate['vehicle_image']=$this->edit_vehicle_image->store('vehicle', 'public');
+            }
+
+            $imagename['plate_number_image']='';
+            if($this->plate_number_image)
+            {
+                $customerVehicleUpdate['plate_number_image'] = $this->plate_number_image->store('plate_number', 'public');
+            }
+
+            $imagename['chaisis_image']='';
+            if($this->chaisis_image)
+            {
+                $customerVehicleUpdate['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
+            }
+
+            if($this->customer_id)
+            {
+                $customerId = $this->customer_id;
+            }
+            
+
+            $customerVehicleUpdate['customer_id']=$customerId;
+            $customerVehicleUpdate['vehicle_type']=$this->vehicle_type;
+            $customerVehicleUpdate['make']=$this->make;
+            $customerVehicleUpdate['model']=$this->model;
+            $customerVehicleUpdate['plate_country']=$this->plate_country;
+            $customerVehicleUpdate['plate_state']=$this->plate_state;
+            $customerVehicleUpdate['plate_code']=$this->plate_code;
+            $customerVehicleUpdate['plate_number']=$this->plate_number;
+            $customerVehicleUpdate['plate_number_final']=$this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
+            $customerVehicleUpdate['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
+            $customerVehicleUpdate['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
+            $customerVehicleUpdate['created_by']=Session::get('user')->id;
+            //dd($customerVehicleUpdate);
+            CustomerVehicle::where(['id'=>$this->selected_vehicle_id])->update($customerVehicleUpdate);
         }
-
-        $imagename['edit_chaisis_image']='';
-        if($this->edit_chaisis_image)
-        {
-            $imagename['edit_chaisis_image'] = $this->edit_chaisis_image->store('chaisis_image', 'public');
-            $customerVehicleUpdate['chaisis_image']=$imagename['edit_chaisis_image'];
-        }
-
-        if($this->customer_id)
-        {
-            $customerId = $this->customer_id;
-        }
-        
-
-        $customerVehicleUpdate['customer_id']=$customerId;
-        $customerVehicleUpdate['vehicle_type']=$this->edit_vehicle_type;
-        $customerVehicleUpdate['make']=$this->edit_make;
-        $customerVehicleUpdate['model']=$this->edit_model;
-        $customerVehicleUpdate['plate_country']=$this->edit_plate_country;
-        $customerVehicleUpdate['plate_state']=$this->edit_plate_state;
-        $customerVehicleUpdate['plate_code']=$this->edit_plate_code;
-        $customerVehicleUpdate['plate_number']=$this->edit_plate_number;
-        $customerVehicleUpdate['plate_number_final']=$this->edit_plate_state.' '.$this->edit_plate_code.' '.$this->edit_plate_number;
-        $customerVehicleUpdate['chassis_number']=isset($this->edit_chassis_number)?$this->edit_chassis_number:'';
-        $customerVehicleUpdate['vehicle_km']=isset($this->edit_vehicle_km)?$this->edit_vehicle_km:'';
-        $customerVehicleUpdate['created_by']=Session::get('user')->id;
-        //dd($customerVehicleUpdate);
-        CustomerVehicle::where(['id'=>$this->selected_vehicle_id])->update($customerVehicleUpdate);
 
         $this->selectVehicle($customerId,$this->selected_vehicle_id);
-        /*$this->selectedCustomerVehicle=true;
-        $this->newcustomeoperation=false;*/
 
         $this->selectedCustomerVehicle=true;
         $this->editCustomerVehicle=false;
@@ -905,64 +856,105 @@ class Jobcard extends Component
     }
 
     public function closeUpdateVehicleCustomer(){
-        $this->selectedCustomerVehicle=true;
-        $this->editCustomerVehicle=false;
+        $this->selectVehicle($this->customer_id,$this->selected_vehicle_id);
     }
 
     public function addNewVehicle(){
+        
         $this->selectedCustomerVehicle=false;
-        $this->addNewCustomerVehicle=true;
+        $this->showServiceGroup=false;
+        $this->showCheckList=false;
+        $this->showCheckout=false;
+        $this->showPayLaterCheckout=false;
+        $this->successPage=false;
+        $this->showSaveCustomerButton=false;
+        $this->showByMobileNumber=false;
+        $this->updateVehicleFormBtn=false;
+        $this->showCustomerForm=false;
+
+        $this->mobile = $this->selectedVehicleInfo->customerInfoMaster['Mobile'];
+        $this->name = $this->selectedVehicleInfo->customerInfoMaster['TenantName'];
+        $this->email = $this->selectedVehicleInfo->customerInfoMaster['Email'];
+        $this->customer_id = $this->selectedVehicleInfo->customerInfoMaster['TenantId'];
+        $this->customer_code = $this->selectedVehicleInfo->customerInfoMaster['TenantCode'];
+        $this->plate_country = 'AE';
+        $this->plate_state = null;
+        $this->plate_category = null;
+        $this->plate_code = null;
+        $this->plate_number = null;
+        $this->vehicle_type = null;
+        $this->make = null;
+        $this->model = null;
+        $this->chassis_number = null;
+        $this->vehicle_km = null;
+        //dd($this->selectedVehicleInfo);
+
+        $this->showForms=true;
+        $this->showPlateNumber=true;
+        $this->searchByChaisis=true;
+        $this->searchByChaisisForm=true;
+        $this->otherVehicleDetailsForm=true;
+        $this->addVehicleFormBtn=true;
+        $this->cancelEdidAddFormBtn=true;
+
+
     }
     public function closeAddNewVehicleCustomer(){
         $this->selectedCustomerVehicle=true;
         $this->addNewCustomerVehicle=false;
     }
 
-    public function saveAddNewVehicleCustomer(){
-        //d($this);
-
+    public function addNewCustomerVehicle(){
+        
         $validatedData = $this->validate([
             //'edit_plate_number_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif|max:10048',
-            'add_plate_state'=>'required',
-            'add_plate_code'=>'required',
-            'add_plate_number'=>'required',
-            'add_vehicle_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif|max:10048',
-            'add_vehicle_type' => 'required',
-            'add_make' => 'required',
-            'add_model'=> 'required',
+            'plate_country'=>'required',
+            'plate_state'=>'required',
+            'plate_code'=>'required',
+            'plate_number'=>'required',
+            //'vehicle_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif|max:10048',
+            'vehicle_type' => 'required',
+            'make' => 'required',
+            'model'=> 'required',
         ]);
 
         
-        if($this->add_vehicle_image)
+        if($this->vehicle_image)
         {
-            $customerVehicleInsert['vehicle_image'] = $this->add_vehicle_image->store('vehicle', 'public');
+            $customerVehicleInsert['vehicle_image'] = $this->vehicle_image->store('vehicle', 'public');
         }
         if($this->add_plate_number_image)
         {
-            $customerVehicleInsert['plate_number_image'] = $this->add_plate_number_image->store('plate_number', 'public');
+            $customerVehicleInsert['plate_number_image'] = $this->plate_number_image->store('plate_number', 'public');
         }
         if($this->add_chaisis_image)
         {
-            $customerVehicleInsert['chaisis_image'] = $this->add_chaisis_image->store('chaisis_image', 'public');
+            $customerVehicleInsert['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
         }
 
         $customerVehicleInsert['customer_id']=$this->customer_id;
-        $customerVehicleInsert['vehicle_type']=$this->add_vehicle_type;
-        $customerVehicleInsert['make']=$this->add_make;
-        $customerVehicleInsert['model']=$this->add_model;
-        $customerVehicleInsert['plate_state']=$this->add_plate_country;
-        $customerVehicleInsert['plate_state']=$this->add_plate_state;
-        $customerVehicleInsert['plate_code']=$this->add_plate_code;
-        $customerVehicleInsert['plate_number']=$this->add_plate_number;
-        $customerVehicleInsert['plate_number_final']=$this->add_plate_state.' '.$this->add_plate_code.' '.$this->edit_plate_number;
-        $customerVehicleInsert['chassis_number']=isset($this->add_chassis_number)?$this->add_chassis_number:'';
-        $customerVehicleInsert['vehicle_km']=isset($this->add_vehicle_km)?$this->add_vehicle_km:'';
+        $customerVehicleInsert['vehicle_type']=$this->vehicle_type;
+        $customerVehicleInsert['make']=$this->make;
+        $customerVehicleInsert['model']=$this->model;
+        $customerVehicleInsert['plate_country']=$this->plate_country;
+        $customerVehicleInsert['plate_state']=$this->plate_state;
+        $customerVehicleInsert['plate_code']=$this->plate_code;
+        $customerVehicleInsert['plate_number']=$this->plate_number;
+        $customerVehicleInsert['plate_number_final']=$this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
+        $customerVehicleInsert['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
+        $customerVehicleInsert['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
         $customerVehicleInsert['created_by']=Session::get('user')->id;
+        $customerVehicleInsert['is_active']=1;
+        
+
         //dd($customerVehicleInsert);
-        CustomerVehicle::create($customerVehicleInsert);
+        $newcustomer = CustomerVehicle::create($customerVehicleInsert);
+        //dd($newcustomer->id);
+        //dd($this->customer_id.'-'.$newcustomer->id);
+        $this->selectVehicle($this->customer_id,$newcustomer->id);
         //$this->selectedCustomerVehicle=true;
         $this->addNewCustomerVehicle=false;
-        $this->searchResult();
+        //$this->searchResult();
         session()->flash('success', 'New Customer vehicle added Successfully !');
     }
 
@@ -1486,12 +1478,7 @@ class Jobcard extends Component
     public function createJob(){
 
         
-        //dd($this->customerSignature);
         //save checklist
-        
-
-        //$this->job_number = Session::get('user')->stationName['station_code'].'-PSOF-'.Carbon::now()->format('y').Carbon::now()->format('m').Carbon::now()->format('d').'-'.$this->service_group_code.'123';
-        
         $cartDetails = $this->cartItems;
         $this->cartItemCount = count($this->cartItems); 
         $customerVehicleId = $this->selected_vehicle_id;
@@ -1587,6 +1574,7 @@ class Jobcard extends Component
 
         //dd($cartDetails);
         $meterialRequestItems=[];
+        $passmetrialRequest = false;
         foreach($cartDetails as $cartData)
         {
             $serviceItemTax = $cartData->unit_price * (config('global.TAX_PERCENT') / 100);
@@ -1647,6 +1635,8 @@ class Jobcard extends Component
             ]);
             
             if($cartData->cart_item_type==2){
+
+                $passmetrialRequest = true;
                 //$meterialRequestItems= '';
                 $meterialRequestItems = MaterialRequest::create([
                     'sessionId'=>$this->job_number,
@@ -1717,18 +1707,21 @@ class Jobcard extends Component
             $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
         }
 
-        try {
-            //"LL/00004" 'department_code'=>"PP/00037", 'section_code'=>"U-000225",
-            DB::select('EXEC [Inventory].[MaterialRequisition.Update] @companyCode = "PF/00001", @documentCode = "", @documentDate = "'.$customerjobData['job_date_time'].'", @SessionId = "'.$this->job_number.'", @sourceType = "J", @sourceCode = "'.$this->job_number.'", @LandlordCode = "'.Session::get('user')->station_code.'", @propertyCode = "", @UnitCode = "", @IsApprove = "1", @doneby = "'.Session::get('user')->id.'" ');
-        } catch (\Exception $e) {
-            //return $e->getMessage();
+        if($passmetrialRequest==true)
+        {
+            try {
+                DB::select("EXEC [Inventory].[MaterialRequisition.Update] @companyCode = 'PF/00001', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = 'PP/00037', @UnitCode = 'U-000225', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ");
+
+                /*'division_code'=>"LL/00004",
+                'department_code'=>"PP/00037",
+                'section_code'=>"U-000225",*/
+
+
+            } catch (\Exception $e) {
+                //return $e->getMessage();
+            }
         }
 
-        //dd($this);
-        /**/
-
-        /**/
-        //;
 
         $this->showCheckList=false;
         $this->showCheckout =true;

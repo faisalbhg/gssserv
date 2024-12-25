@@ -38,12 +38,12 @@
         </div>
     </div>
 
-    @if($showSearchByPlateNumber || $searchByChaisis)
+    @if($showPlateNumber || $searchByChaisis)
         <div class="row">
             <div class="col-md-12">
                 <div class="card px-3 my-2" >
                     <div class="card-body p-0">
-                        @if($showSearchByPlateNumber)
+                        @if($showPlateNumber)
                         <div class="row">
                             <div class="col-md-12">
                                 
@@ -154,7 +154,7 @@
                                     <select class="form-control selectSearch" id="vehicleMakeInput" wire:model="make" >
                                         <option value="">-Select-</option>
                                         @foreach($listVehiclesMake as $vehicleName)
-                                        <option value="{{$vehicleName['vehicle_name']}}">{{$vehicleName['vehicle_name']}}</option>
+                                        <option value="{{$vehicleName->id}}">{{$vehicleName->vehicle_name}}</option>
                                         @endforeach
                                     </select>
                                     @error('make') <span class="text-danger">{{ $message }}</span> @enderror
@@ -167,7 +167,7 @@
                                     <select class="form-control" id="vehicleModelInput" wire:model="model">
                                         <option value="">-Select-</option>
                                         @foreach($vehiclesModelList as $model)
-                                        <option value="{{$model['Model_Name']}}">{{$model['Model_Name']}}</option>
+                                        <option value="{{$model->id}}">{{$model->vehicle_model_name}}</option>
                                         @endforeach
                                     </select>
                                      @error('model') <span class="text-danger">{{ $message }}</span> @enderror
@@ -214,9 +214,16 @@
                                 @if($updateVehicleFormBtn)
                                 <button type="button" wire:click="updateVehicleCustomer()" class="btn btn-primary btn-sm">Update Vehicle</button>
                                 @endif
+                                @if($addVehicleFormBtn)
+                                <button type="button" wire:click="addNewCustomerVehicle()" class="btn btn-primary btn-sm">Save Vehicle</button>
+                                @endif
+                                @if($cancelEdidAddFormBtn)
+                                <button type="button" wire:click="closeUpdateVehicleCustomer()" class="btn btn-default btn-sm">cancel</button>
+                                @endif
                                 @if($showSaveCustomerButton)
                                 <button type="button" wire:click="saveVehicleCustomer()" class="btn btn-primary btn-sm">Save Vehicle</button>
                                 @endif
+                                    
                             </div>
                         </div>
                     </div>
@@ -377,123 +384,123 @@
             </div>
             @endforeach
             @if($service_group_id==37)
+                @if($qlFilterOpen)
+                    <div class="row">
+                        <div class="col-md-4 d-none">
+                            <div class="form-group">
+                                <label for="kmRange">KM Range</label>
+                                <select class="form-control" id="kmRange" wire:model="ql_km_range">
+                                    <option value="">-Select-</option>
+                                    <option value="1">5K</option>
+                                    <option value="2">10K</option>
+                                    <option value="3">15K</option>
+                                    <option value="4">20K</option>
+                                    <option value="5">25K</option>
+                                </select>
+                                @error('ql_km_range') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
 
-                
-                <div class="row">
-                    <div class="col-md-4 d-none">
-                        <div class="form-group">
-                            <label for="kmRange">KM Range</label>
-                            <select class="form-control" id="kmRange" wire:model="ql_km_range">
-                                <option value="">-Select-</option>
-                                <option value="1">5K</option>
-                                <option value="2">10K</option>
-                                <option value="3">15K</option>
-                                <option value="4">20K</option>
-                                <option value="5">25K</option>
-                            </select>
-                            @error('ql_km_range') <span class="text-danger">{{ $message }}</span> @enderror
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="seachByItemBrand">Items Name</label>
+                                <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="seachByBrand">Brand</label>
+                                <select class="form-control" id="seachByBrand" wire:model="ql_search_brand">
+                                    <option value="">-Select-</option>
+                                    @foreach($qlBrandsLists as $qlBrand)
+                                    <option value="{{$qlBrand->BrandId}}">{{$qlBrand->Description}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="seachByCategory">Category</label>
+                                <select class="form-control" id="seachByCategory" wire:model="ql_search_category">
+                                    <option value="">-Select-</option>
+                                    @foreach($itemQlCategories as $itemQlCategory)
+                                    <option value="{{$itemQlCategory->CategoryId}}">{{$itemQlCategory->Description}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="seachBySubCategory">Sub Category</label>
+                                <select class="form-control" id="seachBySubCategory" wire:model="ql_search_subcategory">
+                                    <option value="">-Select-</option>
+                                    @foreach($itemQlSubCategories as $itemQlSubCategory)
+                                    <option value="{{$itemQlSubCategory->SubCategoryId}}">{{$itemQlSubCategory->Description}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="seachByItemBrand">Items Name</label>
-                            <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <!-- <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control"> -->
+                                <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Apply & Search Item</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="seachByBrand">Brand</label>
-                            <select class="form-control" id="seachByBrand" wire:model="ql_search_brand">
-                                <option value="">-Select-</option>
-                                @foreach($qlBrandsLists as $qlBrand)
-                                <option value="{{$qlBrand->BrandId}}">{{$qlBrand->Description}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="seachByCategory">Category</label>
-                            <select class="form-control" id="seachByCategory" wire:model="ql_search_category">
-                                <option value="">-Select-</option>
-                                @foreach($itemQlCategories as $itemQlCategory)
-                                <option value="{{$itemQlCategory->CategoryId}}">{{$itemQlCategory->Description}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="seachBySubCategory">Sub Category</label>
-                            <select class="form-control" id="seachBySubCategory" wire:model="ql_search_subcategory">
-                                <option value="">-Select-</option>
-                                @foreach($itemQlSubCategories as $itemQlSubCategory)
-                                <option value="{{$itemQlSubCategory->SubCategoryId}}">{{$itemQlSubCategory->Description}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <!-- <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control"> -->
-                            <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Apply & Search Item</button>
-                        </div>
-                    </div>
-                </div>
                 @endif
+
                 @if($qlSearchItems)
-                <div class="row mt-4">
-                    @if (session()->has('cartsuccess'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <span class="alert-icon text-light"><i class="ni ni-like-2"></i></span>
-                            <span class="alert-text text-light"><strong>Success!</strong> {{ Session::get('cartsuccess') }}</span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif
-                    @forelse($quickLubeItemsList as $quickLubeItem)
-                        <?php $qlItemPriceDetails = $quickLubeItem['priceDetails']; ?>
-                        <?php $qlItemDiscountDetails = $quickLubeItem['discountDetails']; ?>
-                        <div class="col-md-4 mb-4">
-                            <div class="card">
-                                <div class="card-header text-center pt-4 pb-3">
-                                    <h6 class="font-weight-normal mt-2" style="text-transform: capitalize;">
-                                        {{ strtolower($qlItemPriceDetails->ItemName)}}
-                                    </h6>
-                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$qlItemPriceDetails->ItemId}}"></textarea >
-                                    <div class="ms-auto">
-                                        @if(!empty($qlItemDiscountDetails))
-                                            <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc,2)}}%off</span>
-                                        @endif
+                    <div class="row mt-4">
+                        @if (session()->has('cartsuccess'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <span class="alert-icon text-light"><i class="ni ni-like-2"></i></span>
+                                <span class="alert-text text-light"><strong>Success!</strong> {{ Session::get('cartsuccess') }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
+                        @forelse($quickLubeItemsList as $quickLubeItem)
+                            <?php $qlItemPriceDetails = $quickLubeItem['priceDetails']; ?>
+                            <?php $qlItemDiscountDetails = $quickLubeItem['discountDetails']; ?>
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <div class="card-header text-center pt-4 pb-3">
+                                        <h6 class="font-weight-normal mt-2" style="text-transform: capitalize;">
+                                            {{ strtolower($qlItemPriceDetails->ItemName)}}
+                                        </h6>
+                                        <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$qlItemPriceDetails->ItemId}}"></textarea >
+                                        <div class="ms-auto">
+                                            @if(!empty($qlItemDiscountDetails))
+                                                <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc,2)}}%off</span>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card-body text-lg-left text-center pt-0">
-                                    <h4 class="my-auto me-2" @if($qlItemDiscountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($qlItemPriceDetails->UnitPrice,2)}}
-                                    </h4>
-                                    @if($qlItemDiscountDetails != null)
-                                    <h4 class="my-auto">
-                                    <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($qlItemPriceDetails->UnitPrice-(($qlItemDiscountDetails->DiscountPerc/100)*$qlItemPriceDetails->UnitPrice),2) }}
-                                    </h4>
-                                    @endif
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <input type="number" class="form-control w-30 m-auto" placeholder="Qty" wire:model.defer="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" />
-                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartItem('{{$qlItemPriceDetails}}','{{$qlItemDiscountDetails}}')">Add Now</a>
+                                    <div class="card-body text-lg-left text-center pt-0">
+                                        <h4 class="my-auto me-2" @if($qlItemDiscountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($qlItemPriceDetails->UnitPrice,2)}}
+                                        </h4>
+                                        @if($qlItemDiscountDetails != null)
+                                        <h4 class="my-auto">
+                                        <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($qlItemPriceDetails->UnitPrice-(($qlItemDiscountDetails->DiscountPerc/100)*$qlItemPriceDetails->UnitPrice),2) }}
+                                        </h4>
+                                        @endif
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <input type="number" class="form-control w-30 m-auto" placeholder="Qty" wire:model.defer="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" />
+                                                <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartItem('{{$qlItemPriceDetails}}','{{$qlItemDiscountDetails}}')">Add Now</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @empty
-                        <div class="alert alert-danger text-white" role="alert">
-                            <strong>Empty!</strong> The Searched items are not in stock!</div>
-                    @endforelse 
-                </div>
-            
+                        @empty
+                            <div class="alert alert-danger text-white" role="alert">
+                                <strong>Empty!</strong> The Searched items are not in stock!</div>
+                        @endforelse 
+                    </div>
+                @endif
             @endif
         </div>
 

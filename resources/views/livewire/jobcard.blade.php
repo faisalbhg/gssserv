@@ -102,7 +102,7 @@
                                 @endif
                                 
                                 <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Edit Customer/Discount/Vehicle" wire:click="editCustomer()">Edit</button>
-                                <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle">New</button>
+                                <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle"  wire:click="addNewVehicle()">New Vehicle</button>
                                 <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
                                 <button class="btn bg-gradient-info btn-sm" wire:click.prevent="openServiceGroup">Services</button>
                                 <br>
@@ -502,7 +502,7 @@
                                         <select class="form-control selectSearch" id="editVehicleMakeInput" wire:model="edit_make" name="edit_make" >
                                             <option value="">-Select-</option>
                                             @foreach($listVehiclesMake as $vehicleName)
-                                            <option value="{{$vehicleName['name']}}">{{$vehicleName['name']}}</option>
+                                            <option value="{{$vehicleName->vehicle_name}}">{{$vehicleName->vehicle_name}}</option>
                                             @endforeach
                                         </select>
                                         @error('edit_make') <span class="text-danger">{{ $message }}</span> @enderror
@@ -514,7 +514,7 @@
 
                                         <select class="form-control" id="editVehicleModelInput" wire:model="edit_model" name="edit_model">
                                             <option value="">-Select-</option>
-                                            @foreach($vehiclesModel as $model)
+                                            @foreach($vehiclesModelList as $model)
                                             <option value="{{$model['Model_Name']}}">{{$model['Model_Name']}}</option>
                                             @endforeach
                                         </select>
@@ -574,23 +574,41 @@
                                                 @endif
                                             </div>
                                         </div>
+                                        <div class="col-md-3 col-sm-6">
+                                            <div class="form-group">
+                                                <label for="addPlateCountry">Country</label>
+                                                <select class="form-control  " wire:model="add_plate_country"  id="addPlateCountry" name="addPlateCountry" aria-invalid="false"><option value="">Select</option>
+                                                    @foreach(config('global.country') as $country)
+                                                    <option value="{{$country['CountryCode']}}">{{$country['CountryName']}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="addPlateEmirates">Plate Emirates</label>
                                                 <select class="form-control  " wire:model="add_plate_state" name="add_plate_state" id="addPlateEmirates" style="padding:0.5rem 0.3rem !important;" >
                                                     <option value="">-Emirates-</option>
                                                     @foreach($stateList as $state)
-                                                    <option value="{{$state->state_name}}">{{$state->state_name}}</option>
+                                                    <option value="{{$state->StateName}}">{{$state->StateName}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-3 col-sm-6">
                                             <div class="form-group">
                                                 <label for="addPlateCode">Plate Code</label>
-                                                <input style="padding:0.5rem 0.3rem !important;" type="text" id="addPlateCode" class="form-control @error('add_plate_code') btn-outline-danger @enderror" wire:model="add_plate_code" name="add_plate_code" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="2" placeholder="Code">
+                                                <select class="form-control  " wire:model="add_plate_code" name="addPlateCode" id="addPlateCode" style="padding:0.5rem 0.3rem !important;" >
+                                                    <option value="">-Code-</option>
+                                                    @foreach($addplateEmiratesCodes as $addplateCode)
+                                                    <option value="{{$addplateCode->plateColorTitle}}">{{$addplateCode->plateColorTitle}}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
+                                        
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="addPlateNumber">Plate Number</label>
@@ -633,7 +651,7 @@
                                         <select class="form-control selectSearch" id="addVehicleMakeInput" wire:model="add_make" name="add_make" >
                                             <option value="">-Select-</option>
                                             @foreach($listVehiclesMake as $vehicleName)
-                                            <option value="{{$vehicleName->vehicle_make}}">{{$vehicleName->vehicle_make}}</option>
+                                            <option value="{{$vehicleName->vehicle_name}}">{{$vehicleName->vehicle_name}}</option>
                                             @endforeach
                                         </select>
                                         @error('add_make') <span class="text-danger">{{ $message }}</span> @enderror
@@ -645,7 +663,7 @@
 
                                         <select class="form-control" id="addVehicleModelInput" wire:model="add_model" name="add_model">
                                             <option value="">-Select-</option>
-                                            @foreach($vehiclesModel as $model)
+                                            @foreach($vehiclesModelList as $model)
                                             <option value="{{$model->model}}">{{$model->model}}</option>
                                             @endforeach
                                         </select>

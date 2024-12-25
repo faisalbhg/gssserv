@@ -46,15 +46,24 @@ class HomePage extends Component
             $customerjobsQuery = CustomerJobCards::with(['customerInfo']);
             if($this->selected_date)
             {
-
+        
                 $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 00:00:00');
                 $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 23:59:59');
-                $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$startDate, $endDate]);
-                $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);
+            }
+            else
+            {
+                $this->selected_date = Carbon::now()->format('Y-m-d');
+                $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 00:00:00');
+                $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 23:59:59');
+
+            }
+
+            $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$startDate, $endDate]);
+            $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);
 
                 //$getCountSalesJobStatus = $getCountSalesJobStatus->where(['job_date_time'=>$this->selected_date]);
                 //$customerjobsQuery = $customerjobsQuery->where(['job_date_time'=>$this->selected_date]);
-            }
+            
             $this->getCountSalesJob = $getCountSalesJobStatus->first();
 
             if($this->filterJobStatus)
