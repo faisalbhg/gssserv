@@ -41,7 +41,7 @@
             <?php $arrayCustomersPendingJobs = []; ?>
             @forelse($pendingCustomersCart as $pendingvehicle)
                     @if(!in_array($pendingvehicle->vehicle_id, $arrayCustomersPendingJobs))
-                        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 mb-xl-0 my-4">
+                        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 my-4">
                             <a href="javascript:;" wire:click="selectPendingVehicle({{$pendingvehicle->customer_id}},{{$pendingvehicle->vehicle_id}})" class="">
                                 <div class="card card-background move-on-hover">
                                     <div class="full-background" style="background-image: url('{{url("public/storage/".$pendingvehicle->vehicleInfo["vehicle_image"])}}')"></div>
