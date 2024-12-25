@@ -42,6 +42,7 @@ use App\Models\InventoryBrand;
 use App\Models\MaterialRequest;
 use App\Models\VehicleMakes;
 use App\Models\VehicleModels;
+use App\Models\ItemMakeModel;
 
 use Carbon\Carbon;
 use Session;
@@ -230,11 +231,10 @@ class Jobcard extends Component
         if($this->service_group_id==37 || $this->selectServiceItems)
         {
             $this->qlFilterOpen=true;
-            $this->itemQlCategories = ItemCategories::with(['subCategoryList'])->get();
-            if($this->ql_search_category){
-                $this->itemQlSubCategories = InventorySubCategory::where(['CategoryId'=>$this->ql_search_category])->get();
-            }
+            $this->itemQlCategories = ItemCategories::where(['show_in'=>'q'])->get();
+            
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1])->get();
+            $this->dispatchBrowserEvent('selectSearchEvent'); 
         }
         else
         {
@@ -244,7 +244,7 @@ class Jobcard extends Component
             $this->qlBrandsLists = [];
         }
 
-        if($this->qlSearchItems)
+        /*if($this->qlSearchItems)
         {
             //dd($this->qlSearchItems);
             $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
@@ -282,7 +282,7 @@ class Jobcard extends Component
         else
         {
             $this->quickLubeItemsList=null;
-        }
+        }*/
 
         if($this->customer_id && $this->selected_vehicle_id){
             $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->get();
@@ -310,6 +310,61 @@ class Jobcard extends Component
 
         $this->qlSearchItems=true;
         
+    }
+
+    public function qlItemkmRange($kmRange)
+    {
+        $validatedData = $this->validate([
+            'ql_search_brand' => 'required',
+        ]);
+        $this->qlSearchItems=true;
+        $qlEngineOilItems = InventoryItemMaster::where(['Active'=>1,'KM'=>$kmRange,'BrandId'=>$this->ql_search_brand])->get();
+        $qlEngineOilItemsList = [];
+        foreach($qlEngineOilItems as $key => $qlEngineOilItem)
+        {
+            $qlEngineOilItemsList[$key]['priceDetails'] = $qlEngineOilItem;
+            if($this->customerDiscontGroupCode){
+                $qlEngineOilItemsList[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlEngineOilItem->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+            }
+            else
+            {
+                $qlEngineOilItemsList[$key]['discountDetails']=null;
+            }
+            //dd($sectionServicePriceLists[$key]);
+        }
+        $this->quickLubeItemsList = $qlEngineOilItemsList;
+        $this->dispatchBrowserEvent('scrolltopQl');
+    }
+
+    public function qlCategorySelect(){
+
+        $this->qlSearchItems=true;
+        $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation'])->where(function ($query) {
+                $query->whereRelation('itemInformation', 'CategoryId', '=', $this->ql_search_category);
+            })->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
+        $qlMakeModelCatItmDetails = [];
+        foreach($qlMakeModelCategoryItems as $key => $qlItemMakeModelItem){
+            foreach($qlItemMakeModelItem->itemInformation as $key => $qlMakeModelCatItm)
+            {
+                $qlMakeModelCatItmDetails[$key]['priceDetails'] = $qlMakeModelCatItm;
+                if($this->customerDiscontGroupCode){
+                    $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlMakeModelCatItm->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+                }
+                else
+                {
+                    $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
+                }
+                //dd($sectionServicePriceLists[$key]);
+            }
+        }
+        $this->quickLubeItemsList = $qlMakeModelCatItmDetails;
+        $this->dispatchBrowserEvent('scrolltopQl');
+    }
+
+    public function searchQlItemkmRange($kmRange)
+    {
+        $this->qlSearchItems=true;
+        $this->quickLubeItemsList = InventoryItemMaster::where(['Active'=>1,'KM'=>$kmRange])->get();
     }
 
     public function openPendingVehicle($customer_id, $vehicle_id){
