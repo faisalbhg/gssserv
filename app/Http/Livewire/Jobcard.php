@@ -94,7 +94,7 @@ class Jobcard extends Component
     public $selectServiceItems;
     public $staffavailable;
 
-    public $quickLubeItemsList,$serviceItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $qlSearchItems=false, $itemQlCategories=[], $itemQlSubCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
+    public $quickLubeItemsList=[],$serviceItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
     public $item_search_category, $itemCategories=[], $item_search_subcategory, $itemSubCategories =[], $item_search_brand, $itemBrandsLists=[], $itemSearchName, $ql_item_qty;
     public $editTenantCode, $discountCardApplyForm=false, $discountForm=false, $discountSearch=false;
     public $searchByMobileNumberBtn=false,$searchByPlateBtn=false, $searchByChaisisBtn=false;
@@ -120,6 +120,8 @@ class Jobcard extends Component
 
 
     public function render(){
+        
+
         if($this->showPlateNumber)
         {
             //Get all state List
@@ -240,49 +242,75 @@ class Jobcard extends Component
         {
             $this->qlFilterOpen=false;
             $this->itemQlCategories = [];
-            $this->itemQlSubCategories = [];
             $this->qlBrandsLists = [];
         }
 
-        /*if($this->qlSearchItems)
+        if($this->showQlItems)
         {
-            //dd($this->qlSearchItems);
-            $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
-            if($this->ql_search_category){
-                $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['CategoryId'=>$this->ql_search_category]);
-            }
-            if($this->ql_search_subcategory){
-                $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['SubCategoryId'=>$this->ql_search_subcategory]);
-            }
-            //dd($this->ql_search_brand);
-            if($this->ql_search_brand){
-                $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['BrandId'=>$this->ql_search_brand]);
-            }
-            if($this->quickLubeItemSearch){
-                $quickLubeItemsNormalList = $quickLubeItemsNormalList->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
-            }
-            $quickLubeItemsNormalList=$quickLubeItemsNormalList->get();
-            $qlItemPriceLists = [];
-            foreach($quickLubeItemsNormalList as $key => $qlItemsList)
+            if($this->showQlCategoryFilterItems)
             {
-                $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
-                if($this->customerDiscontGroupCode){
-                    $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlItemsList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+                $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation'])->where(function ($query) {
+                        $query->whereRelation('itemInformation', 'CategoryId', '=', $this->ql_search_category);
+                    })->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
+
+                $qlMakeModelCatItmDetails = [];
+                foreach($qlMakeModelCategoryItems as $key => $qlItemMakeModelItem){
+                    
+                    foreach($qlItemMakeModelItem->itemInformation as $qlMakeModelCatItm)
+                    {
+                        $qlMakeModelCatItmDetails[$key]['priceDetails'] = $qlMakeModelCatItm;
+                        if($this->customerDiscontGroupCode){
+                            $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlMakeModelCatItm->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+                        }
+                        else
+                        {
+                            $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
+                        }
+                        //dd($sectionServicePriceLists[$key]);
+                    }
                 }
-                else
-                {
-                    $qlItemPriceLists[$key]['discountDetails']=null;
-                }
-                //dd($sectionServicePriceLists[$key]);
+                //dd($qlMakeModelCatItmDetails);
+                $this->quickLubeItemsList = $qlMakeModelCatItmDetails;
             }
-            $this->quickLubeItemsList = $qlItemPriceLists;
-            //dd($this->quickLubeItemsList);
-            //$this->dispatchBrowserEvent('scrolltopQl');
+            else{
+                $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
+                if($this->showQlEngineOilItems){
+                    $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['KM'=>$this->ql_km_range,'BrandId'=>$this->ql_search_brand]);
+                }
+                if($this->quickLubeItemSearch){
+                    $quickLubeItemsNormalList = $quickLubeItemsNormalList->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
+                }
+                $quickLubeItemsNormalList=$quickLubeItemsNormalList->get();
+                $qlItemPriceLists = [];
+                foreach($quickLubeItemsNormalList as $key => $qlItemsList)
+                {
+                    $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
+                    if($this->customerDiscontGroupCode){
+                        $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlItemsList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+                    }
+                    else
+                    {
+                        $qlItemPriceLists[$key]['discountDetails']=null;
+                    }
+                    //dd($sectionServicePriceLists[$key]);
+                }
+                $this->quickLubeItemsList = $qlItemPriceLists;
+            }
+
         }
         else
         {
-            $this->quickLubeItemsList=null;
-        }*/
+            $this->quickLubeItemsList=[];
+        }
+
+
+
+        
+        
+        
+
+
+        
 
         if($this->customer_id && $this->selected_vehicle_id){
             $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->get();
@@ -304,11 +332,12 @@ class Jobcard extends Component
     }
 
     public function searchQuickLubeItem(){
-        /*$validatedData = $this->validate([
-            'ql_km_range' => 'required',
-        ]);*/
+        $validatedData = $this->validate([
+            'quickLubeItemSearch' => 'required',
+        ]);
 
-        $this->qlSearchItems=true;
+        $this->showQlItems=true;
+        $this->showQlCategoryFilterItems=false;
         
     }
 
@@ -317,58 +346,21 @@ class Jobcard extends Component
         $validatedData = $this->validate([
             'ql_search_brand' => 'required',
         ]);
-        $this->qlSearchItems=true;
-        $qlEngineOilItems = InventoryItemMaster::where(['Active'=>1,'KM'=>$kmRange,'BrandId'=>$this->ql_search_brand])->get();
-        $qlEngineOilItemsList = [];
-        foreach($qlEngineOilItems as $key => $qlEngineOilItem)
-        {
-            $qlEngineOilItemsList[$key]['priceDetails'] = $qlEngineOilItem;
-            if($this->customerDiscontGroupCode){
-                $qlEngineOilItemsList[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlEngineOilItem->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
-            }
-            else
-            {
-                $qlEngineOilItemsList[$key]['discountDetails']=null;
-            }
-            //dd($sectionServicePriceLists[$key]);
-        }
-        $this->quickLubeItemsList = $qlEngineOilItemsList;
+        $this->ql_km_range=$kmRange;
+        $this->showQlItems=true;
+        $this->showQlEngineOilItems=true;
+        $this->showQlCategoryFilterItems=false;
+        
         $this->dispatchBrowserEvent('scrolltopQl');
     }
 
     public function qlCategorySelect(){
-
-        $this->qlSearchItems=true;
-        $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation'])->where(function ($query) {
-                $query->whereRelation('itemInformation', 'CategoryId', '=', $this->ql_search_category);
-            })->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
-
-        $qlMakeModelCatItmDetails = [];
-        foreach($qlMakeModelCategoryItems as $key => $qlItemMakeModelItem){
-            
-            foreach($qlItemMakeModelItem->itemInformation as $qlMakeModelCatItm)
-            {
-                $qlMakeModelCatItmDetails[$key]['priceDetails'] = $qlMakeModelCatItm;
-                if($this->customerDiscontGroupCode){
-                    $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlMakeModelCatItm->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
-                }
-                else
-                {
-                    $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
-                }
-                //dd($sectionServicePriceLists[$key]);
-            }
-        }
-        //dd($qlMakeModelCatItmDetails);
-        $this->quickLubeItemsList = $qlMakeModelCatItmDetails;
+        $this->showQlItems=true;
+        $this->showQlCategoryFilterItems=true;
         $this->dispatchBrowserEvent('scrolltopQl');
     }
 
-    public function searchQlItemkmRange($kmRange)
-    {
-        $this->qlSearchItems=true;
-        $this->quickLubeItemsList = InventoryItemMaster::where(['Active'=>1,'KM'=>$kmRange])->get();
-    }
+    
 
     public function openPendingVehicle($customer_id, $vehicle_id){
 
@@ -731,9 +723,9 @@ class Jobcard extends Component
         $this->station = $service['station_code'];
         $this->service_search='';
 
-        if($this->service_group_id !=37 || $this->qlSearchItems == true)
+        if($this->service_group_id !=37 || $this->showQlItems == true)
         {
-            $this->qlSearchItems=false;
+            $this->showQlItems=false;
         }
 
         $this->showVehicleDiv = false;
@@ -758,7 +750,7 @@ class Jobcard extends Component
         $this->showSectionsList=true;
         $this->selectPackageMenu=false;
         $this->selectServiceItems=false;
-        $this->qlSearchItems=false;
+        $this->showQlItems=false;
 
         
         $this->dispatchBrowserEvent('scrolltop');
@@ -1924,7 +1916,7 @@ class Jobcard extends Component
         $this->showPackageList=true;
         $this->selectPackageMenu=true;
         $this->selectServiceItems=false;
-        $this->qlSearchItems=false;
+        $this->showQlItems=false;
         //dd($this->showSectionsList);
 
         $this->service_group_id = null;
@@ -1978,7 +1970,7 @@ class Jobcard extends Component
         $this->showSectionsList=false;
         $this->showServiceSectionsList=false;
         $this->showPackageList=false;
-        $this->qlSearchItems=false;
+        $this->showQlItems=false;
     }
 
     public function dearchServiceItems(){

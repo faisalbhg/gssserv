@@ -393,19 +393,6 @@
                                 </select>
                             </div>
                         </div>
-                        
-                        <div class="col-md-4 col-sm-6 d-none">
-                            <div class="form-group">
-                                <label for="seachBySubCategory">Sub Category</label>
-                                <select class="form-control" id="seachBySubCategory" wire:model="ql_search_subcategory">
-                                    <option value="">-Select-</option>
-                                    @foreach($itemQlSubCategories as $itemQlSubCategory)
-                                    <option value="{{$itemQlSubCategory->SubCategoryId}}">{{$itemQlSubCategory->Description}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        
                     </div>
 
                     <div class="row">
@@ -414,6 +401,7 @@
                                 <label for="seachByItemBrand">Items Name</label>
                                 <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
                             </div>
+                            @error('quickLubeItemSearch') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="col-md-4 col-sm-4">
                             <label></label>
@@ -425,7 +413,7 @@
                     </div>
                 @endif
 
-                @if($qlSearchItems)
+                @if($showQlItems)
                     <div class="row mt-4"  id="serviceQlItems">
                         @if (session()->has('cartsuccess'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
