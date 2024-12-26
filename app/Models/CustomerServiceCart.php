@@ -52,7 +52,7 @@ class CustomerServiceCart extends Model
 
     public function vehicleInfo()
     {
-        return $this->belongsTo(CustomerVehicle::class,'vehicle_id','id');
+        return $this->belongsTo(CustomerVehicle::class,'vehicle_id','id')->with(['makeInfo','modelInfo']);
     }
 
     

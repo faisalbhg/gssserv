@@ -66,5 +66,12 @@ class CustomerVehicle extends Model
     {
         return $this->belongsTo(VehicleModels::class,'model','id');
     }
+
+    public function customerDiscountLists()
+    {
+        return $this->hasMany(CustomerDiscountGroup::class,'customer_id','customer_id');
+    }
+
+    
     
 }

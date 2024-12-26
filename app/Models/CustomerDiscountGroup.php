@@ -19,6 +19,8 @@ class CustomerDiscountGroup extends Model
         'discount_card_imgae',
         'discount_card_number',
         'discount_card_validity',
+        'employee_code',
+        'employee_name',
         'is_active',
         'is_default',
         'is_deleted',

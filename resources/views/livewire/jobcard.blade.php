@@ -77,7 +77,6 @@
                         <div class="card card-profile card-plain">
                             <div class="card-body text-left p-0">
                                 <div class="p-md-0 pt-3">
-                                    
                                     <h5 class="font-weight-bolder mb-0">{{$selectedVehicleInfo['plate_number_final']}}</h5>
                                     <p class="text-uppercase text-sm font-weight-bold mb-2">{{isset($selectedVehicleInfo->makeInfo)?$selectedVehicleInfo->makeInfo['vehicle_name']:''}}, {{isset($selectedVehicleInfo->modelInfo['vehicle_model_name'])?$selectedVehicleInfo->modelInfo['vehicle_model_name']:''}}</p>
                                 </div>
@@ -100,20 +99,65 @@
                                 @if($selectedVehicleInfo['vehicle_km'])
                                 <b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
                                 @endif
-                                
-                                <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Edit Customer/Discount/Vehicle" wire:click="editCustomer()">Edit</button>
-                                <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle"  wire:click="addNewVehicle()">New Vehicle</button>
-                                <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
-                                <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
-                                <br>
-                                @if($customerDiscontGroupCode)
-                                <button class="btn bg-gradient-info text-white ms-0 py-1 px-3 m-0" wire:click.prevent="applyDiscountGroup()">Apply {{$customerDiscontGroupCode}} Discount Group</button> 
-                                <button type="button" wire:click="removeDiscount()" class="btn btn-danger btn-simple btn-lg mb-0 p-1">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                                @endif
+                                <div>
+                                    <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Edit Customer/Discount/Vehicle" wire:click="editCustomer()">Edit</button>
+                                    <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle"  wire:click="addNewVehicle()">New Vehicle</button>
+                                    <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
+                                    <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
+                                    <br>
+                                    <!-- @if($customerDiscontGroupCode)
+                                    <button class="btn bg-gradient-info text-white ms-0 py-1 px-3 m-0" wire:click.prevent="applyDiscountGroup()">Apply {{$customerDiscontGroupCode}} Discount Group</button> 
+                                    <button type="button" wire:click="removeDiscount()" class="btn btn-danger btn-simple btn-lg mb-0 p-1">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                    @endif -->
+                                </div>
+                                @if(count($selectedVehicleInfo['customerDiscountLists'])>0)
+                                <div class="row">
+                                    @forelse($selectedVehicleInfo['customerDiscountLists'] as $customerDiscount)
+                                    <div class="col-4">
+                                        <div class="card">
+                                            <div class="card-body pt-2">
+                                                
+                                                <a href="javascript:;" class="card-title h5 d-block text-darker text-capitalize">
+                                                    {{strtolower($customerDiscount->discount_title)}}
+                                                </a>
+                                                @if($customerDiscount->discount_id==8 || $customerDiscount->discount_id==9)
+                                                    <div class="author align-items-center">
+                                                        <div class="name ps-3">
+                                                            <span>{{strtolower($customerDiscount->employee_name)}}</span>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="author align-items-center">
+                                                        <img src="{{url("public/storage/".$customerDiscount->discount_card_imgae)}}" alt="..." class="avatar shadow">
+                                                        <div class="name ps-3">
+                                                            <span>{{$customerDiscount->discount_card_number}}</span>
+                                                            <div class="stats">
+                                                                <small>Expired in: <?php $end = \Carbon\Carbon::parse($customerDiscount->discount_card_validity);?>
+                                                                {{ \Carbon\Carbon::now()->diffInDays($end) }} Days</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                
+                                                @endif
+                                                
+                                                @if($customerDiscontGroupId!=$customerDiscount->discount_id)
+                                                <button class="btn bg-gradient-success btn-sm" wire:click.prevent="applyDiscountGroup({{$customerDiscount}})"><i class="fa-solid fa-check fa-xl"></i> Apply Now</button>
+                                                @else
+                                                <button class="btn bg-gradient-danger btn-sm" wire:click.prevent="removeDiscount()"><i class="fa-solid fa-check"></i>Remove</button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    @empty
 
-                                
+                                    @endforelse
+                                    
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>

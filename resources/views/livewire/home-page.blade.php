@@ -54,7 +54,7 @@
                                             @endif
                                         </h4>
                                         <p class="mt-0 pt-0"><small>{{$pendingvehicle->customerInfo['Email']}}, {{$pendingvehicle->customerInfo['Mobile']}}</small></p>
-                                        <p class="mb-0">{{$pendingvehicle->vehicleInfo['make']}}, {{$pendingvehicle->vehicleInfo['model']}}</p>
+                                        <p class="mb-0">{{$pendingvehicle->vehicleInfo['makeInfo']['vehicle_name']}}, {{$pendingvehicle->vehicleInfo['modelInfo']['vehicle_model_name']}}</p>
                                         <p>{{$pendingvehicle->vehicleInfo['plate_number_final']}}</p>
                                         <span class="text-xs">{{ \Carbon\Carbon::parse($pendingvehicle->created_at)->diffForHumans() }} </span>
                                     </div>
