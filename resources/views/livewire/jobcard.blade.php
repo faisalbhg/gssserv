@@ -112,59 +112,56 @@
                                     </button>
                                     @endif -->
                                 </div>
-                                @if(count($selectedVehicleInfo['customerDiscountLists'])>0)
-                                <div class="row">
-                                    @forelse($selectedVehicleInfo['customerDiscountLists'] as $customerDiscount)
-                                    <div class="col-4">
-                                        <div class="card">
-                                            <div class="card-body pt-2">
-                                                
-                                                <a href="javascript:;" class="card-title h5 d-block text-darker text-capitalize">
-                                                    {{strtolower($customerDiscount->discount_title)}}
-                                                </a>
-                                                @if($customerDiscount->discount_id==8 || $customerDiscount->discount_id==9)
-                                                    <div class="author align-items-center">
-                                                        <div class="name ps-3">
-                                                            <span>{{strtolower($customerDiscount->employee_name)}}</span>
-                                                            
-                                                        </div>
-                                                    </div>
-                                                @else
-                                                    <div class="author align-items-center">
-                                                        <img src="{{url("public/storage/".$customerDiscount->discount_card_imgae)}}" alt="..." class="avatar shadow">
-                                                        <div class="name ps-3">
-                                                            <span>{{$customerDiscount->discount_card_number}}</span>
-                                                            <div class="stats">
-                                                                <small>Expired in: <?php $end = \Carbon\Carbon::parse($customerDiscount->discount_card_validity);?>
-                                                                {{ \Carbon\Carbon::now()->diffInDays($end) }} Days</small>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                
-                                                @endif
-                                                
-                                                @if($customerDiscontGroupId!=$customerDiscount->discount_id)
-                                                <button class="btn bg-gradient-success btn-sm" wire:click.prevent="applyDiscountGroup({{$customerDiscount}})"><i class="fa-solid fa-check fa-xl"></i> Apply Now</button>
-                                                @else
-                                                <button class="btn bg-gradient-danger btn-sm" wire:click.prevent="removeDiscount()"><i class="fa-solid fa-check"></i>Remove</button>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    @empty
-
-                                    @endforelse
-                                    
-                                </div>
-                                @endif
+                                
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
+        @if(count($selectedVehicleInfo['customerDiscountLists'])>0)
+            <div class="row">
+                @forelse($selectedVehicleInfo['customerDiscountLists'] as $customerDiscount)
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-body p-2 text-center">
+                            
+                            <a href="javascript:;" class="card-title h5 d-block text-darker text-capitalize">
+                                {{strtolower($customerDiscount->discount_title)}}
+                            </a>
+                            @if($customerDiscount->discount_id==8 || $customerDiscount->discount_id==9)
+                                <div class="author align-items-center">
+                                    <div class="name ps-3">
+                                        <span>{{strtolower($customerDiscount->employee_name)}}</span>
+                                        
+                                    </div>
+                                </div>
+                            @else
+                                <div class="author align-items-center">
+                                    <img src="{{url('public/storage/'.$customerDiscount->discount_card_imgae)}}" alt="..." class="avatar shadow cursor-pointer" wire:click="popUpDiscountImage('{{$customerDiscount->discount_card_imgae}}')">
+                                    <div class="name ps-3">
+                                        <span>{{$customerDiscount->discount_card_number}}</span>
+                                        <div class="stats">
+                                            <small>Expired in: <?php $end = \Carbon\Carbon::parse($customerDiscount->discount_card_validity);?>
+                                            {{ \Carbon\Carbon::now()->diffInDays($end) }} Days</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            @endif
+                            
+                            @if($customerDiscontGroupId!=$customerDiscount->discount_id)
+                            <button class="btn bg-gradient-success btn-sm mb-0" wire:click.prevent="applyDiscountGroup({{$customerDiscount}})"><i class="fa-solid fa-check fa-xl"></i> Apply Now</button>
+                            @else
+                            <button class="btn bg-gradient-danger btn-sm mb-0" wire:click.prevent="removeDiscount()"><i class="fa-solid fa-check"></i>Remove</button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @empty
+                @endforelse
+            </div>
+        @endif
         <div class="row">
             
             <!-- Modal -->
@@ -317,6 +314,33 @@
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="discountImageModal" tabindex="-1" role="dialog" aria-labelledby="discountImageModalLabel" aria-hidden="true" wire:ignore.self style="z-index:99999;" >
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="max-width:90%;">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="discountImageModalLabel">Discount Card Image</h5>
+                            <button type="button" class="btn-close text-dark " data-bs-dismiss="modal" aria-label="Close" style="font-size: 2.125rem !important;" >
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body py-0">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-12 mt-4 mt-lg-0 ">
+                                    <div class="card my-2" ">
+                                        <div class="card-body p-3 cursor-pointer ">
+                                            <img src="{{url('public/storage/'.$shoe_discound_popup_image)}}" class="w-100" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 my-2">
                 @if(count($cartItems)>0)
@@ -458,6 +482,11 @@
                 scrollTop: $("#serviceQlItems").offset().top - 100
             }, 100);
         });
+    });
+
+    
+    window.addEventListener('showPopUpDiscountImage',event=>{
+        $('#discountImageModal').modal('show');
     });
 
     window.addEventListener('openServicesListModal',event=>{

@@ -97,7 +97,7 @@ class Jobcard extends Component
     public $quickLubeItemsList=[],$serviceItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
     public $item_search_category, $itemCategories=[], $item_search_subcategory, $itemSubCategories =[], $item_search_brand, $itemBrandsLists=[], $itemSearchName, $ql_item_qty;
     public $editTenantCode, $discountCardApplyForm=false, $discountForm=false, $discountSearch=false;
-    public $searchByMobileNumberBtn=false,$searchByPlateBtn=false, $searchByChaisisBtn=false;
+    public $searchByMobileNumberBtn=false,$searchByPlateBtn=false, $searchByChaisisBtn=false, $shoe_discound_popup_image;
 
     function mount( Request $request) {
         $vehicle_id = $request->vehicle_id;
@@ -1430,6 +1430,13 @@ class Jobcard extends Component
             }
 
             $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->get();
+        }
+    }
+
+    public function popUpDiscountImage($image){
+        if($image){
+            $this->dispatchBrowserEvent('showPopUpDiscountImage');
+            $this->shoe_discound_popup_image = $image;
         }
     }
 
