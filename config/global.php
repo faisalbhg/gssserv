@@ -226,7 +226,7 @@ return [
         "4"=>"Hight Price",
     ],
     //'bhr-paymenkLink_payment_url'=>'https://bhr.ae/payment-app/api/pbl-payment-panel',
-    'paymenkLink_payment_url'=>'http://172.23.25.95/gssapi/api/new-payment-link',
+    'paymenkLink_payment_url'=>'https://gsstations.ae/gssapi/api/new-payment-link',
     
     'sms'=>[
         "1"=>[

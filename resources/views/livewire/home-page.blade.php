@@ -183,12 +183,12 @@
                         </div>
                     </div>
                     @foreach($customerjobsLists as $custJob)
-                    <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
                         <div class="card h-100" wire:click="dashCustomerJobUpdate('{{$custJob->job_number}}')">
                             <div class="card-body d-flex flex-column justify-content-center text-center">
                                 <div class="d-flex">
                                     <div class="avatar avatar-xxl {{config('global.jobs.job_status_bg')[$custJob->job_status]}} border-radius-md p-2" style="width:inherit; height: inherit;">
-                                        <img src="{{url('storage/'.$custJob->vehicle_image)}}" alt="slack_logo">
+                                        <img src="{{url('public/storage/'.$custJob->vehicle_image)}}" alt="slack_logo">
                                     </div>
                                     <div class="ms-3 my-auto">
                                         <h6>{{$custJob->job_number}}</h6>

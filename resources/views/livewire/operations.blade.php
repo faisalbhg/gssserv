@@ -133,7 +133,7 @@
                     <td>
                       <div class="d-flex px-3 py-1">
                         <div>
-                          <img src="{{url('storage/'.$jobs->vehicle_image)}}" class="avatar me-3" alt="avatar image">
+                          <img src="{{url('public/storage/'.$jobs->vehicle_image)}}" class="avatar me-3" alt="avatar image">
                         </div>
                         <div class="d-flex flex-column justify-content-center">
                           <h6 class="mb-0 text-sm">{{$jobs->make}} - <small>{{$jobs->model}} </small></h6>

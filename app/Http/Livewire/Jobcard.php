@@ -1820,7 +1820,7 @@ class Jobcard extends Component
             $paymentLink = $this->sendPaymentLink($customerjobs);
             $paymentResponse = json_decode((string) $paymentLink->getBody()->getContents(), true);
             $merchant_reference = $paymentResponse['merchant_reference'];
-            
+            //dd($merchant_reference);
             if(array_key_exists('payment_redirect_link', $paymentResponse))
             {
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));

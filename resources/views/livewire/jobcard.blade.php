@@ -124,14 +124,14 @@
                 @forelse($selectedVehicleInfo['customerDiscountLists'] as $customerDiscount)
                 <div class="col-4">
                     <div class="card">
-                        <div class="card-body p-2 text-center">
+                        <div class="card-body p-2 text-left">
                             
                             <a href="javascript:;" class="card-title h5 d-block text-darker text-capitalize">
                                 {{strtolower($customerDiscount->discount_title)}}
                             </a>
                             @if($customerDiscount->discount_id==8 || $customerDiscount->discount_id==9)
                                 <div class="author align-items-center">
-                                    <div class="name ps-3">
+                                    <div class="name ps-0">
                                         <span>{{strtolower($customerDiscount->employee_name)}}</span>
                                         
                                     </div>
