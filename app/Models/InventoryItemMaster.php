@@ -17,4 +17,11 @@ class InventoryItemMaster extends Model
     {
         return $this->belongsTo(ItemCategories::class,'CategoryId','CategoryId');
     }
+
+    public function discountItemPrice()
+    {
+        return $this->belongsTo(InventorySalesPrices::class,'ItemId','ServiceItemId');
+    }
+
+
 }

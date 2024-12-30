@@ -67,7 +67,7 @@ class Jobcard extends Component
 
     //FormValues
     public $customer_id, $customer_code, $name, $email, $customer_type=23, $customer_id_image;
-    public $mobile, $plate_country = 'AE', $plate_state, $plateEmiratesCategories=[], $editPlateEmiratesCategories=[], $addPlateEmiratesCategories = [], $plateEmiratesCodes=[], $editplateEmiratesCodes=[], $addplateEmiratesCodes=[], $plate_category, $plate_code, $plate_number;
+    public $mobile, $plate_country = 'AE', $plate_state=2, $plateEmiratesCategories=[], $editPlateEmiratesCategories=[], $addPlateEmiratesCategories = [], $plateEmiratesCodes=[], $editplateEmiratesCodes=[], $addplateEmiratesCodes=[], $plate_category, $plate_code, $plate_number;
     public $plate_number_final, $vehicle_image,$listVehiclesMake, $vehicle_type, $make, $vehiclesModelList=[], $model, $chassis_number,$vehicle_km,$plate_number_image,$chaisis_image, $selected_vehicle_id, $propertyCode;
 
     //ListValues
@@ -125,6 +125,7 @@ class Jobcard extends Component
         {
             //Get all state List
             $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
+            //dd($this->plate_state);
             if($this->plate_state)
             {
                 switch ($this->plate_state) {
@@ -216,6 +217,7 @@ class Jobcard extends Component
             $sectionServicePriceLists = [];
             foreach($sectionServiceLists as $key => $sectionServiceList)
             {
+                //dd($sectionServiceList);
                 $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
                 if($this->customerDiscontGroupCode){
                     $sectionServicePriceLists[$key]['discountDetails'] = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
@@ -248,9 +250,9 @@ class Jobcard extends Component
         {
             if($this->showQlCategoryFilterItems)
             {
-                $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation'])->where(function ($query) {
-                        $query->whereRelation('itemInformation', 'CategoryId', '=', $this->ql_search_category);
-                    })->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
+                $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation' => function ($query) {
+                        $query->where('CategoryId', '=', $this->ql_search_category);
+                    }])->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
 
                 $qlMakeModelCatItmDetails = [];
                 foreach($qlMakeModelCategoryItems as $key => $qlItemMakeModelItem){
@@ -325,7 +327,7 @@ class Jobcard extends Component
             }
         }
 
-
+        $this->dispatchBrowserEvent('selectSearchEvent'); 
 
         return view('livewire.jobcard');
     }
@@ -1018,12 +1020,26 @@ class Jobcard extends Component
 
     public function addtoCart($servicePrice,$discount)
     {
+        //dd($discount);
         $servicePrice = json_decode($servicePrice);
         $discountPrice = json_decode($discount);
         $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'item_id'=>$servicePrice->ItemId]);
         if($customerBasketCheck->count())
         {
+
             $customerBasketCheck->increment('quantity', 1);
+            if($discountPrice!=null){
+                $cartUpdate['price_id']=$discountPrice->PriceID;
+                $cartUpdate['customer_group_id']=$discountPrice->CustomerGroupId;
+                $cartUpdate['customer_group_code']=$discountPrice->CustomerGroupCode;
+                $cartUpdate['min_price']=$discountPrice->MinPrice;
+                $cartUpdate['max_price']=$discountPrice->MaxPrice;
+                $cartUpdate['start_date']=$discountPrice->StartDate;
+                $cartUpdate['end_date']=$discountPrice->EndDate;
+                $cartUpdate['discount_perc']=$discountPrice->DiscountPerc;
+            }
+            $customerBasketResult =  $customerBasketCheck->first();
+            CustomerServiceCart::find($customerBasketResult->id)->update($cartUpdate);
         }
         else
         {
@@ -1414,8 +1430,26 @@ class Jobcard extends Component
         {
             foreach($this->cartItems as $items)
             {
-                $discountSalePrice = LaborItemMaster::join('Labor.SalesPrice as lsp', 'lsp.ServiceItemId', '=', 'Labor.ItemMaster.ItemId')->where(['Labor.ItemMaster.SectionCode'=>$items['section_code'],'lsp.CustomerGroupCode'=>$this->customerDiscontGroupCode])->where('lsp.StartDate', '<=', Carbon::now())->where('lsp.EndDate','=',null)->first();
-                //dd($discountSalePrice);
+                if($items->cart_item_type==1){
+                    
+                    $discountSalePriceQuery = LaborItemMaster::with(['discountServicePrice' => function ($query) {
+                        $query->where('CustomerGroupCode', '=', $this->customerDiscontGroupCode);
+                        //$query->where('StartDate', '<=', Carbon::now());
+                        //$query->where('EndDate', '=', null);
+                    }])->where(['ItemId'=>$items->item_id])->first();
+                    $discountSalePrice= $discountSalePriceQuery->discountServicePrice;
+
+                }
+                else if($items->cart_item_type==2)
+                {
+                    $discountSalePriceQuery = InventoryItemMaster::with(['discountItemPrice' => function ($query) {
+                        $query->where('CustomerGroupCode', '=', $this->customerDiscontGroupCode);
+                        //$query->where('StartDate', '<=', Carbon::now());
+                        //$query->where('EndDate', '=', null);
+                    }])->where(['ItemId'=>$items->item_id])->first();
+                    $discountSalePrice= $discountSalePriceQuery->discountItemPrice;
+                }
+
                 if($discountSalePrice){
                     $cartUpdate['price_id']=$discountSalePrice->PriceID;
                     $cartUpdate['customer_group_id']=$discountSalePrice->CustomerGroupId;

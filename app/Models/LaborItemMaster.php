@@ -20,4 +20,12 @@ class LaborItemMaster extends Model
     {
         return $this->hasMany(LaborSalesPrices::class,'ServiceItemCode','ItemCode');
     }
+
+    public function discountServicePrice(){
+        return $this->belongsTo(LaborSalesPrices::class,'ItemId','ServiceItemId');
+    }
+
+    public function discountServicePriceList(){
+        return $this->hasMany(LaborSalesPrices::class,'ServiceItemId','ItemId');
+    }
 }
