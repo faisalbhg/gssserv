@@ -236,7 +236,7 @@ class Jobcard extends Component
             $this->qlFilterOpen=true;
             $this->itemQlCategories = ItemCategories::where(['show_in'=>'q'])->get();
             
-            $this->qlBrandsLists = InventoryBrand::where(['Active'=>1])->get();
+            $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
             $this->dispatchBrowserEvent('selectSearchEvent'); 
         }
         else
