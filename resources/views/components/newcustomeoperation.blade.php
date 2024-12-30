@@ -10,7 +10,7 @@
                                     <label for="mobilenumberInput">Mobile Number </label>
                                     <div class="input-group mb-0">
                                         <span class="input-group-text px-0">+971</span>
-                                        <input class="form-control" placeholder="Mobile Number" type="number" wire:model="mobile" @if(!$editCustomerAndVehicle) wire:keyup="searchResult" @endif name="mobile" id="mobilenumberInput">
+                                        <input class="form-control" placeholder="Mobile Number" type="number" wire:model="mobile" @if(!$editCustomerAndVehicle) wire:keyup="searchResult" @endif name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="9" id="mobilenumberInput">
                                     </div>
                                     @error('mobile') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                 </div>
