@@ -1662,13 +1662,14 @@ class Jobcard extends Component
         if($this->showQLCheckList==true){
             $customerjobData['ql_km_range']=$this->ql_km_range;
         }
-        if($this->customerDiscontGroupCode)
+        //dd($this->customerSelectedDiscountGroup);
+        if($this->customerSelectedDiscountGroup)
         {
-            $customerjobData['customer_discount_id']=$this->customerSelectedDiscountGroup->id;
-            $customerjobData['discount_id']=$this->customerSelectedDiscountGroup->discount_id;
-            $customerjobData['discount_unit_id']=$this->customerSelectedDiscountGroup->discount_unit_id;
-            $customerjobData['discount_code']=$this->customerSelectedDiscountGroup->discount_code;
-            $customerjobData['discount_title']=$this->customerSelectedDiscountGroup->discount_title;
+            $customerjobData['customer_discount_id']=$this->customerSelectedDiscountGroup['id'];
+            $customerjobData['discount_id']=$this->customerSelectedDiscountGroup['discount_id'];
+            $customerjobData['discount_unit_id']=$this->customerSelectedDiscountGroup['discount_unit_id'];
+            $customerjobData['discount_code']=$this->customerSelectedDiscountGroup['discount_code'];
+            $customerjobData['discount_title']=$this->customerSelectedDiscountGroup['discount_title'];
             /*'discount_percentage',
             'discount_amount'*/
         }
@@ -1717,13 +1718,13 @@ class Jobcard extends Component
             $customerJobServiceData['service_item_type']=$cartData->cart_item_type;
             //dd($customerJobServiceData);
 
-            if($this->customerDiscontGroupCode)
+            if($this->customerSelectedDiscountGroup)
             {
-                $customerJobServiceData['customer_discount_id']=$this->customerSelectedDiscountGroup->id;
-                $customerJobServiceData['discount_id']=$this->customerSelectedDiscountGroup->discount_id;
-                $customerJobServiceData['discount_unit_id']=$this->customerSelectedDiscountGroup->discount_unit_id;
-                $customerJobServiceData['discount_code']=$this->customerSelectedDiscountGroup->discount_code;
-                $customerJobServiceData['discount_title']=$this->customerSelectedDiscountGroup->discount_title;
+                $customerJobServiceData['customer_discount_id']=$this->customerSelectedDiscountGroup['id'];
+                $customerJobServiceData['discount_id']=$this->customerSelectedDiscountGroup['discount_id'];
+                $customerJobServiceData['discount_unit_id']=$this->customerSelectedDiscountGroup['discount_unit_id'];
+                $customerJobServiceData['discount_code']=$this->customerSelectedDiscountGroup['discount_code'];
+                $customerJobServiceData['discount_title']=$this->customerSelectedDiscountGroup['discount_title'];
                 $customerJobServiceData['discount_percentage'] = $cartData->discount_perc;
                 $customerJobServiceData['discount_amount'] = round((($cartData->discount_perc/100)*$cartData->unit_price),2);
             }
