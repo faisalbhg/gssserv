@@ -51,7 +51,7 @@
                                     <div class="col-md-3 col-sm-6">
                                         <div class="form-group">
                                             <label for="plateImage">Plate Imgae</label>
-                                            <input type="file" class="form-control" wire:model="plate_number_image" id="plateImage">
+                                            <input type="file" class="form-control" wire:model="plate_number_image" id="plateImage" capture="camera">
                                             @if ($plate_number_image)
                                                 <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                                             @endif
@@ -99,6 +99,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        @error('plate_code') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                     </div>
                                     
                                     <div class="col-md-3 col-sm-6">

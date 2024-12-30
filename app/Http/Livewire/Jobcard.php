@@ -67,7 +67,7 @@ class Jobcard extends Component
 
     //FormValues
     public $customer_id, $customer_code, $name, $email, $customer_type=23, $customer_id_image;
-    public $mobile, $plate_country = 'AE', $plate_state=2, $plateEmiratesCategories=[], $editPlateEmiratesCategories=[], $addPlateEmiratesCategories = [], $plateEmiratesCodes=[], $editplateEmiratesCodes=[], $addplateEmiratesCodes=[], $plate_category, $plate_code, $plate_number;
+    public $mobile, $plate_country = 'AE', $plate_state='Dubai', $plateEmiratesCategories=[], $editPlateEmiratesCategories=[], $addPlateEmiratesCategories = [], $plateEmiratesCodes=[], $editplateEmiratesCodes=[], $addplateEmiratesCodes=[], $plate_category, $plate_code, $plate_number;
     public $plate_number_final, $vehicle_image,$listVehiclesMake, $vehicle_type, $make, $vehiclesModelList=[], $model, $chassis_number,$vehicle_km,$plate_number_image,$chaisis_image, $selected_vehicle_id, $propertyCode;
 
     //ListValues
@@ -430,6 +430,8 @@ class Jobcard extends Component
                 $this->searchByChaisisBtn=false;
                 break;
             case '2':
+                
+                
                 $this->searchByPlateNumber=true;
                 $this->showSearchByMobileNumber=false;
                 $this->showPlateNumber=true;

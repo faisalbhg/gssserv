@@ -531,6 +531,7 @@
             $('#seachByCategory').select2();
             $('#seachBySubCategory').select2();
             $('#seachByBrand').select2();
+            $('#plateCode').select2();
 
             $('#customerTypeSelect').on('change', function (e) {
                 var customerTypeVal = $('#customerTypeSelect').select2("val");
@@ -563,6 +564,10 @@
             $('#seachByBrand').on('change', function (e) {
                 var BrandVal = $('#seachByBrand').select2("val");
                 @this.set('ql_search_brand', BrandVal);
+            });
+            $('#plateCode').on('change', function (e) {
+                var stateCodeVal = $('#plateCode').select2("val");
+                @this.set('plate_code', stateCodeVal);
             });
         });
     });
