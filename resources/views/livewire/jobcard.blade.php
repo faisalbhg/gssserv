@@ -655,6 +655,15 @@ window.addEventListener('imageUpload',event=>{
         //document.body.appendChild(img);
     }
 
+    $('#plateImage').click(function(){
+        $("#plateImageFile").trigger('click');
+    });
+    $('#vehicleImage').click(function(){
+        $("#vehicleImageFile").trigger('click');
+    });
+    $('#chaisisImage').click(function(){
+        $("#chaisisImageFile").trigger('click');
+    });
     $("#upfile1").click(function () {
         $("#file1").trigger('click');
     });

@@ -48,16 +48,23 @@
                             <div class="col-md-12">
                                 
                                 <div class="row mb-0">
-                                    <div class="col-md-3 col-sm-6">
-                                        <div class="form-group">
-                                            <label for="plateImage">Plate Imgae</label>
-                                            <input type="file" class="form-control" wire:model="plate_number_image" id="plateImage" capture="camera">
-                                            @if ($plate_number_image)
-                                                <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
-                                            @endif
+
+                                    <div class="col-2">
+                                        <label></label>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button class="btn btn-icon btn-2 btn-primary float-end" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
                                         </div>
+                                        <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display:none"/>
+                                        @if ($plate_number_image)
+                                            <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
+                                        @endif
+                                        
                                     </div>
-                                    <div class="col-md-3 col-sm-6">
+                                    <div class="col-md-3 col-sm-4">
                                         <div class="form-group">
                                             <label for="plateEmirates">Country</label>
                                             <select class="form-control  " wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
@@ -125,18 +132,21 @@
                         @if($otherVehicleDetailsForm)
                         <div class="row">
                             <div class="col-md-3 col-sm-6">
-                                <div class="form-group">
-                                    <label for="exampleFormControlSelect2">Vehicle Picture</label>
-                                    <input type="file" class="form-control" wire:model="vehicle_image">
-                                    @error('vehicle_image') <span class="text-danger">{{ $message }}</span> @enderror
-                                    
-                                    @if ($vehicle_image)
-                                        
-                                        <img class="img-fluid border-radius-lg w-30" src="{{ $vehicle_image->temporaryUrl() }}">
-                                    @endif
+                                <label for="exampleFormControlSelect2">Vehicle Picture</label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-icon btn-2 btn-primary float-start" id="vehicleImage" type="button">
+                                            <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                        </button>
+                                    </div>
                                 </div>
+                                <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture style="display:none"/>
+                                @if ($vehicle_image)
+                                <img class="img-fluid border-radius-lg w-30" src="{{ $vehicle_image->temporaryUrl() }}">
+                                @endif
                                 
                             </div>
+                            
                             <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleTypeInput">Vehicle Type</label>
@@ -179,14 +189,21 @@
                         <div class="row">
                             @if($searchByChaisisForm)
                                 <div class="col-md-3 col-sm-6">
-                                    <div class="form-group">
-                                        <label for="exampleFormControlSelect2">Chaisis Imgae</label>
-                                        <input type="file" class="form-control" wire:model="chaisis_image">
-                                        @if ($chaisis_image)
-                                            <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button>
-                                        @endif
+                                    <label for="exampleFormControlSelect2">Vehicle Picture</label>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-icon btn-2 btn-primary float-start" id="chaisisImage" type="button">
+                                                <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                            </button>
+                                        </div>
                                     </div>
+                                    <input type="file" id="chaisisImageFile" wire:model="chaisis_image" accept="image/*" capture style="display:none"/>
+                                    @if ($chaisis_image)
+                                        <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button>
+                                    @endif
+                                    
                                 </div>
+                                
                                 <div class="col-md-3 col-sm-6">
                                     <div class="form-group">
                                         <label for="chaisisNumberInput">Chaisis Number</label>

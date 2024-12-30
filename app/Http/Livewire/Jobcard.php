@@ -430,7 +430,7 @@ class Jobcard extends Component
                 $this->searchByChaisisBtn=false;
                 break;
             case '2':
-                
+                $this->dispatchBrowserEvent('imageUpload');
                 
                 $this->searchByPlateNumber=true;
                 $this->showSearchByMobileNumber=false;
@@ -478,6 +478,7 @@ class Jobcard extends Component
         }
         else
         {
+            $this->dispatchBrowserEvent('imageUpload');
             $this->showPlateNumber=true;
             $this->showVehicleAvailable=false;
             $this->showByMobileNumber=true;
