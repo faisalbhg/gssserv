@@ -231,22 +231,14 @@ class Jobcard extends Component
             $this->sectionServiceLists = $sectionServicePriceLists;
         }
 
-
-        if($this->service_group_id==37 || $this->selectServiceItems)
-        {
-            $this->qlFilterOpen=true;
-            $this->itemQlCategories = ItemCategories::where(['show_in'=>'q'])->get();
-            if($this->item_search_category){
-                $this->itemSubCategories = InventorySubCategory::where(['CategoryId'=>$this->item_search_category])->get();
-            }
-            $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
-            $this->dispatchBrowserEvent('selectSearchEvent'); 
-        }
+        
         
         if($this->selectServiceItems)
         {
             $this->itemCategories = ItemCategories::where(['Active'=>1])->get();
-            
+            if($this->item_search_category){
+                $this->itemSubCategories = InventorySubCategory::where(['CategoryId'=>$this->item_search_category])->get();
+            }
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
             $this->dispatchBrowserEvent('selectSearchEvent');
             if($this->showItemsSearchResults){
@@ -281,6 +273,14 @@ class Jobcard extends Component
                 $this->serviceItemsList = $itemPriceLists; 
                 //dd($this->serviceItemsList);
             }
+        }
+        else if($this->service_group_id==37)
+        {
+            $this->qlFilterOpen=true;
+            $this->itemQlCategories = ItemCategories::where(['show_in'=>'q'])->get();
+            
+            $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
+            $this->dispatchBrowserEvent('selectSearchEvent'); 
         }
         else
         {
@@ -846,6 +846,7 @@ class Jobcard extends Component
         if($this->service_group_id !=37 || $this->showQlItems == true)
         {
             $this->showQlItems=false;
+
         }
 
         $this->showVehicleDiv = false;
