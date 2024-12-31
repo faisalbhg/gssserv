@@ -22,9 +22,11 @@ class UserManagement extends Component
 
     public function render()
     {
+        dd(Stationcode::get());
         $data['usersList'] = User::with('stationName')->paginate(10);
         $this->stationsList = Stationcode::all();
         $this->departmentsList = Department::all();
+        dd($data);
         return view('livewire.user-management',$data);
     }
 

@@ -53,7 +53,7 @@
                                         <label></label>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <button class="btn btn-icon btn-2 btn-primary float-end" id="plateImage" type="button">
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
                                                     <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                                 </button>
                                             </div>
@@ -126,6 +126,15 @@
                                 <button type="button" wire:click="clickSearchByPlateNumber()" class="btn btn-primary btn-sm">Search</button>
                             </div>
                         </div>
+                        <div wire:loading wire:target="clickSearchByPlateNumber">
+                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                <div class="la-ball-beat">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
                         @endif
 
 
@@ -144,6 +153,7 @@
                                 @if ($vehicle_image)
                                 <img class="img-fluid border-radius-lg w-30" src="{{ $vehicle_image->temporaryUrl() }}">
                                 @endif
+                                @error('vehicle_image') <span class="text-danger">{{ $message }}</span> @enderror
                                 
                             </div>
                             
@@ -241,7 +251,15 @@
                                 @if($showSaveCustomerButton)
                                 <button type="button" wire:click="saveVehicleCustomer()" class="btn btn-primary btn-sm">Save Vehicle</button>
                                 @endif
-                                    
+                                <div wire:loading wire:target="updateVehicleCustomer,addNewCustomerVehicle,closeUpdateVehicleCustomer,saveVehicleCustomer">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>    
                             </div>
                         </div>
                     </div>
@@ -260,7 +278,7 @@
                     <hr class="m-0">
                 </div>
                 <div class="card-body p-3">
-                    <div class="row">
+                    <div class="row" id="searchVehicleDiv">
                         @foreach($customers as $customer)
                         <div class="col-xl-3 col-md-4 col-sm-6 mb-xl-0 my-4">
                             <a href="javascript:;" wire:click="selectVehicle({{$customer->TenantId}}, {{$customer->id}})" class="">
@@ -275,7 +293,7 @@
                                             @endif
                                         </h4>
                                         <p class="mt-0 pt-0"><small>{{$customer->Email}}, {{$customer->Mobile}}</small></p>
-                                        <p class="mb-0">{{$customer->vehicleName}}, {{$customer->model}}</p>
+                                        <p class="mb-0">{{isset($customer->makeInfo)?$customer->makeInfo['vehicle_name']:''}}, {{isset($customer->modelInfo['vehicle_model_name'])?$customer->modelInfo['vehicle_model_name']:''}}</p>
                                         <p>{{$customer->plate_number_final}}</p>
                                     </div>
                                 </div>
@@ -426,6 +444,15 @@
                             <div class="form-group pt-1">
                                 <!-- <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control"> -->
                                 <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div wire:loading wire:target="searchQuickLubeItem">
+                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                            <div class="la-ball-beat">
+                                <div></div>
+                                <div></div>
+                                <div></div>
                             </div>
                         </div>
                     </div>
@@ -633,7 +660,7 @@
                 @error('item_search_subcategory') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 d-none">
             <div class="form-group">
                 <label for="seachByItemBrand">Brand</label>
                 <select class="form-control" id="seachByItemBrand" wire:model="item_search_brand">
@@ -656,29 +683,41 @@
             
         </div>
     </div>
-    <div class="row mt-4">
-        @forelse($serviceItemsList as $servicesItem)
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                  <div class="card-header text-center pt-4 pb-3">
-                    <h4 class="font-weight-normal mt-2">
-                      {{$servicesItem->ItemName}}
-                    </h4>
-                    <h4 class="font-weight-bold mt-2">
-                      <small>AED</small>{{round($servicesItem->UnitPrice,2)}}
-                    </h4>
-                  </div>
-                  <div class="card-body text-lg-left text-center pt-0">
-                    <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block mt-3 mb-0" wire:click="addtoCartItem('{{$servicesItem}}')">
-                      Buy Now
-                      <i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
-                    </a>
-                  </div>
+    <div wire:loading wire:target="dearchServiceItems,addtoCartItem">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
                 </div>
-              </div>
-        @empty
-            
-        @endforelse 
+            </div>
+        </div>
+    <div class="row mt-4">
+        @if($showItemsSearchResults)
+            @forelse($serviceItemsList as $servicesItem)
+                <?php $itemPriceDetails = $servicesItem['priceDetails']; ?>
+                <?php $itemDiscountDetails = $servicesItem['discountDetails']; ?>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header text-center pt-4 pb-3">
+                            <h4 class="font-weight-normal mt-2">
+                                {{$itemPriceDetails->ItemName}}
+                            </h4>
+                            <h4 class="font-weight-bold mt-2">
+                                <small>AED</small>{{round($itemPriceDetails->UnitPrice,2)}}
+                            </h4>
+                        </div>
+                        <div class="card-body text-lg-left text-center pt-0">
+                            <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block mt-3 mb-0" wire:click="addtoCartItem('{{$itemPriceDetails}}','{{$itemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="alert alert-danger text-white" role="alert">
+                                <strong>Empty!</strong> The Searched items are not in stock!</div>
+            @endforelse 
+        @endif
     </div>
     @endif
     @if($showPackageList)
@@ -1900,9 +1939,11 @@
                 </div>
                 <div class="card-footer text-lg-left text-center pt-0">
                     <div class="d-flex justify-content-center p-2">
+                        @if($mobile)
                         <div class="form-check">
                             <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
                         </div>
+                        @endif
                     
                         <div class="form-check">
                             <a wire:click="completePaymnet('card')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
@@ -1944,9 +1985,11 @@
                 </div>
                 <div class="card-footer text-lg-left text-center pt-0">
                     <div class="d-flex justify-content-center p-2">
+                        @if($mobile)
                         <div class="form-check">
                             <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
                         </div>
+                        @endif
                     
                         <div class="form-check">
                             <a wire:click="completePaymnet('card')" class="btn btn-icon bg-gradient-warning d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
@@ -1965,7 +2008,15 @@
         </div>
     </div>
 @endif
-
+ <div wire:loading wire:target="completePaymnet,payLater">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
 @if($successPage)
     <div class="row mt-3">
         <div class="col-md-12 mb-4" >

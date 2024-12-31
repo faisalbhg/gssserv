@@ -73,4 +73,9 @@ class CustomerJobCards extends Model
         return $this->belongsTo(JobcardChecklistEntries::class,'job_number','job_number');
 
     }
+
+    public function stationInfo()
+    {
+        return $this->belongsTo(Landlord::class,'station','LandlordCode');
+    }
 }

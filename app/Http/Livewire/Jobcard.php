@@ -94,10 +94,11 @@ class Jobcard extends Component
     public $selectServiceItems;
     public $staffavailable,$discountApplyMessage;
 
-    public $quickLubeItemsList=[],$serviceItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
+    public $quickLubeItemsList=[],$serviceItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $showQuickLubeItemSearchItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
     public $item_search_category, $itemCategories=[], $item_search_subcategory, $itemSubCategories =[], $item_search_brand, $itemBrandsLists=[], $itemSearchName, $ql_item_qty;
     public $editTenantCode, $discountCardApplyForm=false, $discountForm=false, $discountSearch=false;
     public $searchByMobileNumberBtn=false,$searchByPlateBtn=false, $searchByChaisisBtn=false, $shoe_discound_popup_image;
+    public $showItemsSearchResults=false;
 
     function mount( Request $request) {
         $vehicle_id = $request->vehicle_id;
@@ -120,7 +121,7 @@ class Jobcard extends Component
 
 
     public function render(){
-        //CustomerDiscountGroup::truncate();
+        //CustomerServiceCart::truncate();
         if($this->showPlateNumber)
         {
             //Get all state List
@@ -235,12 +236,55 @@ class Jobcard extends Component
         {
             $this->qlFilterOpen=true;
             $this->itemQlCategories = ItemCategories::where(['show_in'=>'q'])->get();
-            
+            if($this->item_search_category){
+                $this->itemSubCategories = InventorySubCategory::where(['CategoryId'=>$this->item_search_category])->get();
+            }
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
             $this->dispatchBrowserEvent('selectSearchEvent'); 
         }
+        
+        if($this->selectServiceItems)
+        {
+            $this->itemCategories = ItemCategories::where(['Active'=>1])->get();
+            
+            $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
+            $this->dispatchBrowserEvent('selectSearchEvent');
+            if($this->showItemsSearchResults){
+                $inventoryItemMasterLists = InventoryItemMaster::where('Active','=',1);
+                if($this->item_search_category){
+                    $inventoryItemMasterLists = $inventoryItemMasterLists->where(['CategoryId'=>$this->item_search_category]);
+                }
+                if($this->item_search_subcategory){
+                    $inventoryItemMasterLists = $inventoryItemMasterLists->where(['SubCategoryId'=>$this->item_search_subcategory]);
+                }
+                if($this->item_search_brand){
+                    $inventoryItemMasterLists = $inventoryItemMasterLists->where(['BrandId'=>$this->item_search_brand]);
+                }
+                if($this->itemSearchName){
+                    $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->itemSearchName}%");
+                }
+                $inventoryItemMasterLists=$inventoryItemMasterLists->get();
+                //dd($inventoryItemMasterLists);
+                $itemPriceLists = [];
+                foreach($inventoryItemMasterLists as $key => $itemMasterList)
+                {
+                    $itemPriceLists[$key]['priceDetails'] = $itemMasterList;
+                    if($this->customerDiscontGroupCode){
+                        $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$itemMasterList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+                    }
+                    else
+                    {
+                        $itemPriceLists[$key]['discountDetails']=null;
+                    }
+                    //dd($sectionServicePriceLists[$key]);
+                }
+                $this->serviceItemsList = $itemPriceLists; 
+                //dd($this->serviceItemsList);
+            }
+        }
         else
         {
+            $this->serviceItemsList=[];
             $this->qlFilterOpen=false;
             $this->itemQlCategories = [];
             $this->qlBrandsLists = [];
@@ -248,6 +292,30 @@ class Jobcard extends Component
 
         if($this->showQlItems)
         {
+            if($this->showQuickLubeItemSearchItems)
+            {
+                $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
+                
+                if($this->quickLubeItemSearch){
+                    $quickLubeItemsNormalList = $quickLubeItemsNormalList->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
+                }
+                $quickLubeItemsNormalList=$quickLubeItemsNormalList->get();
+                $qlItemPriceLists = [];
+                foreach($quickLubeItemsNormalList as $key => $qlItemsList)
+                {
+                    $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
+                    if($this->customerDiscontGroupCode){
+                        $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlItemsList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+                    }
+                    else
+                    {
+                        $qlItemPriceLists[$key]['discountDetails']=null;
+                    }
+                    //dd($sectionServicePriceLists[$key]);
+                }
+                $this->quickLubeItemsList = $qlItemPriceLists;
+            }
+
             if($this->showQlCategoryFilterItems)
             {
                 $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation' => function ($query) {
@@ -339,6 +407,7 @@ class Jobcard extends Component
 
         $this->showQlItems=true;
         $this->showQlCategoryFilterItems=false;
+        $this->showQuickLubeItemSearchItems=true;
         
     }
 
@@ -351,6 +420,7 @@ class Jobcard extends Component
         $this->showQlItems=true;
         $this->showQlEngineOilItems=true;
         $this->showQlCategoryFilterItems=false;
+        $this->showQuickLubeItemSearchItems=false;
         
         $this->dispatchBrowserEvent('scrolltopQl');
     }
@@ -358,6 +428,7 @@ class Jobcard extends Component
     public function qlCategorySelect(){
         $this->showQlItems=true;
         $this->showQlCategoryFilterItems=true;
+        $this->showQuickLubeItemSearchItems=false;
         $this->dispatchBrowserEvent('scrolltopQl');
     }
 
@@ -419,6 +490,9 @@ class Jobcard extends Component
         $this->showSaveCustomerButton=false;
         $this->addNewCustomerVehicle=false;
         $this->editCustomerVehicle=false;
+        $this->updateVehicleFormBtn=false;
+        $this->cancelEdidAddFormBtn=false;
+        $this->addVehicleFormBtn=false;
         switch ($searchId) {
             case '1':
                 $this->searchByMobileNumber=true;
@@ -478,6 +552,19 @@ class Jobcard extends Component
         }
         else
         {
+            $this->plate_country = 'AE';
+            $this->plate_state = null;
+            $this->plate_category = null;
+            $this->plate_code = null;
+            $this->plate_number = null;
+            $this->vehicle_type = null;
+            $this->make = null;
+            $this->model = null;
+            $this->chassis_number = null;
+            $this->vehicle_image = null;
+            $this->chaisis_image = null;
+            $this->vehicle_km = null;
+
             $this->dispatchBrowserEvent('imageUpload');
             $this->showPlateNumber=true;
             $this->showVehicleAvailable=false;
@@ -509,6 +596,14 @@ class Jobcard extends Component
         }
         else
         {
+            $this->vehicle_type = null;
+            $this->make = null;
+            $this->model = null;
+            $this->chassis_number = null;
+            $this->vehicle_image = null;
+            $this->chaisis_image = null;
+            $this->vehicle_km = null;
+
             $this->showPlateNumber=true;
             $this->showVehicleAvailable=false;
             $this->showByMobileNumber=true;
@@ -518,6 +613,7 @@ class Jobcard extends Component
             $this->otherVehicleDetailsForm=true;
             $this->showSearchByPlateNumberButton=false;
             $this->showSaveCustomerButton=true;
+            $this->dispatchBrowserEvent('imageUpload');
         }
         $this->dispatchBrowserEvent('selectSearchEvent'); 
         
@@ -536,6 +632,19 @@ class Jobcard extends Component
         }
         else
         {
+            $this->plate_country = 'AE';
+            $this->plate_state = null;
+            $this->plate_category = null;
+            $this->plate_code = null;
+            $this->plate_number = null;
+            $this->vehicle_type = null;
+            $this->make = null;
+            $this->model = null;
+            $this->chassis_number = null;
+            $this->vehicle_image = null;
+            $this->chaisis_image = null;
+            $this->vehicle_km = null;
+
             $this->showPlateNumber=true;
             $this->showVehicleAvailable=false;
             $this->showByMobileNumber=true;
@@ -552,7 +661,6 @@ class Jobcard extends Component
 
     public function saveVehicleCustomer(){
         $validatedData = $this->validate([
-            'customer_type' => 'required',
             'vehicle_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
             'vehicle_type' => 'required',
             'make' => 'required',
@@ -635,7 +743,16 @@ class Jobcard extends Component
         //$this->showVehicleAvailable=true;
 
         //$this->getVehicleCustomer();
-        $this->searchResult();
+        if($this->mobile){
+            $this->searchResult();
+        }
+        else
+        {
+            $this->showPlateNumber=true;
+            $this->showVehicleAvailable=true;
+            $this->getCustomerVehicleSearch('plate');
+            $this->dispatchBrowserEvent('scrollToSearchVehicle'); 
+        }
         session()->flash('success', 'Vehicle is Added  Successfully !');        
     }
 
@@ -654,7 +771,7 @@ class Jobcard extends Component
         }])->get());*/
         //dd(CustomerVehicle::with('customerInfoMaster')->get());
 
-        $customerSearch = CustomerVehicle::with('customerInfoMaster');
+        $customerSearch = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo']);
         if($serachBy=='mobile'){
             /*$customerSearch = $customerSearch->where(function ($query) {
                 $query->whereRelation('customerInfoMaster', 'Mobile', 'like', "%{$this->mobile}%");
@@ -799,6 +916,8 @@ class Jobcard extends Component
         $this->model = $this->selectedVehicleInfo->model;
         $this->chassis_number = $this->selectedVehicleInfo->chassis_number;
         $this->vehicle_km = $this->selectedVehicleInfo->vehicle_km;
+        $this->vehicle_image=null;
+
         //dd($this->selectedVehicleInfo);
 
         $this->showForms=true;
@@ -810,6 +929,7 @@ class Jobcard extends Component
         $this->otherVehicleDetailsForm=true;
         $this->updateVehicleFormBtn=true;
         $this->cancelEdidAddFormBtn=true;
+        $this->dispatchBrowserEvent('imageUpload');
     }
 
     public function updateVehicleCustomer(){
@@ -874,7 +994,7 @@ class Jobcard extends Component
             $imagename['vehicle_image']='';
             if($this->vehicle_image)
             {
-                $customerVehicleUpdate['vehicle_image']=$this->edit_vehicle_image->store('vehicle', 'public');
+                $customerVehicleUpdate['vehicle_image']=$this->vehicle_image->store('vehicle', 'public');
             }
 
             $imagename['plate_number_image']='';
@@ -949,6 +1069,8 @@ class Jobcard extends Component
         $this->make = null;
         $this->model = null;
         $this->chassis_number = null;
+        $this->vehicle_image = null;
+        $this->chaisis_image = null;
         $this->vehicle_km = null;
         //dd($this->selectedVehicleInfo);
 
@@ -959,6 +1081,7 @@ class Jobcard extends Component
         $this->otherVehicleDetailsForm=true;
         $this->addVehicleFormBtn=true;
         $this->cancelEdidAddFormBtn=true;
+        $this->dispatchBrowserEvent('imageUpload');
 
 
     }
@@ -1541,6 +1664,7 @@ class Jobcard extends Component
             $this->showServiceGroup=false;
             $this->cardShow=false;
             //$this->createJob();
+            //dd($this->mobile);
             $this->showCheckout=true;
         }
 
@@ -1847,9 +1971,10 @@ class Jobcard extends Component
         }
         $job_number = $this->job_number;
         
-        $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle'])->where(['job_number'=>$this->job_number])->first();
-
-        $mobileNumber = '971'.substr($customerjobs->customerInfo['Mobile'], -9);
+        $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle','stationInfo'])->where(['job_number'=>$this->job_number])->first();
+        //dd($customerjobs->customerInfo['Mobile']);
+        $mobileNumber = isset($customerjobs->customerInfo['Mobile'])?'971'.substr($customerjobs->customerInfo['Mobile'], -9):null;
+        //dd($mobileNumber);
         //$mobileNumber = substr($customerjobs->mobile, -9);
         $paymentmode = null;
         if($mode=='link')
@@ -1862,8 +1987,9 @@ class Jobcard extends Component
             if(array_key_exists('payment_redirect_link', $paymentResponse))
             {
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
-                
-                $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link'])."&CountryCode=ALL");
+                if($customerjobs->customerInfo['Mobile']!=''){
+                    $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link'])."&CountryCode=ALL");
+                }
 
                 $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send','job_create_status'=>1]);
 
@@ -1888,8 +2014,9 @@ class Jobcard extends Component
         {
             $paymentmode = "O";
             $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>2,'payment_request'=>'card payment','job_create_status'=>1]);
-
-            $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Complete your payment and proceed. Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
+            if($customerjobs->customerInfo['Mobile']!=''){
+                $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Complete your payment and proceed. Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
+            }
 
             CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->delete();
 
@@ -1906,7 +2033,9 @@ class Jobcard extends Component
             $paymentmode = "C";
             $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>3,'payment_request'=>'cash payment','job_create_status'=>1]);
 
-            $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
+            if($customerjobs->customerInfo['Mobile']!=''){
+                $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
+            }
 
             CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->delete();
 
@@ -1977,7 +2106,8 @@ class Jobcard extends Component
                 "city"=>"Bur Dubai",
                 "countryCode"=>"UAE",
                 "orderReference"=>$merchant_reference,
-                "description"=>"GSS Service #".$merchant_reference
+                "description"=>"GSS Service #".$merchant_reference,
+                "station"=>3,
             ];
             //dd(config('global.paymenkLink_payment_url'));
         $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.paymenkLink_payment_url'),$arrData);
@@ -2062,38 +2192,12 @@ class Jobcard extends Component
     }
 
     public function dearchServiceItems(){
+        
         $validatedData = $this->validate([
             'item_search_category' => 'required',
-            'item_search_subcategory' => 'required',
+            //'item_search_subcategory' => 'required',
         ]);
-        $inventoryItemMasterLists = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
-        if($this->item_search_category){
-            $inventoryItemMasterLists = $inventoryItemMasterLists->where(['CategoryId'=>$this->item_search_category]);
-        }
-        if($this->item_search_subcategory){
-            $inventoryItemMasterLists = $inventoryItemMasterLists->where(['SubCategoryId'=>$this->item_search_subcategory]);
-        }
-        if($this->item_search_brand){
-            $inventoryItemMasterLists = $inventoryItemMasterLists->where(['BrandId'=>$this->item_search_brand]);
-        }
-        if($this->itemSearch){
-            $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->itemSearchName}%");
-        }
-        $inventoryItemMasterLists=$inventoryItemMasterLists->get();
-        $itemPriceLists = [];
-        foreach($inventoryItemMasterLists as $key => $itemMasterList)
-        {
-            $itemPriceLists[$key]['priceDetails'] = $itemMasterList;
-            if($this->customerDiscontGroupCode){
-                $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$itemMasterList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
-            }
-            else
-            {
-                $itemPriceLists[$key]['discountDetails']=null;
-            }
-            //dd($sectionServicePriceLists[$key]);
-        }
-        $this->serviceItemsList = $itemPriceLists;
+        $this->showItemsSearchResults=true;
     }
 
     
