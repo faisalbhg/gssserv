@@ -50,15 +50,15 @@
                                 <div class="row mb-0">
 
                                     <div class="col-2">
-                                        <label></label>
-                                        <div class="row">
+                                        <label for="plateImageFile" >Plate Image</label>
+                                        <!-- <div class="row">
                                             <div class="col-md-12">
                                                 <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
                                                     <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                                 </button>
                                             </div>
-                                        </div>
-                                        <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display:none"/>
+                                        </div> -->
+                                        <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture />
                                         @if ($plate_number_image)
                                             <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                                         @endif
@@ -140,16 +140,18 @@
 
                         @if($otherVehicleDetailsForm)
                         <div class="row">
+                            
+
                             <div class="col-md-3 col-sm-6">
-                                <label for="exampleFormControlSelect2">Vehicle Picture</label>
-                                <div class="row">
+                                <label for="vehicleImageFile">Vehicle Image</label>
+                                <!-- <div class="row">
                                     <div class="col-md-12">
                                         <button class="btn btn-icon btn-2 btn-primary float-start" id="vehicleImage" type="button">
                                             <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                         </button>
                                     </div>
-                                </div>
-                                <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture style="display:none"/>
+                                </div> -->
+                                <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture />
                                 @if ($vehicle_image)
                                 <img class="img-fluid border-radius-lg w-30" src="{{ $vehicle_image->temporaryUrl() }}">
                                 @endif
@@ -199,15 +201,15 @@
                         <div class="row">
                             @if($searchByChaisisForm)
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="exampleFormControlSelect2">Vehicle Picture</label>
-                                    <div class="row">
+                                    <label for="chaisisImageFile">Chaisis Picture</label>
+                                    <!-- <div class="row">
                                         <div class="col-md-12">
                                             <button class="btn btn-icon btn-2 btn-primary float-start" id="chaisisImage" type="button">
                                                 <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                             </button>
                                         </div>
-                                    </div>
-                                    <input type="file" id="chaisisImageFile" wire:model="chaisis_image" accept="image/*" capture style="display:none"/>
+                                    </div> -->
+                                    <input type="file" id="chaisisImageFile" wire:model="chaisis_image" accept="image/*" capture  />
                                     @if ($chaisis_image)
                                         <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button>
                                     @endif
@@ -1287,7 +1289,7 @@
         </div>
         @endif
         @if($showQLCheckList)
-        <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-4">
+        <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-4 d-none">
             <div class="card mb-3">
                 <div class="card-header text-left pt-4 pb-3">
                     <h5 class="font-weight-bold mt-2">Interior Cabin Inspection</h5>
@@ -1392,7 +1394,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-4">
+        <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-4 d-none">
             <div class="card mb-3">
                 <div class="card-header text-left pt-4 pb-3">
                     <h5 class="font-weight-bold mt-2">Under Hood Inspection</h5>
@@ -1607,7 +1609,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-4">
+        <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-4 d-none">
             <div class="card mb-3">
                 <div class="card-header text-left pt-4 pb-3">
                     <h5 class="font-weight-bold mt-2">Under Body Inspection</h5>

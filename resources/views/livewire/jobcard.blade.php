@@ -352,7 +352,7 @@
                                     
                                     <div class="card-body p-3 pb-0">
                                         <ul class="list-group">
-                                            <?php $total=0; $totalDiscount=0; ?>
+                                            <?php $total = 0;$totalDiscount=0; ?>
                                             @foreach ($cartItems as $item)
                                                 <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
                                                     
@@ -392,12 +392,13 @@
                                                 <hr class="horizontal dark mt-0 mb-2">
                                                 <?php
                                                 $total = $total+$item->unit_price*$item->quantity;
-                                                $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2)
+                                                $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2);
                                                 ?>
                                             @endforeach
                                             <?php
-                                            $tax = $total * (config('global.TAX_PERCENT') / 100);
-                                            $grand_total = $total+$tax-$totalDiscount;
+                                            $totalAfterDisc = $total - $totalDiscount;
+                                            $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+                                            $grand_total = $totalAfterDisc+$tax;
                                             ?>
                                         </ul>
                                         
@@ -419,6 +420,13 @@
                                     </span>
                                     <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalDiscount,2)}}</span>
                                 </div>
+                                <hr class="horizontal dark my-2">
+                                <div class="d-flex justify-content-between mt-2">
+                                    <span class="mb-2 text-md text-dark text-bold">
+                                    Total:
+                                    </span>
+                                    <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalAfterDisc,2)}}</span>
+                                </div>
                                 <div class="d-flex justify-content-between">
                                     <span class="text-sm">
                                     Taxes:
@@ -428,7 +436,7 @@
                                 <hr class="horizontal dark my-2">
                                 <div class="d-flex justify-content-between mt-2">
                                     <span class="mb-2 text-lg text-dark text-bold">
-                                    Total:
+                                    Grand Total:
                                     </span>
                                     <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($grand_total,2)}}</span>
                                 </div>
@@ -441,6 +449,15 @@
         </div>
         @endif
         
+        <div wire:loading wire:target="submitService">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
         <div wire:loading wire:target="editCustomer,addNewVehicle,clickDiscountGroup,openServiceGroup,selectDiscountGroup,checkStaffDiscountGroup,openServiceGroup,applyDiscountGroup,removeDiscount">
             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                 <div class="la-ball-beat">
@@ -484,6 +501,13 @@
         });
     });
 
+    window.addEventListener('scrollToSearchVehicle',event=>{
+        $(document).ready(function(){
+            $('html, body').animate({
+                scrollTop: $("#searchVehicleDiv").offset().top - 100
+            }, 100);
+        });
+    });
     
     window.addEventListener('showPopUpDiscountImage',event=>{
         $('#discountImageModal').modal('show');
@@ -569,6 +593,8 @@
                 var stateCodeVal = $('#plateCode').select2("val");
                 @this.set('plate_code', stateCodeVal);
             });
+
+
         });
     });
 
@@ -605,55 +631,7 @@ window.addEventListener('showSignature',event=>{
 });
 
 window.addEventListener('imageUpload',event=>{
-    $(document).ready(function(e) {
-        $(".showonhover").click(function(){
-            $("#selectfile").trigger('click');
-        });
-    });
-
-
-    var input = document.querySelector('input[type=file]'); // see Example 4
-
-    input.onchange = function () {
-        var file = input.files[0];
-
-        drawOnCanvas(file);   // see Example 6
-        displayAsImage(file); // see Example 7
-    };
-
-    function drawOnCanvas(file) {
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-        var dataURL = e.target.result,
-        c = document.querySelector('canvas'), // see Example 4
-        ctx = c.getContext('2d'),
-        img = new Image();
-
-        img.onload = function() {
-        c.width = img.width;
-        c.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        };
-
-        img.src = dataURL;
-        };
-
-        reader.readAsDataURL(file);
-    }
-
-    function displayAsImage(file) {
-        var imgURL = URL.createObjectURL(file),
-        img = document.createElement('img');
-
-        img.onload = function() {
-        URL.revokeObjectURL(imgURL);
-        };
-
-        img.src = imgURL;
-        
-        //document.body.appendChild(img);
-    }
+    /*
 
     $('#plateImage').click(function(){
         $("#plateImageFile").trigger('click');
@@ -663,7 +641,7 @@ window.addEventListener('imageUpload',event=>{
     });
     $('#chaisisImage').click(function(){
         $("#chaisisImageFile").trigger('click');
-    });
+    });*/
     $("#upfile1").click(function () {
         $("#file1").trigger('click');
     });
@@ -683,14 +661,10 @@ window.addEventListener('imageUpload',event=>{
         $("#file6").trigger('click');
     });
 
+
+
 });
-window.addEventListener('scrollToSearchVehicle',event=>{
-    $(document).ready(function(){
-        $('html, body').animate({
-            scrollTop: $("#searchVehicleDiv").offset().top - 100
-        }, 100);
-    });
-});
+
 
 </script>
 @endpush

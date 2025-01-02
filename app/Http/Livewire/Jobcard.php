@@ -68,7 +68,7 @@ class Jobcard extends Component
     //FormValues
     public $customer_id, $customer_code, $name, $email, $customer_type=23, $customer_id_image;
     public $mobile, $plate_country = 'AE', $plate_state='Dubai', $plateEmiratesCategories=[], $editPlateEmiratesCategories=[], $addPlateEmiratesCategories = [], $plateEmiratesCodes=[], $editplateEmiratesCodes=[], $addplateEmiratesCodes=[], $plate_category, $plate_code, $plate_number;
-    public $plate_number_final, $vehicle_image,$listVehiclesMake, $vehicle_type, $make, $vehiclesModelList=[], $model, $chassis_number,$vehicle_km,$plate_number_image,$chaisis_image, $selected_vehicle_id, $propertyCode;
+    public $plate_number_final, $vehicle_image_test, $vehicle_image,$listVehiclesMake, $vehicle_type, $make, $vehiclesModelList=[], $model, $chassis_number,$vehicle_km,$plate_number_image,$chaisis_image, $selected_vehicle_id, $propertyCode;
 
     //ListValues
     public $customers, $countryLists, $stateList, $customerTypeList, $vehicleTypesList, $servicesGroupList;
@@ -561,8 +561,8 @@ class Jobcard extends Component
             $this->make = null;
             $this->model = null;
             $this->chassis_number = null;
-            $this->vehicle_image = null;
-            $this->chaisis_image = null;
+            //$this->vehicle_image = null;
+            //$this->chaisis_image = null;
             $this->vehicle_km = null;
 
             $this->dispatchBrowserEvent('imageUpload');
@@ -600,8 +600,8 @@ class Jobcard extends Component
             $this->make = null;
             $this->model = null;
             $this->chassis_number = null;
-            $this->vehicle_image = null;
-            $this->chaisis_image = null;
+            //$this->vehicle_image = null;
+            //$this->chaisis_image = null;
             $this->vehicle_km = null;
 
             $this->showPlateNumber=true;
@@ -641,8 +641,8 @@ class Jobcard extends Component
             $this->make = null;
             $this->model = null;
             $this->chassis_number = null;
-            $this->vehicle_image = null;
-            $this->chaisis_image = null;
+            //$this->vehicle_image = null;
+            //$this->chaisis_image = null;
             $this->vehicle_km = null;
 
             $this->showPlateNumber=true;
@@ -1619,11 +1619,12 @@ class Jobcard extends Component
         //$this->showaddmorebtn = true;
         $cartDetails = $this->cartItems;
         $this->cartItemCount = count($this->cartItems); 
-        $this->total=0;
         
         $generalservice=false;
         $quicklubeservice=false;
         $showchecklist=false;
+        $this->totalDiscount=0;
+        $this->total=0;
         foreach($this->cartItems as $items)
         {
             if($this->station==null){
@@ -1639,6 +1640,7 @@ class Jobcard extends Component
                 $showchecklist=true;
             }
             $this->total = $this->total+($items->quantity*$items->price);
+            $this->totalDiscount = $this->totalDiscount+round((($items->discount_perc/100)*($items->unit_price*$items->quantity)),2);
         }
         
         if($showchecklist==true)
@@ -1669,14 +1671,12 @@ class Jobcard extends Component
             $this->showCheckout=true;
         }
 
-        //dd($this->showQLCheckList);
+        $totalAfterDisc = $this->total - $this->totalDiscount;
+        $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+                                            $grand_total = $totalAfterDisc+$tax;
 
-        
-
-            
-        $this->tax = $this->total * (config('global.TAX_PERCENT') / 100);
-        $this->grand_total = $this->total  * ((100 + config('global.TAX_PERCENT')) / 100);
-
+        $this->tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+        $this->grand_total = $totalAfterDisc+$this->tax;
 
         $this->dispatchBrowserEvent('imageUpload');
         //$this->dispatchBrowserEvent('showSignature'); 
@@ -1686,6 +1686,7 @@ class Jobcard extends Component
         $this->cardShow=false;
         $this->showCheckout=true;*/
         //dd($this->cartItems);
+        //dd($this->total);
     }
 
     public function clickShowSignature()
@@ -1711,7 +1712,7 @@ class Jobcard extends Component
 
     public function createJob(){
 
-        
+        //dd($this->total);
         //save checklist
         $cartDetails = $this->cartItems;
         $this->cartItemCount = count($this->cartItems); 
@@ -1719,11 +1720,23 @@ class Jobcard extends Component
         $customerId = $this->customer_id;
         
         $total=0;
+        $totalDiscount=0;
         $serviceIncludeArray=[];
         $gsQlIn = false;
+        $discountApply=false;
         foreach($cartDetails as $item)
         {
+
             $total = $total+($item->quantity*$item->unit_price);
+            if($item->discount_perc){
+                //dd($item);
+                $discountApply=true;
+                $discountGroupId = $item->customer_group_id;
+                $discountGroupCode = $item->customer_group_code;
+                $discountGroupDiscountPercentage = $item->discount_perc;
+                $discountGroupPrice = $item->customer_id;
+                $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2);
+            }
             if($item->department_code=='PP/00036'  || $item->department_code=='PP/00037')
             {
                 $gsQlIn=true;
@@ -1748,11 +1761,12 @@ class Jobcard extends Component
             $this->showCheckList=false;
             $this->showCheckout =true;
         }
-
-
+        $totalAfterDisc = $total - $totalDiscount;
+        $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+        $grand_total = $totalAfterDisc+$tax;
         
-        $this->tax = $total * (config('global.TAX_PERCENT') / 100);
-        $this->grand_total = $total  * ((100 + config('global.TAX_PERCENT')) / 100);
+        $this->tax = $tax;
+        $this->grand_total = $grand_total;
         $customerjobData = [
             'job_number'=>$this->service_group_code.Carbon::now()->format('y').Carbon::now()->format('m').Carbon::now()->format('d').rand(1,1000),
             'job_date_time'=>Carbon::now(),
@@ -1790,17 +1804,17 @@ class Jobcard extends Component
         if($this->showQLCheckList==true){
             $customerjobData['ql_km_range']=$this->ql_km_range;
         }
-        //dd($this->customerSelectedDiscountGroup);
-        if($this->customerSelectedDiscountGroup)
+        if($discountApply)
         {
-            $customerjobData['customer_discount_id']=$this->customerSelectedDiscountGroup['id'];
-            $customerjobData['discount_id']=$this->customerSelectedDiscountGroup['discount_id'];
-            $customerjobData['discount_unit_id']=$this->customerSelectedDiscountGroup['discount_unit_id'];
-            $customerjobData['discount_code']=$this->customerSelectedDiscountGroup['discount_code'];
-            $customerjobData['discount_title']=$this->customerSelectedDiscountGroup['discount_title'];
-            /*'discount_percentage',
-            'discount_amount'*/
+            //$customerjobData['customer_discount_id']=$this->customerSelectedDiscountGroup['id'];
+            $customerjobData['discount_id']=$discountGroupId;
+            $customerjobData['discount_unit_id']=$discountGroupId;
+            $customerjobData['discount_code']=$discountGroupCode;
+            $customerjobData['discount_title']=$discountGroupCode;
+            $customerjobData['discount_percentage']=$discountGroupDiscountPercentage;
+            $customerjobData['discount_amount']=$totalDiscount;
         }
+        //dd($customerjobData);
         $customerjobId = CustomerJobCards::create($customerjobData);
             $this->job_number = 'JOB-'.Session::get('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $customerjobId->id);
 
@@ -1845,8 +1859,19 @@ class Jobcard extends Component
             $customerJobServiceData['extra_note']=$cartData->extra_note;
             $customerJobServiceData['service_item_type']=$cartData->cart_item_type;
             //dd($customerJobServiceData);
+            if($cartData->discount_perc){
+                //dd($item);
+                
+                //$customerJobServiceData['customer_discount_id']=$this->customerSelectedDiscountGroup['id'];
+                $customerJobServiceData['discount_id']=$cartData->customer_group_id;
+                $customerJobServiceData['discount_unit_id']=$cartData->customer_group_id;
+                $customerJobServiceData['discount_code']=$cartData->customer_group_code;
+                $customerJobServiceData['discount_title']=$cartData->customer_group_code;
+                $customerJobServiceData['discount_percentage'] = $cartData->discount_perc;
+                $customerJobServiceData['discount_amount'] = round((($cartData->discount_perc/100)*($cartData->unit_price*$item->quantity)),2);
+            }
 
-            if($this->customerSelectedDiscountGroup)
+            /*if($this->customerSelectedDiscountGroup)
             {
                 $customerJobServiceData['customer_discount_id']=$this->customerSelectedDiscountGroup['id'];
                 $customerJobServiceData['discount_id']=$this->customerSelectedDiscountGroup['discount_id'];
@@ -1855,7 +1880,7 @@ class Jobcard extends Component
                 $customerJobServiceData['discount_title']=$this->customerSelectedDiscountGroup['discount_title'];
                 $customerJobServiceData['discount_percentage'] = $cartData->discount_perc;
                 $customerJobServiceData['discount_amount'] = round((($cartData->discount_perc/100)*$cartData->unit_price),2);
-            }
+            }*/
             
             $customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
             
