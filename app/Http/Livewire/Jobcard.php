@@ -300,26 +300,28 @@ class Jobcard extends Component
         {
             if($this->showQuickLubeItemSearchItems)
             {
-                $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
+                $quickLubeItemsNormalList1 = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
                 
                 if($this->quickLubeItemSearch){
-                    $quickLubeItemsNormalList = $quickLubeItemsNormalList->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
+                    $quickLubeItemsNormalList1 = $quickLubeItemsNormalList1->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
                 }
-                $quickLubeItemsNormalList=$quickLubeItemsNormalList->get();
-                $qlItemPriceLists = [];
-                foreach($quickLubeItemsNormalList as $key => $qlItemsList)
+                $quickLubeItemsNormalList1=$quickLubeItemsNormalList1->get();
+                //dd($quickLubeItemsNormalList);
+                $qlItemPriceLists1 = [];
+                foreach($quickLubeItemsNormalList1 as $key => $qlItemsList)
                 {
                     $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
                     if($this->customerDiscontGroupCode){
-                        $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlItemsList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
+                        $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlItemsList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
                     }
                     else
                     {
-                        $qlItemPriceLists[$key]['discountDetails']=null;
+                        $qlItemPriceLists1[$key]['discountDetails']=null;
                     }
                     //dd($sectionServicePriceLists[$key]);
                 }
-                $this->quickLubeItemsList = $qlItemPriceLists;
+                $this->quickLubeItemsList = $qlItemPriceLists1;
+                //dd($this->quickLubeItemsList);
             }
 
             if($this->showQlCategoryFilterItems)
