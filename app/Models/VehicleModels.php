@@ -9,6 +9,8 @@ class VehicleModels extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'vehicle_make_id',
         'vehicle_make_name',

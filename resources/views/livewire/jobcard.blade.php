@@ -105,6 +105,42 @@
                                     <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
                                     <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
                                     <br>
+                                    <div wire:loading wire:target="editCustomer">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div wire:loading wire:target="addNewVehicle">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div wire:loading wire:target="clickDiscountGroup">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div wire:loading wire:target="saveSelectedDiscountGroup">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!-- @if($customerDiscontGroupCode)
                                     <button class="btn bg-gradient-info text-white ms-0 py-1 px-3 m-0" wire:click.prevent="applyDiscountGroup()">Apply {{$customerDiscontGroupCode}} Discount Group</button> 
                                     <button type="button" wire:click="removeDiscount()" class="btn btn-danger btn-simple btn-lg mb-0 p-1">
@@ -458,7 +494,19 @@
                 </div>
             </div>
         </div>
-        <div wire:loading wire:target="editCustomer,addNewVehicle,clickDiscountGroup,openServiceGroup,selectDiscountGroup,checkStaffDiscountGroup,openServiceGroup,applyDiscountGroup,removeDiscount">
+        
+
+        <div wire:loading wire:target="applyDiscountGroup,removeDiscount">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        
+        <div wire:loading wire:target="openServiceGroup,selectDiscountGroup,checkStaffDiscountGroup,openServiceGroup">
             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                 <div class="la-ball-beat">
                     <div></div>
@@ -633,15 +681,17 @@ window.addEventListener('showSignature',event=>{
 window.addEventListener('imageUpload',event=>{
     /*
 
-    $('#plateImage').click(function(){
-        $("#plateImageFile").trigger('click');
-    });
+    
     $('#vehicleImage').click(function(){
         $("#vehicleImageFile").trigger('click');
     });
     $('#chaisisImage').click(function(){
         $("#chaisisImageFile").trigger('click');
     });*/
+
+    $('#plateImage').click(function(){
+        $("#plateImageFile").trigger('click');
+    });
     $("#upfile1").click(function () {
         $("#file1").trigger('click');
     });

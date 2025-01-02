@@ -122,6 +122,7 @@ class Jobcard extends Component
 
     public function render(){
         //CustomerServiceCart::truncate();
+        //dd($this->showPlateNumber);
         if($this->showPlateNumber)
         {
             //Get all state List
@@ -176,7 +177,7 @@ class Jobcard extends Component
                 }
             }
             //Get all veicle type list
-            $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
+            
             //Get Vehicle Make List
             $this->listVehiclesMake = VehicleMakes::get();
             if($this->make){
@@ -186,11 +187,11 @@ class Jobcard extends Component
         else
         {
             $this->stateList = Null;
-            $this->vehicleTypesList = Null;
             $this->listVehiclesMake = Null;
             $this->plateEmiratesCategories=[];
             $this->plateEmiratesCodes=[];
         }
+        $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
 
         if($this->selectedCustomerVehicle)
         {
@@ -215,6 +216,7 @@ class Jobcard extends Component
         {
             $sectionServiceLists = LaborItemMaster::where(['Labor.ItemMaster.SectionCode'=>$this->propertyCode]);
             $sectionServiceLists = $sectionServiceLists->get();
+            //dd($sectionServiceLists);
             $sectionServicePriceLists = [];
             foreach($sectionServiceLists as $key => $sectionServiceList)
             {
@@ -557,7 +559,7 @@ class Jobcard extends Component
         else
         {
             $this->plate_country = 'AE';
-            $this->plate_state = null;
+            $this->plate_state = 'Dubai';
             $this->plate_category = null;
             $this->plate_code = null;
             $this->plate_number = null;
@@ -637,7 +639,7 @@ class Jobcard extends Component
         else
         {
             $this->plate_country = 'AE';
-            $this->plate_state = null;
+            $this->plate_state = 'Dubai';
             $this->plate_category = null;
             $this->plate_code = null;
             $this->plate_number = null;
@@ -929,6 +931,7 @@ class Jobcard extends Component
         $this->showByMobileNumber=true;
         $this->showCustomerForm=true;
         $this->showPlateNumber=true;
+        //dd($this->showPlateNumber);
         $this->searchByChaisis=true;
         $this->searchByChaisisForm=true;
         $this->otherVehicleDetailsForm=true;
@@ -1441,7 +1444,7 @@ class Jobcard extends Component
         $proceeddisctount=false;
         if($this->searchStaffId==false){
             $validatedData = $this->validate([
-                'discount_card_imgae' => 'required',
+                //'discount_card_imgae' => 'required',
                 'discount_card_number' => 'required',
                 'discount_card_validity' => 'required',
                 'selectedDiscountId'=>'required',
@@ -1482,6 +1485,10 @@ class Jobcard extends Component
                 $customerDiscontGroupInfo['discount_card_imgae'] = $this->discount_card_imgae->store('discount_group', 'public');
             }
             $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
+
+            $this->customerSelectedDiscountGroup = CustomerDiscountGroup::find($customerDiscontGroup->id);
+            $this->customerDiscontGroupId = $this->customerSelectedDiscountGroup['id'];
+            $this->customerDiscontGroupCode = $this->customerSelectedDiscountGroup['discount_code'];
             
             $this->dispatchBrowserEvent('closeDiscountGroupModal');
         }
@@ -1743,22 +1750,22 @@ class Jobcard extends Component
             }
             if($item->department_code=='PP/00036'  || $item->department_code=='PP/00037')
             {
-                $gsQlIn=true;
+                //$gsQlIn=true;
             }
         }
         if($gsQlIn==true)
         {
-            $validatedData = $this->validate([
+            /*$validatedData = $this->validate([
                 'fuel' => 'required',
                 'scratchesFound' => 'required',
                 'scratchesNotFound' => 'required',
-                /*'vImageR1' => 'required',
+                'vImageR1' => 'required',
                 'vImageR2' => 'required',
                 'vImageF' => 'required',
                 'vImageB' => 'required',
                 'vImageL1' => 'required',
-                'vImageL2' => 'required',*/
-            ]);
+                'vImageL2' => 'required',
+            ]);*/
 
             //$checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
 
@@ -2228,6 +2235,10 @@ class Jobcard extends Component
             //'item_search_subcategory' => 'required',
         ]);
         $this->showItemsSearchResults=true;
+    }
+
+    public function markScrach($image){
+        //
     }
 
     

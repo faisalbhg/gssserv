@@ -51,14 +51,14 @@
 
                                     <div class="col-2">
                                         <label for="plateImageFile" >Plate Image</label>
-                                        <!-- <div class="row">
+                                        <div class="row">
                                             <div class="col-md-12">
                                                 <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
                                                     <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                                 </button>
                                             </div>
-                                        </div> -->
-                                        <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture />
+                                        </div>
+                                        <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: none;" />
                                         @if ($plate_number_image)
                                             <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                                         @endif
@@ -141,6 +141,15 @@
                         @if($otherVehicleDetailsForm)
                         <div class="row">
                             
+                            <div wire:loading wire:target="vehicle_image">
+                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                    <div class="la-ball-beat">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="col-md-3 col-sm-6">
                                 <label for="vehicleImageFile">Vehicle Image</label>
@@ -442,14 +451,14 @@
                         </div>
                     </div>
                     <div wire:loading wire:target="qlItemkmRange,qlCategorySelect">
-                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                        <div class="la-ball-beat">
-                            <div></div>
-                            <div></div>
-                            <div></div>
+                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                            <div class="la-ball-beat">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
                     <div class="row">
                         <div class="col-md-8 col-sm-8">
@@ -1742,7 +1751,7 @@
                                 </div>
                             </div>
                             <input type="file" id="file1" wire:model="vImageR1" accept="image/*" capture style="display:none"/>
-                            <img class="w-75 float-end" id="img1" src="@if($vImageR1) {{$vImageR1->temporaryUrl()}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img1')" />
+                            <img class="w-75 float-end" id="img1" src="@if($vImageR1) {{$vImageR1->temporaryUrl()}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer"  />
                             @error('vImageR1') <span class="text-danger">Missing Image..!</span> @enderror
                         </div>
                         <div class="col-md-6 col-sm-6">
@@ -1754,7 +1763,7 @@
                                 </div>
                             </div>
                             <input type="file" id="file2" wire:model="vImageR2" accept="image/*" capture style="display:none"/>
-                            <img class="w-75 float-start" id="img2" src="@if ($vImageR2) {{ $vImageR2->temporaryUrl() }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img2')" />
+                            <img class="w-75 float-start" id="img2" src="@if ($vImageR2) {{ $vImageR2->temporaryUrl() }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer"  />
                             @error('vImageR2') <span class="text-danger">Missing Image..!</span> @enderror
                         </div>
                         <hr>
@@ -1769,7 +1778,7 @@
                                 </div>
                             </div>
                             <input type="file" id="file3" wire:model="vImageF" accept="image/*" capture style="display:none"/>
-                            <img class="w-75 float-end" id="img3" src="@if ($vImageF) {{ $vImageF->temporaryUrl() }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img3')" />
+                            <img class="w-75 float-end" id="img3" src="@if ($vImageF) {{ $vImageF->temporaryUrl() }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer"  />
                             @error('vImageF') <span class="text-danger">Missing Image..!</span> @enderror
                         </div>
                         <div class="col-md-6 col-sm-6">
@@ -1781,7 +1790,7 @@
                                 </div>
                             </div>
                             <input type="file" id="file4" wire:model="vImageB" accept="image/*" capture style="display:none"/>
-                            <img class="w-75 float-start" id="img4" src="@if ($vImageB) {{ $vImageB->temporaryUrl() }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img4')" />
+                            <img class="w-75 float-start" id="img4" src="@if ($vImageB) {{ $vImageB->temporaryUrl() }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer"  />
                             @error('vImageB') <span class="text-danger">Missing Image..!</span> @enderror
                         </div>
                         <hr>
@@ -1796,7 +1805,7 @@
                                 </div>
                             </div>
                             <input type="file" id="file5" wire:model="vImageL1" accept="image/*" capture style="display:none"/>
-                            <img class="w-75 float-end" id="img5" src="@if ($vImageL1) {{ $vImageL1->temporaryUrl() }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img5')" />
+                            <img class="w-75 float-end" id="img5" src="@if ($vImageL1) {{ $vImageL1->temporaryUrl() }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer"  />
                             @error('vImageL1') <span class="text-danger">Missing Image..!</span> @enderror
                         </div>
                         <div class="col-md-6 col-sm-6">
@@ -1808,7 +1817,7 @@
                                 </div>
                             </div>
                             <input type="file" id="file6" wire:model="vImageL2" accept="image/*" capture style="display:none"/>
-                            <img class="w-75 float-start" id="img6" src="@if ($vImageL2) {{ $vImageL2->temporaryUrl() }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img6')" />
+                            <img class="w-75 float-start" id="img6" src="@if ($vImageL2) {{ $vImageL2->temporaryUrl() }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer"   />
                             @error('vImageL2') <span class="text-danger">Missing Image..!</span> @enderror
                         </div>
                     </div>
