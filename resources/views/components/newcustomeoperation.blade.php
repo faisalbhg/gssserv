@@ -610,9 +610,11 @@
                         <div class="modal-body py-0">
                             <div class="row">
                                 @forelse($sectionServiceLists as $sectionServiceList)
+                                <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
+                                <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
+                                @if($priceDetails->UnitPrice!=0)
                                 <div class="col-md-6">
-                                    <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
-                                    <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
+                                    
                                     <div class="bg-gray-100 my-3 p-2">
                                         <div class="d-flex">
                                             <h6>{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</h6>
@@ -642,6 +644,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                @endif
                                 @empty
                                 @endforelse
                             </div>
@@ -1730,7 +1733,7 @@
                 <div class="card-body text-left pt-0">
                     <div class="row">
 
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-6">
                             <div class="row">
                                 <div class="col-md-6">
                                     <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile1" type="button">
@@ -1742,7 +1745,7 @@
                             <img class="w-75 float-end" id="img1" src="@if($vImageR1) {{$vImageR1->temporaryUrl()}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img1')" />
                             @error('vImageR1') <span class="text-danger">Missing Image..!</span> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-6">
                             <div class="row">
                                 <div class="col-md-6">
                                     <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile2" type="button">
@@ -1757,7 +1760,7 @@
                         <hr>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-6">
                             <div class="row">
                                 <div class="col-md-6">
                                     <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile3" type="button">
@@ -1769,7 +1772,7 @@
                             <img class="w-75 float-end" id="img3" src="@if ($vImageF) {{ $vImageF->temporaryUrl() }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img3')" />
                             @error('vImageF') <span class="text-danger">Missing Image..!</span> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-6">
                             <div class="row">
                                 <div class="col-md-6">
                                     <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile4" type="button">
@@ -1784,7 +1787,7 @@
                         <hr>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-6">
                             <div class="row">
                                 <div class="col-md-6">
                                     <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile5" type="button">
@@ -1796,7 +1799,7 @@
                             <img class="w-75 float-end" id="img5" src="@if ($vImageL1) {{ $vImageL1->temporaryUrl() }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img5')" />
                             @error('vImageL1') <span class="text-danger">Missing Image..!</span> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-6">
                             <div class="row">
                                 <div class="col-md-6">
                                     <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile6" type="button">
