@@ -528,7 +528,7 @@
                         @endforelse 
                     </div>
                 @endif
-                @foreach($sectionsLists as $sectionsList)
+                @forelse($sectionsLists as $sectionsList)
                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3 my-2 cursor-pointer" wire:click="getSectionServices({{$sectionsList}})">
                     <!--  aria-hidden="true" data-bs-toggle="modal" data-bs-target="#exampleModal"-->
                     <div class="card bg-gradient-primary">
@@ -551,7 +551,8 @@
                         </div>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                @endforelse
             @else
                 @foreach($sectionsLists as $sectionsList)
                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3 my-2 cursor-pointer" wire:click="getSectionServices({{$sectionsList}})">
@@ -608,7 +609,7 @@
                         </div>
                         <div class="modal-body py-0">
                             <div class="row">
-                                @foreach($sectionServiceLists as $sectionServiceList)
+                                @forelse($sectionServiceLists as $sectionServiceList)
                                 <div class="col-md-6">
                                     <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
                                     <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
@@ -641,7 +642,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                @endforeach
+                                @empty
+                                @endforelse
                             </div>
                         </div>
                         <div class="modal-footer">

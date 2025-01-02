@@ -200,15 +200,15 @@ class Jobcard extends Component
         {
             $this->servicesGroupList = null;
         }
-
         if($this->selected_vehicle_id && $this->service_group_code)
         {
-            $this->sectionsLists = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')->where(['DevelopmentCode'=>$this->service_group_code])->get();
+            $this->sectionsLists = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')->where(['DevelopmentCode'=>$this->service_group_code,'Operation'=>true])->get();
         }
         else
         {
-            $this->sectionsLists = null;
+            $this->sectionsLists = [];
         }
+        //dd($this->sectionsLists);
 
         //Get Service List Prices
         if($this->propertyCode)
@@ -229,6 +229,10 @@ class Jobcard extends Component
                 }
             }
             $this->sectionServiceLists = $sectionServicePriceLists;
+        }
+        else
+        {
+            $this->sectionServiceLists=[];
         }
 
         
