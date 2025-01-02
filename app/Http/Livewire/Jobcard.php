@@ -902,7 +902,7 @@ class Jobcard extends Component
 
     public function editCustomer(){
         
-
+        $this->editCustomerAndVehicle=true;
         $this->selectedCustomerVehicle=false;
         $this->showServiceGroup=false;
         $this->showCheckList=false;
