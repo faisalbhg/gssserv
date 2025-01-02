@@ -201,6 +201,7 @@ class Jobcard extends Component
         {
             $this->servicesGroupList = null;
         }
+
         if($this->selected_vehicle_id && $this->service_group_code)
         {
             $this->sectionsLists = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')->where(['DevelopmentCode'=>$this->service_group_code,'Operation'=>true])->get();
@@ -844,7 +845,6 @@ class Jobcard extends Component
     }
 
     public function serviceGroupForm($service){
-        //dd($service);
         $this->service_group_id = $service['id'];
         $this->service_group_name = $service['department_name'];
         $this->service_group_code = $service['department_code'];
@@ -856,7 +856,7 @@ class Jobcard extends Component
             $this->showQlItems=false;
 
         }
-
+        
         $this->showVehicleDiv = false;
         $this->showSearchByPlateNumberDiv=false;
         $this->newVehicleAdd=false;
@@ -887,6 +887,7 @@ class Jobcard extends Component
 
     public function getSectionServices($section)
     {
+        //dd($section);
         $this->propertyCode=$section['PropertyCode'];
         $this->selectedSectionName = $section['PropertyName'];
         
