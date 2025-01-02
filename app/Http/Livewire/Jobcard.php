@@ -307,11 +307,11 @@ class Jobcard extends Component
                     $quickLubeItemsNormalList1 = $quickLubeItemsNormalList1->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
                 }
                 $quickLubeItemsNormalList1=$quickLubeItemsNormalList1->get();
-                //dd($quickLubeItemsNormalList);
+                //dd($quickLubeItemsNormalList1);
                 $qlItemPriceLists1 = [];
                 foreach($quickLubeItemsNormalList1 as $key => $qlItemsList)
                 {
-                    $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
+                    $qlItemPriceLists1[$key]['priceDetails'] = $qlItemsList;
                     if($this->customerDiscontGroupCode){
                         $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where(['ServiceItemId'=>$qlItemsList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])->first();
                     }
@@ -319,13 +319,11 @@ class Jobcard extends Component
                     {
                         $qlItemPriceLists1[$key]['discountDetails']=null;
                     }
-                    //dd($sectionServicePriceLists[$key]);
+                    //dd($qlItemPriceLists1[$key]);
                 }
                 $this->quickLubeItemsList = $qlItemPriceLists1;
                 //dd($this->quickLubeItemsList);
-            }
-
-            if($this->showQlCategoryFilterItems)
+            }else if($this->showQlCategoryFilterItems)
             {
                 $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation' => function ($query) {
                         $query->where('CategoryId', '=', $this->ql_search_category);
