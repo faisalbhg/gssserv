@@ -137,9 +137,11 @@
                                                     <div class="float-start icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center m-2">
                                                         <i class="fa-solid fa-gas-pump opacity-10" aria-hidden="true"></i>
                                                     </div>
+                                                    @if($jobcardDetails->checklistInfo['fuel'])
                                                     <h6 class="my-2 text-sm text-white">
                                                         Fuel: <span class="text-sm  pb-2">{{config('global.fuel')[$jobcardDetails->checklistInfo['fuel']]}}</span>
                                                     </h6>
+                                                    @endif
                                                     
                                                 </div>
                                             </div>
