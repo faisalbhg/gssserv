@@ -104,6 +104,9 @@
                                     <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle"  wire:click="addNewVehicle()">New Vehicle</button>
                                     <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
                                     <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
+                                    @if(@$customerSelectedDiscountGroup['GroupType']==2)
+                                    <button class="btn bg-gradient-danger btn-sm mb-0" wire:click.prevent="removeDiscount()">Remove Discount - {{strtolower(str_replace("_"," ",$customerDiscontGroupCode))}}</button>
+                                    @endif
                                     <br>
                                     <div wire:loading wire:target="editCustomer">
                                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
@@ -155,10 +158,12 @@
                 </div>
             </div>
         </div>
+        
         @if(count($selectedVehicleInfo['customerDiscountLists'])>0)
+        @if($discountApplyMessage)<p class="text-gradient-danger">{{$discountApplyMessage}}</p>@endif
             <div class="row">
                 @forelse($selectedVehicleInfo['customerDiscountLists'] as $customerDiscount)
-                <div class="col-4">
+                <div class="col-3">
                     <div class="card">
                         <div class="card-body p-2 text-left">
                             
@@ -174,22 +179,22 @@
                                 </div>
                             @else
                                 <div class="author align-items-center">
-                                    <img src="{{url('public/storage/'.$customerDiscount->discount_card_imgae)}}" alt="..." class="avatar shadow cursor-pointer" wire:click="popUpDiscountImage('{{$customerDiscount->discount_card_imgae}}')">
                                     <div class="name ps-3">
                                         <span>{{$customerDiscount->discount_card_number}}</span>
                                         <div class="stats">
-                                            <small>Expired in: <?php $end = \Carbon\Carbon::parse($customerDiscount->discount_card_validity);?>
-                                            {{ \Carbon\Carbon::now()->diffInDays($end) }} Days</small>
+                                            <small>Expired in: <?php $end = \Carbon\Carbon::parse($customerDiscount->discount_card_validity);?> {{ $diff = Carbon\Carbon::parse($customerDiscount->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}   </small>
                                         </div>
                                     </div>
                                 </div>
                             
                             @endif
                             
-                            @if($customerDiscontGroupId!=$customerDiscount->discount_id)
-                            <button class="btn bg-gradient-success btn-sm mb-0" wire:click.prevent="applyDiscountGroup({{$customerDiscount}})"><i class="fa-solid fa-check fa-xl"></i> Apply Now</button>
-                            @else
-                            <button class="btn bg-gradient-danger btn-sm mb-0" wire:click.prevent="removeDiscount()"><i class="fa-solid fa-check"></i>Remove</button>
+                            @if(\Carbon\Carbon::now()->diffInDays($end, false)>=0)
+                                @if($customerDiscontGroupId!=$customerDiscount->discount_id)
+                                <button class="btn bg-gradient-success btn-sm mb-0" wire:click.prevent="applyDiscountGroup({{$customerDiscount}})"><i class="fa-solid fa-check fa-xl"></i> Apply Now</button>
+                                @else
+                                <button class="btn bg-gradient-danger btn-sm mb-0" wire:click.prevent="removeDiscount()"><i class="fa-solid fa-check"></i>Remove</button>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -230,9 +235,9 @@
                                         <div class="row">
                                             @foreach($laborCustomerGroupLists as $listCustDiscGrp)
                                             <div class="col-lg-2 col-sm-4 my-2">
-                                                <div wire:click="selectDiscountGroup({{$listCustDiscGrp}})" class="card h-100 cursor-pointer">
+                                                <div wire:click="selectDiscountGroup({{$listCustDiscGrp}})" class="card h-70 cursor-pointer">
                                                     <div class="card-body">
-                                                        <p class="mt-4 mb-0 font-weight-bold">{{str_replace("_"," ",$listCustDiscGrp->Title)}}</p>
+                                                        <h6 class="mt-3 mb-0 font-weight-bold text-capitalize">{{strtolower(str_replace("_"," ",$listCustDiscGrp->Title))}}</h6>
                                                         
                                                     </div>
                                                 </div>
@@ -294,13 +299,17 @@
                                                                 <div class="col-md-12">
                                                                     <div class="form-group">
                                                                         <label for="discountCardValidity">Discount Card Validity</label>
-                                                                        <input type="date" class="form-control" id="discountCardValidity" wire:model="discount_card_validity" name="discountCardValidity" placeholder="Discount Card Validity">
+                                                                        <input type="date" class="form-control" id="discountCardValidity" wire:model="discount_card_validity" name="discountCardValidity" placeholder="Discount Card Validity" min="<?php echo date("Y-m-d"); ?>">
                                                                         @error('discount_card_validity') <span class="text-danger">{{ $message }}</span> @enderror
                                                                     </div>
                                                                 </div>
+                                                            
+                                                                <div class="col-md-12">
+                                
+                                                                    <button type="button" class="btn bg-gradient-secondary " data-bs-dismiss="modal">Close</button>
+                                                                    <button type="button" class="btn bg-gradient-primary " wire:click="saveSelectedDiscountGroup()">Save changes</button>
+                                                                </div>
                                                             </div>
-                                                            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <button type="button" class="btn bg-gradient-primary" wire:click="saveSelectedDiscountGroup()">Save changes</button>
                                                         @endif
                                                     @endif
                                                     
@@ -496,7 +505,16 @@
         </div>
         
 
-        <div wire:loading wire:target="applyDiscountGroup,removeDiscount">
+        <div wire:loading wire:target="applyDiscountGroup">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        <div wire:loading wire:target="removeDiscount">
             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                 <div class="la-ball-beat">
                     <div></div>
@@ -532,6 +550,14 @@
 @push('custom_script')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript">
+    window.addEventListener('mobile0Remove',event=>{
+        $("#mobilenumberInput").on("input", function() {
+            if (/^0/.test(this.value)) {
+                this.value = this.value.replace(/^0/, "")
+            }
+        });
+    });
+
     window.addEventListener('scrolltop',event=>{
         $(document).ready(function(){
             $('html, body').animate({
