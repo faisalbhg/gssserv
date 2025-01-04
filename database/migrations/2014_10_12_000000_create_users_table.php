@@ -29,8 +29,8 @@ class CreateUsersTable extends Migration
             $table->integer('is_blocked')->nullable();
             $table->rememberToken();
             $table->timestamps();
-            $table->foreign('station_id')->references('id')->on('stationcodes')->onDelete('cascade');
-            $table->foreign('user_type')->references('id')->on('usertypes')->onDelete('cascade');
+            //$table->foreign('station_id')->references('id')->on('stationcodes')->onDelete('cascade');
+            //$table->foreign('user_type')->references('id')->on('usertypes')->onDelete('cascade');
         });
     }
 

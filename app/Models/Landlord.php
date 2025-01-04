@@ -10,4 +10,6 @@ class Landlord extends Model
     use HasFactory;
 
     protected $table = 'Landlord';
+
+    protected $primaryKey = 'StationID';
 }

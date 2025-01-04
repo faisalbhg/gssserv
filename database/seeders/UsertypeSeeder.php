@@ -23,7 +23,7 @@ class UsertypeSeeder extends Seeder
             ['user_type' => 'Operation'],
             ['user_type' => 'Sales'],
             ['user_type' => 'Accounts'],
-            ['user_type' => 'Customer Service'] 
+            ['user_type' => 'Customer Service'], 
         ];
 
         foreach ($datas as $data) {

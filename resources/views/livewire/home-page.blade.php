@@ -213,43 +213,14 @@
 <script type="text/javascript">
     
     window.addEventListener('datePicker',event=>{
-        var rangeText = function (start, end) {
-            var str = '';
-            str += start ? start.format('Do MMMM YYYY') + ' to ' : '';
-            str += end ? end.format('Do MMMM YYYY') : '...';
-
-            return str;
-        },
-        css = function(url){
-            var head  = document.getElementsByTagName('head')[0];
-            var link  = document.createElement('link');
-            link.rel  = 'stylesheet';
-            link.type = 'text/css';
-            link.href = url;
-            head.appendChild(link);
-        },
-        script = function (url) {
-            var s = document.createElement('script');
-            s.type = 'text/javascript';
-            s.async = true;
-            s.src = url;
-            var head  = document.getElementsByTagName('head')[0];
-            head.appendChild(s);
-        }
-        callbackJson = function(json){
-            var id = json.files[0].replace(/\D/g,'');
-            document.getElementById('gist-' + id).innerHTML = json.div;
-
-            if (!document.querySelector('link[href="' + json.stylesheet  + '"]')) {
-                css(json.stylesheet);
-            }
-        };
+        
 
         // demo-13
         //var some_date = '2024-11-20';
         //var dateToday = new Date('December 17, 2024 03:24:00');
 
         var dateToday = new Date();
+
         new Lightpick({
             field: document.getElementById('demo-13'),
             inline: true,
@@ -274,37 +245,7 @@
     });
 
 
-    var rangeText = function (start, end) {
-        var str = '';
-        str += start ? start.format('Do MMMM YYYY') + ' to ' : '';
-        str += end ? end.format('Do MMMM YYYY') : '...';
-
-        return str;
-    },
-    css = function(url){
-        var head  = document.getElementsByTagName('head')[0];
-        var link  = document.createElement('link');
-        link.rel  = 'stylesheet';
-        link.type = 'text/css';
-        link.href = url;
-        head.appendChild(link);
-    },
-    script = function (url) {
-        var s = document.createElement('script');
-        s.type = 'text/javascript';
-        s.async = true;
-        s.src = url;
-        var head  = document.getElementsByTagName('head')[0];
-        head.appendChild(s);
-    }
-    callbackJson = function(json){
-        var id = json.files[0].replace(/\D/g,'');
-        document.getElementById('gist-' + id).innerHTML = json.div;
-
-        if (!document.querySelector('link[href="' + json.stylesheet  + '"]')) {
-            css(json.stylesheet);
-        }
-    };
+    
 
     // demo-13
     var dateToday = new Date();

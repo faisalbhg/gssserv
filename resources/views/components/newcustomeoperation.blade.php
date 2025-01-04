@@ -342,7 +342,7 @@
                     <div class="col-sm-4 col-md-3 col-lg-2 col-xl-2 my-2">
                         <div class="card h-100" >
                             <a wire:click="serviceGroupForm({{$servicesGroup}})" href="javascript:;">
-                                <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100" style="background-image: url('{{asset("img/".str_replace("/","",$servicesGroup->department_code).".jpg")}}');">
+                                <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100" style="background-image: url('{{asset("img/".str_replace(" ","-",$servicesGroup->department_name).".jpg")}}');">
                                     @if($service_group_id == $servicesGroup->id)
                                     <span class="mask bg-gradient-dark opacity-4"></span>
                                     @else
@@ -416,7 +416,7 @@
         <div class="row mt-2 mb-2">
             
             
-            @if($service_group_id==37)
+            @if($service_group_name=='Quick Lube')
                 @if($qlFilterOpen)
                     <div class="row">
                         <div class="col-md-4 col-sm-4">

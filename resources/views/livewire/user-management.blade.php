@@ -86,7 +86,7 @@
                                             <p class="text-xs font-weight-bold mb-0">{{$user->phone}}</p>
                                         </td> -->
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{$user->stationName['station_code']}} - {{$user->stationName['station_name']}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{$user->stationName['CorporateName']}}</p>
                                         </td>
                                         <td class="text-center">
                                             <p class="text-xs font-weight-bold mb-0">{{config('global.user_type')[$user->user_type]}}</p>

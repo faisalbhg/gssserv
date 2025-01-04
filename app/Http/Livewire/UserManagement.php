@@ -6,8 +6,9 @@ use Illuminate\Support\Facades\Hash;
 
 use Livewire\Component;
 use App\Models\User;
-use App\Models\Stationcode;
+use App\Models\Landlord;
 use App\Models\Department;
+use App\models\Usertype;
 
 use Carbon\Carbon;
 use Session;
@@ -22,11 +23,15 @@ class UserManagement extends Component
 
     public function render()
     {
-        dd(Stationcode::get());
-        $data['usersList'] = User::with('stationName')->paginate(10);
-        $this->stationsList = Stationcode::all();
+        //Usertype::truncate();
+        /*User::where(['id'=>5])->update([
+        "station_code" => "LL/00004",
+        "station_id" => "4"]);
+        dd(User::get());*/
+        $data['usersList'] = User::with(['stationName'])->paginate(10);
+        $this->stationsList = Landlord::all();
         $this->departmentsList = Department::all();
-        dd($data);
+        //dd($this->stationsList);
         return view('livewire.user-management',$data);
     }
 
@@ -58,13 +63,14 @@ class UserManagement extends Component
      */
     public function editUser($id){
         $user = User::findOrFail($id);
+        //dd($user);
         $this->name = $user->name;
         $this->email = $user->email;
         $this->showpasswordinput=false;
         $this->password = '';
         $this->phone = $user->phone;
-        $this->station_id = $user->station_id;
-        $this->station_id = $user->user_type;
+        $this->station_id = $user->station_id.'##'.$user->station_code;
+        $this->user_type = $user->user_type;
         $this->user_id = $user->id;
         $this->is_active = $user->is_active;
         $this->manageUser = true;
@@ -83,29 +89,34 @@ class UserManagement extends Component
             'name' => 'required',
             'email' => 'required|email',
             'user_type' => 'required',
-            'password' => 'required',
+            //'password' => 'required',
         ]);
-        //dd($this);
+
         if($this->user_id!=null){
+            $dtationDtls = explode('##',$this->station_id);
+            //dd($dtationDtls);
             User::find($this->user_id)->update([
                 'name'=>$this->name,
                 'email'=>$this->email,
                 'phone'=>$this->phone,
-                'user_type'=>$this->station_id,
-                'station_id'=>$this->user_type,
+                'user_type'=>$this->user_type,
+                'station_id'=>$dtationDtls[0],
+                'station_code'=>$dtationDtls[1],
                 'is_active'=>$this->is_active,
             ]);
             session()->flash('success', 'User updated successfully !');
         }
         else
         {
+            $dtationDtls = explode('##',$this->station_id);
             User::create([
                 'name'=>$this->name,
                 'email'=>$this->email,
                 'password'=>Hash::make($this->password),
                 'phone'=>$this->phone,
                 'user_type'=>$this->user_type,
-                'station_id'=>$this->station_id,
+                'station_id'=>$dtationDtls[0],
+                'station_code'=>$dtationDtls[1],
                 'is_active'=>$this->is_active,
                 'created_by'=>Session::get('user')->id,
             ]);

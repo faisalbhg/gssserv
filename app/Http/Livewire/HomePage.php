@@ -74,8 +74,12 @@ class HomePage extends Component
     }
 
     public function getSelectedDate( $date ) {
-        $this->selected_date = Carbon::parse($date)->format('Y-m-d');
-        $this->dispatchBrowserEvent('datePicker');
+        if(Carbon::parse($date)->format('Y-m-d')!=$this->selected_date){
+            $this->selected_date = Carbon::parse($date)->format('Y-m-d');
+            $this->dispatchBrowserEvent('datePicker');
+        }
+        //dd($this->selected_date);
+        
     }
 
     public function jobListPage($filter){

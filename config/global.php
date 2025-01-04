@@ -210,13 +210,13 @@ return [
     ],
     "user_type_access"=>[
         "administrator"=>[
-            "13"
+            "1"
         ],
         "operation"=>[
-            "13","14","15","16"
+            "1","2","3","4"
         ],
         "finance"=>[
-            "13","16"
+            "1","4"
         ],
     ],
     "sorting"=>[

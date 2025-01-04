@@ -74,7 +74,7 @@
                                                         <select class="form-control" id="stationSelect" wire:model="station_id">
                                                             <option value="">-Select-</option>
                                                             @foreach($stationsList as $station)
-                                                            <option value="{{$station->id}}">{{$station->station_name.' - '.$station->station_code}}</option>
+                                                            <option value="{{$station->StationID}}##{{$station->LandlordCode}}">{{$station->CorporateName}}</option>
                                                             @endforeach
                                                         </select>
                                                         @error('station_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror

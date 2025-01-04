@@ -160,7 +160,9 @@
         </div>
         
         @if(count($selectedVehicleInfo['customerDiscountLists'])>0)
-        @if($discountApplyMessage)<p class="text-gradient-danger">{{$discountApplyMessage}}</p>@endif
+            @if($discountApplyMessage)
+                <p class="text-gradient-danger">{{$discountApplyMessage}}</p>
+            @endif
             <div class="row">
                 @forelse($selectedVehicleInfo['customerDiscountLists'] as $customerDiscount)
                 <div class="col-3">
@@ -170,6 +172,7 @@
                             <a href="javascript:;" class="card-title h5 d-block text-darker text-capitalize">
                                 {{strtolower($customerDiscount->discount_title)}}
                             </a>
+                            <?php $end = \Carbon\Carbon::parse($customerDiscount->discount_card_validity);?>
                             @if($customerDiscount->discount_id==8 || $customerDiscount->discount_id==9)
                                 <div class="author align-items-center">
                                     <div class="name ps-0">
@@ -182,7 +185,7 @@
                                     <div class="name ps-3">
                                         <span>{{$customerDiscount->discount_card_number}}</span>
                                         <div class="stats">
-                                            <small>Expired in: <?php $end = \Carbon\Carbon::parse($customerDiscount->discount_card_validity);?> {{ $diff = Carbon\Carbon::parse($customerDiscount->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}   </small>
+                                            <small>Expired in: discount_card_validity);?> {{ $diff = Carbon\Carbon::parse($customerDiscount->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}   </small>
                                         </div>
                                     </div>
                                 </div>
@@ -191,9 +194,9 @@
                             
                             @if(\Carbon\Carbon::now()->diffInDays($end, false)>=0)
                                 @if($customerDiscontGroupId!=$customerDiscount->discount_id)
-                                <button class="btn bg-gradient-success btn-sm mb-0" wire:click.prevent="applyDiscountGroup({{$customerDiscount}})"><i class="fa-solid fa-check fa-xl"></i> Apply Now</button>
+                                    <button class="btn bg-gradient-success btn-sm mb-0" wire:click.prevent="applyDiscountGroup({{$customerDiscount}})"><i class="fa-solid fa-check fa-xl"></i> Apply Now</button>
                                 @else
-                                <button class="btn bg-gradient-danger btn-sm mb-0" wire:click.prevent="removeDiscount()"><i class="fa-solid fa-check"></i>Remove</button>
+                                    <button class="btn bg-gradient-danger btn-sm mb-0" wire:click.prevent="removeDiscount()"><i class="fa-solid fa-check"></i>Remove</button>
                                 @endif
                             @endif
                         </div>
