@@ -243,7 +243,7 @@ class Jobcard extends Component
             {
                 $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
                 if($this->customerDiscontGroupCode){
-                    dd($this->customerSelectedDiscountGroup);
+                    //dd($this->customerSelectedDiscountGroup);
                     if($this->customerSelectedDiscountGroup['groupType']==1)
                     {
 
