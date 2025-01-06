@@ -1,8 +1,22 @@
 <main class="main-content">
   <div class="container-fluid py-4">
+    
+    <div class="row">
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>Job Number</label>
+        <div class="form-group">
+          <input type="text"  class="form-control" placeholder="Search Job Number" wire:model="search_job_number" />
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>Job Date</label>
+        <div class="form-group">
+          <input type="date"  class="form-control" placeholder="Search Job Date" wire:model="search_job_date" />
+        </div>
+      </div>
+    </div>
 
     <div class="row">
-
       <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount total">
         <div class="card bg-gradient-dark shadow text-white">
             <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('total')">
@@ -63,23 +77,10 @@
           </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
-        <div class="form-group">
-          <input type="text"  class="form-control" placeholder="Search Job Number" wire:model="search_job_number" />
-        </div>
-      </div>
-    </div>
-
+    
     <div class="row mt-2">
       <div class="col-12">
         <div class="card mb-4">
-          <div class="card-header pb-0">
-            <h6>Service Jobs
-              
-            
-            </h6>
-          </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-0">
               <table class="table align-items-center justify-content-center mb-0">

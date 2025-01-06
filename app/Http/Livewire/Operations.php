@@ -30,7 +30,7 @@ class Operations extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $search_job_number = '';
+    public $search_job_number = '', $search_job_date;
     public $customerDetails = false;
     public $job_number, $job_date_time, $vehicle_image, $make, $model, $plate_number, $chassis_number, $vehicle_km, $name, $email, $mobile, $customerType, $payment_status=0, $payment_type=0, $job_status=0, $job_departent, $total_price, $vat, $grand_total, $tax;
     public $filter = [0,1,2,3,4];
@@ -85,24 +85,6 @@ class Operations extends Component
     public function render()
     {
 
-        //dd(JobcardChecklistEntries::get());
-
-        /*CustomerJobCardServices::where('job_number','!=',null)->update(['job_status'=>1,'job_departent'=>1]);
-        CustomerJobCards::where('payment_status','=',null)->update(['payment_status'=>1,'payment_status'=>1]);
-        dd(CustomerJobCards::where('job_number','!=',null)->get());*/
-        //CustomerJobCards::where('job_number','=','LL00004-PSOF-241107-PP0003517')->update(['payment_status'=>0,'payment_type'=>1]);
-
-
-        $customerjobs = CustomerJobCards::with(['customerInfo']);
-        if($this->filter){
-            $customerjobs = $customerjobs->whereIn('job_status', $this->filter);
-        }
-        if($this->search_job_number)
-        {
-            $customerjobs = $customerjobs->where('job_number', 'like', "%{$this->search_job_number}%");
-        }
-        $customerjobs = $customerjobs->orderBy('id','DESC')->paginate(10);
-        //dd($customerjobs);
         $getCountSalesJob = CustomerJobCards::select(
             array(
                 \DB::raw('count(DISTINCT(customer_id)) customers'),
@@ -115,7 +97,25 @@ class Operations extends Component
                 \DB::raw('count(case when job_status in (0,1,2,3,4) then job_status end) total'),
                 \DB::raw('SUM(grand_total) as saletotal'),
             )
-        )->first();
+        );
+
+
+        $customerjobs = CustomerJobCards::with(['customerInfo']);
+        if($this->filter){
+            $customerjobs = $customerjobs->whereIn('job_status', $this->filter);
+        }
+        if($this->search_job_number)
+        {
+            $customerjobs = $customerjobs->where('job_number', 'like', "%{$this->search_job_number}%");
+            $getCountSalesJob = $getCountSalesJob->where('job_number', 'like', "%{$this->search_job_number}%");
+        }
+        if($this->search_job_date){
+            $customerjobs = $customerjobs->whereBetween('job_date_time', [$this->search_job_date." 00:00:00",$this->search_job_date." 23:59:59"]);
+            $getCountSalesJob = $getCountSalesJob->whereBetween('job_date_time', [$this->search_job_date." 00:00:00",$this->search_job_date." 23:59:59"]);
+        }
+        $customerjobs = $customerjobs->orderBy('id','DESC')->paginate(10);
+        //dd($customerjobs);
+        $getCountSalesJob = $getCountSalesJob->first();
 
         /*$customerjobs = Customerjobs::
             select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')

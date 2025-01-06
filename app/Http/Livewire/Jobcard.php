@@ -579,6 +579,7 @@ class Jobcard extends Component
 
     public function clickSearchBy($searchId){
         
+        $this->job_number=Null;
         $this->selected_vehicle_id=null;
         $this->service_group_code=null;
         $this->propertyCode=null;
