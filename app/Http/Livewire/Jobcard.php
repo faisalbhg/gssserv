@@ -122,6 +122,13 @@ class Jobcard extends Component
 
 
     public function render(){
+        /*StateList::create(["StateCode" => "168",
+        "CountryCode" => "SD",
+        "StateName" => "SUDAN",
+        "StateNameAR" => null,
+        "Active" => "1"]);
+        */
+        //dd(StateList::where(['CountryCode'=>'SD'])->get());
         //dd(Country::where('CountryName','like','%sudan%')->get());
         //dd(TempSalesPriceHeader::limit(2)->get());
         //CustomerDiscountGroup::truncate();

@@ -11,4 +11,13 @@ class StateList extends Model
 
     protected $table = 'Library.State';
     protected $primaryKey = 'id';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'StateCode',
+        'CountryCode',
+        'StateName',
+        'StateNameAR',
+        'Active',
+    ];
 }

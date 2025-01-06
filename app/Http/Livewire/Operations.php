@@ -420,7 +420,7 @@ class Operations extends Component
         $this->updateService=true;
         
         $job = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo'])->where(['job_number'=>$job_number])->first();
-        //dd($job);
+        dd($job);
         $this->jobcardDetails = $job;
         if($this->jobcardDetails->checklistInfo!=null){
             $this->checkListDetails=$this->jobcardDetails->checklistInfo;

@@ -1,6 +1,6 @@
 <main class="main-content">
   <div class="container-fluid py-4">
-    
+
     <div class="row">
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
         <label>Job Number</label>
@@ -12,6 +12,18 @@
         <label>Job Date</label>
         <div class="form-group">
           <input type="date"  class="form-control" placeholder="Search Job Date" wire:model="search_job_date" />
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>Plate Search</label>
+        <div class="form-group">
+          <span class="badge badge-sm bg-gradient-danger">Plate Number</span>
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>Vehicle</label>
+        <div class="form-group">
+          <span class="badge badge-sm bg-gradient-danger">Vehicle Make</span>
         </div>
       </div>
     </div>
