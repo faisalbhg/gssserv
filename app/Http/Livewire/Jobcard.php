@@ -122,6 +122,7 @@ class Jobcard extends Component
 
 
     public function render(){
+        //dd(Country::where('CountryName','like','%sudan%')->get());
         //dd(TempSalesPriceHeader::limit(2)->get());
         //CustomerDiscountGroup::truncate();
         //dd($this->showPlateNumber);

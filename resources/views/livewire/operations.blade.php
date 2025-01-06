@@ -3,105 +3,71 @@
 
     <div class="row">
 
-      <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2 jobscount total">
-        <div class="card">
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount total">
+        <div class="card bg-gradient-dark shadow text-white">
             <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('total')">
-                <div class="row">
-                    <div class="col-8">
-                        <div class="numbers">
-                            <p class="text-sm mb-0 text-capitalize font-weight-bold">Total jobs</p>
-                            <hr class="m-0">
-                            <h5 class="font-weight-bolder mb-0">{{$getCountSalesJob->total}}<span class="text-success text-sm font-weight-bolder"></span></h5>
-                        </div>
-                    </div>
-                    <div class="col-4 text-end">
-                        <div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md">
-                            <i class="ni ni-archive-2 text-lg opacity-10" aria-hidden="true"></i>
-                        </div>
-                    </div>
+                <div class="numbers">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total jobs</p>
+                    <hr class="m-0">
+                    <h5 class="font-weight-bolder mb-0  text-white">{{$getCountSalesJob->total}}<span class="text-success text-sm font-weight-bolder"></span></h5>
                 </div>
             </div>
         </div>
       </div>
-      <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2 jobscount working_progress">
-          <div class="card">
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount working_progress">
+          <div class="card bg-gradient-danger shadow text-white">
               <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('working_progress')">
-                  <div class="row">
-                      <div class="col-8">
-                          <div class="numbers">
-                              <p class="text-sm mb-0 text-capitalize font-weight-bold">Working Progress</p>
-                              <hr class="m-0">
-                              <h5 class="font-weight-bolder mb-0">{{$getCountSalesJob->working_progress}}<span class="text-success text-sm font-weight-bolder"></span></h5>
-                          </div>
-                      </div>
-                      <div class="col-4 text-end">
-                          <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                              <i class="fa-solid fa-hourglass-start text-lg opacity-10" aria-hidden="true"></i>
-                          </div>
-                      </div>
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Working</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->working_progress}}<span class="text-success text-sm font-weight-bolder"></span></h5>
                   </div>
               </div>
           </div>
       </div>
-      <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2 jobscount work_finished">
-          <div class="card">
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount work_finished">
+          <div class="card bg-gradient-warning shadow text-white">
               <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('work_finished')">
                   <div class="row">
-                      <div class="col-8">
+                      <div class="col-12">
                           <div class="numbers">
-                              <p class="text-sm mb-0 text-capitalize font-weight-bold">Work Completed</p>
+                              <p class="text-sm mb-0 text-capitalize font-weight-bold">Completed</p>
                               <hr class="m-0">
-                              <h5 class="font-weight-bolder mb-0">{{$getCountSalesJob->work_finished}}<span class="text-success text-sm font-weight-bolder"></span></h5>
-                          </div>
-                      </div>
-                      <div class="col-4 text-end">
-                          <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md">
-                              <i class="fa-solid fa-hourglass-end text-lg opacity-10" aria-hidden="true"></i>
+                              <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->work_finished}}<span class="text-success text-sm font-weight-bolder"></span></h5>
                           </div>
                       </div>
                   </div>
               </div>
           </div>
       </div>
-      <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2 jobscount ready_to_deliver">
-          <div class="card">
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount ready_to_deliver">
+          <div class="card bg-gradient-info shadow text-white">
               <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('ready_to_deliver')">
-                  <div class="row">
-                      <div class="col-8">
-                          <div class="numbers">
-                              <p class="text-sm mb-0 text-capitalize font-weight-bold">Ready to Deliver</p>
-                              <hr class="m-0">
-                              <h5 class="font-weight-bolder mb-0">{{$getCountSalesJob->ready_to_deliver}}<span class="text-success text-sm font-weight-bolder"></span></h5>
-                          </div>
-                      </div>
-                      <div class="col-4 text-end">
-                          <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
-                              <i class="fa-solid fa-car opacity-10" aria-hidden="true"></i>
-                          </div>
-                      </div>
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Ready to Deliver</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->ready_to_deliver}}<span class="text-success text-sm font-weight-bolder"></span></h5>
                   </div>
               </div>
           </div>
       </div>
-      <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2 jobscount delivered">
-          <div class="card">
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount delivered">
+          <div class="card bg-gradient-success shadow text-white">
               <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('delivered')">
-                  <div class="row">
-                      <div class="col-8">
-                          <div class="numbers">
-                              <p class="text-sm mb-0 text-capitalize font-weight-bold">Delivered</p>
-                              <hr class="m-0">
-                              <h5 class="font-weight-bolder mb-0">{{$getCountSalesJob->delivered}}<span class="text-success text-sm font-weight-bolder"></span></h5>
-                          </div>
-                      </div>
-                      <div class="col-4 text-end">
-                          <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
-                              <i class="fa-solid fa-flag-checkered opacity-10" aria-hidden="true"></i>
-                          </div>
-                      </div>
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Delivered</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->delivered}}<span class="text-success text-sm font-weight-bolder"></span></h5>
                   </div>
               </div>
           </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <div class="form-group">
+          <input type="text"  class="form-control" placeholder="Search Job Number" wire:model="search_job_number" />
+        </div>
       </div>
     </div>
 
@@ -109,8 +75,8 @@
       <div class="col-12">
         <div class="card mb-4">
           <div class="card-header pb-0">
-            <h6>Service Jobs - {{$showUpdateModel}}
-              <input type="text"  class="form-control float-end" style="width:20%;" placeholder="Search Job Number" wire:model="search" />
+            <h6>Service Jobs
+              
             
             </h6>
           </div>
@@ -127,6 +93,7 @@
                     <th></th>
                   </tr>
                 </thead>
+
                 <tbody>
                   @forelse( $customerjobs as $jobs)
                   <tr wire:click="customerJobUpdate('{{$jobs->job_number}}')">
@@ -199,7 +166,7 @@
                 
               </tbody>
             </table>
-            <div class="float-end">{{$customerjobs->links()}}</div>
+            <div class="float-end">{{$customerjobs->onEachSide(0)->links()}}</div>
           </div>
         </div>
       </div>

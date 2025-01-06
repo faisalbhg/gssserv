@@ -30,7 +30,7 @@ class Operations extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $search = '';
+    public $search_job_number = '';
     public $customerDetails = false;
     public $job_number, $job_date_time, $vehicle_image, $make, $model, $plate_number, $chassis_number, $vehicle_km, $name, $email, $mobile, $customerType, $payment_status=0, $payment_type=0, $job_status=0, $job_departent, $total_price, $vat, $grand_total, $tax;
     public $filter = [0,1,2,3,4];
@@ -40,7 +40,7 @@ class Operations extends Component
     public $customerJobUpdation = [];
 
     public $showUpdateModel = false;
-    public $filterTab;
+    public $filterTab='total';
 
     public $showServiceGroup  = false;
     public $showServiceType = false;
@@ -93,7 +93,15 @@ class Operations extends Component
         //CustomerJobCards::where('job_number','=','LL00004-PSOF-241107-PP0003517')->update(['payment_status'=>0,'payment_type'=>1]);
 
 
-        $customerjobs = CustomerJobCards::with(['customerInfo'])->orderBy('id','DESC')->paginate(10);
+        $customerjobs = CustomerJobCards::with(['customerInfo']);
+        if($this->filter){
+            $customerjobs = $customerjobs->whereIn('job_status', $this->filter);
+        }
+        if($this->search_job_number)
+        {
+            $customerjobs = $customerjobs->where('job_number', 'like', "%{$this->search_job_number}%");
+        }
+        $customerjobs = $customerjobs->orderBy('id','DESC')->paginate(10);
         //dd($customerjobs);
         $getCountSalesJob = CustomerJobCards::select(
             array(
@@ -122,6 +130,7 @@ class Operations extends Component
         
         $data['getCountSalesJob'] = $getCountSalesJob;
         $data['customerjobs'] = $customerjobs;
+        $this->dispatchBrowserEvent('filterTab',['tabName'=>$this->filterTab]);
         return view('livewire.operations',$data);
     }
 
@@ -134,7 +143,8 @@ class Operations extends Component
             case 'ready_to_deliver': $this->filter = [3];break;
             case 'delivered': $this->filter = [4];break;
         }
-        $this->dispatchBrowserEvent('filterTab',['tabName'=>$statusFilter]);
+        $this->filterTab = $statusFilter;
+        $this->dispatchBrowserEvent('filterTab',['tabName'=>$this->filterTab]);
     }
 
 

@@ -282,6 +282,13 @@ return [
             "id" => "165",
             "Active" => "1",
         ],
+        [
+            "CountryCode" => "SD",
+            "CountryName" => "Sudan",
+            "CountryNameAR" => "السودان",
+            "id" => "168",
+            "Active" => "1",
+        ],
     ],
 
 ]
