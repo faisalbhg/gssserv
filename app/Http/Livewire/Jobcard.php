@@ -1579,6 +1579,15 @@ class Jobcard extends Component
             'discount_card_validity' => 'required',
             'selectedDiscountId'=>'required',
         ]);
+
+        $this->selectedDiscount = [
+            'unitId'=>$this->selectedDiscountUnitId,
+            'code'=>$this->selectedDiscountCode,
+            'title'=>$this->selectedDiscountTitle,
+            'id'=>$this->selectedDiscountId,
+            'groupType'=>$this->selectedDiscountGroupType,
+        ];
+        
         
         if (!CustomerDiscountGroup::where([
                 'customer_id'=>$this->customer_id,
@@ -1609,6 +1618,8 @@ class Jobcard extends Component
                 $customerDiscontGroupInfo['discount_card_imgae'] = $this->discount_card_imgae->store('discount_group', 'public');
             }
             $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
+
+
             $this->customerSelectedDiscountGroup = $this->selectedDiscount;
             $this->customerDiscontGroupId = $this->selectedDiscount['id'];
             $this->customerDiscontGroupCode = $this->selectedDiscount['code'];
