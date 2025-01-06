@@ -228,6 +228,7 @@ class Jobcard extends Component
         }
         
         //Get Service List Prices
+        //dd($this->propertyCode);
         if($this->propertyCode)
         {
             
@@ -242,6 +243,7 @@ class Jobcard extends Component
             {
                 $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
                 if($this->customerDiscontGroupCode){
+                    dd($this->customerSelectedDiscountGroup);
                     if($this->customerSelectedDiscountGroup['groupType']==1)
                     {
 
@@ -1467,6 +1469,7 @@ class Jobcard extends Component
             'id'=>$discountGroup['Id'],
             'groupType'=>$discountGroup['GroupType'],
         ];
+        //dd($this->selectedDiscount);
 
         $this->selectedDiscountUnitId = $discountGroup['UnitId'];
         $this->selectedDiscountCode = $discountGroup['Code'];
@@ -1480,7 +1483,7 @@ class Jobcard extends Component
             $this->discountCardApplyForm=false;
             $this->discountForm=false;
             
-            $this->customerSelectedDiscountGroup = $discountGroup;
+            $this->customerSelectedDiscountGroup = $this->selectedDiscount;
             $this->customerDiscontGroupId = $discountGroup['Id'];
             $this->customerDiscontGroupCode = $discountGroup['Code'];
             $this->dispatchBrowserEvent('closeDiscountGroupModal');
