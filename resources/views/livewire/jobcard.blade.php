@@ -104,7 +104,7 @@
                                     <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle"  wire:click="addNewVehicle()">New Vehicle</button>
                                     <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
                                     <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
-                                    @if(@$customerSelectedDiscountGroup['GroupType']==2)
+                                    @if(@$customerSelectedDiscountGroup['groupType']==2)
                                     <button class="btn bg-gradient-danger btn-sm mb-0" wire:click.prevent="removeDiscount()">Remove Discount - {{strtolower(str_replace("_"," ",$customerDiscontGroupCode))}}</button>
                                     @endif
                                     <br>
@@ -185,7 +185,7 @@
                                     <div class="name ps-3">
                                         <span>{{$customerDiscount->discount_card_number}}</span>
                                         <div class="stats">
-                                            <small>Expired in: discount_card_validity);?> {{ $diff = Carbon\Carbon::parse($customerDiscount->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}   </small>
+                                            <small>Expired in: {{ $diff = Carbon\Carbon::parse($customerDiscount->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}   </small>
                                         </div>
                                     </div>
                                 </div>

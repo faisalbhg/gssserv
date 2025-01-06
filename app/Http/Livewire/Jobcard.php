@@ -228,28 +228,20 @@ class Jobcard extends Component
                 'DivisionCode'=>Session::get('user')->station_code,
             ]);
             $sectionServiceLists = $sectionServiceLists->get();
+            //dd($sectionServiceLists);
             $sectionServicePriceLists = [];
             foreach($sectionServiceLists as $key => $sectionServiceList)
             {
-                /*if($sectionServiceList->ItemCode=='S161'){
-                    dd(LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode])
-                    ->where('StartDate', '<=', Carbon::now())
-                    ->where('EndDate', '>=', Carbon::now() )
-                    ->first()
-                    );
-                }*/
                 $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
-                
                 if($this->customerDiscontGroupCode){
-                    
-                    if($this->customerSelectedDiscountGroup['GroupType']==1)
+                    if($this->customerSelectedDiscountGroup['groupType']==1)
                     {
 
                         $discountLaborSalesPrices = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode]);
-                        //$discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '=', null );
+                        $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '=', null );
                         $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
 
-                    }else if($this->customerSelectedDiscountGroup['GroupType']==2)
+                    }else if($this->customerSelectedDiscountGroup['groupType']==2)
                     {
                         $discountLaborSalesPrices = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode]);
                         $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() );
@@ -304,7 +296,7 @@ class Jobcard extends Component
 
                     if($this->customerDiscontGroupCode){
                     
-                        if($this->customerSelectedDiscountGroup['GroupType']==1)
+                        if($this->customerSelectedDiscountGroup['groupType']==1)
                         {
 
                             $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
@@ -313,7 +305,7 @@ class Jobcard extends Component
                                 'DivisionCode'=>Session::get('user')->station_code,
                             ])->first();
 
-                        }else if($this->customerSelectedDiscountGroup['GroupType']==2)
+                        }else if($this->customerSelectedDiscountGroup['groupType']==2)
                         {
                             
                             $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
@@ -370,7 +362,7 @@ class Jobcard extends Component
                     $qlItemPriceLists1[$key]['priceDetails'] = $qlItemsList1;
                     if($this->customerDiscontGroupCode){
                     
-                        if($this->customerSelectedDiscountGroup['GroupType']==1)
+                        if($this->customerSelectedDiscountGroup['groupType']==1)
                         {
 
                             $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where([
@@ -379,7 +371,7 @@ class Jobcard extends Component
                                 'DivisionCode'=>Session::get('user')->station_code,
                             ])->first();
 
-                        }else if($this->customerSelectedDiscountGroup['GroupType']==2)
+                        }else if($this->customerSelectedDiscountGroup['groupType']==2)
                         {
                             
                             $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where([
@@ -414,7 +406,7 @@ class Jobcard extends Component
                         $qlMakeModelCatItmDetails[$key]['priceDetails'] = $qlMakeModelCatItm;
                         if($this->customerDiscontGroupCode){
                     
-                            if($this->customerSelectedDiscountGroup['GroupType']==1)
+                            if($this->customerSelectedDiscountGroup['groupType']==1)
                             {
 
                                 $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
@@ -423,7 +415,7 @@ class Jobcard extends Component
                                     'DivisionCode'=>Session::get('user')->station_code,
                                 ])->first();
 
-                            }else if($this->customerSelectedDiscountGroup['GroupType']==2)
+                            }else if($this->customerSelectedDiscountGroup['groupType']==2)
                             {
                                 
                                 $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
@@ -458,7 +450,7 @@ class Jobcard extends Component
                     $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
                     if($this->customerDiscontGroupCode){
                     
-                        if($this->customerSelectedDiscountGroup['GroupType']==1)
+                        if($this->customerSelectedDiscountGroup['groupType']==1)
                         {
 
                             $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
@@ -467,7 +459,7 @@ class Jobcard extends Component
                                 'DivisionCode'=>Session::get('user')->station_code,
                             ])->first();
 
-                        }else if($this->customerSelectedDiscountGroup['GroupType']==2)
+                        }else if($this->customerSelectedDiscountGroup['groupType']==2)
                         {
                             
                             $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
@@ -1532,9 +1524,13 @@ class Jobcard extends Component
                 }
                 $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
             }
-            $this->customerSelectedDiscountGroup = $customerDiscontGroup;
-            $this->customerDiscontGroupId = $customerDiscontGroup->id;
-            $this->customerDiscontGroupCode = $customerDiscontGroup->discount_code;
+            
+
+            $this->customerSelectedDiscountGroup = $this->selectedDiscount;
+            $this->customerDiscontGroupId = $this->selectedDiscount['id'];
+            $this->customerDiscontGroupCode = $this->selectedDiscount['code'];
+            $this->customerDiscontCustomerId = $customerDiscontGroup->id;
+
             $this->selectVehicle($this->customer_id,$this->selected_vehicle_id);
             $this->dispatchBrowserEvent('closeDiscountGroupModal');
         }
