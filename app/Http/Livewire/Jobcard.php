@@ -578,6 +578,11 @@ class Jobcard extends Component
     }
 
     public function clickSearchBy($searchId){
+        $this->plate_country = 'AE';
+        $this->plate_state = 'Dubai';
+        $this->plate_category = null;
+        $this->plate_code = null;
+        $this->plate_number = null;
         $this->vehicle_image=Null;
         $this->plate_number_image=Null;
         $this->vehicle_type = null;
