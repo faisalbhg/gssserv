@@ -578,7 +578,19 @@ class Jobcard extends Component
     }
 
     public function clickSearchBy($searchId){
-        
+        $this->vehicle_image=Null;
+        $this->plate_number_image=Null;
+        $this->vehicle_type = null;
+        $this->mobile = null;
+        $this->name = null;
+        $this->email = null;
+        $this->make = null;
+        $this->model = null;
+        $this->chassis_number = null;
+        $this->chaisis_image = null;
+        $this->chassis_number = null;
+        $this->vehicle_km = null;
+
         $this->job_number=Null;
         $this->selected_vehicle_id=null;
         $this->service_group_code=null;
