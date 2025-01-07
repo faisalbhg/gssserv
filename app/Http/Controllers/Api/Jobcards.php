@@ -12,11 +12,14 @@ use App\Models\CustomerJobCardServiceLogs;
 class Jobcards extends Controller
 {
     public function show($job_number){
-        
+        //dd($job_number);
         $customerjobs = CustomerJobCards::with(['customerInfo'])->where(['job_number'=>$job_number])->first();
-        $data['qrdata'] = $customerjobs;
 
-        return response->json($data);
+        return response()->json([
+            'status' => true,
+            'message' => 'Customers retrieved successfully',
+            'data' => $customerjobs
+        ], 200);
     }
 }
 

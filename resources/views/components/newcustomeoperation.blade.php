@@ -506,7 +506,9 @@
                                     <div class="card-header text-center pt-4 pb-3">
                                         <h6 class="font-weight-normal mt-2" style="text-transform: capitalize;">
                                             {{ strtolower($qlItemPriceDetails->ItemName)}}
+
                                         </h6>
+                                        <small>{{$qlItemPriceDetails->ItemCode}}</small>
                                         <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$qlItemPriceDetails->ItemId}}"></textarea > -->
                                         <div class="ms-auto">
                                             @if(!empty($qlItemDiscountDetails))
