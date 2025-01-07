@@ -419,9 +419,10 @@ class Operations extends Component
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
         
-        $job = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo'])->where(['job_number'=>$job_number])->first();
-        dd($job);
+        $job = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first();
+        //dd($job);
         $this->jobcardDetails = $job;
+        //dd($this->jobcardDetails->modelInfo['vehicle_model_name']);
         if($this->jobcardDetails->checklistInfo!=null){
             $this->checkListDetails=$this->jobcardDetails->checklistInfo;
             $this->checklistLabels = ServiceChecklist::get();
@@ -503,12 +504,9 @@ class Operations extends Component
         $this->showServiceGroup=true;
         $this->showServiceType=true;
 
-        $job = CustomerJobCards::select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
-            ->join('customers','customers.id','=','customerjobs.customer_id')
-            ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
-            ->orderBy('customerjobs.id','DESC')
-            ->where(['customerjobs.job_number'=>$job_number])
-            ->first();
+        $job = CustomerJobCards::with(['customerInfo','customerVehicle'])->where(['job_number'=>$this->job_number])->first();
+        //dd($job);
+
         
         $this->selected_vehicle_id = $job->vehicle_id;
         $this->customer_type = $job->customer_type;

@@ -40,7 +40,7 @@
                                     Guest
                                     @endif
                                     <hr class="horizontal dark mt-3">
-                                    <p class="mb-0 text-white">{{$jobcardDetails->make}}, {{$jobcardDetails->model}}</p>
+                                    <p class="mb-0 text-white">{{isset($jobcardDetails->makeInfo)?$jobcardDetails->makeInfo['vehicle_name']:''}}, {{isset($jobcardDetails->modelInfo['vehicle_model_name'])?$jobcardDetails->modelInfo['vehicle_model_name']:''}}</p>
                                     <p class="text-white">{{$jobcardDetails->plate_number}}</p>
                                     <p class="mb-0 text-white">Chassis Number: {{$jobcardDetails->chassis_number}}</p>
                                     <p class="text-white">K.M Reading: {{$jobcardDetails->vehicle_km}}</p>

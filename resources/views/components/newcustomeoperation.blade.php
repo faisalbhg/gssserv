@@ -329,7 +329,7 @@
     </div>
 @endif
 
-@if ($showServiceGroup)
+@if($showServiceGroup)
 
     <div class="row" id="servceGroup">
         @if($selectedCustomerVehicle)
@@ -565,7 +565,6 @@
             @else
                 @foreach($sectionsLists as $sectionsList)
                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3 my-2 cursor-pointer" wire:click="getSectionServices({{$sectionsList}})">
-                    <!--  aria-hidden="true" data-bs-toggle="modal" data-bs-target="#exampleModal"-->
                     <div class="card bg-gradient-primary">
                         <div class="card-body ">
                             <div class="row">

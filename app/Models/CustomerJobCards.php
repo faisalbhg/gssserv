@@ -61,7 +61,7 @@ class CustomerJobCards extends Model
 
     public function customerVehicle()
     {
-        return $this->belongsTo(CustomerVehicle::class,'vehicle_id','id');
+        return $this->belongsTo(CustomerVehicle::class,'vehicle_id','id')->with(['makeInfo','modelInfo']);
     }
 
     public function customerJobServices()
@@ -77,5 +77,15 @@ class CustomerJobCards extends Model
     public function stationInfo()
     {
         return $this->belongsTo(Landlord::class,'station','LandlordCode');
+    }
+
+    public function makeInfo()
+    {
+        return $this->belongsTo(VehicleMakes::class,'make','id');
+    }
+
+    public function modelInfo()
+    {
+        return $this->belongsTo(VehicleModels::class,'model','id');
     }
 }
