@@ -501,6 +501,7 @@
                         @forelse($quickLubeItemsList as $quickLubeItem)
                             <?php $qlItemPriceDetails = $quickLubeItem['priceDetails']; ?>
                             <?php $qlItemDiscountDetails = $quickLubeItem['discountDetails']; ?>
+                            @if($qlItemPriceDetails->UnitPrice!=0)
                             <div class="col-md-4 col-sm-6 mb-4">
                                 <div class="card">
                                     <div class="card-header text-center pt-4 pb-3">
@@ -533,6 +534,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                         @empty
                             <div class="alert alert-danger text-white" role="alert">
                                 <strong>Empty!</strong> The Searched items are not in stock!</div>
@@ -732,12 +734,14 @@
             @forelse($serviceItemsList as $servicesItem)
                 <?php $itemPriceDetails = $servicesItem['priceDetails']; ?>
                 <?php $itemDiscountDetails = $servicesItem['discountDetails']; ?>
+                @if($itemPriceDetails->UnitPrice!=0)
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <div class="card-header text-center pt-4 pb-3">
                             <h4 class="font-weight-normal mt-2">
                                 {{$itemPriceDetails->ItemName}}
                             </h4>
+                            <small>{{$itemPriceDetails->ItemCode}}</small>
                             <h4 class="font-weight-bold mt-2">
                                 <small>AED</small>{{round($itemPriceDetails->UnitPrice,2)}}
                             </h4>
@@ -748,6 +752,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
             @empty
                 <div class="alert alert-danger text-white" role="alert">
                                 <strong>Empty!</strong> The Searched items are not in stock!</div>

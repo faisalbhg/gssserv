@@ -82,7 +82,7 @@ class Jobcard extends Component
     //Cart Details
     public $total, $tax, $grand_total, $paymentMethode, $job_number, $job_service_number, $cartItemCount=0, $cartItems = [], $quantity,$extra_note,$cartItemQty;
     public $showPayLaterCheckout=false, $successPage=false, $showCheckList=false, $showCheckout=false, $showFuelScratchCheckList=false, $showQLCheckList=false, $markCarScratch = false, $updateCustomerFormDiv = false;
-    public $laborCustomerGroupLists=[], $selectedDiscount, $selectedDiscountUnitId, $selectedDiscountCode, $selectedDiscountTitle, $selectedDiscountId, $selectedDiscountGroupType, $discount_card_imgae, $discount_card_number, $discount_card_validity, $customerSelectedDiscountGroup, $customerDiscontGroupId, $customerDiscontGroupCode, $searchStaffId=false,$employeeId;
+    public $laborCustomerGroupLists=[], $selectedDiscount, $selectedDiscountUnitId, $selectedDiscountCode, $selectedDiscountTitle, $selectedDiscountId, $selectedDiscountGroupType, $discount_card_imgae, $discount_card_number, $discount_card_validity, $customerSelectedDiscountGroup,$engineOilDiscountPercentage, $customerDiscontGroupId, $customerDiscontGroupCode, $searchStaffId=false,$employeeId;
 
     public $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature;
     public $servicePackage, $packagePriceUpdate, $servicePackageAddon, $showPackageAddons=false;
@@ -97,7 +97,7 @@ class Jobcard extends Component
 
     public $quickLubeItemsList=[],$serviceItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $showQuickLubeItemSearchItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
     public $item_search_category, $itemCategories=[], $item_search_subcategory, $itemSubCategories =[], $item_search_brand, $itemBrandsLists=[], $itemSearchName, $ql_item_qty;
-    public $editTenantCode, $discountCardApplyForm=false, $discountForm=false, $discountSearch=false;
+    public $editTenantCode, $discountCardApplyForm=false, $engineOilDiscountForm=false, $discountForm=false, $discountSearch=false;
     public $searchByMobileNumberBtn=false,$searchByPlateBtn=false, $searchByChaisisBtn=false, $shoe_discound_popup_image;
     public $showItemsSearchResults=false;
 
@@ -249,6 +249,10 @@ class Jobcard extends Component
                         $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
                         //dd($sectionServicePriceLists[$key]['discountDetails']);
                     }
+                    else
+                    {
+                        $sectionServicePriceLists[$key]['discountDetails']=null;
+                    }
                     
                 }
                 else
@@ -314,6 +318,10 @@ class Jobcard extends Component
                                 'CustomerGroupCode'=>$this->customerDiscontGroupCode,
                                 'DivisionCode'=>Session::get('user')->station_code,
                             ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
+                        }
+                        else
+                        {
+                            $itemPriceLists[$key]['discountDetails']=null;
                         }
                         
                     }
@@ -381,6 +389,10 @@ class Jobcard extends Component
                                 'DivisionCode'=>Session::get('user')->station_code,
                             ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
                         }
+                        else
+                        {
+                            $qlItemPriceLists1[$key]['discountDetails']=null;
+                        }
                         
                     }
                     else
@@ -425,6 +437,10 @@ class Jobcard extends Component
                                     'DivisionCode'=>Session::get('user')->station_code,
                                 ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
                             }
+                            else
+                            {
+                                $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
+                            }
                             
                         }
                         else
@@ -468,6 +484,10 @@ class Jobcard extends Component
                                 'CustomerGroupCode'=>$this->customerDiscontGroupCode,
                                 'DivisionCode'=>Session::get('user')->station_code,
                             ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
+                        }
+                        else
+                        {
+                            $qlItemPriceLists[$key]['discountDetails']=null;
                         }
                         
                     }
@@ -1011,6 +1031,7 @@ class Jobcard extends Component
         $this->selectServiceItems=false;
         $this->showQlItems=false;
         
+        //$this->selectVehicle($this->customer_id,$this->selected_vehicle_id);
         
         
         $this->dispatchBrowserEvent('scrolltop');
@@ -1469,6 +1490,8 @@ class Jobcard extends Component
 
     }
 
+
+
     public function selectDiscountGroup($discountGroup){
         //dd($discountGroup);
         $this->selectedDiscount = [
@@ -1487,6 +1510,7 @@ class Jobcard extends Component
         $this->selectedDiscountGroupType = $discountGroup['GroupType'];
         
 
+        
         if($discountGroup['GroupType']==2)
         {
             $this->discountCardApplyForm=false;
@@ -1507,14 +1531,82 @@ class Jobcard extends Component
                 //dd($this->searchStaffId);
                 $this->searchStaffId=true;
                 $this->discountCardApplyForm=false;
+                $this->engineOilDiscountForm=false;
+            }
+            else if($discountGroup['Id']==41)
+            {
+                if(Session()->get('user')->station_id!=1){
+                    $this->engineOilDiscountForm=true;
+                    $this->discountCardApplyForm=false;
+                    $this->searchStaffId=false;
+                }
+                else
+                {
+                    $this->staffavailable="Discount Not Available..!";
+                }
             }
             else
             {
                 $this->discountCardApplyForm=true;
                 $this->searchStaffId=false;
+                $this->engineOilDiscountForm=true;
             }
         }
         //$this->dispatchBrowserEvent('closeDiscountGroupModal');
+    }
+
+    public function selectEngineOilDiscount($percentage){
+
+        $this->customerSelectedDiscountGroup = $this->selectedDiscount;
+        $this->engineOilDiscountPercentage=$percentage;
+        $this->customerDiscontGroupId = $this->selectedDiscount['id'];
+        $this->customerDiscontGroupCode = $this->selectedDiscount['code'];
+        $this->selectVehicle($this->customer_id,$this->selected_vehicle_id);
+        $this->dispatchBrowserEvent('closeDiscountGroupModal');
+    }
+
+    public function applyEngineOilDiscount(){
+
+        foreach($this->cartItems as $items)
+        {
+            if($items->cart_item_type==1){
+                if(in_array($items->item_code,config('global.engine_oil_discount_voucher')['services']))
+                {
+                    $discountSalePrice= $this->engineOilDiscountPercentage;
+                }
+                else
+                {
+                    $discountSalePrice= null;
+                }
+                
+
+            }
+            else if($items->cart_item_type==2)
+            {
+                if(in_array($items->item_code,config('global.engine_oil_discount_voucher')['items']))
+                {
+                    $discountSalePrice= $this->engineOilDiscountPercentage;
+                }
+                else
+                {
+                    $discountSalePrice= null;
+                }
+            }
+
+            if($discountSalePrice){
+                //$cartUpdate['price_id']=$discountSalePrice->PriceID;
+                $cartUpdate['customer_group_id']=$this->customerDiscontGroupId;
+                $cartUpdate['customer_group_code']=$this->customerDiscontGroupCode;
+                //$cartUpdate['min_price']=$discountSalePrice->MinPrice;
+                //$cartUpdate['max_price']=$discountSalePrice->MaxPrice;
+                //$cartUpdate['start_date']=$discountSalePrice->StartDate;
+                //$cartUpdate['end_date']=$discountSalePrice->EndDate;
+                $cartUpdate['discount_perc']=$discountSalePrice;
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'id'=>$items->id])->update($cartUpdate);
+            }
+        }
+
+        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->get();
     }
 
     public function checkStaffDiscountGroup(){
