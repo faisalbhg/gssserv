@@ -40,6 +40,7 @@ use App\Http\Livewire\CustomerTypes;
 use App\Http\Livewire\Jobcard;
 use App\Http\Livewire\Mechanical;
 use App\Http\Livewire\CustomerCheckout;
+use App\Http\Livewire\CarsTaxi;
 
 use App\Http\Controllers\QrCodeController;
 
@@ -119,6 +120,8 @@ Route::middleware('auth')->group(function () {
 
     
     Route::get('mechanical',Mechanical::class)->name('mechanical');
+
+    Route::get('cars-taxi', CarsTaxi::class)->name('cars-taxi');
 });
 
 Route::get('qr/{name}', [QrCodeController::class, 'qrcode']);

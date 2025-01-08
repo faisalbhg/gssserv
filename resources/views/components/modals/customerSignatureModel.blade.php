@@ -2,11 +2,6 @@
 <div wire:ignore.self class="modal fade" id="customerSignatureModal" tabindex="-1" role="dialog" aria-labelledby="customerSignatureModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
        <div class="modal-content ">
-            <!-- <div class="modal-header">
-
-                <h5 class="modal-title" id="customerSignatureModalLabel">#{{$job_number}} Update</h5>
-            </div>
-             -->
              <div class="modal-body ">
                 <div class="row">
                     <div class="card text-white border-0">

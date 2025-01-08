@@ -33,7 +33,7 @@
                 </div> -->
                 
                 <ul class="navbar-nav justify-content-end">
-                    <li class="nav-item px-1 dropdown pe-2 d-flex align-items-center">
+                    <li class="d-none nav-item px-1 dropdown pe-2 d-flex align-items-center">
                         <a href="javascript:;" class="nav-link text-primary p-0 " id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-bell cursor-pointer"></i>
                         </a>
@@ -66,7 +66,20 @@
                         </a>
                     </li> -->
 
-                    <li class="nav-item px-3 d-flex align-items-center"  >
+                    <li class="nav-item px-0 d-flex align-items-center"  >
+                        <div class="dropdown">
+                            <button class="btn bg-gradient-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fa-solid fa-car fa-xl"></i></span>
+                                Contract
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" href="{{ route('cars-taxi') }}">Dubai Car Taxi</a></li>
+                                <li><a class="dropdown-item" href="{{ route('cars-taxi') }}">Emirates Catering</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item px-0 d-flex align-items-center"  >
                         <a class="nav-link" href="{{ route('job-card') }}">
                             <button class="btn btn-icon btn-sm btn-3 bg-gradient-primary" type="button" wire:click="newVehicleOpen">
                                 <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fa-solid fa-car fa-xl"></i></span>
