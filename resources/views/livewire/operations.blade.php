@@ -17,7 +17,16 @@
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
         <label>Plate Search</label>
         <div class="form-group">
-          <span class="badge badge-sm bg-gradient-danger">Plate Number</span>
+          <span class="badge badge-sm bg-gradient-danger cursor-pointer" wire:click="showSearchPlateNumber()">Plate Number</span>
+          <div wire:loading wire:target="showSearchPlateNumber">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
         </div>
       </div>
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
@@ -27,6 +36,50 @@
         </div>
       </div>
     </div>
+    @if($showNumberPlateFilter)
+    <div class="row">
+      <div class="col-md-3 col-sm-3">
+        <div class="form-group">
+            <label for="searchPlateCountry">Country</label>
+            <select class="form-control  " wire:model="search_plate_country"  id="searchPlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
+                @foreach(config('global.country') as $country)
+                <option value="{{$country['CountryCode']}}">{{$country['CountryName']}}</option>
+                @endforeach
+            </select>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-3">
+        <div class="form-group">
+            <label for="searchPlateEmirates">Plate Emirates</label>
+            <select class="form-control  " wire:model="search_plate_state" name="search_plate_state" id="searchPlateEmirates" style="padding:0.5rem 0.3rem !important;" >
+                <option value="">-Emirates-</option>
+                @foreach($stateList as $state)
+                <option value="{{$state->StateName}}">{{$state->StateName}}</option>
+                @endforeach
+            </select>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-3">
+        <div class="form-group">
+            <label for="plateCode">Plate Code</label>
+            <select class="form-control  " wire:model="search_plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
+                <option value="">-Code-</option>
+                @foreach($plateEmiratesCodes as $plateCode)
+                <option value="{{$plateCode->plateColorTitle}}">{{$plateCode->plateColorTitle}}</option>
+                @endforeach
+            </select>
+        </div>
+        @error('plate_code') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+      </div>
+    
+    <div class="col-md-3 col-sm-3">
+        <div class="form-group">
+            <label for="plateNumber">Plate Number</label>
+            <input style="padding:0.5rem 0.3rem !important;" type="number" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="search_plate_number" name="plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Number">
+        </div>
+    </div>
+    </div>
+    @endif
 
     <div class="row">
       <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount total">

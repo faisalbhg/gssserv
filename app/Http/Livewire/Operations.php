@@ -19,6 +19,10 @@ use App\Models\ServicesJobUpdate;
 use App\Models\JobcardChecklistEntries;
 use App\Models\ServiceChecklist;
 use App\Models\TenantMasterCustomers;
+use App\Models\Country;
+use App\Models\PlateCategories;
+use App\Models\PlateEmiratesCategory;
+use App\Models\PlateCode;
 
 use Carbon\Carbon;
 use Session;
@@ -62,6 +66,7 @@ class Operations extends Component
     public $jobcardDetails, $showaddServiceItems=false;
     public $showVehicleImageDetails=false;
     public $checkListDetails, $checklistLabels, $vehicleSidesImages, $vehicleCheckedChecklist, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature;
+    public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $plateEmiratesCodes=[], $search_plate_state, $search_plate_code, $search_plate_number;
 
 
     
@@ -84,6 +89,63 @@ class Operations extends Component
 
     public function render()
     {
+        if($this->showNumberPlateFilter){
+            $this->stateList = StateList::where(['CountryCode'=>$this->search_plate_country])->get();
+            if($this->search_plate_state)
+            {
+                switch ($this->search_plate_state) {
+                    case 'Abu Dhabi':
+                        $plateStateCode = 1;
+                        $this->search_plate_category = '242';
+                        break;
+                    case 'Dubai':
+                        $plateStateCode = 2;
+                        $this->search_plate_category = '1';
+                        break;
+                    case 'Sharjah':
+                        $plateStateCode = 3;
+                        $this->search_plate_category = '103';
+                        break;
+                    case 'Ajman':
+                        $plateStateCode = 4;
+                        $this->search_plate_category = '122';
+                        break;
+                    case 'Umm Al-Qaiwain':
+                        $plateStateCode = 5;
+                        $this->search_plate_category = '134';
+                        break;
+                    case 'Ras Al-Khaimah':
+                        $plateStateCode = 6;
+                        $this->search_plate_category = '147';
+                        break;
+                    case 'Fujairah':
+                        $plateStateCode = 7;
+                        $this->search_plate_category = '169';
+                        break;
+                    
+                    default:
+                        $plateStateCode = 1;
+                        $this->search_plate_category = '242';
+                        break;
+                }
+                
+                $this->plateEmiratesCategories = PlateEmiratesCategory::where([
+                        'plateEmiratesId'=>$plateStateCode,'is_active'=>1,
+                    ])->get();
+                //dd($plateStateCode);
+                if($this->search_plate_category){
+                    $this->plateEmiratesCodes = PlateCode::where([
+                        'plateEmiratesId'=>$plateStateCode,'plateCategoryId'=>$this->search_plate_category,'is_active'=>1,
+                    ])->get();
+                }
+            }
+        }
+        else
+        {
+            /*$this->stateList=null;
+            $this->plateEmiratesCategories=null;
+            $this->plateEmiratesCodes=null;*/
+        }
 
         $getCountSalesJob = CustomerJobCards::select(
             array(
@@ -132,6 +194,10 @@ class Operations extends Component
         $data['customerjobs'] = $customerjobs;
         $this->dispatchBrowserEvent('filterTab',['tabName'=>$this->filterTab]);
         return view('livewire.operations',$data);
+    }
+
+    public function showSearchPlateNumber(){
+        $this->showNumberPlateFilter=true;
     }
 
     public function filterJobListPage($statusFilter)

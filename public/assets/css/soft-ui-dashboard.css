@@ -4556,7 +4556,7 @@ textarea.form-control-lg {
   padding-left: 0;
 }
 .navbar-nav .dropdown-menu {
-  position: static;
+  margin-top: 44px !important;
 }
 
 .navbar-text {

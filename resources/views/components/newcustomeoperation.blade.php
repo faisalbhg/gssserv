@@ -59,9 +59,6 @@
                                             </div>
                                         </div>
                                         <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: none;" />
-                                        @if( $progress )
-                                        <progress max=100 wire:model="progress" />
-                                        @endif
                                         @if ($plate_number_image)
                                             <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                                         @endif
