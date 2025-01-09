@@ -89,63 +89,7 @@ class Operations extends Component
 
     public function render()
     {
-        if($this->showNumberPlateFilter){
-            $this->stateList = StateList::where(['CountryCode'=>$this->search_plate_country])->get();
-            if($this->search_plate_state)
-            {
-                switch ($this->search_plate_state) {
-                    case 'Abu Dhabi':
-                        $plateStateCode = 1;
-                        $this->search_plate_category = '242';
-                        break;
-                    case 'Dubai':
-                        $plateStateCode = 2;
-                        $this->search_plate_category = '1';
-                        break;
-                    case 'Sharjah':
-                        $plateStateCode = 3;
-                        $this->search_plate_category = '103';
-                        break;
-                    case 'Ajman':
-                        $plateStateCode = 4;
-                        $this->search_plate_category = '122';
-                        break;
-                    case 'Umm Al-Qaiwain':
-                        $plateStateCode = 5;
-                        $this->search_plate_category = '134';
-                        break;
-                    case 'Ras Al-Khaimah':
-                        $plateStateCode = 6;
-                        $this->search_plate_category = '147';
-                        break;
-                    case 'Fujairah':
-                        $plateStateCode = 7;
-                        $this->search_plate_category = '169';
-                        break;
-                    
-                    default:
-                        $plateStateCode = 1;
-                        $this->search_plate_category = '242';
-                        break;
-                }
-                
-                $this->plateEmiratesCategories = PlateEmiratesCategory::where([
-                        'plateEmiratesId'=>$plateStateCode,'is_active'=>1,
-                    ])->get();
-                //dd($plateStateCode);
-                if($this->search_plate_category){
-                    $this->plateEmiratesCodes = PlateCode::where([
-                        'plateEmiratesId'=>$plateStateCode,'plateCategoryId'=>$this->search_plate_category,'is_active'=>1,
-                    ])->get();
-                }
-            }
-        }
-        else
-        {
-            /*$this->stateList=null;
-            $this->plateEmiratesCategories=null;
-            $this->plateEmiratesCodes=null;*/
-        }
+        
 
         $getCountSalesJob = CustomerJobCards::select(
             array(
@@ -175,9 +119,14 @@ class Operations extends Component
             $customerjobs = $customerjobs->whereBetween('job_date_time', [$this->search_job_date." 00:00:00",$this->search_job_date." 23:59:59"]);
             $getCountSalesJob = $getCountSalesJob->whereBetween('job_date_time', [$this->search_job_date." 00:00:00",$this->search_job_date." 23:59:59"]);
         }
+        if($this->search_plate_number)
+        {
+            $customerjobs = $customerjobs->where('plate_number', 'like',"%$this->search_plate_number%");
+        }
         $customerjobs = $customerjobs->orderBy('id','DESC')->paginate(10);
         //dd($customerjobs);
         $getCountSalesJob = $getCountSalesJob->first();
+        //dd($getCountSalesJob);
 
         /*$customerjobs = Customerjobs::
             select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')

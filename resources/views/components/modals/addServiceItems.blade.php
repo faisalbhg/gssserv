@@ -1,6 +1,6 @@
 <style>
     .modal-dialog {
-        max-width: 85%;
+        max-width: 90% !important;
     }
     .modal{
         z-index: 99999;
@@ -29,7 +29,7 @@
                                             <a href="javascript:;">
                                                 <div class="position-relative">
                                                 <div class="blur-shadow-image">
-                                                    <img class="w-70 rounded-3 shadow-lg" src="{{url('storage/'.$vehicle_image)}}">
+                                                    <img class="w-70 rounded-3 shadow-lg" src="{{url('public/storage/'.$vehicle_image)}}">
                                                 </div>
                                                 </div>
                                             </a>

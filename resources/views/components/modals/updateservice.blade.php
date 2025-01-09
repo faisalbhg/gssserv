@@ -1,6 +1,6 @@
 <style>
     .modal-dialog {
-        max-width: 90%;
+        max-width: 90% !important;
     }
     .modal{
         z-index: 99999;
@@ -17,13 +17,13 @@
                       <h5 class=" modal-title" id="serviceUpdateModalLabel">#{{$jobcardDetails->job_number}}</h5>
                     </div>
                     <div class="d-flex">
+                    @if($jobcardDetails->payment_status==0)
                       <button wire:click="addNewServiceItem('{{$jobcardDetails->job_number}}')" type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end">Add New Service/Items</button>
+                    @endif
                       <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
                     </div>
                 </div>
-                
             </div>
-            
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-6">
@@ -31,14 +31,19 @@
                             <div class="card card-background mb-4" style="align-items: inherit;">
                                 <!-- move-on-hover-->
                                 <div class="full-background" style="background-image: url('{{url("public/storage/".$jobcardDetails->vehicle_image)}}')"></div>
-                                <div class="card-body pt-5">
+                                <div class="card-body pt-2">
                                     @if($jobCustomerInfo['TenantName'])
-                                        <h4 class="text-white mb-0 pb-0 text-white">{{$jobCustomerInfo['TenantName']}}</h4>
-                                        <p class="mt-0 pt-0 text-white"><small>{{$jobCustomerInfo['Mobile']}}<br> {{$jobCustomerInfo['Email']}}</small></p>
-                                        <!--ID image-->
+                                    <h4 class="text-white mb-0 pb-0 text-white">{{$jobCustomerInfo['TenantName']}}</h4>
                                     @else
                                     Guest
                                     @endif
+                                    @if($jobCustomerInfo['Mobile'])
+                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobCustomerInfo['Mobile']}}</small></p>
+                                    @endif
+                                    @if($jobCustomerInfo['Email'])
+                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobCustomerInfo['Email']}}</small></p>
+                                    @endif
+                                    <!--ID image-->
                                     <hr class="horizontal dark mt-3">
                                     <p class="mb-0 text-white">{{isset($jobcardDetails->makeInfo)?$jobcardDetails->makeInfo['vehicle_name']:''}}, {{isset($jobcardDetails->modelInfo['vehicle_model_name'])?$jobcardDetails->modelInfo['vehicle_model_name']:''}}</p>
                                     <p class="text-white">{{$jobcardDetails->plate_number}}</p>
@@ -46,7 +51,7 @@
                                     <p class="text-white">K.M Reading: {{$jobcardDetails->vehicle_km}}</p>
                                     <ul class="list-group">
                                         <!-- Job Status -->
-                                        <li class="list-group-item border-0  p-2 mb-2 bg-transparent border-radius-lg">
+                                        <li class="list-group-item border-0 p-0 pb-0 mb-0 bg-transparent border-radius-lg">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$job_status]}} shadow text-center m-2">
@@ -61,7 +66,7 @@
                                             </div>
                                         </li>
                                         <!-- Payment Status -->
-                                        <li class="list-group-item border-0  p-2 mb-2 bg-transparent border-radius-lg">
+                                        <li class="list-group-item border-0 p-0 mb-0 bg-transparent border-radius-lg">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     
@@ -77,13 +82,8 @@
                                             <div class="row">
                                                 <div class="col-md-12">
 
-                                                    @if($jobcardDetails->payment_status==0 && $jobcardDetails->payment_type!=1)
-                                                    <div class=" float-start">
-                                                        @foreach(config('global.payment.status_update') as $pskey => $paymentStatus)
-                                                        <button wire:click="updatePayment('{{$job_number}}','{{$pskey}}')" class="btn btn-sm {{config('global.payment.status_class')[$pskey]}} btn-sm px-2">{{config('global.payment.status_update')[$pskey]}}</button>
-                                                        @endforeach
-                                                    </div>
-                                                    @else
+                                                    @if($jobcardDetails->payment_status==0 && $jobcardDetails->payment_type==1)
+                                                    
                                                     <div class=" float-start">
                                                         @if($jobcardDetails->payment_type==1 && $jobcardDetails->payment_status==0)
                                                         <button type="button" wire:click="resendPaymentLink('{{$job_number}}')" class="mt-2 btn btn-sm bg-gradient-success px-2">Re send Payment link</button>
@@ -176,16 +176,19 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="card-body pt-4 p-2">
-                                                                        <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Items/Services</h6>
+                                                                        <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-0">Items/Services</h6>
                                                                         <ul class="list-group">
                                                                             <?php $discountPS=0;?>
                                                                             @foreach($customerjobservices as $serviceItems)
                                                                             <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
                                                                                 <div class="d-flex align-items-center">
                                                                                     <button class="btn btn-icon-only btn-rounded  mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
-                                                                                    <div class="d-flex flex-column">
-                                                                                        <h6 class="mb-1 text-dark text-sm">{{$serviceItems->item_name}}</h6>
-                                                                                        <span class="text-xs">{{$serviceItems->item_code}}<br>{{$serviceItems->department_code}}-</span>
+                                                                                    <div class="d-flex">
+                                                                                        <h6 class="mb-1 text-dark text-sm">{{$serviceItems->item_name}}<br>
+                                                                                        <small>
+                                                                                            {{$serviceItems->item_code}} - {{$serviceItems->department_code}}
+                                                                                        </small>
+                                                                                        </h6>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
