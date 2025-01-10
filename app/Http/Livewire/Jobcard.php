@@ -1082,6 +1082,7 @@ class Jobcard extends Component
         $this->vehicle_image=null;
 
         //dd($this->selectedVehicleInfo);
+        $this->editCustomerAndVehicle=true;
 
         $this->showForms=true;
         $this->showByMobileNumber=true;
