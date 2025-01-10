@@ -23,6 +23,9 @@ use App\Models\Country;
 use App\Models\PlateCategories;
 use App\Models\PlateEmiratesCategory;
 use App\Models\PlateCode;
+use App\Models\Development;
+use App\Models\Sections;
+use App\Models\LaborItemMaster;
 
 use Carbon\Carbon;
 use Session;
@@ -67,6 +70,10 @@ class Operations extends Component
     public $showVehicleImageDetails=false;
     public $checkListDetails, $checklistLabels, $vehicleSidesImages, $vehicleCheckedChecklist, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature;
     public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $plateEmiratesCodes=[], $search_plate_state, $search_plate_code, $search_plate_number;
+    public $selectedVehicleInfo, $selectedCustomerVehicle=false, $showSectionsList=false, $selectServiceItems, $showPackageList=false, $selectPackageMenu=false, $showServiceSectionsList=false;
+    public $propertyCode, $selectedSectionName;
+    public $servicesGroupList, $sectionsLists=[], $sectionServiceLists=[];
+    public $customerDiscontGroupId, $customerDiscontGroupCode;
 
 
     
@@ -90,6 +97,77 @@ class Operations extends Component
     public function render()
     {
         
+        if($this->selectedCustomerVehicle)
+        {
+            $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>Session::get('user')->station_code])->get();
+            //dd($this->servicesGroupList);
+        }
+        else
+        {
+            $this->servicesGroupList = null;
+        }
+
+        if($this->selected_vehicle_id && $this->service_group_code)
+        {
+            $this->sectionsLists = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')
+                ->where([
+                    'DevelopmentCode'=>$this->service_group_code,
+                    'Operation'=>true
+                ])
+                ->get();
+        }
+        else
+        {
+            $this->sectionsLists = [];
+        }
+
+        if($this->propertyCode)
+        {
+            
+            $sectionServiceLists = LaborItemMaster::where([
+                'SectionCode'=>$this->propertyCode,
+                'DivisionCode'=>Session::get('user')->station_code,
+            ]);
+            $sectionServiceLists = $sectionServiceLists->get();
+            //dd($sectionServiceLists);
+            $sectionServicePriceLists = [];
+            foreach($sectionServiceLists as $key => $sectionServiceList)
+            {
+                $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
+                if($this->customerDiscontGroupCode){
+                    //dd($this->customerSelectedDiscountGroup);
+                    if($this->customerSelectedDiscountGroup['groupType']==1)
+                    {
+
+                        $discountLaborSalesPrices = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode]);
+                        $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '=', null );
+                        $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
+
+                    }else if($this->customerSelectedDiscountGroup['groupType']==2)
+                    {
+                        $discountLaborSalesPrices = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->customerDiscontGroupCode]);
+                        $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() );
+                        $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
+                        //dd($sectionServicePriceLists[$key]['discountDetails']);
+                    }
+                    else
+                    {
+                        $sectionServicePriceLists[$key]['discountDetails']=null;
+                    }
+                    
+                }
+                else
+                {
+                    $sectionServicePriceLists[$key]['discountDetails']=null;
+                }
+            }
+            $this->sectionServiceLists = $sectionServicePriceLists;
+            //dd($this->sectionServiceLists);
+        }
+        else
+        {
+            $this->sectionServiceLists=[];
+        }
 
         $getCountSalesJob = CustomerJobCards::select(
             array(
@@ -513,14 +591,42 @@ class Operations extends Component
         }
     }
 
+    public function selectVehicle($customerId,$vehicleId){
+        //dd($this);
+        //dd($customerId.'-'.$vehicleId);
+        //dd(CustomerVehicle::limit(2)->where(['id'=>$vehicleId])->get());
+        $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$vehicleId,'customer_id'=>$customerId])->first();
+        //dd($customers);
+        
+        $this->selectedVehicleInfo=$customers;
+        $this->selected_vehicle_id = $customers->id;
+        $this->customer_id = $customers->customer_id;
+        $this->mobile = $customers->customerInfoMaster['Mobile'];
+        $this->name = $customers->customerInfoMaster['TenantName'];
+        $this->email = $customers->customerInfoMaster['Email'];
+        //dd($this);
+        
+    }
+    public function openServiceGroup(){
+        $this->showServiceGroup=true;
+        $this->showCheckout=false;
+        $this->showPayLaterCheckout=false;
+        $this->successPage=false;
+    }
+
     public function addNewServiceItem($job_number)
     {
+
+
         $this->job_number = $job_number;
+
+
         $this->showServiceGroup=true;
         $this->showServiceType=true;
 
         $job = CustomerJobCards::with(['customerInfo','customerVehicle'])->where(['job_number'=>$this->job_number])->first();
         //dd($job);
+        $this->selectVehicle($job->customer_id,$job->vehicle_id);
 
         
         $this->selected_vehicle_id = $job->vehicle_id;
@@ -532,6 +638,7 @@ class Operations extends Component
         
         
         $this->showaddServiceItems=true;
+        $this->selectedCustomerVehicle=true;
         $this->dispatchBrowserEvent('hideServiceUpdate');
         $this->dispatchBrowserEvent('showAddServiceItems');
 
@@ -539,26 +646,51 @@ class Operations extends Component
 
     public function serviceGroupForm($service)
     {
-        $service = json_decode($service);
-        $this->service_group_id = $service->id;
-        $this->service_group_name = $service->service_group_name;
-        $this->service_group_code = $service->service_group_code;
-        $this->station = $service->station_id;
+        $this->service_group_id = $service['id'];
+        $this->service_group_name = $service['department_name'];
+        $this->service_group_code = $service['department_code'];
+        $this->station = $service['station_code'];
         $this->service_search='';
-        $this->selectedCustomerVehivleDetails($this->selected_vehicle_id);
+        $this->showSectionsList=true;
+        if($this->service_group_name !='Quick Lube' || $this->showQlItems == true)
+        {
+            $this->showQlItems=false;
+        }
+
+        $this->selectedCustomerVehicle=true;
         $this->customer_id = $this->customer_id;
-        $this->vehicle_id = $this->vehicle_id;
+        $this->vehicle_id = $this->selected_vehicle_id;
         $this->customer_type = $this->customer_type;
         $this->mobile = $this->mobile;
         $this->name = $this->name;
         $this->email = $this->email;
-        $this->showServiceType=true;
+        
+        $this->showServiceType=false;
         $this->selectServicesitems=false;
-        $this->showServicesitems=true;
+        $this->showServicesitems=true; 
 
-        $this->getServiceTypes();
-        //dd($this->servicesTypesList);
+        $this->showPackageList=false;
+        $this->showSectionsList=true;
+        $this->selectPackageMenu=false;
+        $this->selectServiceItems=false;
+        $this->showQlItems=false;
+        $this->dispatchBrowserEvent('scrolltop');
     }
+
+    public function getSectionServices($section)
+    {
+        //dd($section);
+        $this->propertyCode=$section['PropertyCode'];
+        $this->selectedSectionName = $section['PropertyName'];
+        
+        /*foreach($this->sectionServiceLists as $sectionServiceLists)
+        {
+            dd($sectionServiceLists);
+        }*/
+        $this->showServiceSectionsList=true;
+        $this->dispatchBrowserEvent('openServicesListModal');
+    }
+
     public function getServiceTypes()
     {
         $this->servicesTypesList = ServicesType::select(

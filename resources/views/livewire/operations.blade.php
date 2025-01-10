@@ -234,6 +234,13 @@
         $('.jobscount').addClass('opacity-5');
         $('.'+event.detail.tabName).removeClass('opacity-5');
     });
+
+    window.addEventListener('openServicesListModal',event=>{
+        $('#servicePriceModal').modal('show');
+    });
+    window.addEventListener('closeServicesListModal',event=>{
+        $('#servicePriceModal').modal('hide');
+    });
     
 
   </script>

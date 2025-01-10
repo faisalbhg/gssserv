@@ -43,24 +43,28 @@ return [
             '1'=>'Paid',
             '2'=>'Failed',
             '3'=>'Cancelled',
+            '4'=>'Advanced',
         ],
         'status_class'=>[
             '0'=>'bg-gradient-primary',
             '1'=>'bg-gradient-success',
             '2'=>'bg-gradient-danger',
             '3'=>'bg-gradient-danger',
+            '4'=>'bg-gradient-success',
         ],
         'status_icon'=>[
             '0'=>'fas fa-minus',
             '1'=>'fas fa-check',
             '2'=>'fas fa-minus',
             '3'=>'fas fa-minus',
+            '4'=>'fas fa-check',
         ],
         'status_icon_class'=>[
             '0'=>'btn-outline-danger',
             '1'=>'btn-outline-success',
             '2'=>'btn-outline-danger',
             '3'=>'btn-outline-danger',
+            '3'=>'btn-outline-success',
         ],
         'status_update'=>[
             '1'=>'Paid',

@@ -186,7 +186,7 @@ class Jobcard extends Component
         else
         {
             $this->stateList = Null;
-            $this->listVehiclesMake = Null;
+            //$this->listVehiclesMake = Null;
             $this->plateEmiratesCategories=[];
             $this->plateEmiratesCodes=[];
         }
