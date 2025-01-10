@@ -348,7 +348,7 @@
                                                                 <div class="card-body z-index-2 py-4">
                                                                     <h2 class="text-white">15%</h2>
                                                                     <p class="text-white">
-                                                                    10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                    15% Discount on Special Selected Engine Oil & Selected Wash Service</p>
                                                                     <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
                                                                 </div>
                                                                 <div class="mask bg-gradient-primary border-radius-lg"></div>
@@ -359,7 +359,7 @@
                                                                 <div class="card-body z-index-2 py-4">
                                                                     <h2 class="text-white">20%</h2>
                                                                     <p class="text-white">
-                                                                    10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                    20% Discount on Special Selected Engine Oil & Selected Wash Service</p>
                                                                     <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
                                                                 </div>
                                                                 <div class="mask bg-gradient-primary border-radius-lg"></div>
@@ -370,7 +370,7 @@
                                                                 <div class="card-body z-index-2 py-4">
                                                                     <h2 class="text-white">25%</h2>
                                                                     <p class="text-white">
-                                                                    10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                    25% Discount on Special Selected Engine Oil & Selected Wash Service</p>
                                                                     <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
                                                                 </div>
                                                                 <div class="mask bg-gradient-primary border-radius-lg"></div>

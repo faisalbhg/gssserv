@@ -762,6 +762,7 @@ class Jobcard extends Component
         }
         else
         {
+            $this->editCustomerAndVehicle=true;
             $this->vehicle_type = null;
             $this->make = null;
             $this->model = null;
@@ -1549,7 +1550,7 @@ class Jobcard extends Component
             {
                 $this->discountCardApplyForm=true;
                 $this->searchStaffId=false;
-                $this->engineOilDiscountForm=true;
+                $this->engineOilDiscountForm=false;
             }
         }
         //$this->dispatchBrowserEvent('closeDiscountGroupModal');
