@@ -5,7 +5,7 @@
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
         <label>Job Number</label>
         <div class="form-group">
-          <input type="text"  class="form-control" placeholder="Search Job Number" wire:model="search_job_number" />
+          <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Search Job Number" wire:model="search_job_number" />
         </div>
       </div>
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
@@ -117,7 +117,7 @@
                           <img src="{{url('public/storage/'.$jobs->vehicle_image)}}" class="avatar me-3" alt="avatar image">
                         </div>
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm">{{$jobs->make}} - <small>{{$jobs->model}} </small></h6>
+                          <h6 class="mb-0 text-sm">{{$jobs->makeInfo['vehicle_name']}} - <small>{{$jobs->modelInfo['vehicle_model_name']}} </small></h6>
                           <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">{{$jobs->plate_number}}</span></p>
                           <hr class="m-0">
                           <p class="text-sm text-dark mb-0">{{$jobs->customerInfo['TenantName']}}

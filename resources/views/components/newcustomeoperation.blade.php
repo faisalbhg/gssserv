@@ -541,56 +541,31 @@
                         @endforelse 
                     </div>
                 @endif
-                @forelse($sectionsLists as $sectionsList)
-                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3 my-2 cursor-pointer" wire:click="getSectionServices({{$sectionsList}})">
-                    <!--  aria-hidden="true" data-bs-toggle="modal" data-bs-target="#exampleModal"-->
-                    <div class="card bg-gradient-primary">
-                        <div class="card-body ">
-                            <div class="row">
-                                <div class="col-8 p-0">
-                                    <div class="numbers">
-                                    <p class="text-white text-sm mb-0 opacity-7">{{$service_group_name}}</p>
-                                    <h5 class="text-white font-weight-bolder mb-0">
-                                    {{$sectionsList->PropertyName}}
-                                    </h5>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <div class="icon icon-shape bg-white shadow text-center border-radius-md">
-                                        <i class="cursor-pointer fa-solid fa-angles-down text-dark text-lg opacity-10"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @empty
-                @endforelse
-            @else
-                @foreach($sectionsLists as $sectionsList)
-                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3 my-2 cursor-pointer" wire:click="getSectionServices({{$sectionsList}})">
-                    <div class="card bg-gradient-primary">
-                        <div class="card-body ">
-                            <div class="row">
-                                <div class="col-8 p-0">
-                                    <div class="numbers">
-                                    <p class="text-white text-sm mb-0 opacity-7">{{$service_group_name}}</p>
-                                    <h5 class="text-white font-weight-bolder mb-0">
-                                    {{$sectionsList->PropertyName}}
-                                    </h5>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <div class="icon icon-shape bg-white shadow text-center border-radius-md">
-                                        <i class="cursor-pointer fa-solid fa-angles-down text-dark text-lg opacity-10"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
+                
             @endif
+            @foreach($sectionsLists as $sectionsList)
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3 my-2 cursor-pointer" wire:click="getSectionServices({{$sectionsList}})">
+                <div class="card bg-gradient-primary">
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-8 p-0">
+                                <div class="numbers">
+                                <p class="text-white text-sm mb-0 opacity-7">{{$service_group_name}}</p>
+                                <h5 class="text-white font-weight-bolder mb-0">
+                                {{$sectionsList->PropertyName}}
+                                </h5>
+                                </div>
+                            </div>
+                            <div class="col-4 text-end">
+                                <div class="icon icon-shape bg-white shadow text-center border-radius-md">
+                                    <i class="cursor-pointer fa-solid fa-angles-down text-dark text-lg opacity-10"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
         </div>
 
         @if($showServiceSectionsList)

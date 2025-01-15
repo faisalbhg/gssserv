@@ -41,6 +41,7 @@ use App\Http\Livewire\Jobcard;
 use App\Http\Livewire\Mechanical;
 use App\Http\Livewire\CustomerCheckout;
 use App\Http\Livewire\CarsTaxi;
+use App\Http\Livewire\UpdateJobCards;
 
 use App\Http\Controllers\QrCodeController;
 
@@ -116,6 +117,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/job-card/{customer_id}/{vehicle_id}',Jobcard::class)->name('pending-job-card-creation');
     Route::get('/job-card/{job_number}',Jobcard::class)->name('pending-job-card');
     Route::get('/chustomer-checkout/{customer_id}/{vehicle_id}',CustomerCheckout::class)->name('chustomer-checkout');
+
+    //UpdateJobCardds
+    Route::get('/update_jobcard/{job_number}',UpdateJobCards::class)->name('update_jobcard');
+
 
 
     

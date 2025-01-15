@@ -26,6 +26,10 @@ use App\Models\PlateCode;
 use App\Models\Development;
 use App\Models\Sections;
 use App\Models\LaborItemMaster;
+use App\Models\CustomerServiceCart;
+use App\Models\ItemCategories;
+use App\Models\InventoryBrand;
+use App\Models\InventoryItemMaster;
 
 use Carbon\Carbon;
 use Session;
@@ -54,9 +58,8 @@ class Operations extends Component
     public $showServicesitems = false;
     public $servicesGroups;
     public $servicesTypesList=[];
-    public $cartItems = [];
+    public $cartItems = [], $cartItemCount=0, $quantity,$extra_note,$cartItemQty;
     public $cardShow=false;
-    public $quantity;
 
     public $selected_vehicle_id, $customer_type,$service_group_id,$station,$service_search;
     public $service_group_name, $service_group_code;
@@ -74,6 +77,7 @@ class Operations extends Component
     public $propertyCode, $selectedSectionName;
     public $servicesGroupList, $sectionsLists=[], $sectionServiceLists=[];
     public $customerDiscontGroupId, $customerDiscontGroupCode;
+    public $quickLubeItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $showQuickLubeItemSearchItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
 
 
     
@@ -169,6 +173,243 @@ class Operations extends Component
             $this->sectionServiceLists=[];
         }
 
+        if($this->selectServiceItems)
+        {
+            $this->itemCategories = ItemCategories::where(['Active'=>1])->get();
+            if($this->item_search_category){
+                $this->itemSubCategories = InventorySubCategory::where(['CategoryId'=>$this->item_search_category])->get();
+            }
+            $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
+            $this->dispatchBrowserEvent('selectSearchEvent');
+            if($this->showItemsSearchResults){
+                $inventoryItemMasterLists = InventoryItemMaster::where('Active','=',1);
+                if($this->item_search_category){
+                    $inventoryItemMasterLists = $inventoryItemMasterLists->where(['CategoryId'=>$this->item_search_category]);
+                }
+                if($this->item_search_subcategory){
+                    $inventoryItemMasterLists = $inventoryItemMasterLists->where(['SubCategoryId'=>$this->item_search_subcategory]);
+                }
+                if($this->item_search_brand){
+                    $inventoryItemMasterLists = $inventoryItemMasterLists->where(['BrandId'=>$this->item_search_brand]);
+                }
+                if($this->itemSearchName){
+                    $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->itemSearchName}%");
+                }
+                $inventoryItemMasterLists=$inventoryItemMasterLists->get();
+                //dd($inventoryItemMasterLists);
+                $itemPriceLists = [];
+                foreach($inventoryItemMasterLists as $key => $itemMasterList)
+                {
+                    $itemPriceLists[$key]['priceDetails'] = $itemMasterList;
+
+                    if($this->customerDiscontGroupCode){
+                    
+                        if($this->customerSelectedDiscountGroup['groupType']==1)
+                        {
+
+                            $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
+                                'ServiceItemId'=>$itemMasterList->ItemId,
+                                'CustomerGroupCode'=>$this->customerDiscontGroupCode,
+                                'DivisionCode'=>Session::get('user')->station_code,
+                            ])->first();
+
+                        }else if($this->customerSelectedDiscountGroup['groupType']==2)
+                        {
+                            
+                            $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
+                                'ServiceItemId'=>$itemMasterList->ItemId,
+                                'CustomerGroupCode'=>$this->customerDiscontGroupCode,
+                                'DivisionCode'=>Session::get('user')->station_code,
+                            ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
+                        }
+                        else
+                        {
+                            $itemPriceLists[$key]['discountDetails']=null;
+                        }
+                        
+                    }
+                    else
+                    {
+                        $itemPriceLists[$key]['discountDetails']=null;
+                    }
+
+
+                    
+                }
+                $this->serviceItemsList = $itemPriceLists; 
+                //dd($this->serviceItemsList);
+            }
+        }
+        else if($this->service_group_name=='Quick Lube')
+        {
+            $this->qlFilterOpen=true;
+            $this->itemQlCategories = ItemCategories::where(['show_in'=>'q'])->get();
+            
+            $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
+            $this->dispatchBrowserEvent('selectSearchEvent'); 
+        }
+        else
+        {
+            $this->serviceItemsList=[];
+            $this->qlFilterOpen=false;
+            $this->itemQlCategories = [];
+            $this->qlBrandsLists = [];
+        }
+
+        if($this->showQlItems)
+        {
+            if($this->showQuickLubeItemSearchItems)
+            {
+                //dd(InventorySalesPrices::limit(1)->get());
+                $quickLubeItemsNormalList1 = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
+                
+                if($this->quickLubeItemSearch){
+                    $quickLubeItemsNormalList1 = $quickLubeItemsNormalList1->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
+                }
+                $quickLubeItemsNormalList1=$quickLubeItemsNormalList1->get();
+                //dd($quickLubeItemsNormalList1);
+                $qlItemPriceLists1 = [];
+                foreach($quickLubeItemsNormalList1 as $key => $qlItemsList1)
+                {
+                    $qlItemPriceLists1[$key]['priceDetails'] = $qlItemsList1;
+                    if($this->customerDiscontGroupCode){
+                    
+                        if($this->customerSelectedDiscountGroup['groupType']==1)
+                        {
+
+                            $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where([
+                                'ServiceItemId'=>$qlItemsList1->ItemId,
+                                'CustomerGroupCode'=>$this->customerDiscontGroupCode,
+                                'DivisionCode'=>Session::get('user')->station_code,
+                            ])->first();
+
+                        }else if($this->customerSelectedDiscountGroup['groupType']==2)
+                        {
+                            
+                            $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where([
+                                'ServiceItemId'=>$qlItemsList1->ItemId,
+                                'CustomerGroupCode'=>$this->customerDiscontGroupCode,
+                                'DivisionCode'=>Session::get('user')->station_code,
+                            ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
+                        }
+                        else
+                        {
+                            $qlItemPriceLists1[$key]['discountDetails']=null;
+                        }
+                        
+                    }
+                    else
+                    {
+                        $qlItemPriceLists1[$key]['discountDetails']=null;
+                    }
+                    
+                    //dd($qlItemPriceLists1[$key]);
+                }
+                $this->quickLubeItemsList = $qlItemPriceLists1;
+                //dd($this->quickLubeItemsList);
+            }
+            else if($this->showQlCategoryFilterItems)
+            {
+                $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation' => function ($query) {
+                        $query->where('CategoryId', '=', $this->ql_search_category);
+                    }])->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
+
+                $qlMakeModelCatItmDetails = [];
+                foreach($qlMakeModelCategoryItems as $key => $qlItemMakeModelItem){
+                    
+                    foreach($qlItemMakeModelItem->itemInformation as $qlMakeModelCatItm)
+                    {
+                        $qlMakeModelCatItmDetails[$key]['priceDetails'] = $qlMakeModelCatItm;
+                        if($this->customerDiscontGroupCode){
+                    
+                            if($this->customerSelectedDiscountGroup['groupType']==1)
+                            {
+
+                                $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
+                                    'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
+                                    'CustomerGroupCode'=>$this->customerDiscontGroupCode,
+                                    'DivisionCode'=>Session::get('user')->station_code,
+                                ])->first();
+
+                            }else if($this->customerSelectedDiscountGroup['groupType']==2)
+                            {
+                                
+                                $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
+                                    'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
+                                    'CustomerGroupCode'=>$this->customerDiscontGroupCode,
+                                    'DivisionCode'=>Session::get('user')->station_code,
+                                ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
+                            }
+                            else
+                            {
+                                $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
+                            }
+                            
+                        }
+                        else
+                        {
+                            $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
+                        }
+
+                        //dd($sectionServicePriceLists[$key]);
+                    }
+                }
+                //dd($qlMakeModelCatItmDetails);
+                $this->quickLubeItemsList = $qlMakeModelCatItmDetails;
+            }
+            else{
+                $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
+                if($this->showQlEngineOilItems){
+                    $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['KM'=>$this->ql_km_range,'BrandId'=>$this->ql_search_brand]);
+                }
+                
+                $quickLubeItemsNormalList=$quickLubeItemsNormalList->get();
+                $qlItemPriceLists = [];
+                foreach($quickLubeItemsNormalList as $key => $qlItemsList)
+                {
+                    $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
+                    if($this->customerDiscontGroupCode){
+                    
+                        if($this->customerSelectedDiscountGroup['groupType']==1)
+                        {
+
+                            $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
+                                'ServiceItemId'=>$qlItemsList->ItemId,
+                                'CustomerGroupCode'=>$this->customerDiscontGroupCode,
+                                'DivisionCode'=>Session::get('user')->station_code,
+                            ])->first();
+
+                        }else if($this->customerSelectedDiscountGroup['groupType']==2)
+                        {
+                            
+                            $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
+                                'ServiceItemId'=>$qlItemsList->ItemId,
+                                'CustomerGroupCode'=>$this->customerDiscontGroupCode,
+                                'DivisionCode'=>Session::get('user')->station_code,
+                            ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
+                        }
+                        else
+                        {
+                            $qlItemPriceLists[$key]['discountDetails']=null;
+                        }
+                        
+                    }
+                    else
+                    {
+                        $qlItemPriceLists[$key]['discountDetails']=null;
+                    }
+                    
+                    //dd($sectionServicePriceLists[$key]);
+                }
+                $this->quickLubeItemsList = $qlItemPriceLists;
+            }
+
+        }
+        else
+        {
+            $this->quickLubeItemsList=[];
+        }
+
         $getCountSalesJob = CustomerJobCards::select(
             array(
                 \DB::raw('count(DISTINCT(customer_id)) customers'),
@@ -184,7 +425,7 @@ class Operations extends Component
         );
 
 
-        $customerjobs = CustomerJobCards::with(['customerInfo']);
+        $customerjobs = CustomerJobCards::with(['customerInfo','makeInfo','modelInfo']);
         if($this->filter){
             $customerjobs = $customerjobs->whereIn('job_status', $this->filter);
         }
@@ -204,7 +445,7 @@ class Operations extends Component
         $customerjobs = $customerjobs->orderBy('id','DESC')->paginate(10);
         //dd($customerjobs);
         $getCountSalesJob = $getCountSalesJob->first();
-        //dd($getCountSalesJob);
+        //dd($customerjobs);
 
         /*$customerjobs = Customerjobs::
             select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
@@ -220,6 +461,21 @@ class Operations extends Component
         $data['getCountSalesJob'] = $getCountSalesJob;
         $data['customerjobs'] = $customerjobs;
         $this->dispatchBrowserEvent('filterTab',['tabName'=>$this->filterTab]);
+
+        if($this->customer_id && $this->selected_vehicle_id){
+            $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->get();
+
+            $this->cartItemCount = count($this->cartItems); 
+            if(count($this->cartItems)>0)
+            {
+                $this->cardShow=true;
+            }
+            else
+            {
+                $this->cardShow=false;
+            }
+        }
+
         return view('livewire.operations',$data);
     }
 
@@ -790,89 +1046,165 @@ class Operations extends Component
         $this->selectServicesitems=false;
     }
 
-    public function addtoCart($serviceType)
+    public function qlItemkmRange($kmRange)
     {
-        $this->getServiceTypes();
-        $serviceType = json_decode($serviceType);
-        \Cart::add([
-            'id' => $serviceType->service_type_id,
-            'name' => $serviceType->service_type_name,
-            'price' => $serviceType->unit_price,
-            'quantity' => 1,
-            'attributes' => array(
-                'service_item'=>false,
-                'service_type_id' => $serviceType->service_type_id,
-                'service_type_code' => $serviceType->service_type_code,
-                'service_type_name' => $serviceType->service_type_name,
-                'service_group_id' => $serviceType->service_group_id,
-                'service_group_code' => $serviceType->service_group_code,
-                'service_group_name' => $serviceType->service_group_name,
-                'department_id' => $serviceType->department_id,
-                'station_id' => $serviceType->station_id,
-                'station_id' => $serviceType->station_id,
-            )
+        $validatedData = $this->validate([
+            'ql_search_brand' => 'required',
         ]);
-        $this->cartItems = \Cart::getContent()->toArray();
-        if(!empty($this->cartItems))
-        {
-            $this->cardShow=true;
-        }
-        $total = \Cart::getTotal();
-        $this->tax = $total * (config('global.TAX_PERCENT') / 100);
-        $this->grand_total = $total  * ((100 + config('global.TAX_PERCENT')) / 100);
+        $this->ql_km_range=$kmRange;
+        $this->showQlItems=true;
+        $this->showQlEngineOilItems=true;
+        $this->showQlCategoryFilterItems=false;
+        $this->showQuickLubeItemSearchItems=false;
         
+        $this->dispatchBrowserEvent('scrolltopQl');
+    }
+
+    public function addtoCart($servicePrice,$discount)
+    {
+        //dd($discount);
+        $servicePrice = json_decode($servicePrice);
+        $discountPrice = json_decode($discount);
+        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'item_id'=>$servicePrice->ItemId]);
+        if($customerBasketCheck->count())
+        {
+
+            $customerBasketCheck->increment('quantity', 1);
+            if($discountPrice!=null){
+                $cartUpdate['price_id']=$discountPrice->PriceID;
+                $cartUpdate['customer_group_id']=$discountPrice->CustomerGroupId;
+                $cartUpdate['customer_group_code']=$discountPrice->CustomerGroupCode;
+                $cartUpdate['min_price']=$discountPrice->MinPrice;
+                $cartUpdate['max_price']=$discountPrice->MaxPrice;
+                $cartUpdate['start_date']=$discountPrice->StartDate;
+                $cartUpdate['end_date']=$discountPrice->EndDate;
+                $cartUpdate['discount_perc']=$discountPrice->DiscountPerc;
+            }
+            $customerBasketResult =  $customerBasketCheck->first();
+            CustomerServiceCart::find($customerBasketResult->id)->update($cartUpdate);
+        }
+        else
+        {
+            $cartInsert = [
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->selected_vehicle_id,
+                'item_id'=>$servicePrice->ItemId,
+                'item_code'=>$servicePrice->ItemCode,
+                'cart_item_type'=>1,
+                'company_code'=>$servicePrice->CompanyCode,
+                'category_id'=>$servicePrice->CategoryId,
+                'sub_category_id'=>$servicePrice->SubCategoryId,
+                'brand_id'=>$servicePrice->BrandId,
+                'bar_code'=>$servicePrice->BarCode,
+                'item_name'=>$servicePrice->ItemName,
+                'description'=>$servicePrice->Description,
+                'division_code'=>$servicePrice->DivisionCode,
+                'department_code'=>$servicePrice->DepartmentCode,
+                'section_code'=>$servicePrice->SectionCode,
+                'unit_price'=>$servicePrice->UnitPrice,
+                'quantity'=>1,
+                'created_by'=>Session::get('user')->id,
+                'created_at'=>Carbon::now(),
+            ];
+            if($this->extra_note!=null){
+               $cartInsert['extra_note']=isset($this->extra_note[$servicePrice->ItemId])?$this->extra_note[$servicePrice->ItemId]:null; 
+            }
+            if($discountPrice!=null){
+                $cartInsert['price_id']=$discountPrice->PriceID;
+                $cartInsert['customer_group_id']=$discountPrice->CustomerGroupId;
+                $cartInsert['customer_group_code']=$discountPrice->CustomerGroupCode;
+                $cartInsert['min_price']=$discountPrice->MinPrice;
+                $cartInsert['max_price']=$discountPrice->MaxPrice;
+                $cartInsert['start_date']=$discountPrice->StartDate;
+                $cartInsert['end_date']=$discountPrice->EndDate;
+                $cartInsert['discount_perc']=$discountPrice->DiscountPerc;
+            }
+            CustomerServiceCart::insert($cartInsert);
+        }
+        //dd($this->sectionServiceLists);
         /*$this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
             'message' => 'Added to Cart Successfully',
             'text' => 'service added..!',
             'cartitemcount'=>\Cart::getTotalQuantity()
         ]);*/
+        session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
     }
     
-    public function addtoCartItem($items)
+    public function addtoCartItem($items,$discount)
     {
-        $this->getServiceTypes();
-        $items = json_decode($items);
-        $itemsDetails = $items->service_items;
-        //dd($itemsDetails->item_name);
-        $itemBrand = $itemsDetails->item_brand;
-        $itemsCategory = $itemsDetails->item_category;
-        $itemsGroup = $itemsDetails->product_group;
-        
-        \Cart::add([
-            'id' => $items->item_id,
-            'name' => $itemsDetails->item_name,
-            'price' => $items->sale_price,
-            'quantity' => 1,
-            'attributes' => array(
-                'service_item'=>true,
-                'item_id' => $itemsDetails->id,
-                'item_code' => $itemsDetails->item_code,
-                'item_name' => $itemsDetails->item_name,
-                'brand_id' => $itemBrand->id,
-                'brand_name' => $itemBrand->brand_name,
-                'category_id' => $itemsCategory->id,
-                'category_name' => $itemsCategory->category_name,
-                'item_group_id' => $itemsGroup->id,
-                'product_group_name' => $itemsGroup->product_group_name,
-            )
-        ]);
-        
-        $this->cartItems = \Cart::getContent()->toArray();
-        if(!empty($this->cartItems))
+        $items = json_decode($items,true);
+        //dd($items);
+        $discountPrice = json_decode($discount,true);
+        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'item_id'=>$items['ItemId']]);
+        if($customerBasketCheck->count())
         {
-            $this->cardShow=true;
+            $customerBasketCheck->increment('quantity', 1);
         }
-        $total = \Cart::getTotal();
-        $this->tax = $total * (config('global.TAX_PERCENT') / 100);
-        $this->grand_total = $total  * ((100 + config('global.TAX_PERCENT')) / 100);
+        else
+        {
+            $cartInsert = [
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->selected_vehicle_id,
+                'item_id'=>$items['ItemId'],
+                'item_code'=>$items['ItemCode'],
+                'company_code'=>$items['CompanyCode'],
+                'category_id'=>$items['CategoryId'],
+                'sub_category_id'=>$items['SubCategoryId'],
+                'brand_id'=>$items['BrandId'],
+                'bar_code'=>$items['BarCode'],
+                'item_name'=>$items['ItemName'],
+                'cart_item_type'=>2,
+                'description'=>$items['Description'],
+                'division_code'=>"LL/00004",
+                'department_code'=>"PP/00037",
+                'section_code'=>"U-000225",
+                'unit_price'=>$items['UnitPrice'],
+                'quantity'=>isset($this->ql_item_qty[$items['ItemId']])?$this->ql_item_qty[$items['ItemId']]:1,
+                'created_by'=>Session::get('user')->id,
+                'created_at'=>Carbon::now(),
+            ];
+            if($this->extra_note!=null){
+               $cartInsert['extra_note']=isset($this->extra_note[$items['ItemId']])?$this->extra_note[$items['ItemId']]:null; 
+            }
+            if($discountPrice!=null){
+                $cartInsert['price_id']=$discountPrice['PriceID'];
+                $cartInsert['customer_group_id']=$discountPrice['CustomerGroupId'];
+                $cartInsert['customer_group_code']=$discountPrice['CustomerGroupCode'];
+                $cartInsert['min_price']=$discountPrice['MinPrice'];
+                $cartInsert['max_price']=$discountPrice['MaxPrice'];
+                $cartInsert['start_date']=$discountPrice['StartDate'];
+                $cartInsert['end_date']=$discountPrice['EndDate'];
+                $cartInsert['discount_perc']=$discountPrice['DiscountPerc'];
+            }
+            CustomerServiceCart::insert($cartInsert);
+        }
+        
+        //dd($this->sectionServiceLists);
         /*$this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
             'message' => 'Added to Cart Successfully',
             'text' => 'service added..!',
-            'cartitemcount'=>1
+            'cartitemcount'=>\Cart::getTotalQuantity()
         ]);*/
+        session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
+    }
+    public function searchQuickLubeItem(){
+        $validatedData = $this->validate([
+            'quickLubeItemSearch' => 'required',
+        ]);
 
+        $this->showQlItems=true;
+        $this->showQlCategoryFilterItems=false;
+        $this->showQuickLubeItemSearchItems=true;
+        
+    }
+
+    public function qlCategorySelect(){
+        $this->showQlItems=true;
+        $this->showQlCategoryFilterItems=true;
+        $this->showQuickLubeItemSearchItems=false;
+        $this->dispatchBrowserEvent('scrolltopQl');
     }
 
     public function updateCart()

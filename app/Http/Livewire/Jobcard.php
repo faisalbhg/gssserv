@@ -212,6 +212,8 @@ class Jobcard extends Component
                     'Operation'=>true
                 ])
                 ->get();
+
+            //dd($this->sectionsLists);
         }
         else
         {
@@ -345,13 +347,13 @@ class Jobcard extends Component
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
             $this->dispatchBrowserEvent('selectSearchEvent'); 
         }
-        else
+        /*else
         {
             $this->serviceItemsList=[];
             $this->qlFilterOpen=false;
             $this->itemQlCategories = [];
             $this->qlBrandsLists = [];
-        }
+        }*/
 
         if($this->showQlItems)
         {
@@ -1000,17 +1002,30 @@ class Jobcard extends Component
 
     public function serviceGroupForm($service){
 
-        
+        //dd($service);
 
         $this->service_group_id = $service['id'];
         $this->service_group_name = $service['department_name'];
         $this->service_group_code = $service['department_code'];
         $this->station = $service['station_code'];
         $this->service_search='';
+        if($this->service_group_name =='Quick Lube')
+        {
+            $sectionDetails = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')
+                ->where([
+                    'DevelopmentCode'=>$this->service_group_code,
+                    'Operation'=>true,
+                    'PropertyName'=>'Quick Lube',
+                ])->first();
+            $this->propertyCode=$sectionDetails->PropertyCode;
+            $this->selectedSectionName = $sectionDetails->PropertyName;
+        }
 
         if($this->service_group_name !='Quick Lube' || $this->showQlItems == true)
         {
             $this->showQlItems=false;
+            /*$this->propertyCode=$sectionDetails->PropertyCode;
+            $this->selectedSectionName = $sectionDetails->PropertyName;*/
 
         }
         
@@ -1317,7 +1332,6 @@ class Jobcard extends Component
         $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'item_id'=>$servicePrice->ItemId]);
         if($customerBasketCheck->count())
         {
-
             $customerBasketCheck->increment('quantity', 1);
             if($discountPrice!=null){
                 $cartUpdate['price_id']=$discountPrice->PriceID;
@@ -1349,6 +1363,7 @@ class Jobcard extends Component
                 'description'=>$servicePrice->Description,
                 'division_code'=>$servicePrice->DivisionCode,
                 'department_code'=>$servicePrice->DepartmentCode,
+                'department_name'=>$this->selectedSectionName,
                 'section_code'=>$servicePrice->SectionCode,
                 'unit_price'=>$servicePrice->UnitPrice,
                 'quantity'=>1,
@@ -1368,6 +1383,7 @@ class Jobcard extends Component
                 $cartInsert['end_date']=$discountPrice->EndDate;
                 $cartInsert['discount_perc']=$discountPrice->DiscountPerc;
             }
+            //dd($cartInsert);
             CustomerServiceCart::insert($cartInsert);
         }
         
@@ -1389,6 +1405,7 @@ class Jobcard extends Component
 
     public function addtoCartItem($items,$discount)
     {
+        //dd($this);
         $items = json_decode($items,true);
         //dd($items);
         $discountPrice = json_decode($discount,true);
@@ -1412,9 +1429,10 @@ class Jobcard extends Component
                 'item_name'=>$items['ItemName'],
                 'cart_item_type'=>2,
                 'description'=>$items['Description'],
-                'division_code'=>"LL/00004",
-                'department_code'=>"PP/00037",
-                'section_code'=>"U-000225",
+                'division_code'=>$this->station,
+                'department_code'=>$this->service_group_code,
+                'department_name'=>$this->selectedSectionName,
+                'section_code'=>$this->propertyCode,
                 'unit_price'=>$items['UnitPrice'],
                 'quantity'=>isset($this->ql_item_qty[$items['ItemId']])?$this->ql_item_qty[$items['ItemId']]:1,
                 'created_by'=>Session::get('user')->id,
@@ -1625,7 +1643,6 @@ class Jobcard extends Component
         
         if($customerStaffIdCheck)
         {
-            
             if (!CustomerDiscountGroup::where([
                 'customer_id'=>$this->customer_id,
                 'vehicle_id'=>$this->selected_vehicle_id,
@@ -1655,6 +1672,14 @@ class Jobcard extends Component
                     $customerDiscontGroupInfo['discount_card_imgae'] = $this->discount_card_imgae->store('discount_group', 'public');
                 }
                 $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
+            }
+            else
+            {
+                $customerDiscontGroup = CustomerDiscountGroup::where([
+                    'customer_id'=>$this->customer_id,
+                    'vehicle_id'=>$this->selected_vehicle_id,
+                    'discount_id'=>$this->selectedDiscountId
+                ])->first();
             }
             
 
@@ -1962,12 +1987,12 @@ class Jobcard extends Component
             if($this->station==null){
                 $this->station = $items->division_code;
             }
-
-            if($items->department_code=='PP/00036' && $generalservice==false){
+            //dd($items);
+            if($items->department_name=='Quick Lube' && $generalservice==false){
                 $generalservice=true;
                 $showchecklist=true;
             }
-            else if($items->department_code=='PP/00037' && $quicklubeservice==false){
+            else if($items->department_name=='Electrical' && $quicklubeservice==false){
                 $quicklubeservice=true;
                 $showchecklist=true;
             }
@@ -2238,6 +2263,11 @@ class Jobcard extends Component
             if($cartData->cart_item_type==2){
 
                 $passmetrialRequest = true;
+                $propertyCodeMR = $cartData->department_code;
+                $unitCodeMR = $cartData->section_code;
+                
+                
+
                 //$meterialRequestItems= '';
                 $meterialRequestItems = MaterialRequest::create([
                     'sessionId'=>$this->job_number,
@@ -2310,8 +2340,9 @@ class Jobcard extends Component
 
         if($passmetrialRequest==true)
         {
+            Session::get('user')->stationName['PortfolioCode'];
             try {
-                DB::select("EXEC [Inventory].[MaterialRequisition.Update] @companyCode = 'PF/00001', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = 'PP/00037', @UnitCode = 'U-000225', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ");
+                DB::select("EXEC [Inventory].[MaterialRequisition.Update] @companyCode = 'PF/00001', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ");
 
                 /*'division_code'=>"LL/00004",
                 'department_code'=>"PP/00037",

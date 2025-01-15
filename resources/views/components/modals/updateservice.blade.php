@@ -18,7 +18,8 @@
                     </div>
                     <div class="d-flex">
                     @if($jobcardDetails->payment_status==0)
-                      <button wire:click="addNewServiceItem('{{$jobcardDetails->job_number}}')" type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end">Add New Service/Items</button>
+                    <a href="{{ url('update_jobcard/'.$jobcardDetails->job_number) }}">
+                      <button  type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end">Add New Service/Items</button>
                     @endif
                       <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
                     </div>

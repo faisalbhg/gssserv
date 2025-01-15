@@ -20,114 +20,216 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="card card-profile card-plain">
-                                        <div class="position-relative">
-                                            <div class="blur-shadow-image">
-                                                <img class="w-100 rounded-3 shadow-lg" src="{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}">
-                                            </div>
-
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="card card-profile card-plain">
+                                    <div class="position-relative">
+                                        <div class="blur-shadow-image">
+                                            <img class="w-100 rounded-3 shadow-lg" src="{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}">
                                         </div>
+
                                     </div>
                                 </div>
-                                <div class="col-8">
-                                    <div class="card card-profile card-plain">
-                                        <div class="card-body text-left p-0">
-                                            <div class="p-md-0 pt-3">
-                                                <h5 class="font-weight-bolder mb-0">{{$selectedVehicleInfo['plate_number_final']}}</h5>
-                                                <p class="text-uppercase text-sm font-weight-bold mb-2">{{isset($selectedVehicleInfo->makeInfo)?$selectedVehicleInfo->makeInfo['vehicle_name']:''}}, {{isset($selectedVehicleInfo->modelInfo['vehicle_model_name'])?$selectedVehicleInfo->modelInfo['vehicle_model_name']:''}}</p>
-                                            </div>
-                                            @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
-                                                @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
-                                                <p class="mb-0">{{$selectedVehicleInfo['customerInfoMaster']['TenantName']}}</p>
-                                                @endif
-                                                @if($selectedVehicleInfo['customerInfoMaster']['Mobile'])
-                                                <p class="mb-0">{{$selectedVehicleInfo['customerInfoMaster']['Mobile']}}</p>
-                                                @endif
-                                                @if($selectedVehicleInfo['customerInfoMaster']['Email'])
-                                                <p class="mb-1">{{$selectedVehicleInfo['customerInfoMaster']['Email']}}</p>
-                                                @endif
-                                            @else
-                                            <p class="mb-0">Customer Guest</p>
-                                            @endif
-                                            @if($selectedVehicleInfo['chassis_number'])
-                                            <p class="mb-1"><b>Chaisis:</b> {{$selectedVehicleInfo['chassis_number']}}</p>
-                                            @endif
-                                            @if($selectedVehicleInfo['vehicle_km'])
-                                            <b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
-                                            @endif
-                                            <div>
-                                                
-                                                <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
-                                                <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
-                                                @if(@$customerSelectedDiscountGroup['groupType']==2)
-                                                <button class="btn bg-gradient-danger btn-sm mb-0" wire:click.prevent="removeDiscount()">Remove Discount - {{strtolower(str_replace("_"," ",$customerDiscontGroupCode))}}</button>
-                                                @endif
-
-                                                @if(@$customerSelectedDiscountGroup['groupType']==3)
-                                                {{$engineOilDiscountPercentage}}
-                                                <button class="btn bg-gradient-success btn-sm mb-0" wire:click.prevent="applyEngineOilDiscount()">Apply {{$engineOilDiscountPercentage}}% Discount</button>
-                                                @endif
-
-                                                <br>
-                                                <div wire:loading wire:target="applyEngineOilDiscount">
-                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                        <div class="la-ball-beat">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div wire:loading wire:target="editCustomer">
-                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                        <div class="la-ball-beat">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div wire:loading wire:target="addNewVehicle">
-                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                        <div class="la-ball-beat">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div wire:loading wire:target="clickDiscountGroup">
-                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                        <div class="la-ball-beat">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div wire:loading wire:target="saveSelectedDiscountGroup">
-                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                        <div class="la-ball-beat">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
+                            </div>
+                            <div class="col-8">
+                                <div class="card card-profile card-plain">
+                                    <div class="card-body text-left p-0">
+                                        <div class="p-md-0 pt-3">
+                                            <h5 class="font-weight-bolder mb-0">{{$selectedVehicleInfo['plate_number_final']}}</h5>
+                                            <p class="text-uppercase text-sm font-weight-bold mb-2">{{isset($selectedVehicleInfo->makeInfo)?$selectedVehicleInfo->makeInfo['vehicle_name']:''}}, {{isset($selectedVehicleInfo->modelInfo['vehicle_model_name'])?$selectedVehicleInfo->modelInfo['vehicle_model_name']:''}}</p>
                                         </div>
+                                        @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
+                                            @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
+                                            <p class="mb-0">{{$selectedVehicleInfo['customerInfoMaster']['TenantName']}}</p>
+                                            @endif
+                                            @if($selectedVehicleInfo['customerInfoMaster']['Mobile'])
+                                            <p class="mb-0">{{$selectedVehicleInfo['customerInfoMaster']['Mobile']}}</p>
+                                            @endif
+                                            @if($selectedVehicleInfo['customerInfoMaster']['Email'])
+                                            <p class="mb-1">{{$selectedVehicleInfo['customerInfoMaster']['Email']}}</p>
+                                            @endif
+                                        @else
+                                        <p class="mb-0">Customer Guest</p>
+                                        @endif
+                                        @if($selectedVehicleInfo['chassis_number'])
+                                        <p class="mb-1"><b>Chaisis:</b> {{$selectedVehicleInfo['chassis_number']}}</p>
+                                        @endif
+                                        @if($selectedVehicleInfo['vehicle_km'])
+                                        <b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
+                                        @endif
+                                        <div>
+                                            
+                                            <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
+                                            <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
+                                            @if(@$customerSelectedDiscountGroup['groupType']==2)
+                                            <button class="btn bg-gradient-danger btn-sm mb-0" wire:click.prevent="removeDiscount()">Remove Discount - {{strtolower(str_replace("_"," ",$customerDiscontGroupCode))}}</button>
+                                            @endif
+
+                                            @if(@$customerSelectedDiscountGroup['groupType']==3)
+                                            {{$engineOilDiscountPercentage}}
+                                            <button class="btn bg-gradient-success btn-sm mb-0" wire:click.prevent="applyEngineOilDiscount()">Apply {{$engineOilDiscountPercentage}}% Discount</button>
+                                            @endif
+
+                                            <br>
+                                            <div wire:loading wire:target="applyEngineOilDiscount">
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div wire:loading wire:target="editCustomer">
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div wire:loading wire:target="addNewVehicle">
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div wire:loading wire:target="clickDiscountGroup">
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div wire:loading wire:target="saveSelectedDiscountGroup">
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 my-2">
+                        @if(count($cartItems)>0)
+                            <div class="card card-profile card-plain">
+                                <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Pricing Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <div class="card h-100">
+                                            
+                                            <div class="card-body p-3 pb-0">
+                                                <ul class="list-group">
+                                                    <?php $total = 0;$totalDiscount=0; ?>
+                                                    @foreach ($cartItems as $item)
+                                                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                                            
+                                                            <div class="d-flex flex-column">
+                                                                <h6 class="mb-1 text-dark font-weight-bold text-sm">
+                                                                    {{ $item->item_name }}
+                                                                </h6>
+                                                                <span class="text-xs">#{{ $item->item_code }}</span>
+                                                                @if($item->extra_note)
+                                                                    <span class="text-xs text-dark">Note: {{ $item->extra_note }}</span>
+                                                                @endif
+                                                                @if($item->customer_group_code)
+                                                                <p class="mb-0"><span class="text-sm text-dark">Discount Group: {{ $item->customer_group_code }} <label class="badge bg-gradient-info">{{ $item->discount_perc }}% Off</label></span></p>
+                                                                @endif
+                                                                <a href="#" class="p-0 text-danger bg-red-600" wire:click.prevent="removeCart('{{$item->id}}')"><i class="fa fa-trash"></i></a>
+                                                            </div>
+                                                            <div class="d-flex align-items-center text-sm">
+                                                                @if($item->quantity>1)<span class="px-2 cursor-pointer" wire:click="cartSetDownQty({{ $item->id }})">
+                                                                    <i class="fa-solid fa-square-minus fa-xl"></i>
+                                                                </span>
+                                                                @endif
+                                                                {{$item->quantity}}
+                                                                <span class="px-2 cursor-pointer" wire:click="cartSetUpQty({{ $item->id }})">
+                                                                    <i class="fa-solid fa-square-plus fa-xl"></i>
+                                                                </span>
 
+                                                                
+                                                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{round($item->unit_price,2)}}</button>
+
+                                                                @if($item->customer_group_code)
+                                                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)),2) }}</button>
+                                                                @endif
+
+                                                            </div>
+
+                                                        </li>
+                                                        <hr class="horizontal dark mt-0 mb-2">
+                                                        <?php
+                                                        $total = $total+$item->unit_price*$item->quantity;
+                                                        $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2);
+                                                        ?>
+                                                    @endforeach
+                                                    <?php
+                                                    $totalAfterDisc = $total - $totalDiscount;
+                                                    $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+                                                    $grand_total = $totalAfterDisc+$tax;
+                                                    ?>
+                                                </ul>
+                                                
+                                                <button class="btn bg-gradient-danger btn-sm float-end" wire:click.prevent="clearAllCart">Remove All Cart</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-12 ms-auto">
+                                        <h6 class="mb-3">Order Summary</h6>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="mb-2 text-sm">
+                                            Product Price:
+                                            </span>
+                                            <span class="text-dark font-weight-bold ms-2">{{config('global.CURRENCY')}} {{round($total,2)}}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="mb-2 text-sm">
+                                            Discount:
+                                            </span>
+                                            <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalDiscount,2)}}</span>
+                                        </div>
+                                        <hr class="horizontal dark my-2">
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <span class="mb-2 text-md text-dark text-bold">
+                                            Total:
+                                            </span>
+                                            <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalAfterDisc,2)}}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-sm">
+                                            Taxes:
+                                            </span>
+                                            <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($tax,2)}}</span>
+                                        </div>
+                                        <hr class="horizontal dark my-2">
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <span class="mb-2 text-lg text-dark text-bold">
+                                            Grand Total:
+                                            </span>
+                                            <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($grand_total,2)}}</span>
+                                        </div>
+                                        <button type="button" class="btn bg-gradient-success btn-sm float-end" wire:click="submitService()">Confirm & Continue</button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                
                 @if($showServiceGroup)
 
                     <div class="row" id="servceGroup">
@@ -388,79 +490,55 @@
                         </div>
 
                         @if($showServiceSectionsList)
-                            <!-- Modal -->
-                            <style type="text/css">
-                                .modal-body{
-                                    max-height: calc(100vh - 300px);
-                                    overflow-y: auto;
-                                }
-                            </style>
-                            <div class="modal fade" id="servicePriceModal" tabindex="-1" role="dialog" aria-labelledby="servicePriceModalLabel" aria-hidden="true" wire:ignore.self style="z-index:99999;" >
-                                <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:90%;">
-                                    <div class="modal-content">
-                                        @if (session()->has('cartsuccess'))
-                                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                                <span class="alert-icon text-light"><i class="ni ni-like-2"></i></span>
-                                                <span class="alert-text text-light"><strong>Success!</strong> {{ Session::get('cartsuccess') }}</span>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                        @endif
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="servicePriceModalLabel">{{$service_group_name}} - {{$selectedSectionName}}</h5>
-                                            <button type="button" class="btn-close text-dark " style="font-size: 2.125rem !important;" data-bs-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true" class="text-xl">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body py-0">
-                                            <div class="row">
-                                                @forelse($sectionServiceLists as $sectionServiceList)
-                                                <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
-                                                <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
-                                                @if($priceDetails->UnitPrice!=0)
-                                                <div class="col-md-6">
-                                                    
-                                                    <div class="bg-gray-100 my-3 p-2">
-                                                        <div class="d-flex">
-                                                            <h6>{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</h6>
-                                                            <div class="ms-auto">
-                                                                @if(!empty($discountDetails))
-                                                                    <span class="badge bg-gradient-info">{{round($discountDetails->DiscountPerc,2)}}%off</span>
-                                                                @endif
-                                                                
-                                                            </div>
-                                                        </div>
-                                                        
-                                                        
-                                                        <p class="d-none text-sm mb-0">The website was initially built in PHP, I need a professional ruby programmer to shift it.</p>
-                                                        <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea > -->
-                                                        <div class="d-flex border-radius-lg p-0 mt-2">
-                                                            
-                                                            <h4 class="my-auto me-2" @if($discountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($priceDetails->UnitPrice,2)}}
-                                                            </h4>
-                                                            @if($discountDetails != null)
-                                                            <h4 class="my-auto">
-                                                            <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($priceDetails->UnitPrice-(($discountDetails->DiscountPerc/100)*$priceDetails->UnitPrice),2) }}
-                                                            </h4>
-                                                            
-                                                            @endif
-
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                            @if (session()->has('cartsuccess'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <span class="alert-icon text-light"><i class="ni ni-like-2"></i></span>
+                                    <span class="alert-text text-light"><strong>Success!</strong> {{ Session::get('cartsuccess') }}</span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            @endif
+                            <h5 class="modal-title" id="servicePriceModalLabel">{{$service_group_name}} - {{$selectedSectionName}}</h5>
+                            <div class="row">
+                                @forelse($sectionServiceLists as $sectionServiceList)
+                                <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
+                                <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
+                                @if($priceDetails->UnitPrice!=0)
+                                <div class="col-md-6">
+                                    
+                                    <div class="bg-gray-100 my-3 p-2">
+                                        <div class="d-flex">
+                                            <h6>{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</h6>
+                                            <div class="ms-auto">
+                                                @if(!empty($discountDetails))
+                                                    <span class="badge bg-gradient-info">{{round($discountDetails->DiscountPerc,2)}}%off</span>
                                                 @endif
-                                                @empty
-                                                @endforelse
+                                                
                                             </div>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                            <!-- <button type="button" class="btn bg-gradient-primary">Save changes</button> -->
+                                        
+                                        
+                                        <p class="d-none text-sm mb-0">The website was initially built in PHP, I need a professional ruby programmer to shift it.</p>
+                                        <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea > -->
+                                        <div class="d-flex border-radius-lg p-0 mt-2">
+                                            
+                                            <h4 class="my-auto me-2" @if($discountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($priceDetails->UnitPrice,2)}}
+                                            </h4>
+                                            @if($discountDetails != null)
+                                            <h4 class="my-auto">
+                                            <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($priceDetails->UnitPrice-(($discountDetails->DiscountPerc/100)*$priceDetails->UnitPrice),2) }}
+                                            </h4>
+                                            
+                                            @endif
+
+                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
                                         </div>
                                     </div>
                                 </div>
+                                @endif
+                                @empty
+                                @endforelse
                             </div>
                         @endif
                     @endif

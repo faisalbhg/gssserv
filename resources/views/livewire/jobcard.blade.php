@@ -332,48 +332,50 @@
                                                             </div>
                                                         @endif
                                                         @if($engineOilDiscountForm)
-                                                        <div class="col-sm-3">
-                                                            <div wire:click="selectEngineOilDiscount(10)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                                <div class="card-body z-index-2 py-4">
-                                                                    <h2 class="text-white">10%</h2>
-                                                                    <p class="text-white">
-                                                                    10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                    <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 my-2">
+                                                                <div wire:click="selectEngineOilDiscount(10)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                                    <div class="card-body z-index-2 py-2">
+                                                                        <h2 class="text-white">10%</h2>
+                                                                        <p class="text-white">
+                                                                        10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                        <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                                    </div>
+                                                                    <div class="mask bg-gradient-primary border-radius-lg"></div>
                                                                 </div>
-                                                                <div class="mask bg-gradient-primary border-radius-lg"></div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-sm-3">
-                                                            <div wire:click="selectEngineOilDiscount(15)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                                <div class="card-body z-index-2 py-4">
-                                                                    <h2 class="text-white">15%</h2>
-                                                                    <p class="text-white">
-                                                                    15% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                    <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                            <div class="col-md-6 col-sm-6 my-2">
+                                                                <div wire:click="selectEngineOilDiscount(15)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                                    <div class="card-body z-index-2 py-2">
+                                                                        <h2 class="text-white">15%</h2>
+                                                                        <p class="text-white">
+                                                                        15% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                        <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                                    </div>
+                                                                    <div class="mask bg-gradient-primary border-radius-lg"></div>
                                                                 </div>
-                                                                <div class="mask bg-gradient-primary border-radius-lg"></div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-sm-3">
-                                                            <div wire:click="selectEngineOilDiscount(20)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                                <div class="card-body z-index-2 py-4">
-                                                                    <h2 class="text-white">20%</h2>
-                                                                    <p class="text-white">
-                                                                    20% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                    <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                            <div class="col-md-6 col-sm-6 my-2">
+                                                                <div wire:click="selectEngineOilDiscount(20)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                                    <div class="card-body z-index-2 py-2">
+                                                                        <h2 class="text-white">20%</h2>
+                                                                        <p class="text-white">
+                                                                        20% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                        <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                                    </div>
+                                                                    <div class="mask bg-gradient-primary border-radius-lg"></div>
                                                                 </div>
-                                                                <div class="mask bg-gradient-primary border-radius-lg"></div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-sm-3">
-                                                            <div wire:click="selectEngineOilDiscount(25)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                                <div class="card-body z-index-2 py-4">
-                                                                    <h2 class="text-white">25%</h2>
-                                                                    <p class="text-white">
-                                                                    25% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                    <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                            <div class="col-md-6 col-sm-6 my-2">
+                                                                <div wire:click="selectEngineOilDiscount(25)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                                    <div class="card-body z-index-2 py-2">
+                                                                        <h2 class="text-white">25%</h2>
+                                                                        <p class="text-white">
+                                                                        25% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                        <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                                    </div>
+                                                                    <div class="mask bg-gradient-primary border-radius-lg"></div>
                                                                 </div>
-                                                                <div class="mask bg-gradient-primary border-radius-lg"></div>
                                                             </div>
                                                         </div>
                                                         <div wire:loading wire:target="selectEngineOilDiscount">

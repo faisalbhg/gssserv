@@ -13,10 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('customer_job_cards', function (Blueprint $table) {
-            $table->integer('is_contract')->nullable()->after('ql_km_range');
-            $table->integer('contract_id')->nullable()->after('is_contract');
-            $table->string('contract_code')->nullable()->after('contract_id');
+        Schema::table('customer_service_carts', function (Blueprint $table) {
+            $table->integer('department_name')->nullable()->after('department_code');
         });
     }
 
@@ -27,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('customer_job_cards', function (Blueprint $table) {
+        Schema::table('customer_service_carts', function (Blueprint $table) {
             //
         });
     }
