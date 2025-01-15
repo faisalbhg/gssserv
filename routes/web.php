@@ -67,11 +67,11 @@ Route::get('/login/forgot-password', ForgotPassword::class)->name('forgot-passwo
 Route::get('/reset-password/{id}',ResetPassword::class)->name('reset-password')->middleware('signed');
 
 Route::middleware('auth')->group(function () {
-    //Route::get('/', Dashboard::class)->name('dashboard');
-    //Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    Route::get('/', Dashboard::class)->name('dashboard');
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
-    Route::get('/', HomePage::class)->name('dashboard');
-    Route::get('/dashboard', HomePage::class)->name('dashboard');
+    //oute::get('/', HomePage::class)->name('dashboard');
+    //Route::get('/dashboard', HomePage::class)->name('dashboard');
 
     Route::get('/customer-job-update/{job_number}',Operations::class)->name('customer-jobs');
     Route::get('/jobs', Operations::class)->name('customer-jobs');
