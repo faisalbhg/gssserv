@@ -13,8 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('customer_service_carts', function (Blueprint $table) {
-            $table->string('department_name')->nullable()->after('department_code');
+        Schema::table('customer_job_card_services', function (Blueprint $table) {
+            $table->datetime('discount_start_date')->nullable()->after('discount_amount');
+            $table->datetime('discount_end_date')->nullable()->after('discount_start_date');
         });
     }
 
@@ -25,7 +26,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('customer_service_carts', function (Blueprint $table) {
+        Schema::table('customer_job_card_services', function (Blueprint $table) {
             //
         });
     }

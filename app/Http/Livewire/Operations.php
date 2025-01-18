@@ -30,6 +30,7 @@ use App\Models\CustomerServiceCart;
 use App\Models\ItemCategories;
 use App\Models\InventoryBrand;
 use App\Models\InventoryItemMaster;
+use App\Models\Landlord;
 
 use Carbon\Carbon;
 use Session;
@@ -72,7 +73,7 @@ class Operations extends Component
     public $jobcardDetails, $showaddServiceItems=false;
     public $showVehicleImageDetails=false;
     public $checkListDetails, $checklistLabels, $vehicleSidesImages, $vehicleCheckedChecklist, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature;
-    public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $plateEmiratesCodes=[], $search_plate_state, $search_plate_code, $search_plate_number;
+    public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $plateEmiratesCodes=[], $search_plate_state, $search_plate_code, $search_plate_number, $search_station;
     public $selectedVehicleInfo, $selectedCustomerVehicle=false, $showSectionsList=false, $selectServiceItems, $showPackageList=false, $selectPackageMenu=false, $showServiceSectionsList=false;
     public $propertyCode, $selectedSectionName;
     public $servicesGroupList, $sectionsLists=[], $sectionServiceLists=[];
@@ -100,6 +101,7 @@ class Operations extends Component
 
     public function render()
     {
+        $this->stationsList = Landlord::all();
         
         if($this->selectedCustomerVehicle)
         {
@@ -441,6 +443,10 @@ class Operations extends Component
         if($this->search_plate_number)
         {
             $customerjobs = $customerjobs->where('plate_number', 'like',"%$this->search_plate_number%");
+        }
+        if($this->search_station){
+            $customerjobs = $customerjobs->where('station', '=', $this->search_station);
+            $getCountSalesJob = $getCountSalesJob->where('station', '=', $this->search_station);
         }
         $customerjobs = $customerjobs->orderBy('id','DESC')->paginate(10);
         //dd($customerjobs);

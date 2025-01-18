@@ -514,7 +514,10 @@
                                                 <hr class="horizontal dark mt-0 mb-2">
                                                 <?php
                                                 $total = $total+$item->unit_price*$item->quantity;
-                                                $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2);
+                                                if($item->discount_perc){
+                                                    $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*$item->unit_price)*$item->quantity,2);
+                                                    //echo $totalDiscount;
+                                                }
                                                 ?>
                                             @endforeach
                                             <?php

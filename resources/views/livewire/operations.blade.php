@@ -20,10 +20,15 @@
           <input style="padding:0.5rem 0.3rem !important;" type="text" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="search_plate_number" name="plate_number" placeholder="Number Plate">
         </div>
       </div>
-      <div class="d-none col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
-        <label>Vehicle</label>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>Station</label>
         <div class="form-group">
-          <span class="badge badge-sm bg-gradient-danger">Vehicle Make</span>
+          <select class="form-control" id="stationSelect" wire:model="search_station">
+            <option value="">-Select-</option>
+            @foreach($stationsList as $station)
+            <option value="{{$station->LandlordCode}}">{{$station->CorporateName}}</option>
+            @endforeach
+          </select>
         </div>
       </div>
     </div>
@@ -60,20 +65,9 @@
                           <div class="numbers">
                               <p class="text-sm mb-0 text-capitalize font-weight-bold">Completed</p>
                               <hr class="m-0">
-                              <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->work_finished}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                              <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->work_finished+$getCountSalesJob->ready_to_deliver}}<span class="text-success text-sm font-weight-bolder"></span></h5>
                           </div>
                       </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount ready_to_deliver">
-          <div class="card bg-gradient-info shadow text-white">
-              <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('ready_to_deliver')">
-                  <div class="numbers">
-                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Ready to Deliver</p>
-                      <hr class="m-0">
-                      <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->ready_to_deliver}}<span class="text-success text-sm font-weight-bolder"></span></h5>
                   </div>
               </div>
           </div>

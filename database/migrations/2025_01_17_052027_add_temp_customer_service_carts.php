@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('customer_service_carts', function (Blueprint $table) {
-            $table->string('department_name')->nullable()->after('department_code');
+        Schema::table('temp_customer_service_carts', function (Blueprint $table) {
+            $table->string('job_number')->nullable()->after('save_type');
         });
     }
 
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('customer_service_carts', function (Blueprint $table) {
+        Schema::table('temp_customer_service_carts', function (Blueprint $table) {
             //
         });
     }

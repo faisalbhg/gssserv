@@ -72,6 +72,11 @@ class CustomerJobCards extends Model
         return $this->hasMany(CustomerJobCardServices::class,'job_id','id')->with(['customerJobServiceLogs']);
     }
 
+    public function tempServiceCart()
+    {
+        return $this->hasMany(TempCustomerServiceCart::class,'job_number','job_number');
+    }
+
     public function checklistInfo(){
         return $this->belongsTo(JobcardChecklistEntries::class,'job_number','job_number');
 
@@ -91,4 +96,8 @@ class CustomerJobCards extends Model
     {
         return $this->belongsTo(VehicleModels::class,'model','id');
     }
+
+    
+
+    
 }

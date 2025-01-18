@@ -1019,16 +1019,9 @@ class Jobcard extends Component
                 ])->first();
             $this->propertyCode=$sectionDetails->PropertyCode;
             $this->selectedSectionName = $sectionDetails->PropertyName;
+            $this->showQlItems=true;
         }
-
-        if($this->service_group_name !='Quick Lube' || $this->showQlItems == true)
-        {
-            $this->showQlItems=false;
-            /*$this->propertyCode=$sectionDetails->PropertyCode;
-            $this->selectedSectionName = $sectionDetails->PropertyName;*/
-
-        }
-        
+        $this->showQlItems=false;
         $this->selectedCustomerVehicle=true;
         $this->customer_id = $this->customer_id;
         $this->vehicle_id = $this->selected_vehicle_id;
@@ -2173,9 +2166,8 @@ class Jobcard extends Component
         }
         //dd($customerjobData);
         $customerjobId = CustomerJobCards::create($customerjobData);
-            $this->job_number = 'JOB-'.Session::get('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $customerjobId->id);
-
-
+        $stationJobNumber = CustomerJobCards::where(['station'=>Session::get('user')->station_code])->count();
+        $this->job_number = 'JOB-'.Session::get('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
         CustomerJobCards::where(['id'=>$customerjobId->id])->update(['job_number'=>$this->job_number]);
 
         //dd($cartDetails);
@@ -2208,6 +2200,7 @@ class Jobcard extends Component
             $customerJobServiceData['description']=$cartData->description;
             $customerJobServiceData['division_code']=$cartData->division_code;
             $customerJobServiceData['department_code']=$cartData->department_code;
+            $customerJobServiceData['department_name']=$cartData->department_name;
             $customerJobServiceData['section_code']=$cartData->section_code;
             $customerJobServiceData['station']=$this->station;
             $customerJobServiceData['extra_note']=$cartData->extra_note;
@@ -2222,8 +2215,10 @@ class Jobcard extends Component
                 $customerJobServiceData['discount_code']=$cartData->customer_group_code;
                 $customerJobServiceData['discount_title']=$cartData->customer_group_code;
                 $customerJobServiceData['discount_percentage'] = $cartData->discount_perc;
-                $customerJobServiceDiscountAmount = round((($cartData->discount_perc/100)*($cartData->unit_price*$item->quantity)),2);
-                $customerJobServiceData['discount_amount'] = round((($cartData->discount_perc/100)*($cartData->unit_price*$item->quantity)),2);
+                $customerJobServiceDiscountAmount = round((($cartData->discount_perc/100)*($cartData->unit_price*$cartData->quantity)),2);
+                $customerJobServiceData['discount_amount'] = $customerJobServiceDiscountAmount;
+                $customerJobServiceData['discount_start_date']=$cartData->start_date;
+                $customerJobServiceData['discount_end_date']=$cartData->end_date;
             }
 
             
@@ -2247,7 +2242,7 @@ class Jobcard extends Component
                 $customerJobServiceData['discount_percentage'] = $cartData->discount_perc;
                 $customerJobServiceData['discount_amount'] = round((($cartData->discount_perc/100)*$cartData->unit_price),2);
             }*/
-            
+            //dd($customerJobServiceData);
             $customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
             
             CustomerJobCardServiceLogs::create([
@@ -2342,7 +2337,9 @@ class Jobcard extends Component
         {
             Session::get('user')->stationName['PortfolioCode'];
             try {
-                DB::select("EXEC [Inventory].[MaterialRequisition.Update] @companyCode = 'PF/00001', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ");
+                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update] @companyCode = 'PF/00001', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ");
+
+                dd($meterialRequestResponse);
 
                 /*'division_code'=>"LL/00004",
                 'department_code'=>"PP/00037",
@@ -2540,7 +2537,9 @@ class Jobcard extends Component
         $this->service_group_code = null;
         $this->servicePackage=[];
         
-        $this->dispatchBrowserEvent('scrolltop');
+        $this->dispatchBrowserEvent('scrollto', [
+            'scrollToId' => 'servceGroup',
+        ]);
     }
 
     public function packageAddOnFrom($id)

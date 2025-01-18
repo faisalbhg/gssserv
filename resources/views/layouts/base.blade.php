@@ -265,6 +265,15 @@
             $('.cartitemcount').text('('+event.detail.cartitemcount+')');
         });
 
+        window.addEventListener('scrollto',event=>{
+            $(document).ready(function(){
+                alert('1');
+                $('html, body').animate({
+                    scrollTop: $("#"+event.detail.scrollToId).offset().top - 100
+                }, 100);
+            });
+        });
+
         
         </script>
     
