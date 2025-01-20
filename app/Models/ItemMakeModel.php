@@ -14,4 +14,11 @@ class ItemMakeModel extends Model
     {
         return $this->hasMany(InventoryItemMaster::class,'ItemCode','ItemCode')->with(['categoryInfo']);
     }
+
+    public function itemDetails()
+    {
+        return $this->belongsTo(InventoryItemMaster::class,'ItemCode','ItemCode');
+    }
+
+    
 }

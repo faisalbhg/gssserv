@@ -42,6 +42,8 @@ use App\Http\Livewire\Mechanical;
 use App\Http\Livewire\CustomerCheckout;
 use App\Http\Livewire\CarsTaxi;
 use App\Http\Livewire\UpdateJobCards;
+use App\Http\Livewire\VehicleSearchSave;
+use App\Http\Livewire\CustomerServiceJob;
 
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
@@ -70,6 +72,11 @@ Route::get('/reset-password/{id}',ResetPassword::class)->name('reset-password')-
 Route::middleware('auth')->group(function () {
     Route::get('/', Dashboard::class)->name('dashboard');
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
+
+    //Job Start
+    Route::get('job-start',VehicleSearchSave::class)->name('job-start');
+    Route::get('customer-service-job/{customer_id}/{vehicle_id}',CustomerServiceJob::class)->name('customer-service-job');
+
 
     //oute::get('/', HomePage::class)->name('dashboard');
     //Route::get('/dashboard', HomePage::class)->name('dashboard');
