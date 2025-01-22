@@ -822,6 +822,21 @@ class CustomerServiceJob extends Component
         $this->dispatchBrowserEvent('closeDiscountGroupModal');
     }
 
+    public function savedCustomerDiscountGroup($savedCustDiscount){
+        //dd($savedCustDiscount);
+        $getSavedCustDiscount = LaborCustomerGroup::find($savedCustDiscount['discount_id']);
+        $this->selectedDiscount = [
+            'unitId'=>$getSavedCustDiscount->UnitId,
+            'code'=>$getSavedCustDiscount->Code,
+            'title'=>$getSavedCustDiscount->Title,
+            'id'=>$getSavedCustDiscount->Id,
+            'groupType'=>$getSavedCustDiscount->GroupType,
+        ];
+        $this->appliedDiscount = $this->selectedDiscount;
+        $this->applyEngineOilDiscount();
+        $this->dispatchBrowserEvent('closeDiscountGroupModal');
+    }
+
     public function applyEngineOilDiscount(){
 
         foreach($this->cartItems as $items)
