@@ -116,16 +116,16 @@
                             <div class="col-2">
                                 <label for="plateImageFile" >Plate Image</label>
                                 <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
-                                    <!-- <div class="row">
+                                    <div class="row">
                                         <div class="col-md-12">
                                             
                                             <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
                                                 <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                             </button>
                                         </div>
-                                    </div> -->
+                                    </div>
                                     <!-- File Input -->
-                                    <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: block;" />
+                                    <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: none;" />
                                     <!-- Progress Bar -->
                                     <div x-show="isUploading">
                                         <progress max="100" x-bind:value="progress"></progress>
@@ -199,16 +199,16 @@
                             <div class="col-md-2 col-sm-2">
                                 <label for="vehicleImageFile">Vehicle Image</label>
                                 <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
-                                    <!-- <div class="row">
+                                    <div class="row">
                                         <div class="col-md-12">
                                             
                                             <button class="btn btn-icon btn-2 btn-primary float-start" id="vehicleImage" type="button">
                                                 <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                             </button>
                                         </div>
-                                    </div> -->
+                                    </div>
                                     <!-- File Input -->
-                                    <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture style="display: block;" />
+                                    <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture style="display: none;" />
                                     <!-- Progress Bar -->
                                     <div x-show="isUploading">
                                         <progress max="100" x-bind:value="progress"></progress>
@@ -270,16 +270,16 @@
                             <div class="col-md-3 col-sm-2">
                                 <label for="chaisisImageFile">Chaisis Picture</label>
                                 <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
-                                    <!-- <div class="row">
+                                    <div class="row">
                                         <div class="col-md-12">
                                             
                                             <button class="btn btn-icon btn-2 btn-primary float-start" id="chaisisImage" type="button">
                                                 <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                             </button>
                                         </div>
-                                    </div> -->
+                                    </div>
                                     <!-- File Input -->
-                                    <input type="file" id="chaisisImageFile" wire:model="chaisis_image" accept="image/*" capture style="display: block;" />
+                                    <input type="file" id="chaisisImageFile" wire:model="chaisis_image" accept="image/*" capture style="display: none;" />
                                     <!-- Progress Bar -->
                                     <div x-show="isUploading">
                                         <progress max="100" x-bind:value="progress"></progress>
@@ -443,7 +443,7 @@
 <script type="text/javascript">
     
     window.addEventListener('imageUpload',event=>{
-        /*$('#vehicleImage').click(function(){
+        $('#vehicleImage').click(function(){
             $("#vehicleImageFile").trigger('click');
         });
         $('#plateImage').click(function(){
@@ -451,7 +451,7 @@
         });
         $('#chaisisImage').click(function(){
             $("#chaisisImageFile").trigger('click');
-        });*/
+        });
 
         
     });

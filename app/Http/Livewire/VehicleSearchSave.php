@@ -61,7 +61,7 @@ class VehicleSearchSave extends Component
             $this->listVehiclesMake = [];
             $this->vehiclesModelList = [];
         }
-        $this->dispatchBrowserEvent('imageUpload');
+        //$this->dispatchBrowserEvent('imageUpload');
         $this->dispatchBrowserEvent('selectSearchEvent');
         return view('livewire.vehicle-search-save');
     }
