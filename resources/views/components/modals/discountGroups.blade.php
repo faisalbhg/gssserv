@@ -15,37 +15,40 @@
                             </button>
                         </div>
                         <div class="modal-body py-0">
-                            <div class="row">
-                                <h6><u>Saved Customer Discounts</u></h6>
-                                @forelse($selectedVehicleInfo->customerDiscountLists as $customerDiscountLists)
-                                    <div class="col-lg-2 col-sm-3 my-2">
-                                        @if($customerDiscountLists->discount_id==8 || $customerDiscountLists->discount_id==9)
-                                        <?php $expired=false; $bgbackground= "bg-gradient-info";?>
-                                        @else
-                                            <?php $end = \Carbon\Carbon::parse($customerDiscountLists->discount_card_validity);$expired=false;?>
-                                            @if(\Carbon\Carbon::now()->diffInDays($end, false)>=0)
-                                            <?php $bgbackground= "bg-gradient-info";?>
+                            @$if(count($selectedVehicleInfo->customerDiscountLists)>0)
+                                <div class="row">
+
+                                    <h6><u>Saved Customer Discounts</u></h6>
+                                    @forelse($selectedVehicleInfo->customerDiscountLists as $customerDiscountLists)
+                                        <div class="col-lg-2 col-sm-3 my-2">
+                                            @if($customerDiscountLists->discount_id==8 || $customerDiscountLists->discount_id==9)
+                                            <?php $expired=false; $bgbackground= "bg-gradient-info";?>
                                             @else
-                                            <?php $bgbackground= "bg-gradient-danger";$expired=true;?>
-                                            @endif
-
-                                        @endif
-                                        <div @if(!$expired) wire:click="savedCustomerDiscountGroup({{$customerDiscountLists}})" @endif class="card cursor-pointer {{$bgbackground}}">
-                                            <div class="card-body  py-2">
-                                                <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower($customerDiscountLists->discount_title)}}</h6>
-                                            </div>
-
-                                        </div>
-                                        @if($customerDiscountLists->discount_id==8 || $customerDiscountLists->discount_id==9)
-                                                
+                                                <?php $end = \Carbon\Carbon::parse($customerDiscountLists->discount_card_validity);$expired=false;?>
+                                                @if(\Carbon\Carbon::now()->diffInDays($end, false)>=0)
+                                                <?php $bgbackground= "bg-gradient-info";?>
                                                 @else
-                                                <small>Expired in: {{ $diff = Carbon\Carbon::parse($customerDiscountLists->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}   </small>
+                                                <?php $bgbackground= "bg-gradient-danger";$expired=true;?>
                                                 @endif
-                                    </div>
-                                @empty
-                                @endforelse
-                            </div>
-                            <hr>
+
+                                            @endif
+                                            <div @if(!$expired) wire:click="savedCustomerDiscountGroup({{$customerDiscountLists}})" @endif class="card cursor-pointer {{$bgbackground}}">
+                                                <div class="card-body  py-2">
+                                                    <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower($customerDiscountLists->discount_title)}}</h6>
+                                                </div>
+
+                                            </div>
+                                            @if($customerDiscountLists->discount_id==8 || $customerDiscountLists->discount_id==9)
+                                                    
+                                                    @else
+                                                    <small>Expired in: {{ $diff = Carbon\Carbon::parse($customerDiscountLists->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}   </small>
+                                                    @endif
+                                        </div>
+                                    @empty
+                                    @endforelse
+                                </div>
+                                <hr>
+                            @endif
                             <div class="row mt-2">
                                 <div class="col-md-12">
                                     @error('$selectedDiscountId') <span class="text-danger">{{ $message }}</span> @enderror
