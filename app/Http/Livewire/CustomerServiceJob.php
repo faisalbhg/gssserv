@@ -833,7 +833,7 @@ class CustomerServiceJob extends Component
             'groupType'=>$getSavedCustDiscount->GroupType,
         ];
         $this->appliedDiscount = $this->selectedDiscount;
-        $this->applyEngineOilDiscount();
+        $this->applyDiscountOnCart();
         $this->dispatchBrowserEvent('closeDiscountGroupModal');
     }
 
