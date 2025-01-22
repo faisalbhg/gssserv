@@ -27,6 +27,7 @@ class HomePage extends Component
         //CustomerJobCardServices::truncate();
         //Get Pending Customer
         $this->pendingCustomersCart =  CustomerServiceCart::with(['customerInfo','vehicleInfo'])->where(['created_by'=>Session::get('user')->id])->get();
+        dd($this->pendingCustomersCart);
         //dd($this->pendingCustomersCart);
 
         $getCountSalesJobStatus = CustomerJobCards::select(
@@ -63,13 +64,13 @@ class HomePage extends Component
             //$getCountSalesJobStatus = $getCountSalesJobStatus->where(['job_date_time'=>$this->selected_date]);
             //$customerjobsQuery = $customerjobsQuery->where(['job_date_time'=>$this->selected_date]);
         
-        $this->getCountSalesJob = $getCountSalesJobStatus->first();
+        $this->getCountSalesJob = $getCountSalesJobStatus->where(['created_by'=>Session::get('user')->id])->first();
 
         if($this->filterJobStatus)
         {
             $customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
         }
-        $this->customerjobsLists = $customerjobsQuery->get();
+        $this->customerjobsLists = $customerjobsQuery->where(['created_by'=>Session::get('user')->id])->get();
         return view('livewire.home-page');
     }
 
