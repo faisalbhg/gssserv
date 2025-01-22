@@ -25,6 +25,7 @@ use App\Models\ServiceChecklist;
 
 class SubmitCutomerServiceJob extends Component
 {
+    use WithFileUploads;
     public $customer_id, $vehicle_id, $mobile, $name, $email, $selectedVehicleInfo;
     public $selectedCustomerVehicle=true, $showCheckout=true, $successPage=false, $showCheckList=false, $showQLCheckList=false, $showFuelScratchCheckList=false, $showCustomerSignature=false, $discountApply=false;
     public $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
