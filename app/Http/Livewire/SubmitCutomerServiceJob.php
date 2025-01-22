@@ -55,7 +55,6 @@ class SubmitCutomerServiceJob extends Component
                 'scrollToId' => 'checkoutSignature',
             ]);
         }
-        $this->dispatchBrowserEvent('imageUpload');
         return view('livewire.submit-cutomer-service-job');
     }
 
@@ -84,6 +83,7 @@ class SubmitCutomerServiceJob extends Component
                 {
                     $this->showCheckout =false;
                     $this->showCheckList=true;
+                    $this->dispatchBrowserEvent('imageUpload');
                 }
             }
             $this->total = $total;
