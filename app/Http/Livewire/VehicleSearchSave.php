@@ -24,7 +24,7 @@ use App\Models\VehicleMakes;
 class VehicleSearchSave extends Component
 {
     use WithFileUploads;
-    public $searchByMobileNumber = true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false;
+    public $searchByMobileNumber = true, $showSearchByMobileBtn=true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false;
     public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false;
     public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
     public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
@@ -214,16 +214,22 @@ class VehicleSearchSave extends Component
     }
 
     public function getCustomerVehicleSearch($serachBy){
+        $ssearchCustomerVehicleQuery = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo']);
         if($serachBy=='mobile'){
-            $this->dispatchBrowserEvent('mobile0Remove');
-            $this->customers = CustomerVehicle::join('TenantMaster','TenantMaster.TenantId','=','customer_vehicles.customer_id')->where('mobile','like',"%{$this->mobile}%")->where('customer_vehicles.is_active','=',1)->get();
+            if($this->mobile[0]=='0'){
+                $this->mobile = ltrim($this->mobile, $this->mobile[0]);
+            }
+            $ssearchCustomerVehicleQuery = $ssearchCustomerVehicleQuery->where(function ($query) {
+                $query->whereRelation('customerInfoMaster', 'mobile', 'like', "%$this->mobile%");
+            });
         }
         if($serachBy=='plate'){
-            $this->customers = CustomerVehicle::join('TenantMaster','TenantMaster.TenantId','=','customer_vehicles.customer_id')->where('plate_code', 'like', "%{$this->plate_code}%")->where('plate_number', 'like', "%{$this->plate_number}%")->where('customer_vehicles.is_active','=',1)->get();
+            $ssearchCustomerVehicleQuery = $ssearchCustomerVehicleQuery->where('plate_code', 'like', "%{$this->plate_code}%")->where('plate_number', 'like', "%{$this->plate_number}%");
         }
         if($serachBy=='chaisis'){
-            $this->customers = CustomerVehicle::join('TenantMaster','TenantMaster.TenantId','=','customer_vehicles.customer_id')->where('chassis_number', 'like', "%{$this->chassis_number}%")->where('customer_vehicles.is_active','=',1)->get();
+            $ssearchCustomerVehicleQuery = $ssearchCustomerVehicleQuery->where('chassis_number', 'like', "%{$this->chassis_number}%");
         }
+        $this->customers = $ssearchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1)->get();
     }
 
     public function saveVehicleCustomer(){

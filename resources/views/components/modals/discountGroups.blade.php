@@ -10,23 +10,17 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="discountGroupModalLabel">Discount Groups</h5>
-                            
                             <button type="button" class="btn-close text-dark " data-bs-dismiss="modal" aria-label="Close" style="font-size: 2.125rem !important;" >
-                              <span aria-hidden="true">&times;</span>
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body py-0">
                             <div class="row mt-2">
                                 <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header p-0">
-                                        @error('$selectedDiscountId') <span class="text-danger">{{ $message }}</span> @enderror
-                                        
-                                    </div>
-                                    <div class="card-body p-3">
-                                        @if($discountSearch)
+                                    @error('$selectedDiscountId') <span class="text-danger">{{ $message }}</span> @enderror
+                                    @if($discountSearch)
                                         <div class="row">
-                                            @foreach($customerGroupLists as $listCustDiscGrp)
+                                            @forelse($customerGroupLists as $listCustDiscGrp)
                                             <div class="col-lg-2 col-sm-4 my-2">
                                                 <div wire:click="selectDiscountGroup({{$listCustDiscGrp}})" class="card h-100 cursor-pointer">
                                                     <div class="card-body py-3">
@@ -35,10 +29,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @endforeach
-                                            
+                                            @empty
+                                            @endforelse
                                         </div>
-                                        @else
+                                    @else
                                         <div class="row">
                                             @if($selectedDiscount)
                                             <div class="col-lg-2 col-sm-4 my-2">
@@ -54,7 +48,6 @@
                                                     <p class="badge bg-gradient-danger text-light text-bold text-lg mb-0">{{$staffavailable}}</p>
                                                     @if($discountForm)
                                                         @if($searchStaffId)
-                                                            
                                                             <div class="row mb-0">
                                                                 <div class="col-md-12">
                                                                     <div class="form-group">
@@ -105,65 +98,58 @@
                                                             </div>
                                                         @endif
                                                         @if($engineOilDiscountForm)
-                                                        <div class="row">
-                                                            <div class="col-md-6 col-sm-6 my-2">
-                                                                <div wire:click="selectEngineOilDiscount(10)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                                    <div class="card-body z-index-2 py-2">
-                                                                        <h2 class="text-white">10%</h2>
-                                                                        <p class="text-white">
-                                                                        10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                        <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                            <div class="row">
+                                                                <div class="col-md-6 col-sm-6 my-2">
+                                                                    <div wire:click="selectEngineOilDiscount(10)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                                        <div class="card-body z-index-2 py-2">
+                                                                            <h2 class="text-white">10%</h2>
+                                                                            <p class="text-white">
+                                                                            10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                            <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                                        </div>
+                                                                        <div class="mask bg-gradient-primary border-radius-lg"></div>
                                                                     </div>
-                                                                    <div class="mask bg-gradient-primary border-radius-lg"></div>
+                                                                </div>
+                                                                <div class="col-md-6 col-sm-6 my-2">
+                                                                    <div wire:click="selectEngineOilDiscount(15)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                                        <div class="card-body z-index-2 py-2">
+                                                                            <h2 class="text-white">15%</h2>
+                                                                            <p class="text-white">
+                                                                            15% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                            <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                                        </div>
+                                                                        <div class="mask bg-gradient-primary border-radius-lg"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 col-sm-6 my-2">
+                                                                    <div wire:click="selectEngineOilDiscount(20)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                                        <div class="card-body z-index-2 py-2">
+                                                                            <h2 class="text-white">20%</h2>
+                                                                            <p class="text-white">
+                                                                            20% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                            <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                                        </div>
+                                                                        <div class="mask bg-gradient-primary border-radius-lg"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 col-sm-6 my-2">
+                                                                    <div wire:click="selectEngineOilDiscount(25)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                                        <div class="card-body z-index-2 py-2">
+                                                                            <h2 class="text-white">25%</h2>
+                                                                            <p class="text-white">
+                                                                            25% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                            <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                                        </div>
+                                                                        <div class="mask bg-gradient-primary border-radius-lg"></div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6 col-sm-6 my-2">
-                                                                <div wire:click="selectEngineOilDiscount(15)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                                    <div class="card-body z-index-2 py-2">
-                                                                        <h2 class="text-white">15%</h2>
-                                                                        <p class="text-white">
-                                                                        15% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                        <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                                    </div>
-                                                                    <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6 col-sm-6 my-2">
-                                                                <div wire:click="selectEngineOilDiscount(20)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                                    <div class="card-body z-index-2 py-2">
-                                                                        <h2 class="text-white">20%</h2>
-                                                                        <p class="text-white">
-                                                                        20% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                        <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                                    </div>
-                                                                    <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6 col-sm-6 my-2">
-                                                                <div wire:click="selectEngineOilDiscount(25)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                                    <div class="card-body z-index-2 py-2">
-                                                                        <h2 class="text-white">25%</h2>
-                                                                        <p class="text-white">
-                                                                        25% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                        <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                                    </div>
-                                                                    <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        
                                                         @endif
                                                     @endif
-                                                    
                                                 </div>
-
-                                                
                                             </div>
-                                            
                                         </div>
-                                        @endif
-                                    </div>
-                                </div>
+                                    @endif
                                 </div>
                             </div>
                             
@@ -177,6 +163,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div wire:loading wire:target="selectDiscountGroup">
                             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                 <div class="la-ball-beat">

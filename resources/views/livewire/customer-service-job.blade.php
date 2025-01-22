@@ -451,7 +451,7 @@
                                                                 <span class="text-xs text-dark">Note: {{ $item->extra_note }}</span>
                                                             @endif
                                                             @if($item->customer_group_code)
-                                                            <p class="mb-0"><span class="text-sm text-dark">Discount Group: {{ $item->customer_group_code }} <label class="badge bg-gradient-info">{{ $item->discount_perc }}% Off</label></span></p>
+                                                            <label wire:click.prevent="removeLineDiscount({{$item->id}})" class="badge bg-gradient-info cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
                                                             @endif
                                                             <a href="#" class="p-0 text-danger bg-red-600" wire:click.prevent="removeCart('{{$item->id}}')"><i class="fa fa-trash"></i></a>
                                                         </div>
@@ -530,6 +530,15 @@
                                         <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($grand_total,2)}}</span>
                                     </div>
                                     <button type="button" class="btn bg-gradient-success btn-sm float-end" wire:click="submitService()">Confirm & Continue</button>
+                                    <div wire:loading wire:target="removeLineDiscount">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div wire:loading wire:target="submitService">
                                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                             <div class="la-ball-beat">

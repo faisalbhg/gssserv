@@ -44,6 +44,7 @@ class CustomerJobCards extends Model
         'payment_status',
         'payment_request',
         'payment_response',
+        'meterialRequestResponse',
         'payment_link',
         'job_create_status',
         'job_status',

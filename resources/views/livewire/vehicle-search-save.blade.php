@@ -76,14 +76,21 @@
                         <div class="row">
                             @if($showByMobileNumber)
                                 <div class="col-md-4 col-sm-6">
-                                    <div class="form-group">
-                                        <label for="mobilenumberInput">Mobile Number </label>
-                                        <div class="input-group mb-0">
-                                            <span class="input-group-text px-0">+971</span>
-                                            <input class="form-control" placeholder="Mobile Number" type="number" wire:model="mobile" @if(!$editCustomerAndVehicle) wire:keyup="searchResult" @endif name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="9" id="mobilenumberInput">
+                                    <label for="mobilenumberInput">Mobile Number </label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-MobileSearch" wire:model="mobile"  name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="10" id="mobilenumberInput" style="padding-left:10px !important;">
+                                        <button wire:click="searchResult" class="btn btn-outline-primary mb-0" type="button" id="button-MobileSearch">Search</button>
+                                        <div wire:loading wire:target="searchResult">
+                                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                <div class="la-ball-beat">
+                                                    <div></div>
+                                                    <div></div>
+                                                    <div></div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        @error('mobile') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                     </div>
+                                    @error('mobile') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                 </div>
                             @endif
                             @if ($showCustomerForm)
@@ -355,13 +362,13 @@
                                             <div class="full-background" style="background-image: url('{{url("public/storage/".$customer->vehicle_image)}}')"></div>
                                             <div class="card-body pt-5">
                                                 <h4 class="text-white mb-0 pb-0">
-                                                    @if($customer->TenantName)
-                                                        {{$customer->TenantName}}
+                                                    @if($customer->customerInfoMaster['TenantName'])
+                                                        {{$customer->customerInfoMaster['TenantName']}}
                                                     @else
                                                     Guest
                                                     @endif
                                                 </h4>
-                                                <p class="mt-0 pt-0"><small>{{$customer->Email}}, {{$customer->Mobile}}</small></p>
+                                                <p class="mt-0 pt-0"><small>{{$customer->customerInfoMaster['Email']}}, {{$customer->customerInfoMaster['Mobile']}}</small></p>
                                                 <p class="mb-0">{{isset($customer->makeInfo)?$customer->makeInfo['vehicle_name']:''}}, {{isset($customer->modelInfo['vehicle_model_name'])?$customer->modelInfo['vehicle_model_name']:''}}</p>
                                                 <p>{{$customer->plate_number_final}}</p>
                                             </div>

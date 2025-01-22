@@ -19,6 +19,7 @@ use App\Models\CustomerVehicle;
 use App\Models\Development;
 use App\Models\Sections;
 use App\Models\LaborItemMaster;
+use App\Models\LaborSalesPrices;
 use App\Models\CustomerServiceCart;
 use App\Models\ItemCategories;
 use App\Models\InventorySubCategory;
@@ -50,18 +51,18 @@ class CustomerServiceJob extends Component
     public $selectedDiscount, $appliedDiscount=[], $showDiscountDroup=false, $discountSearch=true;
     public $discount_card_imgae, $discount_card_number, $discount_card_validity;
     public $discountCardApplyForm=false, $engineOilDiscountForm=false, $discountForm=false;
-    public $customerSelectedDiscountGroup, $searchStaffId, $staffavailable;
+    public $customerSelectedDiscountGroup, $employeeId, $searchStaffId, $staffavailable;
 
     public $editCUstomerInformation=false, $addNewVehicleInformation=false, $showForms=false, $searchByMobileNumber = false, $editCustomerAndVehicle=false, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false;
     public $mobile, $name, $email, $customer_code, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
     public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
 
     function mount( Request $request) {
-        $customer_id = $request->customer_id;
-        $vehicle_id = $request->vehicle_id;
-        if($vehicle_id && $customer_id)
+        $this->customer_id = $request->customer_id;
+        $this->vehicle_id = $request->vehicle_id;
+        if($this->vehicle_id && $this->customer_id)
         {
-            $this->selectVehicle($customer_id, $vehicle_id);
+            $this->selectVehicle();
 
         }
 
@@ -183,7 +184,7 @@ class CustomerServiceJob extends Component
                             ]);
                         if($this->appliedDiscount['groupType']==1)
                         {
-                            $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery;
+                            //$qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery;
 
                         }else if($this->appliedDiscount['groupType']==2)
                         {
@@ -375,7 +376,6 @@ class CustomerServiceJob extends Component
         }
 
 
-
         $this->openServiceGroup();
         $this->getCartInfo();
         $this->dispatchBrowserEvent('selectSearchEvent');
@@ -385,7 +385,7 @@ class CustomerServiceJob extends Component
 
     public function getCartInfo($value='')
     {
-        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->get();
+        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
         $this->cartItemCount = count($this->cartItems); 
         if(count($this->cartItems)>0)
         {
@@ -411,8 +411,8 @@ class CustomerServiceJob extends Component
         
     }
 
-    public function selectVehicle($customerId,$vehicleId){
-        $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$vehicleId,'customer_id'=>$customerId])->first();
+    public function selectVehicle(){
+        $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->first();
         
         
         $this->selectedCustomerVehicle=true;
@@ -422,8 +422,6 @@ class CustomerServiceJob extends Component
         $this->showVehicleAvailable = false;
         $this->selectedVehicleInfo=$customers;
 
-        $this->selected_vehicle_id = $customers->id;
-        $this->customer_id = $customers->customer_id;
         $this->mobile = $customers->customerInfoMaster['Mobile'];
         $this->name = $customers->customerInfoMaster['TenantName'];
         $this->email = $customers->customerInfoMaster['Email'];
@@ -498,7 +496,7 @@ class CustomerServiceJob extends Component
     {
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
-        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'item_id'=>$servicePrice['ItemId']]);
+        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']]);
         if($customerBasketCheck->count())
         {
             $customerBasketCheck->increment('quantity', 1);
@@ -511,7 +509,7 @@ class CustomerServiceJob extends Component
                 $cartUpdate['start_date']=$discountPrice['StartDate'];
                 $cartUpdate['end_date']=$discountPrice['EndDate'];
                 $cartUpdate['discount_perc']=$discountPrice['DiscountPerc'];
-                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'item_id'=>$servicePrice['ItemId']])->update($cartUpdate);
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']])->update($cartUpdate);
             }
             
         }
@@ -519,7 +517,7 @@ class CustomerServiceJob extends Component
         {
             $cartInsert = [
                 'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->selected_vehicle_id,
+                'vehicle_id'=>$this->vehicle_id,
                 'item_id'=>$servicePrice['ItemId'],
                 'item_code'=>$servicePrice['ItemCode'],
                 'cart_item_type'=>1,
@@ -571,7 +569,7 @@ class CustomerServiceJob extends Component
     {
         $items = json_decode($items,true);
         $discountPrice = json_decode($discount,true);
-        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'item_id'=>$items['ItemId']]);
+        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items['ItemId']]);
         if($customerBasketCheck->count())
         {
             $customerBasketCheck->increment('quantity', 1);
@@ -584,7 +582,7 @@ class CustomerServiceJob extends Component
                 $cartUpdate['start_date']=$discountPrice->StartDate;
                 $cartUpdate['end_date']=$discountPrice->EndDate;
                 $cartUpdate['discount_perc']=$discountPrice->DiscountPerc;
-                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'item_id'=>$items['ItemId']])->update($cartUpdate);
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items['ItemId']])->update($cartUpdate);
             }
             
         }
@@ -592,7 +590,7 @@ class CustomerServiceJob extends Component
         {
             $cartInsert = [
                 'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->selected_vehicle_id,
+                'vehicle_id'=>$this->vehicle_id,
                 'item_id'=>$items['ItemId'],
                 'item_code'=>$items['ItemCode'],
                 'company_code'=>$items['CompanyCode'],
@@ -649,7 +647,7 @@ class CustomerServiceJob extends Component
 
     public function clearAllCart()
     {
-        CustomerServiceCart::where(['customer_id'=>$this->customer_id, 'vehicle_id'=>$this->selected_vehicle_id])->delete();
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id, 'vehicle_id'=>$this->vehicle_id])->delete();
         
         session()->flash('cartsuccess', 'All Service Cart Clear Successfully !');
     }
@@ -694,9 +692,10 @@ class CustomerServiceJob extends Component
         $this->dispatchBrowserEvent('openDiscountGroupModal');
     }
 
+
     public function selectDiscountGroup($discountGroup){
         $this->selectedDiscount = [
-            'unitId'=>$discountGroup['UnitId'],
+            'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
             'code'=>$discountGroup['Code'],
             'title'=>$discountGroup['Title'],
             'id'=>$discountGroup['Id'],
@@ -704,6 +703,7 @@ class CustomerServiceJob extends Component
         ];
         if($discountGroup['GroupType']==2)
         {
+            $this->applyDiscountOnCart();
             $this->discountCardApplyForm=false;
             $this->discountForm=false;
             $this->appliedDiscount = $this->selectedDiscount;
@@ -757,14 +757,14 @@ class CustomerServiceJob extends Component
         {
             if (!CustomerDiscountGroup::where([
                 'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->selected_vehicle_id,
+                'vehicle_id'=>$this->vehicle_id,
                 'discount_id'=>$this->selectedDiscount['id'],
             ])->exists())
             {
                 $customerStaffIdResult = (array)$customerStaffIdCheck[0];
                 $customerDiscontGroupInfo = [
-                    'customer_id'=>$this->jobDetails->customer_id,
-                    'vehicle_id'=>$this->jobDetails->vehicle_id,
+                    'customer_id'=>$this->customer_id,
+                    'vehicle_id'=>$this->vehicle_id,
                     'discount_id'=>$this->selectedDiscount['id'],
                     'discount_unit_id'=>$this->selectedDiscount['unitId'],
                     'discount_code'=>$this->selectedDiscount['code'],
@@ -781,15 +781,17 @@ class CustomerServiceJob extends Component
             }
             else
             {
+
                 $customerDiscontGroup = CustomerDiscountGroup::where([
                     'customer_id'=>$this->customer_id,
-                    'vehicle_id'=>$this->selected_vehicle_id,
+                    'vehicle_id'=>$this->vehicle_id,
                     'discount_id'=>$this->selectedDiscount['id']
                 ])->first();
             }
             
-
+            
             $this->appliedDiscount = $this->selectedDiscount;
+            $this->applyDiscountOnCart();
             $this->dispatchBrowserEvent('closeDiscountGroupModal');
         }
         else
@@ -808,13 +810,14 @@ class CustomerServiceJob extends Component
         $this->engineOilDiscountPercentage=$percentage;
         $this->customerDiscontGroupId = $this->selectedDiscount['id'];
         $this->customerDiscontGroupCode = $this->selectedDiscount['code'];
-        $this->selectVehicle($this->customer_id,$this->selected_vehicle_id);
+        $this->selectVehicle($this->customer_id,$this->vehicle_id);
         $this->dispatchBrowserEvent('closeDiscountGroupModal');
 
 
         $this->discountCardApplyForm=false;
         $this->discountForm=false;
         $this->appliedDiscount = $this->selectedDiscount;
+        $this->applyEngineOilDiscount();
         //$this->applyItemToTempCart();
         $this->dispatchBrowserEvent('closeDiscountGroupModal');
     }
@@ -856,35 +859,34 @@ class CustomerServiceJob extends Component
                 //$cartUpdate['start_date']=$discountSalePrice->StartDate;
                 //$cartUpdate['end_date']=$discountSalePrice->EndDate;
                 $cartUpdate['discount_perc']=$discountSalePrice;
-                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id,'id'=>$items->id])->update($cartUpdate);
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$items->id])->update($cartUpdate);
             }
         }
 
-        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->get();
     }
 
     
 
     public function saveSelectedDiscountGroup(){
-
         $proceeddisctount=false;
         $validatedData = $this->validate([
             //'discount_card_imgae' => 'required',
             'discount_card_number' => 'required',
             'discount_card_validity' => 'required',
         ]);
-        if (!CustomerDiscountGroup::where([
+        $customerDiscountGroupQuery = CustomerDiscountGroup::where([
                 'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->selected_vehicle_id,
+                'vehicle_id'=>$this->vehicle_id,
                 'discount_id'=>$this->selectedDiscount['id'],
                 'discount_card_number'=>$this->discount_card_number,
                 'is_active'=>1
-            ])->exists())
+            ]);
+        if (!$customerDiscountGroupQuery->exists())
         {
         
             $customerDiscontGroupInfo = [
                 'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->selected_vehicle_id,
+                'vehicle_id'=>$this->vehicle_id,
                 'discount_id'=>$this->selectedDiscount['id'],
                 'discount_unit_id'=>$this->selectedDiscount['unitId'],
                 'discount_code'=>$this->selectedDiscount['code'],
@@ -902,28 +904,100 @@ class CustomerServiceJob extends Component
                 $customerDiscontGroupInfo['discount_card_imgae'] = $this->discount_card_imgae->store('discount_group', 'public');
             }
             $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
-
-
-            $this->appliedDiscount = $this->selectedDiscount;
-            $this->dispatchBrowserEvent('closeDiscountGroupModal');
         }
         else{
-            CustomerDiscountGroup::where([
-                'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->selected_vehicle_id,
-                'discount_id'=>$this->selectedDiscount['id'],
-                'discount_card_number'=>$this->discount_card_number,
-                'is_active'=>1
-            ])->update(['discount_card_validity'=>$this->discount_card_validity,'groupType'=>$this->selectedDiscount['groupType']]);
-            $customerDiscontGroup = CustomerDiscountGroup::where([
-                'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->selected_vehicle_id,
-                'discount_id'=>$this->selectedDiscount['id'],
-                'discount_card_number'=>$this->discount_card_number,
-                'is_active'=>1
-            ])->first();
-            $this->appliedDiscount = $this->selectedDiscount;
-            $this->dispatchBrowserEvent('closeDiscountGroupModal');
+            $customerDiscountGroupQuery->update([
+                'discount_card_validity'=>$this->discount_card_validity,
+                'groupType'=>$this->selectedDiscount['groupType']
+            ]);
+            
+        }
+
+        $this->appliedDiscount = $this->selectedDiscount;
+        $this->applyDiscountOnCart();
+        $this->dispatchBrowserEvent('closeDiscountGroupModal');
+
+    }
+
+    public function removeLineDiscount($serviceId){
+        $cartUpdate['price_id']=null;
+        $cartUpdate['customer_group_id']=null;
+        $cartUpdate['customer_group_code']=null;
+        $cartUpdate['min_price']=null;
+        $cartUpdate['max_price']=null;
+        $cartUpdate['start_date']=null;
+        $cartUpdate['end_date']=null;
+        $cartUpdate['discount_perc']=null;
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$serviceId])->update($cartUpdate);
+    }
+
+    public function removeDiscount(){
+
+        $this->selectedDiscount=null;
+        $this->appliedDiscount = null;
+        //dd($this->cartItems);
+        foreach($this->cartItems as $items)
+        {
+            $cartUpdate['price_id']=null;
+            $cartUpdate['customer_group_id']=null;
+            $cartUpdate['customer_group_code']=null;
+            $cartUpdate['min_price']=null;
+            $cartUpdate['max_price']=null;
+            $cartUpdate['start_date']=null;
+            $cartUpdate['end_date']=null;
+            $cartUpdate['discount_perc']=null;
+            CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$items->id])->update($cartUpdate);
+        }
+    }
+
+    public function applyDiscountOnCart(){
+        foreach($this->cartItems as $items)
+        {
+            if($items->cart_item_type==1){
+                $discountCartServicePrices = LaborSalesPrices::where(['ServiceItemId'=>$items->item_id,'CustomerGroupCode'=>$this->appliedDiscount['code']])->where('StartDate', '<=', Carbon::now());
+                if($this->appliedDiscount['groupType']==1)
+                {
+                    $discountCartServicePrices = $discountCartServicePrices->where('EndDate', '=', null );
+                }
+                else if($this->appliedDiscount['groupType']==2)
+                {
+                    $discountCartServicePrices = $discountCartServicePrices->where('EndDate', '>=', Carbon::now() );
+                }
+                if($discountCartServicePrices->exists())
+                {
+                    $serviceCartDiscountSalePrice = $discountCartServicePrices->first();
+                    
+                    $cartUpdate = [
+                        'price_id'=>$serviceCartDiscountSalePrice->PriceID,
+                        'customer_group_id'=>$this->appliedDiscount['id'],
+                        'customer_group_code'=>$this->appliedDiscount['code'],
+                        'min_price'=>$serviceCartDiscountSalePrice->MinPrice,
+                        'max_price'=>$serviceCartDiscountSalePrice->MaxPrice,
+                        'start_date'=>$serviceCartDiscountSalePrice->StartDate,
+                        'end_date'=>$serviceCartDiscountSalePrice->EndDate,
+                        'discount_perc'=>$serviceCartDiscountSalePrice->DiscountPerc,
+                    ];
+                    CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$items->id])->update($cartUpdate);
+                }
+
+            }
+            else if($items->cart_item_type==2){
+                $discountCartServiceItemPrices = InventorySalesPrices::where([
+                        'ServiceItemId'=>$items->item_id,
+                        'CustomerGroupCode'=>$this->appliedDiscount['code'],
+                        'DivisionCode'=>Session::get('user')->station_code,
+                    ]);
+                if($this->appliedDiscount['groupType']==1)
+                {
+                    //$discountCartServiceItemPrices = $discountCartServiceItemPrices;
+
+                }else if($this->appliedDiscount['groupType']==2)
+                {
+                    $discountCartServiceItemPrices = $discountCartServiceItemPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() );
+                }
+                $discountCartServiceItemPrices = $discountCartServiceItemPrices->first();
+                dd($discountCartServiceItemPrices);
+            }
         }
     }
 
@@ -1001,7 +1075,7 @@ class CustomerServiceJob extends Component
                 $tenantCode_out,
             ]); 
         }
-        if($this->selected_vehicle_id){
+        if($this->vehicle_id){
             $customerVehicleUpdate=[];
             if($this->vehicle_image)
             {
@@ -1037,7 +1111,7 @@ class CustomerServiceJob extends Component
             $customerVehicleUpdate['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
             $customerVehicleUpdate['created_by']=Session::get('user')->id;
             //dd($customerVehicleUpdate);
-            CustomerVehicle::where(['id'=>$this->selected_vehicle_id,'customer_id'=>$this->customer_id])->update($customerVehicleUpdate);
+            CustomerVehicle::where(['id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->update($customerVehicleUpdate);
         }
         $this->selectedCustomerVehicle=true;
         $this->editCUstomerInformation=false;
@@ -1135,6 +1209,6 @@ class CustomerServiceJob extends Component
     }
 
     public function submitService(){
-        return redirect()->to('submit-job/'.$this->customer_id.'/'.$this->selected_vehicle_id);
+        return redirect()->to('submit-job/'.$this->customer_id.'/'.$this->vehicle_id);
     }
 }

@@ -21,11 +21,12 @@ use App\Models\CustomerJobCardServiceLogs;
 use App\Models\MaterialRequest;
 use App\Models\WorkOrderJob;
 use App\Models\JobcardChecklistEntries;
+use App\Models\ServiceChecklist;
 
 class SubmitCutomerServiceJob extends Component
 {
     public $customer_id, $vehicle_id, $mobile, $name, $email, $selectedVehicleInfo;
-    public $selectedCustomerVehicle=true, $showCheckout=true, $successPage=false, $showCheckList=false, $showQLCheckList=false, $showFuelScratchCheckList=false;
+    public $selectedCustomerVehicle=true, $showCheckout=true, $successPage=false, $showCheckList=false, $showQLCheckList=false, $showFuelScratchCheckList=false, $showCustomerSignature=false, $discountApply=false;
     public $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
 
@@ -45,8 +46,15 @@ class SubmitCutomerServiceJob extends Component
         if($this->showCheckList)
         {
             $this->showFuelScratchCheckList=true;
+            $this->checklistLabels= ServiceChecklist::get();
 
         }
+        if($this->customerSignature){
+            $this->dispatchBrowserEvent('scrollto', [
+                'scrollToId' => 'checkoutSignature',
+            ]);
+        }
+        $this->dispatchBrowserEvent('imageUpload');
         return view('livewire.submit-cutomer-service-job');
     }
 
@@ -60,12 +68,11 @@ class SubmitCutomerServiceJob extends Component
             $totalDiscount=0;
             $serviceIncludeArray=[];
             $gsQlIn = false;
-            $discountApply=false;
             foreach($this->cartItems as $item)
             {
                 $total = $total+($item->quantity*$item->unit_price);
                 if($item->discount_perc){
-                    $discountApply=true;
+                    $this->discountApply=true;
                     $discountGroupId = $item->customer_group_id;
                     $discountGroupCode = $item->customer_group_code;
                     $discountGroupDiscountPercentage = $item->discount_perc;
@@ -101,6 +108,13 @@ class SubmitCutomerServiceJob extends Component
 
     public function updateServiceItem(){
         return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
+    }
+
+    public function clickShowSignature()
+    {
+        $this->showCustomerSignature=true;
+        $this->dispatchBrowserEvent('showSignature');
+
     }
 
     public function completePaymnet($mode){
@@ -193,61 +207,17 @@ class SubmitCutomerServiceJob extends Component
 
     }
 
+    
+
     public function createJob(){
 
-        $total=0;
-        $totalDiscount=0;
-        $serviceIncludeArray=[];
-        $gsQlIn = false;
-        $discountApply=false;
-        foreach($this->cartItems as $item)
-        {
-
-            $total = $total+($item->quantity*$item->unit_price);
-            if($item->discount_perc){
-                //dd($item);
-                $discountApply=true;
-                $discountGroupId = $item->customer_group_id;
-                $discountGroupCode = $item->customer_group_code;
-                $discountGroupDiscountPercentage = $item->discount_perc;
-                $discountGroupPrice = $item->customer_id;
-                $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2);
-            }
-            if($item->department_code=='PP/00036'  || $item->department_code=='PP/00037')
-            {
-                //$gsQlIn=true;
-            }
-        }
-        if($gsQlIn==true)
-        {
-            /*$validatedData = $this->validate([
-                'fuel' => 'required',
-                'scratchesFound' => 'required',
-                'scratchesNotFound' => 'required',
-                'vImageR1' => 'required',
-                'vImageR2' => 'required',
-                'vImageF' => 'required',
-                'vImageB' => 'required',
-                'vImageL1' => 'required',
-                'vImageL2' => 'required',
-            ]);*/
-
-            //$checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
-
-            $this->showCheckList=false;
-        }
-        $totalAfterDisc = $total - $totalDiscount;
-        $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
-        $grand_total = $totalAfterDisc+$tax;
         
-        $this->tax = $tax;
-        $this->grand_total = $grand_total;
         $customerjobData = [
             'job_number'=>Carbon::now()->format('y').Carbon::now()->format('m').Carbon::now()->format('d').rand(1,1000),
             'job_date_time'=>Carbon::now(),
             'customer_id'=>$this->customer_id,
             //'customer_type'=>$this->customer_type,
-            'vehicle_id'=>$this->selectedVehicleInfo['id'],
+            'vehicle_id'=>$this->vehicle_id,
             'vehicle_type'=>isset($this->selectedVehicleInfo['vehicle_type'])?$this->selectedVehicleInfo['vehicle_type']:0,
             'make'=>$this->selectedVehicleInfo['make'],
             'vehicle_image'=>$this->selectedVehicleInfo['vehicle_image'],
@@ -267,7 +237,7 @@ class SubmitCutomerServiceJob extends Component
             'coupon_type',
             'coupon_code',
             'coupon_amount',*/
-            'total_price'=>$total,
+            'total_price'=>$this->total,
             'vat'=>$this->tax,
             'grand_total'=>$this->grand_total,
             'job_status'=>1,
@@ -279,17 +249,6 @@ class SubmitCutomerServiceJob extends Component
         if($this->showQLCheckList==true){
             //$customerjobData['ql_km_range']=$this->ql_km_range;
         }
-        if($discountApply)
-        {
-            //$customerjobData['customer_discount_id']=$this->customerSelectedDiscountGroup['id'];
-            $customerjobData['discount_id']=$discountGroupId;
-            $customerjobData['discount_unit_id']=$discountGroupId;
-            $customerjobData['discount_code']=$discountGroupCode;
-            $customerjobData['discount_title']=$discountGroupCode;
-            $customerjobData['discount_percentage']=$discountGroupDiscountPercentage;
-            $customerjobData['discount_amount']=$totalDiscount;
-        }
-        //dd($customerjobData);
         $customerjobId = CustomerJobCards::create($customerjobData);
         $stationJobNumber = CustomerJobCards::where(['station'=>Session::get('user')->station_code])->count();
         $this->job_number = 'JOB-'.Session::get('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
@@ -297,6 +256,7 @@ class SubmitCutomerServiceJob extends Component
 
         $meterialRequestItems=[];
         $passmetrialRequest = false;
+        $totalDiscountInJob=0;
         foreach($this->cartItems as $cartData)
         {
             $customerJobServiceData = [
@@ -340,6 +300,7 @@ class SubmitCutomerServiceJob extends Component
                 $customerJobServiceData['discount_amount'] = $customerJobServiceDiscountAmount;
                 $customerJobServiceData['discount_start_date']=$cartData->start_date;
                 $customerJobServiceData['discount_end_date']=$cartData->end_date;
+                $totalDiscountInJob = $totalDiscountInJob+$customerJobServiceDiscountAmount;
             }
 
             
@@ -397,6 +358,20 @@ class SubmitCutomerServiceJob extends Component
 
         }
 
+        if($totalDiscountInJob>0)
+        {
+            //$customerjobData['customer_discount_id']=$this->customerSelectedDiscountGroup['id'];
+            /*$customerjobData['discount_id']=$discountGroupId;
+            $customerjobData['discount_unit_id']=$discountGroupId;
+            $customerjobData['discount_code']=$discountGroupCode;
+            $customerjobData['discount_title']=$discountGroupCode;
+            $customerjobData['discount_percentage']=$discountGroupDiscountPercentage;*/
+            $customerjobDataUpdate['discount_amount']=$totalDiscountInJob;
+            CustomerJobCards::where(['id'=>$customerjobId->id])->update($customerjobDataUpdate);
+        }
+
+
+
         WorkOrderJob::create(
                 [
                     "DocumentCode"=>$this->job_number,
@@ -408,7 +383,7 @@ class SubmitCutomerServiceJob extends Component
 
         $vehicle_image=[];
         //dd($vehicle_image);
-        if(!empty($this->checklistLabel))
+        if($this->showCheckList)
         {
             $vehicle_image = [
                 'vImageR1'=>isset($this->vImageR1)?$this->vImageR1->store('car_image', 'public'):null,
@@ -453,14 +428,29 @@ class SubmitCutomerServiceJob extends Component
             ];
             $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
         }
-
         if($passmetrialRequest==true)
         {
-            Session::get('user')->stationName['PortfolioCode'];
             try {
-                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update] @companyCode = 'PF/00001', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ");
+                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = '".Session::get('user')->stationName['PortfolioCode']."', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ", [
+                        Session::get('user')->stationName['PortfolioCode'],
+                        null,
+                        $customerjobData['job_date_time'],
+                        $this->job_number,
+                        "J",
+                        $this->job_number,
+                        "0",
+                        $this->job_number,
+                        Session::get('user')->station_code,
+                        $propertyCodeMR,
+                        $unitCodeMR,
+                         "1",
+                         "admin",
+                         null
+                    ]);
 
-                dd($meterialRequestResponse);
+                $meterialRequestResponse = json_encode($meterialRequestResponse[0],true);
+                $meterialRequestResponse = json_decode($meterialRequestResponse,true);
+                CustomerJobCards::where(['id'=>$customerjobId->id])->update(['meterialRequestResponse'=>$meterialRequestResponse['refCode']]);
 
                 /*'division_code'=>"LL/00004",
                 'department_code'=>"PP/00037",
@@ -468,6 +458,7 @@ class SubmitCutomerServiceJob extends Component
 
 
             } catch (\Exception $e) {
+                //dd($e->getMessage());
                 //return $e->getMessage();
             }
         }
@@ -554,7 +545,6 @@ class SubmitCutomerServiceJob extends Component
 
     public function dashCustomerJobUpdate($job_number)
     {
-
         return redirect()->to('/customer-job-update/'.$job_number);
     }
 }

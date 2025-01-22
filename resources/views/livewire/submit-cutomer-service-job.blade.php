@@ -655,87 +655,43 @@
                         <div class="card-header text-center pt-4 pb-3">
                             <h5 class="font-weight-bold mt-2">Vehicle Images</h5>
                         </div>
-                        
-                        
                         <div class="card-body text-left pt-0">
                             <div class="row">
 
                                 <div class="col-md-6 col-sm-6">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile1" type="button">
-                                                <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
-                                            </button>
-                                        </div>
-                                    </div>
                                     <input type="file" id="file1" wire:model="vImageR1" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-end" id="img1" src="@if($vImageR1) {{$vImageR1->temporaryUrl()}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer"  />
+                                    <img class="w-75 float-end" id="upfile1" src="@if($vImageR1) {{$vImageR1->temporaryUrl()}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer"  />
                                     @error('vImageR1') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile2" type="button">
-                                                <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
-                                            </button>
-                                        </div>
-                                    </div>
                                     <input type="file" id="file2" wire:model="vImageR2" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-start" id="img2" src="@if ($vImageR2) {{ $vImageR2->temporaryUrl() }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer"  />
+                                    <img class="w-75 float-start" id="upfile2" src="@if ($vImageR2) {{ $vImageR2->temporaryUrl() }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer"  />
                                     @error('vImageR2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <hr>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-sm-6">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile3" type="button">
-                                                <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
-                                            </button>
-                                        </div>
-                                    </div>
                                     <input type="file" id="file3" wire:model="vImageF" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-end" id="img3" src="@if ($vImageF) {{ $vImageF->temporaryUrl() }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="w-75 float-end" id="upfile3" src="@if ($vImageF) {{ $vImageF->temporaryUrl() }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('vImageF') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile4" type="button">
-                                                <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
-                                            </button>
-                                        </div>
-                                    </div>
                                     <input type="file" id="file4" wire:model="vImageB" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-start" id="img4" src="@if ($vImageB) {{ $vImageB->temporaryUrl() }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="w-75 float-start" id="upfile4" src="@if ($vImageB) {{ $vImageB->temporaryUrl() }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('vImageB') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <hr>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-sm-6">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile5" type="button">
-                                                <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
-                                            </button>
-                                        </div>
-                                    </div>
                                     <input type="file" id="file5" wire:model="vImageL1" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-end" id="img5" src="@if ($vImageL1) {{ $vImageL1->temporaryUrl() }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer"  />
+                                    <img class="w-75 float-end" id="upfile5" src="@if ($vImageL1) {{ $vImageL1->temporaryUrl() }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer"  />
                                     @error('vImageL1') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <button class="btn btn-icon btn-2 btn-primary float-end" id="upfile6" type="button">
-                                                <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
-                                            </button>
-                                        </div>
-                                    </div>
                                     <input type="file" id="file6" wire:model="vImageL2" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-start" id="img6" src="@if ($vImageL2) {{ $vImageL2->temporaryUrl() }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer"   />
+                                    <img class="w-75 float-start" id="upfile6" src="@if ($vImageL2) {{ $vImageL2->temporaryUrl() }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer"   />
                                     @error('vImageL2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                             </div>
@@ -755,80 +711,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-12 mb-4">
-                    <div class="card">
-                        <div class="card-header mx-4 p-3 pb-0 mb-0 text-center">
-                            <h5 class="font-weight-bold mt-2">Service Summary</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="card">
-                                        <div class="card-header mx-4 p-3 text-center">
-                                            <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
-                                                <i class="fa fa-money opacity-10" aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                        <div class="card-body pt-0 p-3 text-center">
-                                            <h6 class="text-center mb-0">Total</h6>
-                                            <!-- <span class="text-xs">Belong Interactive</span> -->
-                                            <hr class="horizontal dark my-3">
-                                            <h5 class="mb-0">AED {{ $total }}</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                @if($totalDiscount)
-                                <div class="col-md-3">
-                                    <div class="card">
-                                        <div class="card-header mx-4 p-3 text-center">
-                                            <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
-                                                <i class="fa fa-money opacity-10" aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                        <div class="card-body pt-0 p-3 text-center">
-                                            <h6 class="text-center mb-0">Discount</h6>
-                                            <!-- <span class="text-xs">Belong Interactive</span> -->
-                                            <hr class="horizontal dark my-3">
-                                            <h5 class="mb-0">AED {{ $totalDiscount }}</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endif
-                                <div class="col-md-3">
-                                    <div class="card">
-                                        <div class="card-header mx-4 p-3 text-center">
-                                            <div class="icon icon-shape icon-lg bg-gradient-info shadow text-center border-radius-lg">
-                                                <i class="fa fa-money opacity-10" aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                        <div class="card-body pt-0 p-3 text-center">
-                                            <h6 class="text-center mb-0 text-info">Vat</h6>
-                                            <!-- <span class="text-xs">Belong Interactive</span> -->
-                                            <hr class="horizontal dark my-3">
-                                            <h5 class="mb-0 text-info">AED {{ $tax }}</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card">
-                                        <div class="card-header mx-4 p-3 text-center">
-                                            <div class="icon icon-shape icon-lg bg-gradient-danger shadow text-center border-radius-lg">
-                                                <i class="fa fa-money opacity-10" aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                        <div class="card-body pt-0 p-3 text-center">
-                                            <h6 class="text-center mb-0 text-danger">Grand Total</h6>
-                                            <!-- <span class="text-xs">Belong Interactive</span> -->
-                                            <hr class="horizontal dark my-3">
-                                            <h4 class="mb-0 text-danger">AED {{ $grand_total }}</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>                    
+                  
             </div>
             <div class="row mt-3">
                 <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 mb-4">
@@ -852,15 +735,67 @@
                 </div>
             </div>
             @if($customerSignature)
-                <div class="row mt-3">
-                    <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 mb-4">
-                        <div class="card">
-                            <div class="card-footer text-left pt-4">
-                                <div class="m-signature-pad--footer">
-                                    <button type="button" id='btnSubmit' class="btn bg-gradient-primary btn-lg mui-btn float-end" wire:click="createJob();">Create Job</button>
+                <div class="row mt-3" id="checkoutSignature">
+                    <div class="col-md-12 mb-4" >
+                        <div class="card p-2 mb-4">
+                            <div class="card-header text-center pt-4 pb-3">
+                                
+                                <h1 class="font-weight-bold mt-2">
+                                    Payment Confirmation
+                                </h1>
+                                <hr>
+                                
+                            </div>
+                            <div class="card-body text-lg-left text-center pt-0">
+                                <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ $total }}</span></p>
+                                @if($totalDiscount>0 )
+                                <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ $totalDiscount }}</span></p>
+                                @endif
+                                <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ $tax }}</span></p>
+                                <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ $grand_total }}</span></p>
+                                
+                                
+                            </div>
+                            <div class="card-footer text-lg-left text-center pt-0">
+                                <div class="d-flex justify-content-center p-2">
+                                    @if($mobile)
+                                    <div class="form-check">
+                                        <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
+                                    </div>
+                                    @endif
+                                
+                                    <div class="form-check">
+                                        <a wire:click="completePaymnet('card')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
+                                    </div>
+                                
+                                    <div class="form-check">
+                                        <a wire:click="completePaymnet('cash')" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Cash Payment<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
+                                    </div>
+                                    <div class="form-check">
+                                        <a wire:click="payLater('paylater')" class="btn btn-icon bg-gradient-secondary d-lg-block mt-3 mb-0">Pay Later<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
+                                    </div>
+
+                                    
                                 </div>
                             </div>
-                            
+                        </div>
+                    </div>
+                </div>
+                <div wire:loading wire:target="completePaymnet">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+                <div wire:loading wire:target="payLater">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
                         </div>
                     </div>
                 </div>
@@ -955,7 +890,9 @@
                     </div>
                 </div>
             </div>
-            
+        @endif
+        @if($showCustomerSignature)
+        @include('components.modals.customerSignatureModel')
         @endif
     </div>
 </main>
@@ -965,5 +902,68 @@
     window.addEventListener('refreshPage',event=>{
         location.reload();
     });
+    window.addEventListener('imageUpload',event=>{
+        $("#upfile1").click(function () {
+            $("#file1").trigger('click');
+        });
+        $("#upfile2").click(function () {
+            $("#file2").trigger('click');
+        });
+        $("#upfile3").click(function () {
+            $("#file3").trigger('click');
+        });
+        $("#upfile4").click(function () {
+            $("#file4").trigger('click');
+        });
+        $("#upfile5").click(function () {
+            $("#file5").trigger('click');
+        });
+        $("#upfile6").click(function () {
+            $("#file6").trigger('click');
+        });
+    });
+    $("#upfile1").click(function () {
+        $("#file1").trigger('click');
+    });
+    $("#upfile2").click(function () {
+        $("#file2").trigger('click');
+    });
+    $("#upfile3").click(function () {
+        $("#file3").trigger('click');
+    });
+    $("#upfile4").click(function () {
+        $("#file4").trigger('click');
+    });
+    $("#upfile5").click(function () {
+        $("#file5").trigger('click');
+    });
+    $("#upfile6").click(function () {
+        $("#file6").trigger('click');
+    });
+</script>
+
+<!-- Signature Script -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/signature_pad@3.0.0-beta.3/dist/signature_pad.umd.min.js"></script>
+<script type="text/javascript">
+window.addEventListener('showSignature',event=>{
+    $('#customerSignatureModal').modal('show');
+    var signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        penColor: 'rgb(0, 0, 0)'
+    });
+    var saveButton = document.getElementById('saveSignature');
+    var cancelButton = document.getElementById('clearSignature');
+    saveButton.addEventListener('click', function (event) {
+        var data = signaturePad.toDataURL('image/png');
+        console.log(data);
+        @this.set('customerSignature', data);
+        $('#customerSignatureModal').modal('hide');
+        // Send data to server instead...
+        //window.open(data);
+    });
+    cancelButton.addEventListener('click', function (event) {
+        signaturePad.clear();
+    });
+});
 </script>
 @endpush

@@ -295,6 +295,7 @@ class UpdateJobCards extends Component
         
         $this->applyItemToTempCart();
         $this->tempServiceCart = TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'job_number'=>$this->jobDetails->job_number])->get();
+        dd($this->jobDetails);
         return view('livewire.update-job-cards');
     }
 
