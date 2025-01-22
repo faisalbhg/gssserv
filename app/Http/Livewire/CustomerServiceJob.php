@@ -540,14 +540,14 @@ class CustomerServiceJob extends Component
             ];
             
             if($discountPrice!=null){
-                $cartInsert['price_id']=$discountPrice->PriceID;
-                $cartInsert['customer_group_id']=$discountPrice->CustomerGroupId;
-                $cartInsert['customer_group_code']=$discountPrice->CustomerGroupCode;
-                $cartInsert['min_price']=$discountPrice->MinPrice;
-                $cartInsert['max_price']=$discountPrice->MaxPrice;
-                $cartInsert['start_date']=$discountPrice->StartDate;
-                $cartInsert['end_date']=$discountPrice->EndDate;
-                $cartInsert['discount_perc']=$discountPrice->DiscountPerc;
+                $cartInsert['price_id']=$discountPrice['PriceID'];
+                $cartInsert['customer_group_id']=$discountPrice['CustomerGroupId'];
+                $cartInsert['customer_group_code']=$discountPrice['CustomerGroupCode'];
+                $cartInsert['min_price']=$discountPrice['MinPrice'];
+                $cartInsert['max_price']=$discountPrice['MaxPrice'];
+                $cartInsert['start_date']=$discountPrice['StartDate'];
+                $cartInsert['end_date']=$discountPrice['EndDate'];
+                $cartInsert['discount_perc']=$discountPrice['DiscountPerc'];
             }
             
             CustomerServiceCart::insert($cartInsert);
