@@ -120,6 +120,7 @@ class VehicleSearchSave extends Component
         if(count($this->customers)>0)
         {
             $this->showVehicleAvailable=true;
+            $this->showForms=false;
         }
         else
         {
@@ -155,6 +156,7 @@ class VehicleSearchSave extends Component
         if(count($this->customers)>0)
         {
             $this->showVehicleAvailable=true;
+            $this->showForms=false;
         }
         else
         {
@@ -189,6 +191,7 @@ class VehicleSearchSave extends Component
         if(count($this->customers)>0)
         {
             $this->showVehicleAvailable=true;
+            $this->showForms=false;
         }
         else
         {
