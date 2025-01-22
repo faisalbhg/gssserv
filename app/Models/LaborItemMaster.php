@@ -10,6 +10,7 @@ class LaborItemMaster extends Model
     use HasFactory;
 
     protected $table = 'Labor.ItemMaster';
+    protected $primaryKey = 'ItemId';
 
     public function customerDiscount()
     {

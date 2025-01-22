@@ -47,6 +47,7 @@ class VehicleSearchSave extends Component
             $this->stateList = null;
             $this->plateEmiratesCodes=null;
         }
+        
         if($this->otherVehicleDetailsForm){
             $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
             $this->listVehiclesMake = VehicleMakes::get();

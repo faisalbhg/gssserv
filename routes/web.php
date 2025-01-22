@@ -44,6 +44,7 @@ use App\Http\Livewire\CarsTaxi;
 use App\Http\Livewire\UpdateJobCards;
 use App\Http\Livewire\VehicleSearchSave;
 use App\Http\Livewire\CustomerServiceJob;
+use App\Http\Livewire\SubmitCutomerServiceJob;
 
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
@@ -76,7 +77,7 @@ Route::middleware('auth')->group(function () {
     //Job Start
     Route::get('job-start',VehicleSearchSave::class)->name('job-start');
     Route::get('customer-service-job/{customer_id}/{vehicle_id}',CustomerServiceJob::class)->name('customer-service-job');
-
+    Route::get('submit-job/{customer_id}/{vehicle_id}', SubmitCutomerServiceJob::class)->name('submit-job');
 
     //oute::get('/', HomePage::class)->name('dashboard');
     //Route::get('/dashboard', HomePage::class)->name('dashboard');

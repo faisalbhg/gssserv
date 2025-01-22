@@ -283,7 +283,7 @@ class Jobcard extends Component
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
             $this->dispatchBrowserEvent('selectSearchEvent');
             if($this->showItemsSearchResults){
-                $inventoryItemMasterLists = InventoryItemMaster::where('Active','=',1);
+                $inventoryItemMasterLists = InventoryItemMaster::where(['Active'=>1])->where('UnitPrice'.'!=',0);
                 if($this->item_search_category){
                     $inventoryItemMasterLists = $inventoryItemMasterLists->where(['CategoryId'=>$this->item_search_category]);
                 }
