@@ -26,6 +26,7 @@ class CustomerServiceCart extends Model
         'quantity_per_purchase',
         'division_code',
         'department_code',
+        'section_name',
         'department_name',
         'section_code',
         'price_id',

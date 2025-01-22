@@ -25,8 +25,8 @@ use App\Models\JobcardChecklistEntries;
 class SubmitCutomerServiceJob extends Component
 {
     public $customer_id, $vehicle_id, $mobile, $name, $email, $selectedVehicleInfo;
-    public $selectedCustomerVehicle=true, $showCheckout=true, $successPage=false, $showCheckList=false, $showQLCheckList=false;
-    public $job_number, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
+    public $selectedCustomerVehicle=true, $showCheckout=true, $successPage=false, $showCheckList=false, $showQLCheckList=false, $showFuelScratchCheckList=false;
+    public $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
 
     function mount( Request $request) {
@@ -42,11 +42,53 @@ class SubmitCutomerServiceJob extends Component
 
     public function render()
     {
+        if($this->showCheckList)
+        {
+            $this->showFuelScratchCheckList=true;
+
+        }
         return view('livewire.submit-cutomer-service-job');
     }
 
     public function getCustomerCart(){
-        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
+        $customerServiceCartQuery = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id]);
+        $this->cartItemCount = $customerServiceCartQuery->count();
+        if($this->cartItemCount>0){
+            $this->cartItems = $customerServiceCartQuery->get();
+
+            $total=0;
+            $totalDiscount=0;
+            $serviceIncludeArray=[];
+            $gsQlIn = false;
+            $discountApply=false;
+            foreach($this->cartItems as $item)
+            {
+                $total = $total+($item->quantity*$item->unit_price);
+                if($item->discount_perc){
+                    $discountApply=true;
+                    $discountGroupId = $item->customer_group_id;
+                    $discountGroupCode = $item->customer_group_code;
+                    $discountGroupDiscountPercentage = $item->discount_perc;
+                    $discountGroupPrice = $item->customer_id;
+                    $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2);
+                }
+                if($item->department_name=='Quick Lube'  || $item->department_name=='General Service')
+                {
+                    $this->showCheckout =false;
+                    $this->showCheckList=true;
+                }
+            }
+            $this->total = $total;
+            $this->totalAfterDisc = $this->total - $totalDiscount;
+            $this->tax = $this->totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+            $this->grand_total = $this->totalAfterDisc+$this->tax;
+        }
+        else
+        {
+            return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
+        }
+
+
     }
     public function selectVehicle(){
         $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->first();

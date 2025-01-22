@@ -451,6 +451,9 @@ class CustomerServiceJob extends Component
 
         $this->showServiceItems = false;
         $this->showItemsSearchResults=false;
+        $this->dispatchBrowserEvent('scrollto', [
+            'scrollToId' => 'servceSectionsList',
+        ]);
     }
 
     public function qlItemkmRange($kmRange)
@@ -529,7 +532,8 @@ class CustomerServiceJob extends Component
                 'description'=>$servicePrice['Description'],
                 'division_code'=>$servicePrice['DivisionCode'],
                 'department_code'=>$servicePrice['DepartmentCode'],
-                'department_name'=>$this->selectedSectionName,
+                'section_name'=>$this->selectedSectionName,
+                'department_name'=>$this->service_group_name,
                 'section_code'=>$servicePrice['SectionCode'],
                 'unit_price'=>$servicePrice['UnitPrice'],
                 'quantity'=>1,
@@ -601,7 +605,7 @@ class CustomerServiceJob extends Component
                 'description'=>$items['Description'],
                 'division_code'=>$this->station,
                 'department_code'=>$this->service_group_code,
-                'department_name'=>$this->selectedSectionName,
+                'department_name'=>$this->service_group_name,
                 'section_code'=>$this->propertyCode,
                 'unit_price'=>$items['UnitPrice'],
                 'quantity'=>isset($this->ql_item_qty[$items['ItemId']])?$this->ql_item_qty[$items['ItemId']]:1,
@@ -638,6 +642,11 @@ class CustomerServiceJob extends Component
         CustomerServiceCart::find($cartId)->increment('quantity');
     }
 
+    public function removeCart($id)
+    {
+        CustomerServiceCart::find($id)->delete();
+    }
+
     public function clearAllCart()
     {
         CustomerServiceCart::where(['customer_id'=>$this->customer_id, 'vehicle_id'=>$this->selected_vehicle_id])->delete();
@@ -664,6 +673,9 @@ class CustomerServiceJob extends Component
         $this->showQlItemsList = false;
         $this->showQlEngineOilItems=false;
         $this->showQlItemsOnly=false;
+        $this->dispatchBrowserEvent('scrollto', [
+            'scrollToId' => 'serviceItemsListDiv',
+        ]);
     }
 
     public function searchServiceItems(){

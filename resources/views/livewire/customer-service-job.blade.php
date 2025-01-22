@@ -539,6 +539,15 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div wire:loading wire:target="removeCart">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -660,6 +669,15 @@
                         <div class="form-group pt-1">
                             <button class="btn bg-gradient-primary me-2" wire:click="qlItemkmRange(5000)">5K</button>
                             <button class="btn bg-gradient-primary" wire:click="qlItemkmRange(10000)">10K</button>
+                            <div wire:loading wire:target="qlItemkmRange">
+                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                    <div class="la-ball-beat">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-4">
@@ -671,27 +689,20 @@
                                 <option value="{{$itemQlCategory->CategoryId}}">{{$itemQlCategory->Description}}</option>
                                 @endforeach
                             </select>
+                            <div wire:loading wire:target="qlCategorySelect">
+                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                    <div class="la-ball-beat">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div wire:loading wire:target="qlItemkmRange">
-                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                        <div class="la-ball-beat">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </div>
-                </div>
-                <div wire:loading wire:target="qlCategorySelect">
-                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                        <div class="la-ball-beat">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </div>
-                </div>
+                
+                
                 <div class="row">
                         <div class="col-md-8 col-sm-8">
                             <div class="form-group">
@@ -768,7 +779,7 @@
                 @endif
             @endif
             @if($showSectionsList)
-                <div class="row mt-2 mb-2">
+                <div class="row mt-2 mb-2" id="servceSectionsList">
                     @foreach($sectionsLists as $sectionsList)
                         <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3 my-2 cursor-pointer" wire:click="getSectionServices({{$sectionsList}})">
                             <div class="card bg-gradient-primary">
@@ -792,17 +803,18 @@
                             </div>
                         </div>
                     @endforeach
-                </div>
-            @endif
-            <div wire:loading wire:target="getSectionServices">
-                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                    <div class="la-ball-beat">
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                    <div wire:loading wire:target="getSectionServices">
+                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                            <div class="la-ball-beat">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
+            
         @endif
         
         @if($showServiceSectionsList)
@@ -894,7 +906,7 @@
         @endif
 
         @if($showServiceItems)
-            <div class="row">
+            <div class="row" id="serviceItemsListDiv">
                 <div class="col-md-4 col-sm-6">
                     <div class="form-group">
                         <label for="seachByItemCategory">Category</label>
