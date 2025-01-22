@@ -80,7 +80,7 @@
                     </li>
 
                     <li class="nav-item px-0 d-flex align-items-center"  >
-                        <a class="nav-link" href="{{ route('job-card') }}">
+                        <a class="nav-link" href="{{ route('job-start') }}">
                             <button class="btn btn-icon btn-sm btn-3 bg-gradient-primary" type="button" wire:click="newVehicleOpen">
                                 <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fa-solid fa-car fa-xl"></i></span>
                                 <span class="btn-inner--text">New Job</span>
