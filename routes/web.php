@@ -144,13 +144,10 @@ Route::get('qr/{name}', [QrCodeController::class, 'qrcode']);
 
 Route::get('/clear-all-cache',function(){
     Artisan::call('cache:clear');
-    
-    dd('cache clear all');
-});
-Route::get('config', function () {
-    Artisan::call('cache:clear');
     Artisan::call('storage:link');
     Artisan::call('view:clear');
     Artisan::call('route:clear');
     Artisan::call('config:clear');
-dd("Success..! OK");});
+    
+    dd('cache clear all');
+});
