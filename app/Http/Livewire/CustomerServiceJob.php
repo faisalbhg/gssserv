@@ -1011,7 +1011,23 @@ class CustomerServiceJob extends Component
                     $discountCartServiceItemPrices = $discountCartServiceItemPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() );
                 }
                 $discountCartServiceItemPrices = $discountCartServiceItemPrices->first();
-                dd($discountCartServiceItemPrices);
+                if($discountCartServiceItemPrices->exists())
+                {
+                    $serviceCartDiscountSalePrice = $discountCartServiceItemPrices->first();
+                    
+                    $cartUpdate = [
+                        'price_id'=>$serviceCartDiscountSalePrice->PriceID,
+                        'customer_group_id'=>$this->appliedDiscount['id'],
+                        'customer_group_code'=>$this->appliedDiscount['code'],
+                        'min_price'=>$serviceCartDiscountSalePrice->MinPrice,
+                        'max_price'=>$serviceCartDiscountSalePrice->MaxPrice,
+                        'start_date'=>$serviceCartDiscountSalePrice->StartDate,
+                        'end_date'=>$serviceCartDiscountSalePrice->EndDate,
+                        'discount_perc'=>$serviceCartDiscountSalePrice->DiscountPerc,
+                    ];
+                    CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$items->id])->update($cartUpdate);
+                }
+                //dd($discountCartServiceItemPrices);
             }
         }
     }
