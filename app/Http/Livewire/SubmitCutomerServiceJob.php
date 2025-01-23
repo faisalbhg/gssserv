@@ -146,7 +146,7 @@ class SubmitCutomerServiceJob extends Component
 
                 $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send','job_create_status'=>1]);
 
-                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->delete();
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
 
                 $this->successPage=true;
                 $this->showCheckout =false;
@@ -190,7 +190,7 @@ class SubmitCutomerServiceJob extends Component
                 //$response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
             }
 
-            CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->delete();
+            CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
 
             $this->successPage=true;
             $this->showCheckout =false;
@@ -537,7 +537,7 @@ class SubmitCutomerServiceJob extends Component
             $this->createJob();
         }
         CustomerJobCards::where(['job_number'=>$this->job_number])->update(['job_create_status'=>0]);
-        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->delete();
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
         $this->successPage=true;
         $this->showCheckout =false;
         $this->cardShow=false;
