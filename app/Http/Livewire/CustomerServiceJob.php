@@ -1010,7 +1010,7 @@ class CustomerServiceJob extends Component
                 {
                     $discountCartServiceItemPrices = $discountCartServiceItemPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() );
                 }
-                $discountCartServiceItemPrices = $discountCartServiceItemPrices->first();
+                //$discountCartServiceItemPrices = $discountCartServiceItemPrices->first();
                 if($discountCartServiceItemPrices->exists())
                 {
                     $serviceCartDiscountSalePrice = $discountCartServiceItemPrices->first();
