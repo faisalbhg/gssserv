@@ -56,20 +56,20 @@
                 </a>
             </li>
 
-            <li class="nav-item mt-2 {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['finance']) ? 'd-none': ''}}">
+            <!-- <li class="nav-item mt-2 {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['finance']) ? 'd-none': ''}}">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Finance</h6>
             </li>
             <li class="nav-item pb-2 {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['finance']) ? 'd-none': ''}}">
-                <a class="nav-link {{ Route::currentRouteName() == 'customer-jobs-report' ? 'active' : '' }}"
-                    href="{{ route('customer-jobs-report') }}">
+                <a class="nav-link {{ Route::currentRouteName() == 'customer-jobs-reports' ? 'active' : '' }}"
+                    href="{{ route('customer-jobs-reports') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i style="font-size: 1rem;" class="fa-solid fa-file-invoice fa-lg ps-2 pe-2 text-center
-                        {{ in_array(request()->route()->getName(),['customer-jobs-report']) ? 'text-white' : 'text-dark' }}"></i>
+                        {{ in_array(request()->route()->getName(),['customer-jobs-reports']) ? 'text-white' : 'text-dark' }}"></i>
                     </div>
                     <span class="nav-link-text ms-1">Accounts</span>
                 </a>
-            </li>
+            </li> -->
 
 
             <li class="nav-item mt-2 {{!in_array((Session::get('user')->user_type),config('global.user_type_access')['administrator']) ? 'd-none': ''}}">

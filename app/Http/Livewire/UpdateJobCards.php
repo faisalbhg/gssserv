@@ -56,251 +56,24 @@ class UpdateJobCards extends Component
     public $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature, $vImageR1T, $vImageR2T, $vImageFT, $vImageBT, $vImageL1T, $vImageL2T;
 
     function mount( Request $request) {
-        $job_number = $request->job_number;
-        if($job_number)
+        $this->job_number = $request->job_number;
+        if($this->job_number)
         {
-            $this->customerJobDetails($job_number);
+            $this->customerJobDetails();
             $this->selectVehicle();
+            $this->applyItemToTempCart();
         }
 
     }
 
     public function render()
     {
-        //CustomerJobCardServices::where('id','=',737)->update(['discount_amount'=>13]);
-        //dd($this->jobDetails);
-        //Discount
-        /*"customer_discount_id" => null
-        "discount_id" => "41"
-        "discount_unit_id" => "41"
-        "discount_code" => "ENGINE_OIL"
-        "discount_title" => "ENGINE_OIL"
-        "discount_percentage" => "10"
-        "discount_amount" => "48.090000000000003"*/
-
-        $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>Session::get('user')->station_code])->get();
-
-        if($this->service_group_code)
-        {
-            $this->showSectionsList=true;
-            $this->sectionsLists = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')
-                ->where([
-                    'DevelopmentCode'=>$this->service_group_code,
-                    'Operation'=>true
-                ])
-                ->get();
-        }
-
-        if($this->propertyCode)
-        {
-            
-            $sectionServiceLists = LaborItemMaster::where([
-                'SectionCode'=>$this->propertyCode,
-                'DivisionCode'=>Session::get('user')->station_code,
-            ]);
-            $sectionServiceLists = $sectionServiceLists->get();
-            $sectionServicePriceLists = [];
-            foreach($sectionServiceLists as $key => $sectionServiceList)
-            {
-                $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
-                if(!empty($this->appliedDiscount)){
-                    if($this->appliedDiscount['groupType']==1)
-                    {
-
-                        $discountLaborSalesPrices = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->appliedDiscount['code']]);
-                        $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '=', null );
-                        $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
-
-                    }else if($this->discountGroup['groupType']==2)
-                    {
-                        $discountLaborSalesPrices = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->appliedDiscount['code']]);
-                        $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() );
-                        $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
-                    }
-                    else
-                    {
-                        $sectionServicePriceLists[$key]['discountDetails']=null;
-                    }
-                    
-                }
-                else
-                {
-                    $sectionServicePriceLists[$key]['discountDetails']=null;
-                }
-            }
-            $this->sectionServiceLists = $sectionServicePriceLists;
-        }
-        else
-        {
-            $this->sectionServiceLists=[];
-        }
-
-        if($this->service_group_name =='Quick Lube')
-        {
-            $this->itemCategories = ItemCategories::where(['Active'=>1])->get();
-            if($this->item_search_category){
-                $this->itemSubCategories = InventorySubCategory::where(['CategoryId'=>$this->item_search_category])->get();
-            }
-            $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
-            $this->dispatchBrowserEvent('selectSearchEvent');
-        }
-
-        if($this->showQlItems)
-        {
-            if($this->showQuickLubeItemSearchItems)
-            {
-                $quickLubeItemsNormalList1 = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
-                if($this->quickLubeItemSearch){
-                    $quickLubeItemsNormalList1 = $quickLubeItemsNormalList1->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
-                }
-                $quickLubeItemsNormalList1=$quickLubeItemsNormalList1->get();
-                $qlItemPriceLists1 = [];
-                foreach($quickLubeItemsNormalList1 as $key => $qlItemsList1)
-                {
-                    $qlItemPriceLists1[$key]['priceDetails'] = $qlItemsList1;
-                    if($this->customerDiscontGroupCode){
-                    
-                        if($this->customerSelectedDiscountGroup['groupType']==1)
-                        {
-
-                            $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where([
-                                'ServiceItemId'=>$qlItemsList1->ItemId,
-                                'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                'DivisionCode'=>Session::get('user')->station_code,
-                            ])->first();
-
-                        }else if($this->customerSelectedDiscountGroup['groupType']==2)
-                        {
-                            $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where([
-                                'ServiceItemId'=>$qlItemsList1->ItemId,
-                                'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                'DivisionCode'=>Session::get('user')->station_code,
-                            ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
-                        }
-                        else
-                        {
-                            $qlItemPriceLists1[$key]['discountDetails']=null;
-                        }
-                        
-                    }
-                    else
-                    {
-                        $qlItemPriceLists1[$key]['discountDetails']=null;
-                    }
-                }
-                $this->quickLubeItemsList = $qlItemPriceLists1;
-            }
-            else if($this->showQlCategoryFilterItems)
-            {
-                $qlMakeModelCategoryItems = ItemMakeModel::with(['itemInformation' => function ($query) {
-                        $query->where('CategoryId', '=', $this->ql_search_category);
-                    }])->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
-
-                $qlMakeModelCatItmDetails = [];
-                foreach($qlMakeModelCategoryItems as $key => $qlItemMakeModelItem){
-                    
-                    foreach($qlItemMakeModelItem->itemInformation as $qlMakeModelCatItm)
-                    {
-                        $qlMakeModelCatItmDetails[$key]['priceDetails'] = $qlMakeModelCatItm;
-                        if($this->customerDiscontGroupCode){
-                    
-                            if($this->customerSelectedDiscountGroup['groupType']==1)
-                            {
-
-                                $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
-                                    'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
-                                    'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                    'DivisionCode'=>Session::get('user')->station_code,
-                                ])->first();
-
-                            }else if($this->customerSelectedDiscountGroup['groupType']==2)
-                            {
-                                
-                                $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
-                                    'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
-                                    'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                    'DivisionCode'=>Session::get('user')->station_code,
-                                ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
-                            }
-                            else
-                            {
-                                $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
-                            }
-                            
-                        }
-                        else
-                        {
-                            $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
-                        }
-
-                        //dd($sectionServicePriceLists[$key]);
-                    }
-                }
-                //dd($qlMakeModelCatItmDetails);
-                $this->quickLubeItemsList = $qlMakeModelCatItmDetails;
-            }
-            else{
-                $quickLubeItemsNormalList = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
-                if($this->showQlEngineOilItems){
-                    $quickLubeItemsNormalList = $quickLubeItemsNormalList->where(['KM'=>$this->ql_km_range,'BrandId'=>$this->ql_search_brand]);
-                }
-                
-                $quickLubeItemsNormalList=$quickLubeItemsNormalList->get();
-                $qlItemPriceLists = [];
-                foreach($quickLubeItemsNormalList as $key => $qlItemsList)
-                {
-                    $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
-                    if(!empty($this->appliedDiscount)){
-                    
-                        if($this->appliedDiscount['groupType']==1)
-                        {
-
-                            $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
-                                'ServiceItemId'=>$qlItemsList->ItemId,
-                                'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                'DivisionCode'=>Session::get('user')->station_code,
-                            ])->first();
-
-                        }else if($this->appliedDiscount['groupType']==2)
-                        {
-                            
-                            $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
-                                'ServiceItemId'=>$qlItemsList->ItemId,
-                                'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                'DivisionCode'=>Session::get('user')->station_code,
-                            ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
-                        }
-                        else
-                        {
-                            $qlItemPriceLists[$key]['discountDetails']=null;
-                        }
-                        
-                    }
-                    else
-                    {
-                        $qlItemPriceLists[$key]['discountDetails']=null;
-                    }
-                    
-                    //dd($sectionServicePriceLists[$key]);
-                }
-                $this->quickLubeItemsList = $qlItemPriceLists;
-            }
-
-        }
-        else
-        {
-            $this->quickLubeItemsList=[];
-        }
-
-        
-        $this->applyItemToTempCart();
         $this->tempServiceCart = TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'job_number'=>$this->jobDetails->job_number])->get();
-        dd($this->jobDetails);
         return view('livewire.update-job-cards');
     }
 
-    public function customerJobDetails($job_number){
-        $this->jobDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo'])->where(['job_number'=>$job_number])->first();
+    public function customerJobDetails(){
+        $this->jobDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo'])->where(['job_number'=>$this->job_number])->first();
         $this->customer_id = $this->jobDetails->customer_id;
         $this->selected_vehicle_id = $this->jobDetails->vehicle_id;
     }
@@ -517,6 +290,7 @@ class UpdateJobCards extends Component
                     'created_at'=>Carbon::now(),
                     'job_number'=>$customerJobServices->job_number,
                 ];
+
                 if(!empty($this->appliedDiscount)){
                     if($customerJobServices->service_item_type==1){
                     

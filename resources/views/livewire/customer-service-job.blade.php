@@ -590,15 +590,7 @@
                             </div>
                         </div>
                     @endforeach
-                    <div wire:loading wire:target="serviceGroupForm">
-                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                            <div class="la-ball-beat">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="col-sm-3 col-md-3 col-lg-2 col-xl-2 my-2">
                         <div class="card h-100" >
                             <a wire:click="openServiceItems()" href="javascript:;">
@@ -619,15 +611,7 @@
                             </a>
                         </div>
                     </div>
-                    <div wire:loading wire:target="openServiceItems">
-                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                            <div class="la-ball-beat">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                        </div>
-                    </div>
+
                     <div class="col-sm-4 col-md-3 col-lg-2 col-xl-2 my-2 d-none">
                         <div class="card h-100" >
                             <a wire:click="openPackages()" href="javascript:;">
@@ -648,16 +632,35 @@
                             </a>
                         </div>
                     </div>
-                    <div wire:loading wire:target="openPackages">
-                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                            <div class="la-ball-beat">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                        </div>
-                    </div>
+
                 @endif
+            </div>
+            <div wire:loading wire:target="serviceGroupForm">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <div wire:loading wire:target="openServiceItems">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <div wire:loading wire:target="openPackages">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
             </div>
             @if($showQlItemSearch)
                 <div class="row">
@@ -678,15 +681,6 @@
                         <div class="form-group pt-1">
                             <button class="btn bg-gradient-primary me-2" wire:click="qlItemkmRange(5000)">5K</button>
                             <button class="btn bg-gradient-primary" wire:click="qlItemkmRange(10000)">10K</button>
-                            <div wire:loading wire:target="qlItemkmRange">
-                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                    <div class="la-ball-beat">
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-4">
@@ -698,44 +692,51 @@
                                 <option value="{{$itemQlCategory->CategoryId}}">{{$itemQlCategory->Description}}</option>
                                 @endforeach
                             </select>
-                            <div wire:loading wire:target="qlCategorySelect">
-                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                    <div class="la-ball-beat">
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                
-                
                 <div class="row">
-                        <div class="col-md-8 col-sm-8">
-                            <div class="form-group">
-                                <label for="seachByItemBrand">Items Name</label>
-                                <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
-                            </div>
-                            @error('quickLubeItemSearch') <span class="text-danger">{{ $message }}</span> @enderror
+                    <div class="col-md-8 col-sm-8">
+                        <div class="form-group">
+                            <label for="seachByItemBrand">Items Name</label>
+                            <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
                         </div>
-                        <div class="col-md-4 col-sm-4">
-                            <label></label>
-                            <div class="form-group pt-1">
-                                <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Search</button>
-                            </div>
+                        @error('quickLubeItemSearch') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                        <label></label>
+                        <div class="form-group pt-1">
+                            <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Search</button>
                         </div>
                     </div>
-                    <div wire:loading wire:target="searchQuickLubeItem">
-                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                            <div class="la-ball-beat">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
+                </div>
+                <div wire:loading wire:target="qlItemkmRange">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
                         </div>
                     </div>
+                </div>
+                <div wire:loading wire:target="qlCategorySelect">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+                <div wire:loading wire:target="searchQuickLubeItem">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
                 <!-- serviceQlItems -->
                 @if($showQlItemsList)
                     <div class="row"  id="serviceQlItems">

@@ -20,6 +20,7 @@ use App\Models\CustomerVehicle;
 use App\Models\Vehicletypes;
 use App\Models\VehicleModels;
 use App\Models\VehicleMakes;
+use App\Models\Country;
 
 class VehicleSearchSave extends Component
 {
@@ -35,6 +36,7 @@ class VehicleSearchSave extends Component
 
     public function render()
     {
+        
         if($this->showPlateNumber)
         {
             $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
@@ -70,8 +72,8 @@ class VehicleSearchSave extends Component
                         break;
                     
                     default:
-                        $this->plateStateCode = 1;
-                        $this->plate_category = '242';
+                        $this->plateStateCode = 2;
+                        $this->plate_category = '1';
                         break;
                 }
                 $this->plateEmiratesCodes = PlateCode::where(['plateEmiratesId'=>$this->plateStateCode,'is_active'=>1])->get();
@@ -251,6 +253,9 @@ class VehicleSearchSave extends Component
     public function getCustomerVehicleSearch($serachBy){
         $ssearchCustomerVehicleQuery = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo']);
         if($serachBy=='mobile'){
+            $validatedData = $this->validate([
+                'mobile'=> 'required',
+            ]);
             if($this->mobile[0]=='0'){
                 $this->mobile = ltrim($this->mobile, $this->mobile[0]);
             }

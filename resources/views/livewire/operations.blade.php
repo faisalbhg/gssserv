@@ -20,6 +20,7 @@
           <input style="padding:0.5rem 0.3rem !important;" type="text" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="search_plate_number" name="plate_number" placeholder="Number Plate">
         </div>
       </div>
+      @if(Session::get('user')->user_type==1)
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
         <label>Station</label>
         <div class="form-group">
@@ -29,8 +30,18 @@
             <option value="{{$station->LandlordCode}}">{{$station->CorporateName}}</option>
             @endforeach
           </select>
+          <div wire:loading wire:target="search_station">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
         </div>
       </div>
+      @endif
     </div>
   
 

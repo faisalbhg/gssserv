@@ -133,19 +133,18 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @if($jobcardDetails->checklistInfo['fuel'])
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="float-start icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center m-2">
                                                         <i class="fa-solid fa-gas-pump opacity-10" aria-hidden="true"></i>
                                                     </div>
-                                                    @if($jobcardDetails->checklistInfo['fuel'])
                                                     <h6 class="my-2 text-sm text-white">
                                                         Fuel: <span class="text-sm  pb-2">{{config('global.fuel')[$jobcardDetails->checklistInfo['fuel']]}}</span>
                                                     </h6>
-                                                    @endif
-                                                    
                                                 </div>
                                             </div>
+                                            @endif
                                         </li>
                                         @endif
                                     </ul>
@@ -748,26 +747,26 @@
                             <div class="card-body text-left pt-0">
                                 <div class="row">
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 col-sm-6">
                                         <img class="w-75 float-end" id="img1" src="@if($vehicleSidesImages['vImageR1']) {{ url('storage/'.$vehicleSidesImages['vImageR1'])}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img1')" />
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 col-sm-6">
                                         <img class="w-75 float-start" id="img2" src="@if ($vehicleSidesImages['vImageR2']) {{ url('storage/'.$vehicleSidesImages['vImageR2']) }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img2')" />
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 col-sm-6">
                                         <img class="w-75 float-end" id="img3" src="@if ($vehicleSidesImages['vImageF']) {{ url('storage/'.$vehicleSidesImages['vImageF']) }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img3')" />
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 col-sm-6">
                                         <img class="w-75 float-start" id="img4" src="@if ($vehicleSidesImages['vImageB']) {{ url('storage/'.$vehicleSidesImages['vImageB']) }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img4')" />
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 col-sm-6">
                                         <img class="w-75 float-end" id="img5" src="@if ($vehicleSidesImages['vImageL1']) {{ url('storage/'.$vehicleSidesImages['vImageL1']) }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img5')" />
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 col-sm-6">
                                         <img class="w-75 float-start" id="img6" src="@if ($vehicleSidesImages['vImageL2']) {{ url('storage/'.$vehicleSidesImages['vImageL2']) }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img6')" />
                                     </div>
                                 </div>

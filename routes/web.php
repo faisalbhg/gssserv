@@ -71,7 +71,7 @@ Route::get('/login/forgot-password', ForgotPassword::class)->name('forgot-passwo
 Route::get('/reset-password/{id}',ResetPassword::class)->name('reset-password')->middleware('signed');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', Dashboard::class)->name('dashboard');
+    Route::get('/', Dashboard::class);
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
     //Job Start
@@ -82,15 +82,15 @@ Route::middleware('auth')->group(function () {
     //oute::get('/', HomePage::class)->name('dashboard');
     //Route::get('/dashboard', HomePage::class)->name('dashboard');
 
-    Route::get('/customer-job-update/{job_number}',Operations::class)->name('customer-jobs');
+    Route::get('/customer-job-update/{job_number}',Operations::class)->name('customer-jobs-update');
     Route::get('/jobs', Operations::class)->name('customer-jobs');
-    Route::get('/jobs-filter/{filter}', Operations::class)->name('customer-jobs-filter');
+    Route::get('/jobs-filter/{filter}', Operations::class)->name('customer-job-filter');
 
-    Route::get('/job-accounts/{job_number}',Finance::class)->name('customer-jobs-report');
-    Route::get('/jobs-report', Finance::class)->name('customer-jobs-report');
+    Route::get('/job-accounts/{job_number}',Finance::class)->name('customer-jobs-report-details');
+    Route::get('/jobs-report', Finance::class)->name('customer-jobs-reports');
     Route::get('/jobs-invoice', Invoices::class)->name('customer-jobs-invoices');
-    Route::get('/invoice/{job_number}', [InvoiceExportPDFController::class, 'showinvoice'])->name('customer-jobs-invoices');
-    Route::get('/jobs-accounts-filter/{filter}', Finance::class)->name('customer-jobs-filter');
+    Route::get('/invoice/{job_number}', [InvoiceExportPDFController::class, 'showinvoice'])->name('customer-jobs-invoice-details');
+    Route::get('/jobs-accounts-filter/{filter}', Finance::class)->name('customer-job-account-filter');
     Route::get('/download-invoice/{job_number}', [InvoiceExportPDFController::class, 'invoiceExportPDF'])->name('invoiceexportPDF');
 
 
@@ -125,8 +125,8 @@ Route::middleware('auth')->group(function () {
     Route::get('job-card',Jobcard::class)->name('job-card');
     Route::get('/job-card/{customer_id}/{vehicle_id}',Jobcard::class)->name('pending-job-card-creation');
     Route::get('/job-card/{job_number}',Jobcard::class)->name('pending-job-card');
-    Route::get('/chustomer-checkout/{customer_id}/{vehicle_id}',CustomerCheckout::class)->name('chustomer-checkout');
-    Route::get('/chustomer-checkout/{job_details}',CustomerCheckout::class)->name('chustomer-checkout');
+    Route::get('/customer-checkout/{customer_id}/{vehicle_id}',CustomerCheckout::class)->name('customer-checkout');
+    Route::get('/customer-checkout/{job_details}',CustomerCheckout::class)->name('chustomer-checkout-job');
 
     //UpdateJobCardds
     Route::get('/update_jobcard/{job_number}',UpdateJobCards::class)->name('update_jobcard');

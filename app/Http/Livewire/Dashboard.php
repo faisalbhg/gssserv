@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Http;
 use LaravelPayfort\Facades\Payfort;
 use Illuminate\Support\Facades\Hash;
 
-use Illuminate\Support\Facades\Cache;
 
 class Dashboard extends Component
 {
@@ -25,8 +24,6 @@ class Dashboard extends Component
 
     public function render()
     {
-        Cache::flush();
-        
         //CustomerJobCardServices::truncate();
         //Get Pending Customer
         $this->pendingCustomersCart =  CustomerServiceCart::with(['customerInfo','vehicleInfo'])->where(['created_by'=>Session::get('user')['id']])->get();
