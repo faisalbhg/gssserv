@@ -39,6 +39,41 @@ class VehicleSearchSave extends Component
         {
             $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
             if($this->plate_state){
+                switch ($this->plate_state) {
+                    case 'Abu Dhabi':
+                        $this->plateStateCode = 1;
+                        $this->plate_category = '242';
+                        break;
+                    case 'Dubai':
+                        $this->plateStateCode = 2;
+                        $this->plate_category = '1';
+                        break;
+                    case 'Sharjah':
+                        $this->plateStateCode = 3;
+                        $this->plate_category = '103';
+                        break;
+                    case 'Ajman':
+                        $plateStateCode = 4;
+                        $this->plate_category = '122';
+                        break;
+                    case 'Umm Al-Qaiwain':
+                        $this->plateStateCode = 5;
+                        $this->plate_category = '134';
+                        break;
+                    case 'Ras Al-Khaimah':
+                        $this->plateStateCode = 6;
+                        $this->plate_category = '147';
+                        break;
+                    case 'Fujairah':
+                        $this->plateStateCode = 7;
+                        $this->plate_category = '169';
+                        break;
+                    
+                    default:
+                        $this->plateStateCode = 1;
+                        $this->plate_category = '242';
+                        break;
+                }
                 $this->plateEmiratesCodes = PlateCode::where(['plateEmiratesId'=>$this->plateStateCode,'is_active'=>1])->get();
             }
         }

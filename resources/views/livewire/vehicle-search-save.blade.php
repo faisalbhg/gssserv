@@ -151,7 +151,7 @@
                                     <select class="form-control  " wire:model="plate_state" name="plate_state" id="plateEmirates" style="padding:0.5rem 0.3rem !important;" >
                                         <option value="">-Emirates-</option>
                                         @foreach($stateList as $state)
-                                        <option value="{{$state->StateCode}}##{{$state->StateName}}">{{$state->StateName}}</option>
+                                        <option value="{{$state->StateName}}">{{$state->StateName}}</option>
                                         @endforeach
                                     </select>
                                 </div>
