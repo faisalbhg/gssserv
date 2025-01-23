@@ -147,3 +147,10 @@ Route::get('/clear-all-cache',function(){
     
     dd('cache clear all');
 });
+Route::get('config', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('storage:link');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+dd("Success..! OK");});
