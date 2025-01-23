@@ -31,7 +31,7 @@ class VehicleSearchSave extends Component
     public $editCustomerAndVehicle=false;
     public $customers=[];
     public $showVehicleAvailable=false;
-    public $customer_id;
+    public $customer_id, $vehicle_id;
 
     public function render()
     {
@@ -309,9 +309,12 @@ class VehicleSearchSave extends Component
             $active,
             $paymethod,
             $tenantCode_out,
-        ]); 
+        ]);
+
         $customerSaveResult = (array)$customerSaveResult[0];
+        //dd($customerSaveResult); 
         $customerId = $customerSaveResult['TenantId'];
+        //dd($customerId);
         //$customerInsert = TenantMasterCustomers::create($insertCustmoerData);
         $this->customer_id = $customerId;
 
@@ -344,8 +347,9 @@ class VehicleSearchSave extends Component
             $customerVehicleData['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
         }
         $customerVehicleDetails = CustomerVehicle::create($customerVehicleData);
+        $this->vehicle_id = $customerVehicleDetails->id;
         
-        return redirect()->to('customer-service-job/'.$customer_id.'/'.$vehicle_id);
+        return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
 
         dd($customerVehicleDetails);
 
