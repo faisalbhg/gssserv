@@ -71,9 +71,9 @@ Route::get('/login/forgot-password', ForgotPassword::class)->name('forgot-passwo
 Route::get('/reset-password/{id}',ResetPassword::class)->name('reset-password')->middleware('signed');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', Dashboard::class)->name('dashboard');
-    Route::get('/dashboard', Dashboard::class)->name('dashboard');
-
+    Route::get('/', Dashboard::class)->name('dashboard')->middleware('auth');
+    Route::get('/dashboard', Dashboard::class)->name('dashboard')->middleware('auth');
+    
     //Job Start
     Route::get('job-start',VehicleSearchSave::class)->name('job-start');
     Route::get('customer-service-job/{customer_id}/{vehicle_id}',CustomerServiceJob::class)->name('customer-service-job');
