@@ -2,6 +2,9 @@
 
 return [
 
+    /* Caching disabled when debug is enabled.  */
+    'cache' => (bool) !env('APP_DEBUG', true),
+
     /*
     |--------------------------------------------------------------------------
     | View Storage Paths
