@@ -126,6 +126,6 @@ class Dashboard extends Component
     }
 
     public function selectPendingVehicle($customer_id,$vehicle_id){
-        return redirect()->to('/job-card/'.$customer_id.'/'.$vehicle_id);
+        return redirect()->to('/customer-service-job/'.$customer_id.'/'.$vehicle_id);
     }
 }
