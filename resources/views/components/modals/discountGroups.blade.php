@@ -15,7 +15,7 @@
                             </button>
                         </div>
                         <div class="modal-body py-0">
-                            @$if(count($selectedVehicleInfo->customerDiscountLists)>0)
+                            @if(count($selectedVehicleInfo->customerDiscountLists)>0)
                                 <div class="row">
 
                                     <h6><u>Saved Customer Discounts</u></h6>
