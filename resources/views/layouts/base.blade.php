@@ -271,6 +271,9 @@
                 }, 100);
             });
         });
+        window.addEventListener('refreshPage',event=>{
+            location.reload();
+        });
 
         
         </script>

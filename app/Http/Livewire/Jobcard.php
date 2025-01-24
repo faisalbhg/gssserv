@@ -2604,7 +2604,6 @@ class Jobcard extends Component
 
     public function dashCustomerJobUpdate($job_number)
     {
-
         return redirect()->to('/customer-job-update/'.$job_number);
     }
 

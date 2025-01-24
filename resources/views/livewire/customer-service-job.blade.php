@@ -44,7 +44,7 @@
                                         <label for="mobilenumberInput">Mobile Number </label>
                                         <div class="input-group mb-0">
                                             <span class="input-group-text px-0">+971</span>
-                                            <input class="form-control" placeholder="Mobile Number" type="number" wire:model="mobile" @if(!$editCustomerAndVehicle) wire:keyup="searchResult" @endif name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="9" id="mobilenumberInput">
+                                            <input class="form-control" placeholder="Mobile Number" type="number" name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="9" id="mobilenumberInput">
                                         </div>
                                         @error('mobile') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                     </div>
@@ -1093,7 +1093,7 @@
             $('#seachItemBySubCategory').select2();
             $('#seachByBrand').select2();
 
-            $('#qlSeachByBrand').select2();
+            
 
             $('#seachItemByCategory').on('change', function (e) {
                 var catVal = $('#seachItemByCategory').select2("val");
@@ -1108,6 +1108,7 @@
                 @this.set('item_search_brand', BrandVal);
             });
 
+            $('#qlSeachByBrand').select2();
             $('#qlSeachByBrand').on('change', function (e) {
                 var BrandVal = $('#qlSeachByBrand').select2("val");
                 @this.set('ql_search_brand', BrandVal);
@@ -1130,8 +1131,6 @@
         $('#discountGroupModal').modal('hide');
     });
 
-    window.addEventListener('refreshPage',event=>{
-        location.reload();
-    });
+    
 </script>
 @endpush

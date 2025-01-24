@@ -39,7 +39,7 @@ use App\Models\VehicleMakes;
 class CustomerServiceJob extends Component
 {
     use WithFileUploads;
-    public $selectedCustomerVehicle=false, $selectPackageMenu=false, $showSectionsList=false, $showServiceSectionsList=false, $showServiceItems=false, $showItemsSearchResults=false, $showQlItemSearch=false, $showQlEngineOilItems=false, $showQlItemsOnly=false;
+    public $selectedCustomerVehicle=false, $selectPackageMenu=false, $showSectionsList=false, $showServiceSectionsList=false, $showServiceItems=false, $showItemsSearchResults=false, $showQlItemSearch=false, $showQlEngineOilItems=false, $showQlItemsOnly=false, $showQlItemsList=false;
     public $showServiceGroup, $showCheckout;
     public $showVehicleAvailable, $selectedVehicleInfo, $selected_vehicle_id, $customer_id;
     public $servicesGroupList, $service_group_id, $service_group_name, $service_group_code, $station, $section_service_search, $propertyCode, $selectedSectionName;
@@ -482,6 +482,7 @@ class CustomerServiceJob extends Component
         $validatedData = $this->validate([
             'quickLubeItemSearch' => 'required',
         ]);
+        $this->ql_search_brand=null;
         $this->ql_km_range=null;
         $this->ql_search_category=null;
         $this->showQlItemSearch = true;
@@ -562,7 +563,7 @@ class CustomerServiceJob extends Component
             'text' => 'service added..!',
             'cartitemcount'=>\Cart::getTotalQuantity()
         ]);*/
-        session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
+        //session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
     }
 
     public function addtoCartItem($items,$discount)
@@ -810,15 +811,8 @@ class CustomerServiceJob extends Component
         $this->engineOilDiscountPercentage=$percentage;
         $this->customerDiscontGroupId = $this->selectedDiscount['id'];
         $this->customerDiscontGroupCode = $this->selectedDiscount['code'];
-        $this->selectVehicle($this->customer_id,$this->vehicle_id);
-        $this->dispatchBrowserEvent('closeDiscountGroupModal');
-
-
-        $this->discountCardApplyForm=false;
-        $this->discountForm=false;
-        $this->appliedDiscount = $this->selectedDiscount;
         $this->applyEngineOilDiscount();
-        //$this->applyItemToTempCart();
+        
         $this->dispatchBrowserEvent('closeDiscountGroupModal');
     }
 

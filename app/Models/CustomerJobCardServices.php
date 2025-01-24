@@ -50,6 +50,7 @@ class CustomerJobCardServices extends Model
         'job_departent',
         'is_added',
         'is_removed',
+        'is_updated',
         'created_by',
         'updated_by',
         'is_active',
