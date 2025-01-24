@@ -25,7 +25,7 @@ use App\Models\Country;
 class VehicleSearchSave extends Component
 {
     use WithFileUploads;
-    public $searchByMobileNumber = true, $showSearchByMobileBtn=true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false;
+    public $searchByMobileNumber = true, $showSearchByMobileBtn=true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false, $showAddMakeModelNew=false;
     public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false;
     public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
     public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
@@ -33,9 +33,21 @@ class VehicleSearchSave extends Component
     public $customers=[];
     public $showVehicleAvailable=false;
     public $customer_id, $vehicle_id;
+    public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
 
     public function render()
     {
+        if($this->new_make)
+        {
+            $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->get();
+            //dd($this->makeSearchResult);
+            if($this->showAddNewModel && $this->new_model)
+            {
+                $this->modelSearchResult = VehicleModels::where('vehicle_make_name','=',$this->new_make)->where('vehicle_model_name','like',"%{$this->new_model}%")->get();
+                //dd($this->modelSearchResult);
+
+            }
+        }
         
         if($this->showPlateNumber)
         {
@@ -120,6 +132,7 @@ class VehicleSearchSave extends Component
                 $this->searchByChaisisBtn=false;
                 $this->searchByChaisisForm=false;
                 $this->showSearchByChaisisButton=false;
+                $this->otherVehicleDetailsForm=false;
                 break;
             case '2':
                 $this->searchByMobileNumberBtn=false;
@@ -133,6 +146,7 @@ class VehicleSearchSave extends Component
                 $this->searchByChaisisBtn=false;
                 $this->searchByChaisisForm=false;
                 $this->showSearchByChaisisButton=false;
+                $this->otherVehicleDetailsForm=false;
                 break;
             case '3':
                 $this->searchByMobileNumberBtn=false;
@@ -146,6 +160,7 @@ class VehicleSearchSave extends Component
                 $this->searchByChaisisForm=true;
                 $this->dispatchBrowserEvent('imageUpload');
                 $this->showSearchByChaisisButton=true;
+                $this->otherVehicleDetailsForm=false;
                 break;
         }
     }
@@ -388,6 +403,41 @@ class VehicleSearchSave extends Component
         $this->showSaveCustomerButton=true;
         $this->dispatchBrowserEvent('imageUpload');
         $this->dispatchBrowserEvent('selectSearchEvent');
+    }
+
+    public function addMakeModel(){
+        $this->showAddMakeModelNew=true;
+        $this->dispatchBrowserEvent('openAddMakeModel');
+    }
+
+    public function saveMakeInfo(){
+        $validatedData = $this->validate([
+            'new_make' => 'required',
+        ]);
+        $newMakeSave = VehicleMakes::create([
+            "vehicle_name" => $this->new_make
+        ]);
+        $this->new_make_id = $newMakeSave->id;
+        $this->showAddNewModel=true;
+    }
+    public function selectMakeInfoSave($makeInfo){
+        $this->new_make_id = $makeInfo['id'];
+        $this->new_make = $makeInfo['vehicle_name'];
+        $this->showAddNewModel=true;
+    }
+
+    public function saveModelInfo()
+    {
+        $validatedData = $this->validate([
+            'new_make' => 'required',
+            'new_model' => 'required',
+        ]);
+        $newMakeSave = VehicleModels::create([
+            'vehicle_make_id'=>$this->new_make_id,
+            'vehicle_make_name'=>$this->new_make,
+            'vehicle_model_name'=>$this->new_model,
+        ]);
+        $this->dispatchBrowserEvent('closeAddMakeModel');
     }
 
 }

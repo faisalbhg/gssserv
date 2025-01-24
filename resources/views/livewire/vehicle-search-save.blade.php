@@ -113,7 +113,7 @@
                     @endif
                     @if($showPlateNumber)
                         <div class="row">
-                            <div class="col-2">
+                            <div class="col-md-3 col-sm-3">
                                 <label for="plateImageFile" >Plate Image</label>
                                 <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
                                     <div class="row">
@@ -135,7 +135,7 @@
                                     <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                                 @endif
                             </div>
-                            <div class="col-md-3 col-sm-4">
+                            <div class="col-md-3 col-sm-5">
                                 <div class="form-group">
                                     <label for="plateEmirates">Country</label>
                                     <select class="form-control  " wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
@@ -145,7 +145,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-4 col-sm-4">
                                 <div class="form-group">
                                     <label for="plateEmirates">Plate Emirates</label>
                                     <select class="form-control  " wire:model="plate_state" name="plate_state" id="plateEmirates" style="padding:0.5rem 0.3rem !important;" >
@@ -196,7 +196,7 @@
                     @endif
                     @if($otherVehicleDetailsForm)
                         <div class="row">
-                            <div class="col-md-2 col-sm-2">
+                            <div class="col-md-2 col-sm-3">
                                 <label for="vehicleImageFile">Vehicle Image</label>
                                 <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
                                     <div class="row">
@@ -219,7 +219,7 @@
                                 @endif
                                 @error('vehicle_image') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-3 col-sm-5">
                                 <div class="form-group">
                                     <label for="vehicleTypeInput">Vehicle Type</label>
                                     <select class="form-control selectSearch" id="vehicleTypeInput" wire:model="vehicle_type">
@@ -231,7 +231,13 @@
                                     @error('vehicle_type') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-3 col-sm-4">
+                                <div class="form-group">
+                                    <label for="vehicleMakeInput"></label>
+                                    <button type="button" wire:click="addMakeModel()" class="btn btn-info btn-sm mt-2">Add Make Model</button>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-4">
                                 <div class="form-group">
                                     <label for="vehicleMakeInput">Vehicle Make</label>
                                     <select class="form-control selectSearch" id="vehicleMakeInput" wire:model="make" >
@@ -243,7 +249,7 @@
                                     @error('make') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-3 col-sm-4">
                                 <div class="form-group">
                                     <label for="vehicleModelInput">Vehicle Model</label>
 
@@ -256,7 +262,7 @@
                                      @error('model') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-3 col-sm-4">
                                 <div class="form-group">
                                     <label for="vehicleKmInput">K.M Reading</label>
                                     <input type="number" class="form-control" id="vehicleKmInput" wire:model="vehicle_km" name="vehicle_km" placeholder="Chaisis Number">
@@ -267,7 +273,7 @@
 
                     @if($searchByChaisisForm)
                         <div class="row">
-                            <div class="col-md-3 col-sm-2">
+                            <div class="col-md-3 col-sm-3">
                                 <label for="chaisisImageFile">Chaisis Picture</label>
                                 <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
                                     <div class="row">
@@ -290,7 +296,7 @@
                                     <!-- <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button> -->
                                 @endif
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-3 col-sm-9">
                                 <div class="form-group">
                                     <label for="chaisisNumberInput">Chaisis Number</label>
                                     <input type="text" class="form-control" id="chaisisNumberInput" wire:model="chassis_number" name="chassis_number" placeholder="Chassis Number">
@@ -299,8 +305,9 @@
                         </div>
                         @if($showSearchByChaisisButton)
                             <div class="row">
-                                <div class="col-md-3 col-sm-2">
+                                <div class="col-md-3 col-sm-12">
                                     <button type="button" wire:click="clickSearchByChaisisNumber()" class="btn btn-primary btn-sm">Search By Chaisis Number</button>
+                                    <button type="button" wire:click="saveByPlateNumber()" class="btn btn-info btn-sm">Save Plate Number</button>
                                     <div wire:loading wire:target="clickSearchByChaisisNumber">
                                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                             <div class="la-ball-beat">
@@ -394,6 +401,27 @@
             </div>
         @endif
     </div>
+    <div wire:loading wire:target="saveByPlateNumber">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <div wire:loading wire:target="addMakeModel">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    @if($showAddMakeModelNew)
+    @include('components.modals.addMakeModelNew')
+    @endif
 </main>
 
 @push('custom_script')
@@ -406,6 +434,13 @@
             }
         });
     });
+    window.addEventListener('openAddMakeModel', event=>{
+        $('#addMakeModelModel').modal('show');
+    });
+    window.addEventListener('closeAddMakeModel', event=>{
+        $('#addMakeModelModel').modal('hide');
+    });
+    
     window.addEventListener('selectSearchEvent',event=>{
         $(document).ready(function () {
             $('#plateState').select2();
