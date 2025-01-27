@@ -36,7 +36,7 @@ class CarsTaxi extends Component
             $this->vehiclesModelList = VehicleModels::where(['vehicle_make_id'=>$this->make])->get();
         }
         $this->checklistLabels = ServiceChecklist::get();
-        $this->dispatchBrowserEvent('imageUpload');
+        
         $this->dispatchBrowserEvent('selectSearchEvent'); 
         return view('livewire.cars-taxi');
     }

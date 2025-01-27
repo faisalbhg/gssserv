@@ -28,7 +28,7 @@ class VehicleSearchSave extends Component
     public $searchByMobileNumber = true, $showSearchByMobileBtn=true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false, $showAddMakeModelNew=false;
     public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false;
     public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
-    public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
+    public $countryList = [], $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
     public $editCustomerAndVehicle=false;
     public $customers=[];
     public $showVehicleAvailable=false;
@@ -38,6 +38,7 @@ class VehicleSearchSave extends Component
 
     public function render()
     {
+        $this->countryList = Country::get();
         if($this->plate_country!='AE'){
             $this->otherCountryPlateCode=true;
         }
@@ -56,6 +57,10 @@ class VehicleSearchSave extends Component
                 //dd($this->modelSearchResult);
 
             }
+        }
+        else
+        {
+            $this->showAddNewModel=false;
         }
         
         if($this->showPlateNumber)
@@ -452,6 +457,7 @@ class VehicleSearchSave extends Component
         $this->showAddNewModel=true;
     }
     public function selectMakeInfoSave($makeInfo){
+        $makeInfo = json_decode($makeInfo,true);
         $this->new_make_id = $makeInfo['id'];
         $this->new_make = $makeInfo['vehicle_name'];
         $this->showAddNewModel=true;

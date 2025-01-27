@@ -40,15 +40,17 @@
                                     <div class="row">
                                         
                                         @forelse($makeSearchResult as $makeResult)
-                                        <div class="col-md-4 col-sm-4">
-                                            <div class="card h-100 cursor-pointer" wire:click="selectMakeInfoSave({{$makeResult}})">
+                                        <div class="col-md-4 col-sm-4 m-2">
+                                            <div class="card h-100 cursor-pointer" wire:click="selectMakeInfoSave('{{$makeResult}}')">
                                                 <div class="card-body py-3">
                                                     <h6 class="font-weight-bold text-capitalize text-center text-sm">{{$makeResult->vehicle_name}}</h6>
                                                 </div>
                                             </div>
                                         </div>
                                         @empty
-                                        <button wire:click="saveMakeInfo" type="submit" class="btn bg-gradient-primary">Save Make</button>
+                                        <div>
+                                            <button wire:click="saveMakeInfo" type="submit" class="btn bg-gradient-primary mt-1">Save Make</button>
+                                        </div>
                                         <div wire:loading wire:target="saveMakeInfo">
                                             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                 <div class="la-ball-beat">
@@ -59,6 +61,15 @@
                                             </div>
                                         </div>
                                         @endforelse
+                                    </div>
+                                    <div wire:loading wire:target="selectMakeInfoSave">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                         

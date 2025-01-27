@@ -137,10 +137,10 @@
                             </div>
                             <div class="col-md-5 col-sm-5">
                                 <div class="form-group">
-                                    <label for="plateEmirates">Country</label>
-                                    <select class="form-control  " wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
-                                        @foreach(config('global.country') as $country)
-                                        <option value="{{$country['CountryCode']}}">{{$country['CountryName']}}</option>
+                                    <label for="plateCountry">Country</label>
+                                    <select class="form-control  " wire:model="plate_country"  id="plateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
+                                        @foreach($countryList as $country)
+                                        <option value="{{$country->CountryCode}}">{{$country->CountryName}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -453,12 +453,17 @@
     
     window.addEventListener('selectSearchEvent',event=>{
         $(document).ready(function () {
+            $('#plateCountry').select2();
             $('#plateState').select2();
             $('#vehicleTypeInput').select2();
             $('#vehicleMakeInput').select2();
             $('#vehicleModelInput').select2();
             $('#plateCode').select2();
 
+            $('#plateCountry').on('change', function (e) {
+                var plateStateVal = $('#plateCountry').select2("val");
+                @this.set('plate_country', plateStateVal);
+            });
             $('#plateState').on('change', function (e) {
                 var plateStateVal = $('#plateState').select2("val");
                 @this.set('plate_state', plateStateVal);

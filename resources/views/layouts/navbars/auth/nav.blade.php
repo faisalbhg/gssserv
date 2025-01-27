@@ -73,8 +73,8 @@
                                 Contract
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="{{ route('cars-taxi') }}">Dubai Car Taxi</a></li>
-                                <li><a class="dropdown-item" href="{{ route('cars-taxi') }}">Emirates Catering</a></li>
+                                <li><a class="dropdown-item" href="{{ route('cars-taxi') }}">Dubai Car Taxi</a></li><!-- 
+                                <li><a class="dropdown-item" href="{{ route('cars-taxi') }}">Emirates Catering</a></li> -->
                             </ul>
                         </div>
                     </li>
