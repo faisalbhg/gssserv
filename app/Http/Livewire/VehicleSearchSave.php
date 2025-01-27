@@ -34,9 +34,18 @@ class VehicleSearchSave extends Component
     public $showVehicleAvailable=false;
     public $customer_id, $vehicle_id;
     public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
+    public $otherCountryPlateCode;
 
     public function render()
     {
+        if($this->plate_country!='AE'){
+            $this->otherCountryPlateCode=true;
+        }
+        else
+        {
+            $this->otherCountryPlateCode=false;
+        }
+
         if($this->new_make)
         {
             $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->get();
@@ -197,11 +206,20 @@ class VehicleSearchSave extends Component
 
     public function clickSearchByPlateNumber(){
         $this->mobile=null;
-        $validatedData = $this->validate([
-            'plate_state' => 'required',
-            'plate_code' => 'required',
-            'plate_number' => 'required',
-        ]);
+        if($this->plate_country=='AE'){
+            $validatedData = $this->validate([
+                'plate_state' => 'required',
+                'plate_code' => 'required',
+                'plate_number' => 'required',
+            ]);
+        }
+        else
+        {
+            $validatedData = $this->validate([
+                'plate_code' => 'required',
+                'plate_number' => 'required',
+            ]);
+        }
 
         $this->getCustomerVehicleSearch('plate');
         if(count($this->customers)>0)
@@ -288,15 +306,28 @@ class VehicleSearchSave extends Component
     }
 
     public function saveVehicleCustomer(){
-        $validatedData = $this->validate([
-            'vehicle_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
-            'vehicle_type' => 'required',
-            'make' => 'required',
-            'model'=> 'required',
-            'plate_state'=> 'required',
-            'plate_code'=> 'required',
-            'plate_number'=> 'required',
-        ]);
+        if($this->plate_country!='AE'){
+            $validatedData = $this->validate([
+                'vehicle_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
+                'vehicle_type' => 'required',
+                'make' => 'required',
+                'model'=> 'required',
+                'plate_code'=> 'required',
+                'plate_number'=> 'required',
+            ]);
+        }
+        else
+        {
+            $validatedData = $this->validate([
+                'vehicle_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
+                'vehicle_type' => 'required',
+                'make' => 'required',
+                'model'=> 'required',
+                'plate_state'=> 'required',
+                'plate_code'=> 'required',
+                'plate_number'=> 'required',
+            ]);
+        }
 
         //Save Customer
         $insertCustmoerData['Mobile']=isset($this->mobile)?$this->mobile:'';

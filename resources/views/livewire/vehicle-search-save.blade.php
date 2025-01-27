@@ -135,7 +135,7 @@
                                     <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                                 @endif
                             </div>
-                            <div class="col-md-3 col-sm-5">
+                            <div class="col-md-5 col-sm-5">
                                 <div class="form-group">
                                     <label for="plateEmirates">Country</label>
                                     <select class="form-control  " wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
@@ -145,6 +145,7 @@
                                     </select>
                                 </div>
                             </div>
+                            @if(!$this->otherCountryPlateCode)
                             <div class="col-md-4 col-sm-4">
                                 <div class="form-group">
                                     <label for="plateEmirates">Plate Emirates</label>
@@ -168,8 +169,17 @@
                                 </div>
                                 @error('plate_code') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                             </div>
-                            
+                            @else
                             <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label for="plateCodeOthCountry">Plate Code</label>
+                                    <input type="text" class="form-control" wire:model="plate_code" name="plateCode" id="plateCodeOthCountry" placeholder="Plate Code" style="padding:0.5rem 0.3rem !important;" />
+                                </div>
+                                @error('plate_code') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            @endif
+                            
+                            <div class="col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <label for="plateNumber">Plate Number</label>
                                     <input style="padding:0.5rem 0.3rem !important;" type="number" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="plate_number" name="plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Number">
