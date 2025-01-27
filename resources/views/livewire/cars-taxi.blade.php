@@ -382,7 +382,7 @@
                         <div class="card">
                             <div class="card-footer text-left pt-4">
                                 <div class="m-signature-pad--footer">
-                                    <button type="button" id='btnSubmit' class="btn bg-gradient-primary btn-lg mui-btn float-end" wire:click="createJob();">Create Job</button>
+                                    <button type="button" id='btnSubmit' class="btn bg-gradient-primary btn-lg mui-btn float-end" wire:click="createJob();">Create</button>
                                 </div>
                             </div>
                             

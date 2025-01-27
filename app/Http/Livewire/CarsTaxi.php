@@ -21,7 +21,7 @@ use DB;
 class CarsTaxi extends Component
 {
     use WithFileUploads;
-    public $mobile, $name, $ct_number, $plate_number_image, $plate_code, $plate_number, $vehicle_type, $make, $model, $checklistLabel, $fuel, $scratchesFound, $scratchesNotFound, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature,$roof_images=[], $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $photo;
+    public $mobile, $name, $ct_number, $meter_id, $plate_number_image, $plate_code, $plate_number, $vehicle_type, $make, $model, $checklistLabel, $fuel, $scratchesFound, $scratchesNotFound, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature,$roof_images=[], $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $photo;
     public $plateEmiratesCodes=[], $vehicleTypesList=[], $listVehiclesMake=[], $vehiclesModelList=[], $checklistLabels=[];
     public function render()
     {
@@ -40,9 +40,21 @@ class CarsTaxi extends Component
         $this->dispatchBrowserEvent('selectSearchEvent'); 
         return view('livewire.cars-taxi');
     }
+
     public function clickShowSignature()
     {
         $this->dispatchBrowserEvent('showSignature');
 
+    }
+
+    public function createJob()
+    {
+        $validatedData = $this->validate([
+            'ct_number' => 'required',
+            'meter_id' => 'required',
+            'plate_code' => 'required',
+            'plate_number' => 'required',
+            'plate_number' => 'required',
+        ]);
     }
 }

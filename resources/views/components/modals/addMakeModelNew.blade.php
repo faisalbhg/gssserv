@@ -94,7 +94,7 @@
                                      <div class="row">
                                         
                                         @forelse($modelSearchResult as $modelResult)
-                                        <div class="col-md-4 col-sm-4">
+                                        <div class="col-md-4 col-sm-4 m-2">
                                             <div class="card h-100 cursor-pointer" wire:click="selectModelInfoSave({{$modelResult}})">
                                                 <div class="card-body py-3">
                                                     <h6 class="font-weight-bold text-capitalize text-center text-sm">{{$modelResult->vehicle_model_name}}</h6>
@@ -102,7 +102,9 @@
                                             </div>
                                         </div>
                                         @empty
-                                        <button wire:click="saveModelInfo" type="submit" class="btn bg-gradient-primary">Save Model</button>
+                                        <div>
+                                            <button wire:click="saveModelInfo" type="submit" class="btn bg-gradient-primary mt-1">Save Model</button>
+                                        </div>
                                         <div wire:loading wire:target="saveModelInfo">
                                             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                 <div class="la-ball-beat">
