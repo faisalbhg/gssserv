@@ -126,9 +126,24 @@
                           <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">{{$jobs->plate_number}}</span></p>
                           <hr class="m-0">
                           <p class="text-sm text-dark mb-0">{{$jobs->customerInfo['TenantName']}}
+                            @if($jobs->customerInfo['Email']!='')
                             <br>{{$jobs->customerInfo['Email']}}
+                            @endif
+                            @if(isset($jobs->customerInfo['Mobile']))
                             <br>{{$jobs->customerInfo['Mobile']}}
+                            @endif
                           </p>
+                        </div>
+                      </div>
+                      <div class="">
+                        <span class="w-100 badge badge-sm {!!config('global.jobs.status_btn_class')[$jobs->job_status]!!}">{{config('global.jobs.status')[$jobs->job_status]}}</span>
+                        <div class="d-flex align-items-center justify-content-center">
+                          <span class="me-2 text-xs font-weight-bold">{{config('global.jobs.status_perc')[$jobs->job_status]}}</span>
+                          <div>
+                            <div class="progress">
+                              <div class="progress-bar {{config('global.jobs.status_perc_class')[$jobs->job_status]}}" role="progressbar" aria-valuenow="{{config('global.jobs.status_perc')[$jobs->job_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.status_perc')[$jobs->job_status]}};"></div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -136,7 +151,7 @@
                       <div class="d-flex px-3 py-1">
                         <div class="d-flex flex-column justify-content-center">
                           <h6 class="mb-0 text-sm">{{$jobs->job_number}}</h6>
-                          <p class="text-sm font-weight-bold mb-0">{{ \Carbon\Carbon::parse($jobs->job_date_time)->format('dS M Y H:i A') }}</p>
+                          <p class="text-sm font-weight-bold mb-0">{{ \Carbon\Carbon::parse($jobs->job_date_time)->format('dS M Y h:i A') }}</p>
                         </div>
                       </div>
                     </td>
@@ -158,15 +173,7 @@
                     
                     <td class="align-middle text-center">
 
-                      <span class="badge badge-sm {!!config('global.jobs.status_btn_class')[$jobs->job_status]!!}">{{config('global.jobs.status')[$jobs->job_status]}}</span>
-                      <div class="d-flex align-items-center justify-content-center">
-                        <span class="me-2 text-xs font-weight-bold">{{config('global.jobs.status_perc')[$jobs->job_status]}}</span>
-                        <div>
-                          <div class="progress">
-                            <div class="progress-bar {{config('global.jobs.status_perc_class')[$jobs->job_status]}}" role="progressbar" aria-valuenow="{{config('global.jobs.status_perc')[$jobs->job_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.status_perc')[$jobs->job_status]}};"></div>
-                          </div>
-                        </div>
-                      </div>
+                      
                     </td>
                     
                     <td class="align-middle">

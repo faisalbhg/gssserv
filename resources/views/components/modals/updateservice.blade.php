@@ -171,7 +171,7 @@
                                                                             </div>
                                                                             <div class="col-md-6 d-flex justify-content-end align-items-center">
                                                                                 <i class="far fa-calendar-alt me-2" aria-hidden="true"></i>
-                                                                                <small>{{ \Carbon\Carbon::parse($job_date_time)->format('dS M Y H:i A') }}</small>
+                                                                                <small>{{ \Carbon\Carbon::parse($job_date_time)->format('dS M Y h:i A') }}</small>
                                                                             </div>
                                                                         </div>
                                                                     </div>
