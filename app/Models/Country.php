@@ -11,4 +11,5 @@ class Country extends Model
 
     protected $table = 'Library.Country';
     protected $primaryKey = 'id';
+    public $timestamps = false;
 }

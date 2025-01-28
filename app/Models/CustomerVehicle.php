@@ -72,6 +72,10 @@ class CustomerVehicle extends Model
         return $this->hasMany(CustomerDiscountGroup::class,'customer_id','customer_id');
     }
 
+    public function countryInfo(){
+        return $this->belongsTo(Country::class,'plate_country','CountryCode');
+    }
+
     
     
 }

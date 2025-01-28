@@ -135,7 +135,7 @@
                                     <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                                 @endif
                             </div>
-                            <div class="col-md-5 col-sm-5">
+                            <div class="col-md-4 col-sm-5">
                                 <div class="form-group">
                                     <label for="plateCountry">Country</label>
                                     <select class="form-control  " wire:model="plate_country"  id="plateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
@@ -153,6 +153,17 @@
                                         <option value="">-Emirates-</option>
                                         @foreach($stateList as $state)
                                         <option value="{{$state->StateName}}">{{$state->StateName}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 d-none">
+                                <div class="form-group">
+                                    <label for="plateCategory">Plate Category</label>
+                                    <select class="form-control  " wire:model="plate_category" name="plate_category" id="plateCategory" style="padding:0.5rem 0.3rem !important;" >
+                                        <option value="">-Category-</option>
+                                        @foreach($plateEmiratesCategories as $category)
+                                        <option value="{{$category->plateCategoryId}}">{{$category->plateCategoryTitle}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -387,7 +398,9 @@
                                                 </h4>
                                                 <p class="mt-0 pt-0"><small>{{$customer->customerInfoMaster['Email']}}, {{$customer->customerInfoMaster['Mobile']}}</small></p>
                                                 <p class="mb-0">{{isset($customer->makeInfo)?$customer->makeInfo['vehicle_name']:''}}, {{isset($customer->modelInfo['vehicle_model_name'])?$customer->modelInfo['vehicle_model_name']:''}}</p>
-                                                <p>{{$customer->plate_number_final}}</p>
+                                                <p>
+                                                    {{$customer->plate_number_final}}
+                                                </p>
                                             </div>
                                         </div>
                                     </a>

@@ -16,6 +16,7 @@ use Spatie\Image\Image;
 
 use App\Models\StateList;
 use App\Models\PlateCode;
+use App\Models\PlateEmiratesCategory;
 use App\Models\CustomerVehicle;
 use App\Models\Vehicletypes;
 use App\Models\VehicleModels;
@@ -27,8 +28,8 @@ class VehicleSearchSave extends Component
     use WithFileUploads;
     public $searchByMobileNumber = true, $showSearchByMobileBtn=true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false, $showAddMakeModelNew=false;
     public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false;
-    public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
-    public $countryList = [], $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
+    public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category=2, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
+    public $countryList = [], $stateList=[], $plateEmiratesCategories=[], $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
     public $editCustomerAndVehicle=false;
     public $customers=[];
     public $showVehicleAvailable=false;
@@ -67,6 +68,7 @@ class VehicleSearchSave extends Component
         {
             $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
             if($this->plate_state){
+                
                 switch ($this->plate_state) {
                     case 'Abu Dhabi':
                         $this->plateStateCode = 1;
@@ -102,7 +104,12 @@ class VehicleSearchSave extends Component
                         $this->plate_category = '1';
                         break;
                 }
+                //$this->plateEmiratesCategories = PlateEmiratesCategory::where(['plateEmiratesId'=>$this->plateStateCode])->get();
+                
                 $this->plateEmiratesCodes = PlateCode::where(['plateEmiratesId'=>$this->plateStateCode,'is_active'=>1])->get();
+                
+                
+                //dd($this->plateEmiratesCodes);
             }
         }
         else
@@ -224,7 +231,7 @@ class VehicleSearchSave extends Component
                 'plate_code' => 'required',
                 'plate_number' => 'required',
             ]);
-            $this->plate_state=null;
+
         }
 
         $this->getCustomerVehicleSearch('plate');
@@ -321,6 +328,7 @@ class VehicleSearchSave extends Component
                 'plate_code'=> 'required',
                 'plate_number'=> 'required',
             ]);
+            $this->plate_state=null;
         }
         else
         {
@@ -381,11 +389,17 @@ class VehicleSearchSave extends Component
         $customerVehicleData['make']=$this->make;
         $customerVehicleData['model']=$this->model;
         $customerVehicleData['plate_country']=$this->plate_country;
-        $customerVehicleData['plate_state']=$this->plate_state;
+        $customerVehicleData['plate_state']=isset($this->plate_state)?$this->plate_state:'';
         $customerVehicleData['plate_category']=$this->plate_category;
         $customerVehicleData['plate_code']=$this->plate_code;
         $customerVehicleData['plate_number']=$this->plate_number;
-        $customerVehicleData['plate_number_final']=$this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
+        $completePlateNumber = $this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
+        if($this->plate_country!='AE')
+        {
+            $plateNumberCode = Country::where(['CountryCode'=>$this->plate_country])->first();
+            $completePlateNumber = $plateNumberCode->NumberPlate.' '.$this->plate_code.' '.$this->plate_number;
+        }
+        $customerVehicleData['plate_number_final']=$completePlateNumber;
         $customerVehicleData['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
         $customerVehicleData['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
         $customerVehicleData['is_active']=1;
