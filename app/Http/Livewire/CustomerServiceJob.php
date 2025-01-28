@@ -704,10 +704,11 @@ class CustomerServiceJob extends Component
         ];
         if($discountGroup['GroupType']==2)
         {
-            $this->applyDiscountOnCart();
+
             $this->discountCardApplyForm=false;
             $this->discountForm=false;
             $this->appliedDiscount = $this->selectedDiscount;
+            $this->applyDiscountOnCart();
             //$this->applyItemToTempCart();
             $this->dispatchBrowserEvent('closeDiscountGroupModal');
         }
@@ -992,10 +993,10 @@ class CustomerServiceJob extends Component
             }
             else if($items->cart_item_type==2){
                 $discountCartServiceItemPrices = InventorySalesPrices::where([
-                        'ServiceItemId'=>$items->item_id,
-                        'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                        'DivisionCode'=>Session::get('user')['station_code'],
-                    ]);
+                    'ServiceItemId'=>$items->item_id,
+                    'CustomerGroupCode'=>$this->appliedDiscount['code'],
+                    'DivisionCode'=>Session::get('user')['station_code'],
+                ]);
                 if($this->appliedDiscount['groupType']==1)
                 {
                     //$discountCartServiceItemPrices = $discountCartServiceItemPrices;
