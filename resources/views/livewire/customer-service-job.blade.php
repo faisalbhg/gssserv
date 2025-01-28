@@ -361,9 +361,9 @@
                                             </div>
                                         </div>
                                         @endif
-                                        @if(@$appliedDiscount['groupType']==2)
+                                        <!-- @if(@$appliedDiscount['groupType']==2)
                                         <button class="btn bg-gradient-danger btn-sm" wire:click.prevent="removeDiscount()">Remove Discount - {{strtolower(str_replace("_"," ",$appliedDiscount['title']))}}</button>
-                                        @endif
+                                        @endif -->
 
                                         @if(@$appliedDiscount['groupType']==3)
                                         <button class="btn bg-gradient-success btn-sm " wire:click.prevent="applyEngineOilDiscount()">Apply {{$engineOilDiscountPercentage}}% Discount</button>

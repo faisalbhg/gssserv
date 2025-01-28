@@ -1142,6 +1142,7 @@ class CustomerServiceJob extends Component
         $this->editCUstomerInformation=false;
         $this->updateVehicleFormBtn=false;
         $this->showForms=false;
+        $this->dispatchBrowserEvent('refreshPage');
         session()->flash('success', 'Customer vehicle details updated Successfully !');
     }
     public function addNewVehicle(){
