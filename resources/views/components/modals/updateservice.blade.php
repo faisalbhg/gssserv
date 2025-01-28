@@ -1039,8 +1039,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
-                                                        
                                                     </div>
                                                 </div>
                                                 @endif
@@ -1412,36 +1410,7 @@
                                                 @endif
                                             @endif
                                         @endif
-                                        <div class="row">
-                                            <div class="col-md-12" >
-                                                <div class="card h-100 my-2">
-                                                    <div class="card-header p-2">
-                                                        <h6>Service History overview</h6>
-                                                        <!-- <p class="text-sm">
-                                                            <span class="font-weight-bold">#{{$job_number}}</span>
-                                                        </p> -->
-                                                        <hr class="m-0">
-                                                    </div>
-                                                    <div class="card-body p-2">
-                                                        <div class="timeline timeline-one-side">
-                                                            @forelse( $services->customerJobServiceLogs as $logs)
-                                                            <div class="timeline-block mb-3">
-                                                                <span class="timeline-step">
-                                                                    <i class="fa fa-arrow-up text-success text-gradient"></i>
-                                                                </span>
-                                                                <div class="timeline-content">
-                                                                    <span class="badge badge-sm {{config('global.job_status_text_class')[$logs->job_status]}}">{{config('global.job_status')[$logs->job_status]}}</span>
-                                                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{ \Carbon\Carbon::parse($job_date_time)->format('d M Y H:i A') }}</p>
-                                                                </div>
-                                                            </div>
-                                                            @empty
-                                                            <p class="text-danger">Empty..!</p>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </li>
@@ -1630,4 +1599,23 @@
             </div>
        </div>
     </div>
+
+    <div wire:loading wire:target="updateQwService">
+      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+          <div class="la-ball-beat">
+              <div></div>
+              <div></div>
+              <div></div>
+          </div>
+      </div>
+
+    <div wire:loading wire:target="clickQlOperation">
+      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+          <div class="la-ball-beat">
+              <div></div>
+              <div></div>
+              <div></div>
+          </div>
+      </div>
+
 </div>

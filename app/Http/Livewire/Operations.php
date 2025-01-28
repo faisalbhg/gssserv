@@ -79,6 +79,7 @@ class Operations extends Component
     public $servicesGroupList, $sectionsLists=[], $sectionServiceLists=[];
     public $customerDiscontGroupId, $customerDiscontGroupCode;
     public $quickLubeItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $showQuickLubeItemSearchItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
+    public $customerJobServiceLogs;
 
 
     
@@ -464,11 +465,12 @@ class Operations extends Component
     {
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
-        
+        //dd(CustomerJobCardServices::where(['job_number'=>$job_number])->get());
+        //dd(CustomerJobCards::with(['customerInfo','customerJobServices','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first());
         $job = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first();
-        //dd($job);
         $this->jobcardDetails = $job;
-        //dd($this->jobcardDetails->modelInfo['vehicle_model_name']);
+        //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
+        //dd($this->customerJobServiceLogs);
         if($this->jobcardDetails->checklistInfo!=null){
             $this->checkListDetails=$this->jobcardDetails->checklistInfo;
             $this->checklistLabels = ServiceChecklist::get();

@@ -224,6 +224,7 @@ class VehicleSearchSave extends Component
                 'plate_code' => 'required',
                 'plate_number' => 'required',
             ]);
+            $this->plate_state=null;
         }
 
         $this->getCustomerVehicleSearch('plate');

@@ -122,6 +122,7 @@ class Jobcard extends Component
 
 
     public function render(){
+        
         if($this->showPlateNumber)
         {
             //Get all state List
