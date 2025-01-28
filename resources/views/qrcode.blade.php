@@ -98,7 +98,55 @@
                             <h6 class="category text-gradient h2 {{config('global.jobs.status_text_class')[$qrdata->job_status]}}">Status: {{config('global.jobs.status')[$qrdata->job_status]}}</h6>
                             <h6 class="category text-gradient h2 {{config('global.payment.status_class')[$qrdata->payment_status]}}">Payment: {{config('global.payment.status')[$qrdata->payment_status]}}</h6>
                             <hr class="horizontal dark mt-3">
-                            <button type="button" class="btn btn-dark">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="card card-profile card-plain">
+                                                <div class="position-relative">
+                                                    <div class="blur-shadow-image">
+                                                        <img class="w-100 rounded-3 shadow-lg" src="{{url("public/storage/".$qrdata->customerVehicle["vehicle_image"])}}">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="card card-profile card-plain">
+                                                <div class="card-body text-left p-0">
+                                                    <div class="p-md-0 pt-3 text-left">
+                                                        <h5 class="font-weight-bolder mb-0">
+                                                            {{$qrdata->customerVehicle['plate_number_final']}}
+                                                        </h5>
+                                                        <p class="text-uppercase text-sm font-weight-bold mb-2">{{isset($qrdata->makeInfo)?$qrdata->makeInfo['vehicle_name']:''}}, {{isset($qrdata->modelInfo['vehicle_model_name'])?$qrdata->modelInfo['vehicle_model_name']:''}}</p>
+                                                    </div>
+                                                    @if($qrdata->customerInfo['TenantName'])
+                                                        @if($qrdata->customerInfo['TenantName'])
+                                                        <p class="mb-0">{{$qrdata->customerInfo['TenantName']}}</p>
+                                                        @endif
+                                                        @if($qrdata->customerInfo['Mobile'])
+                                                        <p class="mb-0">{{$qrdata->customerInfo['Mobile']}}</p>
+                                                        @endif
+                                                        @if($qrdata->customerInfo['Email'])
+                                                        <p class="mb-1">{{$qrdata->customerInfo['Email']}}</p>
+                                                        @endif
+                                                    @else
+                                                    <p class="mb-0">Customer Guest</p>
+                                                    @endif
+                                                    @if($qrdata->customerVehicle['chassis_number'])
+                                                    <p class="mb-1"><b>Chaisis:</b> {{$qrdata->customerVehicle['chassis_number']}}</p>
+                                                    @endif
+                                                    @if($qrdata->customerVehicle['vehicle_km'])
+                                                    <b>KM Reading:</b> {{$qrdata->customerVehicle['vehicle_km']}}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <button type="button" class="btn btn-dark">
                                 <h5 class="font-weight-bolder mb-0">{{$qrdata->make}}</h5>
                                 <p class="text-sm font-weight-bold mb-0">{{$qrdata->model}} ({{$qrdata->plate_number}})</p>
                                 <p class="text-sm mb-0">Chassis Number: {{$qrdata->chassis_number}}</p>
@@ -109,7 +157,7 @@
                                 <p class="text-sm mb-0">Name: {{$qrdata->customerInfo['Name']}}</p>
                                 <p class="text-sm mb-0">Mobile: <a href="tel:{{$qrdata->mobile}}">{{$qrdata->customerInfo['Mobile']}}</a></p>
                                 <p class="text-sm mb-0">Email: {{$qrdata->customerInfo['Email']}}</p>
-                            </button>
+                            </button> -->
 
                           </div>
                         </div>
