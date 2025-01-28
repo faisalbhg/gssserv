@@ -4,58 +4,53 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 
-use App\Models\Customerjobs;
-use App\Models\Customerjobservices;
-use App\Models\Customerjoblogs;
+use Illuminate\Http\Request;
+use Livewire\WithFileUploads;
+use Carbon\Carbon;
+use Session;
+use Illuminate\Support\Facades\Http;
+use LaravelPayfort\Facades\Payfort;
+use Illuminate\Support\Facades\Hash;
+use DB;
+use Spatie\Image\Image;
 
 use App\Models\CustomerJobCards;
 use App\Models\CustomerJobCardServices;
 use App\Models\CustomerJobCardServiceLogs;
+use App\Models\CustomerVehicle;
 
-use Carbon\Carbon;
-use Livewire\WithPagination;
-use Illuminate\Support\Facades\Http;
 
 class Jobstatus extends Component
 {
     
-    public $job_number;
+    public $job_number, $jobDetails, $selectedVehicleInfo, $customer_id, $vehicle_id;
 
-    public function mount()
-    {
-        $job_number = \Route::current()->parameter('name');
-        $job = CustomerJobCards::with(['customerInfo'])->where(['job_number'=>$job_number])
-            ->take(5)->first();
-            //dd($job);
-        $this->job_number = $job->job_number;
-        $this->job_date_time = $job->job_date_time;
-        $this->customerDetails = true;
-        $this->vehicle_image = $job->vehicle_image;
-        $this->vehicle_name = $job->vehicle_name;
-        $this->make = $job->make;
-        $this->model = $job->model;
-        $this->plate_number = $job->plate_number;
-        $this->chassis_number = $job->chassis_number;
-        $this->vehicle_km = $job->vehicle_km;
-        $this->name = $job->name;
-        $this->email = $job->email;
-        $this->mobile = $job->mobile;
-        $this->customerType = $job->customerType;
-        $this->payment_status = $job->payment_status;
-        $this->payment_type = $job->payment_type;
-        $this->job_status = $job->job_status;
-        $this->job_departent = $job->job_departent;
-        $this->total_price = $job->total_price;
-        $this->vat = $job->vat;
-        $this->grand_total = $job->grand_total;
+    function mount( Request $request) {
+        $this->job_number = $request->job_number;
+        if($this->job_number)
+        {
+            $this->customerJobDetails();
+            $this->selectVehicle();
+        }
 
-        $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$job->job_number])->get();
-        $this->customerjoblogs = CustomerJobCardServiceLogs::where(['job_number'=>$job->job_number])->orderBy('id','DESC')->get();
+
     }
 
 
+    
     public function render()
     {
+        //dd($this->jobDetails->payment_status);
         return view('livewire.jobstatus');
+    }
+    public function customerJobDetails(){
+        $this->jobDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo'])->where(['job_number'=>$this->job_number])->first();
+        $this->customer_id = $this->jobDetails->customer_id;
+        $this->vehicle_id = $this->jobDetails->vehicle_id;
+    }
+
+    public function selectVehicle(){
+        $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->jobDetails->vehicle_id,'customer_id'=>$this->jobDetails->customer_id])->first();
+        $this->selectedVehicleInfo=$customers;
     }
 }

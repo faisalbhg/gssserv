@@ -106,7 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/departments',Departments::class)->name('departments-list');
     Route::get('/sections',Section::class)->name('sections-list');
     Route::get('/gss-user-management', UserManagement::class)->name('user-management');
-    Route::get('/vehiclestatus/{name}', Jobstatus::class)->name('vehicle-status');
+    Route::get('/vehiclestatus/{job_number}', Jobstatus::class)->name('vehicle-status');
     Route::get('/customers', Customer::class)->name('customers-list');
 
     Route::get('/services-prices-list',ServicesPriceList::class)->name('services-prices-list');

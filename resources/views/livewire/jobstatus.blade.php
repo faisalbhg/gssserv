@@ -1,87 +1,104 @@
 <main class="main-content">
     <div class="container-fluid py-4">
         <div class="row ">
-            <div class="col-12">
+            <div class="col-md-12">
+                <div class="card mb-4 p-4">
+                    <div class="card-body px-0 pt-0 pb-2 ">
+                        <span class="w-100 badge badge-sm {!!config('global.jobs.status_btn_class')[$jobDetails->job_status]!!}">{{config('global.jobs.status')[$jobDetails->job_status]}}</span>
+                        <div class="progress-wrapper">
+                            <div class="progress-info">
+                                <div class="progress-percentage text-center">
+                                    <span class="text-sm font-weight-bold">{{config('global.jobs.status_perc')[$jobDetails->job_status]}}</span>
+                                </div>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar {{config('global.jobs.status_perc_class')[$jobDetails->job_status]}}" role="progressbar" aria-valuenow="{{config('global.jobs.status_perc')[$jobDetails->job_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.status_perc')[$jobDetails->job_status]}};"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card mb-4 p-4">
+                    <div class="card-body px-0 pt-0 pb-2 ">
+                        <div class="text-center py-1">
+                            <div class="d-flex flex-column justify-content-center">
+                              <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">AED {{round($jobDetails->grand_total,2)}}</span></p>
+                              <hr class="my-1">
+                              <span class="badge badge-sm {{config('global.payment.status_class')[$jobDetails->payment_status]}}">{{config('global.payment.status')[$jobDetails->payment_status]}}</span>
+                              @if($jobDetails->payment_type!=null)
+                              <p class="text-sm text-gradient {{config('global.payment.text_class')[$jobDetails->payment_type]}}  font-weight-bold mb-0">{{config('global.payment.type')[$jobDetails->payment_type]}}</p>
+                              @endif
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
                 <div class="card mb-4 p-4">
                     <div class="card-header p-0">
                         <h5 class="modal-title" id="serviceUpdateModalLabel">
-                            <span class="float-start badge badge-lg {{config('global.payment.status_class')[$payment_status]}}"> #{{$job_number}} - {{config('global.payment.status')[$payment_status]}}</span>
+                            <span class="float-start badge badge-lg {{config('global.payment.status_class')[$jobDetails->payment_status]}}"> #{{$job_number}} - {{config('global.payment.status')[$jobDetails->payment_status]}}</span>
                         </h5>
                     </div>
                     
                     <div class="card-body px-0 pt-0 pb-2 ">
+
+
+
+
                         <div class="row">
-                            <div class="col-md-12 mt-0">
+                            <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="card card-profile card-plain p-2">
-                                            <div class="row">
-                                                <div class="col-xxs-6 col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                                    <a href="javascript:;">
-                                                        <div class="position-relative">
-                                                        <div class="blur-shadow-image">
-                                                            <img class="w-100 rounded-3 shadow-lg" src="{{url('public/storage/'.$vehicle_image)}}">
-                                                        </div>
-                                                        </div>
-                                                    </a>
+                                    <div class="col-4">
+                                        <div class="card card-profile card-plain">
+                                            <div class="position-relative">
+                                                <div class="blur-shadow-image">
+                                                    <img class="w-100 rounded-3 shadow-lg" src="{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}">
                                                 </div>
-                                                <div class="col-xxs-6 col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                                    <div class="card-body text-left">
-                                                        
 
-                                                       <div class="row ">
-                                                            <table border="0" class="table align-items-center justify-content-center mb-0">
-                                                                <tr>
-                                                                    <td><h6>Payment: </h6></td>
-                                                                    <td>
-                                                                        <span class="badge badge-sm {{config('global.payment.status_class')[$payment_status]}}"> {{config('global.payment.status')[$payment_status]}}</span>
-                                                                         <p class="text-sm text-gradient {{config('global.payment.text_class')[$payment_type]}}  font-weight-bold mb-0">{{config('global.payment.type')[$payment_type]}}</p>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                    <h6>Job Status:</h6>
-                                                                    </td>
-                                                                    <td>
-                                                                        <span class="badge badge-sm {{config('global.job_status_text_class')[$job_status]}}">{{config('global.job_status')[$job_status]}}</span>
-
-                                                                        <div class="d-flex align-items-center justify-content-center">
-                                                                        <span class="me-2 text-xs font-weight-bold">{{config('global.status_perc')[$job_status]}}</span>
-                                                                        <div>
-                                                                        <div class="progress">
-                                                                        <div class="progress-bar {{config('global.status_perc_class')[$job_status]}}" role="progressbar" aria-valuenow="{{config('global.status_perc')[$job_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.status_perc')[$job_status]}};"></div>
-                                                                        </div>
-                                                                        </div>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                            <hr class="horizontal dark mt-3">
-                                                            <button type="button" class="btn btn-dark">
-                                                                <h5 class="font-weight-bolder mb-0">{{$make}}</h5>
-                                                                <p class="text-sm font-weight-bold mb-0">{{$model}} ({{$plate_number}})</p>
-                                                                <p class="text-sm mb-0">Chassis Number: {{$chassis_number}}</p>
-                                                                <p class="text-sm mb-3">K.M Reading: {{$vehicle_km}}</p>
-                                                            </button>
-                                                            <hr class="horizontal dark mt-3">
-                                                            <button type="button" class="btn btn-outline-dark">
-                                                                <p class="text-sm mb-0">Name: {{$name}}</p>
-                                                                <p class="text-sm mb-0">Mobile: <a href="tel:{{$mobile}}">{{$mobile}}</a></p>
-                                                                <p class="text-sm mb-0">Email: {{$email}}</p>
-                                                            </button>
-                                                        </div>
-
-
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                
+                                    <div class="col-8">
+                                        <div class="card card-profile card-plain">
+                                            <div class="card-body text-left p-0">
+                                                <div class="p-md-0 pt-3">
+                                                    <h5 class="font-weight-bolder mb-0">{{$selectedVehicleInfo['plate_number_final']}}</h5>
+                                                    <p class="text-uppercase text-sm font-weight-bold mb-2">{{isset($selectedVehicleInfo->makeInfo)?$selectedVehicleInfo->makeInfo['vehicle_name']:''}}, {{isset($selectedVehicleInfo->modelInfo['vehicle_model_name'])?$selectedVehicleInfo->modelInfo['vehicle_model_name']:''}}</p>
+                                                </div>
+                                                @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
+                                                    @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
+                                                    <p class="mb-0">{{$selectedVehicleInfo['customerInfoMaster']['TenantName']}}</p>
+                                                    @endif
+                                                    @if($selectedVehicleInfo['customerInfoMaster']['Mobile'])
+                                                    <p class="mb-0">{{$selectedVehicleInfo['customerInfoMaster']['Mobile']}}</p>
+                                                    @endif
+                                                    @if($selectedVehicleInfo['customerInfoMaster']['Email'])
+                                                    <p class="mb-1">{{$selectedVehicleInfo['customerInfoMaster']['Email']}}</p>
+                                                    @endif
+                                                @else
+                                                <p class="mb-0">Customer Guest</p>
+                                                @endif
+                                                @if($selectedVehicleInfo['chassis_number'])
+                                                <p class="mb-1"><b>Chaisis:</b> {{$selectedVehicleInfo['chassis_number']}}</p>
+                                                @endif
+                                                @if($selectedVehicleInfo['vehicle_km'])
+                                                <b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
+                                                @endif
+                                                
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            
                         </div>
+
+                        
                     </div>
                 </div>
             </div>
