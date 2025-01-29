@@ -24,6 +24,8 @@ class Dashboard extends Component
 
     public function render()
     {
+        
+        //'S255'
         //CustomerJobCardServices::truncate();
         //Get Pending Customer
         $this->pendingCustomersCart =  CustomerServiceCart::with(['customerInfo','vehicleInfo'])->where(['created_by'=>Session::get('user')['id']])->get();

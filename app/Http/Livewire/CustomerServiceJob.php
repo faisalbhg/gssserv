@@ -34,12 +34,14 @@ use App\Models\PlateCode;
 use App\Models\Vehicletypes;
 use App\Models\VehicleModels;
 use App\Models\VehicleMakes;
+use App\Models\ServicePackage;
+use App\Models\ServicePackageDetail;
 
 
 class CustomerServiceJob extends Component
 {
     use WithFileUploads;
-    public $selectedCustomerVehicle=false, $selectPackageMenu=false, $showSectionsList=false, $showServiceSectionsList=false, $showServiceItems=false, $showItemsSearchResults=false, $showQlItemSearch=false, $showQlEngineOilItems=false, $showQlItemsOnly=false, $showQlItemsList=false;
+    public $selectedCustomerVehicle=false, $showSectionsList=false, $showServiceSectionsList=false, $showServiceItems=false, $showItemsSearchResults=false, $showQlItemSearch=false, $showQlEngineOilItems=false, $showQlItemsOnly=false, $showQlItemsList=false, $showPackageList=false, $selectPackageMenu=false;
     public $showServiceGroup, $showCheckout;
     public $showVehicleAvailable, $selectedVehicleInfo, $selected_vehicle_id, $customer_id;
     public $servicesGroupList, $service_group_id, $service_group_name, $service_group_code, $station, $section_service_search, $propertyCode, $selectedSectionName;
@@ -56,6 +58,7 @@ class CustomerServiceJob extends Component
     public $editCUstomerInformation=false, $addNewVehicleInformation=false, $showForms=false, $searchByMobileNumber = false, $editCustomerAndVehicle=false, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false;
     public $mobile, $name, $email, $customer_code, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
     public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
+    public $servicePackages;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -71,6 +74,7 @@ class CustomerServiceJob extends Component
 
     public function render()
     {
+        //dd($this->propertyCode);
         if($this->editCUstomerInformation || $this->addNewVehicleInformation)
         {
             $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
@@ -375,6 +379,12 @@ class CustomerServiceJob extends Component
             $this->itemQlCategories=[];
         }
 
+        if($this->showPackageList)
+        {
+            $this->servicePackages = ServicePackage::get();
+            dd($this->servicePackages);
+        }
+
 
         $this->openServiceGroup();
         $this->getCartInfo();
@@ -449,6 +459,10 @@ class CustomerServiceJob extends Component
 
         $this->showServiceItems = false;
         $this->showItemsSearchResults=false;
+
+        $this->showPackageList=false;
+        $this->selectPackageMenu=false;
+
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'servceSectionsList',
         ]);
@@ -667,6 +681,9 @@ class CustomerServiceJob extends Component
         $this->selectedSectionName = null;
         $this->showSectionsList=false;
         $this->showServiceSectionsList=false;
+        
+        $this->showPackageList=false;
+        $this->selectPackageMenu=false;
 
         $this->showQlItemSearch = false;
         $this->showQlItemsList = false;
@@ -1237,5 +1254,31 @@ class CustomerServiceJob extends Component
 
     public function submitService(){
         return redirect()->to('submit-job/'.$this->customer_id.'/'.$this->vehicle_id);
+    }
+
+    public function openPackages(){
+
+        $this->showPackageList=true;
+        $this->selectPackageMenu=true;
+
+        $this->service_group_id = null;
+        $this->service_group_name = null;
+        $this->service_group_code = null;
+        $this->station = null;
+        $this->section_service_search='';
+
+        $this->propertyCode=null;
+        $this->selectedSectionName = null;
+        $this->showSectionsList=false;
+        $this->showServiceSectionsList=false;
+
+        $this->showQlItemSearch = false;
+        $this->showQlItemsList = false;
+        $this->showQlEngineOilItems=false;
+        $this->showQlItemsOnly=false;
+        $this->showServiceItems = false;
+        $this->dispatchBrowserEvent('scrollto', [
+            'scrollToId' => 'packageServiceListDiv',
+        ]);
     }
 }

@@ -105,7 +105,7 @@ class SubmitCutomerServiceJob extends Component
         $this->mobile = $customers->customerInfoMaster['Mobile'];
         $this->name = $customers->customerInfoMaster['TenantName'];
         $this->email = $customers->customerInfoMaster['Email'];
-    }
+    }   
 
     public function updateServiceItem(){
         return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
@@ -134,7 +134,9 @@ class SubmitCutomerServiceJob extends Component
         {
             $paymentmode = "O";
             $paymentLink = $this->sendPaymentLink($customerjobs);
+            //dd($paymentLink);
             $paymentResponse = json_decode((string) $paymentLink->getBody()->getContents(), true);
+            //dd($paymentResponse);
             $merchant_reference = $paymentResponse['merchant_reference'];
             //dd($merchant_reference);
             if(array_key_exists('payment_redirect_link', $paymentResponse))
@@ -479,7 +481,6 @@ class SubmitCutomerServiceJob extends Component
 
     public function sendPaymentLink($customerjobs)
     {
-        //dd($customerjobs);
         $exp_date = Carbon::now('+10:00')->format('Y-m-d\TH:i:s\Z');
         $order_billing_name = $customerjobs->customerInfo['TenantName'];
         $order_billing_phone = $customerjobs->customerInfo['Mobile'];
@@ -487,6 +488,7 @@ class SubmitCutomerServiceJob extends Component
         $total = round(($customerjobs->grand_total),2);
         $merchant_reference = $customerjobs->job_number;
         $order_billing_phone = str_replace(' ', '', $order_billing_phone);
+        /*dd(str_replace(" ","",$order_billing_phone));
         if($order_billing_phone[0] != 0 and $order_billing_phone[1] != 0)
         {
             if($order_billing_phone[0] == '+')
@@ -497,7 +499,8 @@ class SubmitCutomerServiceJob extends Component
             {
                $order_billing_phone = preg_replace('/0/', '00971', $order_billing_phone, 1);
             }
-        }
+        }*/
+        $order_billing_phone = "00971".$order_billing_phone;
 
         /*$arrData    = [
             'service_command'=>'PAYMENT_LINK',
@@ -529,8 +532,9 @@ class SubmitCutomerServiceJob extends Component
                 "countryCode"=>"UAE",
                 "orderReference"=>$merchant_reference,
                 "description"=>"GSS Service #".$merchant_reference,
-                "station"=>3,
+                "station"=>$customerjobs->stationInfo['StationID'],
             ];
+            //dd(json_encode($arrData));
             //dd(config('global.paymenkLink_payment_url'));
         $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.paymenkLink_payment_url'),$arrData);
         //dd($response);

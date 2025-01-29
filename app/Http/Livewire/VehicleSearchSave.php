@@ -27,7 +27,7 @@ class VehicleSearchSave extends Component
 {
     use WithFileUploads;
     public $searchByMobileNumber = true, $showSearchByMobileBtn=true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false, $showAddMakeModelNew=false;
-    public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false;
+    public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false, $numberPlateRequired=true;
     public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category=2, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
     public $countryList = [], $stateList=[], $plateEmiratesCategories=[], $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
     public $editCustomerAndVehicle=false;
@@ -221,14 +221,14 @@ class VehicleSearchSave extends Component
         if($this->plate_country=='AE'){
             $validatedData = $this->validate([
                 'plate_state' => 'required',
-                'plate_code' => 'required',
+                //'plate_code' => 'required',
                 'plate_number' => 'required',
             ]);
         }
         else
         {
             $validatedData = $this->validate([
-                'plate_code' => 'required',
+                //'plate_code' => 'required',
                 'plate_number' => 'required',
             ]);
 
@@ -319,29 +319,27 @@ class VehicleSearchSave extends Component
     }
 
     public function saveVehicleCustomer(){
-        if($this->plate_country!='AE'){
-            $validatedData = $this->validate([
-                'vehicle_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
-                'vehicle_type' => 'required',
-                'make' => 'required',
-                'model'=> 'required',
-                'plate_code'=> 'required',
-                'plate_number'=> 'required',
-            ]);
-            $this->plate_state=null;
+        if($this->numberPlateRequired)
+        {
+            $validateSaveVehicle['plate_country']='required';
+            $validateSaveVehicle['plate_number']='required';
+            $validateSaveVehicle['plate_code']='required';
+            if($this->plate_country=='AE'){
+                $validateSaveVehicle['plate_state']='required';
+            }
+            $validateSaveVehicle['vehicle_image'] = 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048';
+            $validateSaveVehicle['vehicle_type'] = 'required';
+            $validateSaveVehicle['make'] = 'required';
+            $validateSaveVehicle['model'] = 'required';
         }
         else
         {
-            $validatedData = $this->validate([
-                'vehicle_image' => 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
-                'vehicle_type' => 'required',
-                'make' => 'required',
-                'model'=> 'required',
-                'plate_state'=> 'required',
-                'plate_code'=> 'required',
-                'plate_number'=> 'required',
-            ]);
+            $validateSaveVehicle['vehicle_image'] = 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048';
+            $validateSaveVehicle['vehicle_type'] = 'required';
+            $validateSaveVehicle['make'] = 'required';
+            $validateSaveVehicle['model'] = 'required';
         }
+        $validatedData = $this->validate($validateSaveVehicle);
 
         //Save Customer
         $insertCustmoerData['Mobile']=isset($this->mobile)?$this->mobile:'';

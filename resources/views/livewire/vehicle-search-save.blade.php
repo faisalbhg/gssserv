@@ -135,7 +135,7 @@
                                     <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                                 @endif
                             </div>
-                            <div class="col-md-4 col-sm-5">
+                            <div class="col-md-5 col-sm-5">
                                 <div class="form-group">
                                     <label for="plateCountry">Country</label>
                                     <select class="form-control  " wire:model="plate_country"  id="plateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
@@ -168,7 +168,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-4 col-sm-3">
                                 <div class="form-group">
                                     <label for="plateCode">Plate Code</label>
                                     <select class="form-control  " wire:model="plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
@@ -181,7 +181,7 @@
                                 @error('plate_code') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                             </div>
                             @else
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-4 col-sm-3">
                                 <div class="form-group">
                                     <label for="plateCodeOthCountry">Plate Code</label>
                                     <input type="text" class="form-control" wire:model="plate_code" name="plateCode" id="plateCodeOthCountry" placeholder="Plate Code" style="padding:0.5rem 0.3rem !important;" />
@@ -196,6 +196,16 @@
                                     <input style="padding:0.5rem 0.3rem !important;" type="number" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="plate_number" name="plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Number">
                                 </div>
                             </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="form-group">
+                                    <label for="plateNumber"></label>
+                                    <div class="form-check form-switch mt-1">
+                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" wire:model="numberPlateRequired">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">Plate Number Required</label>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         @if($showSearchByPlateNumberButton)
                             <div class="row">
@@ -317,7 +327,7 @@
                                     <!-- <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button> -->
                                 @endif
                             </div>
-                            <div class="col-md-3 col-sm-9">
+                            <div class="col-md-9 col-sm-9">
                                 <div class="form-group">
                                     <label for="chaisisNumberInput">Chaisis Number</label>
                                     <input type="text" class="form-control" id="chaisisNumberInput" wire:model="chassis_number" name="chassis_number" placeholder="Chassis Number">
@@ -326,17 +336,17 @@
                         </div>
                         @if($showSearchByChaisisButton)
                             <div class="row">
-                                <div class="col-md-3 col-sm-12">
+                                <div class="col-md-12">
                                     <button type="button" wire:click="clickSearchByChaisisNumber()" class="btn btn-primary btn-sm">Search By Chaisis Number</button>
                                     <button type="button" wire:click="saveByPlateNumber()" class="btn btn-info btn-sm">Save Plate Number</button>
-                                    <div wire:loading wire:target="clickSearchByChaisisNumber">
-                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                            <div class="la-ball-beat">
-                                                <div></div>
-                                                <div></div>
-                                                <div></div>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div wire:loading wire:target="clickSearchByChaisisNumber">
+                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                    <div class="la-ball-beat">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
                                     </div>
                                 </div>
                             </div>
