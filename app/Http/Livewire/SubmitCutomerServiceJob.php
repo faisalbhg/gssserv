@@ -484,7 +484,12 @@ class SubmitCutomerServiceJob extends Component
         $exp_date = Carbon::now('+10:00')->format('Y-m-d\TH:i:s\Z');
         $order_billing_name = $customerjobs->customerInfo['TenantName'];
         $order_billing_phone = $customerjobs->customerInfo['Mobile'];
-        $order_billing_email = $customerjobs->customerInfo['Email']; 
+        if($customerjobs->customerInfo['Email']==''){
+            $order_billing_email = 'it.web@buhaleeba.ae';
+        }else{
+            $order_billing_email = $customerjobs->customerInfo['Email'];
+        }
+        
         $total = round(($customerjobs->grand_total),2);
         $merchant_reference = $customerjobs->job_number;
         $order_billing_phone = str_replace(' ', '', $order_billing_phone);
@@ -523,7 +528,7 @@ class SubmitCutomerServiceJob extends Component
                 "paymnet_link_expiry"=>Carbon::now()->addDays(1)->format('Y-m-d H:i:s'),
                 "amount"=>$total,
                 //"amount"=>1,
-                "emailAddress"=>$order_billing_email,
+                "emailAddress"=>isset($order_billing_email)?$order_billing_email:'it.web@buhaleeba.ae',
                 "firstName"=>$order_billing_name,
                 "customer_mobile"=>$order_billing_phone,
                 "lastName"=>$order_billing_name,
