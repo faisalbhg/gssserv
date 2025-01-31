@@ -77,8 +77,15 @@ return [
 
     //Job Status
     'jobs'=>[
+        'actions' => [
+            '0'=>'Created',
+            '1'=>'Work Started',
+            '2'=>'Work Completed',
+            '3'=>'Ready For Delivery',
+            '4'=>'Delivered',
+        ],
         'status' => [
-            '0'=>'Start',
+            '0'=>'Created',
             '1'=>'Working Progress',
             '2'=>'Work Completed',
             '3'=>'Ready For Delivery',

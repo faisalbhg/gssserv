@@ -9,6 +9,11 @@
     {
         height: 40px;
     }
+    @media (max-width: 991.98px) {
+    :not(.navbar) .dropdown .dropdown-menu {
+        opacity: 0;
+        top: 30px !important;
+    }
 </style>
 @endpush
 <main class="main-content position-relative  border-radius-lg">
@@ -31,9 +36,147 @@
             </button>
         </div>
         @endif
-    </div>
-    <div class="card px-3 my-2" >
-        <div class="card-body p-0">
+        @if($showlistCarTaxiToday)
+            <section class="py-3">
+                <div class="row">
+                    <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount total">
+                        <div class="card bg-gradient-dark shadow text-white">
+                            <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('total')">
+                                <div class="numbers">
+                                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total jobs</p>
+                                    <hr class="m-0">
+                                    <h5 class="font-weight-bolder mb-0  text-white">{{$getCountCarTaxiJob->total}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount working_progress">
+                        <div class="card bg-gradient-danger shadow text-white">
+                            <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('working_progress')">
+                                <div class="numbers">
+                                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Working</p>
+                                    <hr class="m-0">
+                                    <h5 class="font-weight-bolder mb-0 text-white">{{$getCountCarTaxiJob->working_progress}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount work_finished">
+                        <div class="card bg-gradient-warning shadow text-white">
+                            <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('work_finished')">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="numbers">
+                                            <p class="text-sm mb-0 text-capitalize font-weight-bold">Completed</p>
+                                            <hr class="m-0">
+                                            <h5 class="font-weight-bolder mb-0 text-white">{{$getCountCarTaxiJob->work_finished+$getCountCarTaxiJob->ready_to_deliver}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount delivered">
+                        <div class="card bg-gradient-success shadow text-white">
+                            <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('delivered')">
+                                <div class="numbers">
+                                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Delivered</p>
+                                    <hr class="m-0">
+                                    <h5 class="font-weight-bolder mb-0 text-white">{{$getCountCarTaxiJob->delivered}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8 me-auto text-left">
+                        <h5>Dubai Car Taxi Contract List On {{\Carbon\Carbon::parse($search_job_date)->format('dS M Y')}}</h5>
+                    </div>
+                </div>
+                <div class="row mt-lg-4 mt-2">
+                    <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+                        <div class="card h-100 cursor-pointer" wire:click="addNewCarTaxi">
+                            <div class="card-body d-flex flex-column justify-content-center text-center">
+                                <a href="javascript:;" wire:click="addNewCarTaxi">
+                                    <i class="fa-solid fa-car  text-danger mb-3"></i>
+                                    <h5 class=" text-danger"> Add New <i class="fa fa-plus text-danger mb-3"></i></h5>
+                                </a>
+                            </div>
+                        </div>
+                        <div wire:loading wire:target="addNewCarTaxi">
+                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                <div class="la-ball-beat">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    @foreach($carTaxiJobs as $taxiJob)
+                        <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+                            <div class="card">
+                                <div class="card-body p-3">
+                                    <div class="d-flex">
+                                        <div class="avatar avatar-xl bg-gradient-dark border-radius-md p-0 shadow">
+                                            <img src="{{'public/storage/'.$taxiJob->vehicle_image}}" alt="slack_logo">
+                                        </div>
+                                        <div class="ms-3 my-auto">
+                                            <h6>CT No: {{$taxiJob->ct_number}}</h6>
+                                            <h6>Meeter ID: {{$taxiJob->meter_id}}</h6>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <div class="dropdown">
+                                                <button class="btn btn-link text-secondary ps-0 pe-2" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-ellipsis-v text-lg"></i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end me-sm-n4 me-n3" aria-labelledby="navbarDropdownMenuLink">
+                                                    @foreach(config('global.jobs.actions') as $actionKey => $jobActions)
+                                                        @if($taxiJob->job_status+1 < $actionKey)
+                                                            <a class="dropdown-item" style="text-decoration: line-through;">{{$jobActions}}</a>
+                                                        @elseif($taxiJob->job_status+1 == $actionKey)
+                                                            <a class="dropdown-item {!!config('global.jobs.status_text_class')[$actionKey]!!}" wire:click="updateQwService('{{$taxiJob->job_number}}','{{$actionKey}}')" href="javascript:;">{{$jobActions}}</a>
+                                                        @else
+                                                            <a class="dropdown-item {!!config('global.jobs.status_text_class')[$actionKey]!!}">{{$jobActions}}</a>
+                                                        @endif
+                                                        
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h6 class="mb-0 text-sm mt-2">{{$taxiJob->makeInfo['vehicle_name']}} - <small>{{$taxiJob->modelInfo['vehicle_model_name']}} </small></h6>
+                                      <p class="text-sm font-weight-bold text-primary mb-0">{{$taxiJob->plate_number}}</p>
+                                      <hr class="m-0">
+                                      <p class="text-sm text-dark mb-0"><i class="fa-solid fa-user text-default mt-3"></i> {{$taxiJob->customer_name}}
+                                        @if(isset($taxiJob->customer_mobile))
+                                        <br><i class="fa-solid fa-phone text-default mb-3"></i> {{$taxiJob->customer_mobile}}
+                                        @endif
+                                      </p>
+                                    <hr class="horizontal dark">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <span class="w-100 badge badge-sm {!!config('global.jobs.status_btn_class')[$taxiJob->job_status]!!}">{{config('global.jobs.status')[$taxiJob->job_status]}}</span>
+                                            <small class="text-secondary mb-0">{{ \Carbon\Carbon::parse($taxiJob->created_at)->format('d-m-y h:i A') }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <div wire:loading wire:target="updateQwService">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        @else
             <div class="row">
                 
                 <div class="col-md-4 col-sm-4">
@@ -95,7 +238,7 @@
                             <progress max="100" x-bind:value="progress"></progress>
                         </div>
                     </div>
-                    
+                    @error('plate_number_image') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                     @if ($plate_number_image)
                         <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                     @endif
@@ -282,7 +425,7 @@
                             <div class="row m-4">
 
                                 <div class="col-md-12 col-sm-12">
-                                    <input type="file" id="roofImgFile" multiple wire:model="roof_images" accept="image/*" capture style="display:none"/>
+                                    <input type="file" id="roofImgFile" wire:model="roof_images" accept="image/*" capture style="display:none"/>
                                     <img class="w-100" id="roofimg" src="@if($roof_images) {{$roof_images->temporaryUrl()}} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
@@ -400,13 +543,25 @@
                 </div>
             @endif
             @include('components.modals.customerSignatureModel')
-        </div>
+        @endif
     </div>
-
-    
-
 </main>
 @push('custom_script')
+<script type="text/javascript">
+    $(document).ready(function(){
+      @if($showUpdateModel==true)
+        $('#serviceUpdateModal').modal('show');
+      @endif
+      $('.jobscount').addClass('opacity-5');
+      $('.{{$filterTab}}').removeClass('opacity-5');
+    });
+    window.addEventListener('filterTab',event=>{
+        $('.jobscount').removeClass('opacity-5');
+        $('.jobscount').addClass('opacity-5');
+        $('.'+event.detail.tabName).removeClass('opacity-5');
+    });
+</script>
+
 <script type="text/javascript">
     let file = document.querySelector('input[type="file"]').files[0]
  
