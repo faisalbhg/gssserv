@@ -562,25 +562,7 @@
     });
 </script>
 
-<script type="text/javascript">
-    let file = document.querySelector('input[type="file"]').files[0]
- 
-    // Upload a file:
-    @this.upload('plate_number_image', file, (uploadedFilename) => {
-        // Success callback.
-    }, () => {
-        // Error callback.
-    }, (event) => {
-        // Progress callback.
-        // event.detail.progress contains a number between 1 and 100 as the upload progresses.
-    })
- 
-    // Upload multiple files:
-    @this.uploadMultiple('plate_number_image', [file], successCallback, errorCallback, progressCallback)
- 
-    // Remove single file from multiple uploaded files
-    @this.removeUpload('plate_number_image', uploadedFilename, successCallback)
-</script>
+
 <script type="text/javascript">
     window.addEventListener('imageUpload',event=>{ 
         $('#plateImage').click(function(){
@@ -699,6 +681,24 @@ window.addEventListener('showSignature',event=>{
         signaturePad.clear();
     });
 });
+</script>
+
+<script type="text/javascript">
+    let file = document.querySelector('input[type="file"]').files[0]
+ 
+    // Upload a file:
+    @this.upload('plate_number_image', file, (uploadedFilename) => {
+        // Success callback.
+    }, () => {
+        // Error callback.
+    }, (event) => {
+        // Progress callback.
+        // event.detail.progress contains a number between 1 and 100 as the upload progresses.
+    })
+ 
+   
+    // Remove single file from multiple uploaded files
+    @this.removeUpload('plate_number_image', uploadedFilename, successCallback)
 </script>
 
 @endpush

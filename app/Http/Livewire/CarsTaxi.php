@@ -330,6 +330,17 @@ class CarsTaxi extends Component
         ];
         $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
 
+        try {
+            $meterialRequestResponse = DB::select("EXEC [dbo].[CreateFinancialEntriesContract] @jobnumber = ?, @doneby = ? ", [
+                $this->job_number,
+                "admin"
+            ]);
+        } catch (\Exception $e) {
+            //dd($e->getMessage());
+            //return $e->getMessage();
+        }
+
+
         $this->showlistCarTaxiToday=true;
         
     }

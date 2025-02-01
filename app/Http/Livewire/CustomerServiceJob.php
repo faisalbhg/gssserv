@@ -58,7 +58,7 @@ class CustomerServiceJob extends Component
     public $editCUstomerInformation=false, $addNewVehicleInformation=false, $showForms=false, $searchByMobileNumber = false, $editCustomerAndVehicle=false, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false;
     public $mobile, $name, $email, $customer_code, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
     public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
-    public $servicePackages;
+    public $servicePackages, $showPackageAddons=false;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -381,7 +381,8 @@ class CustomerServiceJob extends Component
 
         if($this->showPackageList)
         {
-            $this->servicePackages = ServicePackage::where(['Status'=>'A'])->get();
+            $this->servicePackages = ServicePackage::with(['packageDetails'])->where(['Status'=>'A'])->get();
+            //$this->showPackageAddons=false;
             dd($this->servicePackages);
         }
         else{
