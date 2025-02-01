@@ -46,7 +46,7 @@ use App\Http\Livewire\VehicleSearchSave;
 use App\Http\Livewire\CustomerServiceJob;
 use App\Http\Livewire\SubmitCutomerServiceJob;
 use App\Http\Livewire\UpdateJobCardSubmit;
-
+use App\Http\Livewire\GatePasses;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
 
@@ -132,6 +132,9 @@ Route::middleware('auth')->group(function () {
     //UpdateJobCardds
     Route::get('/update_jobcard/{job_number}',UpdateJobCards::class)->name('update_jobcard');
     Route::get('submit-job-update/{job_number}', UpdateJobCardSubmit::class)->name('submit-job-update');
+
+    //GatePasses
+    Route::get('gatepasses',GatePasses::class)->name('gatepasses');
 
 
 

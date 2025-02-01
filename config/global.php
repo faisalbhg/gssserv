@@ -229,6 +229,9 @@ return [
         "finance"=>[
             "1","4"
         ],
+        'security'=>[
+            "1","2","6"
+        ]
     ],
     "sorting"=>[
         "1"=>"Latest",

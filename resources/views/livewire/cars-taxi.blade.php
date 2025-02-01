@@ -157,6 +157,7 @@
                                     <hr class="horizontal dark">
                                     <div class="row">
                                         <div class="col-12">
+                                            <span class="{!!config('global.jobs.status_text_class')[$taxiJob->job_status]!!} text-center w-100"> #{{$taxiJob->ct_number}}</span>
                                             <span class="w-100 badge badge-sm {!!config('global.jobs.status_btn_class')[$taxiJob->job_status]!!}">{{config('global.jobs.status')[$taxiJob->job_status]}}</span>
                                             <small class="text-secondary mb-0">{{ \Carbon\Carbon::parse($taxiJob->created_at)->format('d-m-y h:i A') }}</small>
                                         </div>
