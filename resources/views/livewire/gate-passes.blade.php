@@ -37,11 +37,61 @@
         </div>
         @endif
         <section class="py-3">
+
             <div class="row">
                 <div class="col-md-8 me-auto text-left">
                     <h5>Dubai Car Taxi Contract List On {{\Carbon\Carbon::parse($search_job_date)->format('dS M Y')}}</h5>
                 </div>
             </div>
+
+            <div class="row">
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>Job Number</label>
+        <div class="form-group">
+          <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Search Job Number" wire:model="search_job_number" />
+          <div wire:loading wire:target="search_job_number">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>Job Date</label>
+        <div class="form-group">
+          <input type="date"  class="form-control" placeholder="Search Job Date" wire:model="search_job_date" />
+          <div wire:loading wire:target="search_job_date">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>Plate Search</label>
+        <div class="form-group">
+          <input style="padding:0.5rem 0.3rem !important;" type="text" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="search_plate_number" name="plate_number" placeholder="Number Plate">
+          <div wire:loading wire:target="search_plate_number">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+    </div>
             <div class="row mt-lg-4 mt-2">
                 
                 @forelse($jobsResults as $job)
