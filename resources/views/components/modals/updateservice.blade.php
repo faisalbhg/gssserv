@@ -72,10 +72,14 @@
                                                 <div class="col-md-12">
                                                     
                                                     <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.payment.status_class')[$jobcardDetails->payment_status]}} shadow text-center m-2">
-                                                        <i class="{{config('global.payment.status_icon')[$jobcardDetails->payment_type]}} opacity-10" aria-hidden="true"></i>
+                                                        @if($jobcardDetails->payment_type)
+                                                        <i class="{{config('global.payment.icons')[$jobcardDetails->payment_type]}} opacity-10" aria-hidden="true"></i>
+                                                        @endif
                                                     </div>
                                                     <h6 class="my-2 text-sm text-white">
+                                                        @if($jobcardDetails->payment_type)
                                                         Payment Status: <span class="text-sm {{config('global.payment.text_class')[$jobcardDetails->payment_type]}} pb-2">{{config('global.payment.type')[$jobcardDetails->payment_type]}}</span> - <span class=" {{config('global.payment.status_class')[$jobcardDetails->payment_status]}} text-gradient text-sm">{{config('global.payment.status')[$jobcardDetails->payment_status]}}</span>
+                                                        @endif
                                                     </h6>
                                                     
                                                 </div>
