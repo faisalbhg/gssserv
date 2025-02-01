@@ -95,7 +95,7 @@
                                         
                                         @forelse($modelSearchResult as $modelResult)
                                         <div class="col-md-4 col-sm-4 m-2">
-                                            <div class="card h-100 cursor-pointer" wire:click="selectModelInfoSave({{$modelResult}})">
+                                            <div class="card h-100 cursor-pointer" >
                                                 <div class="card-body py-3">
                                                     <h6 class="font-weight-bold text-capitalize text-center text-sm">{{$modelResult->vehicle_model_name}}</h6>
                                                 </div>

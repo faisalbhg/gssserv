@@ -381,8 +381,11 @@ class CustomerServiceJob extends Component
 
         if($this->showPackageList)
         {
-            $this->servicePackages = ServicePackage::get();
+            $this->servicePackages = ServicePackage::where(['Status'=>'A'])->get();
             dd($this->servicePackages);
+        }
+        else{
+            $this->servicePackages=null;
         }
 
 

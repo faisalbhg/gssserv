@@ -1112,7 +1112,7 @@
                                                 <h3 class="text-default font-weight-bold mt-2"></h3>
                                                 <p class="text-center h4"><s><small>AED</small> {{$unitPrice}}</s> <small>AED</small> {{$discountedPrice}}</p>
                                                 <div class="text-center align-center">
-                                                    <a href="javascript:;" class="btn btn-icon bg-gradient-dark d-lg-block mt-3 mb-0 " wire:click="packageAddOnContinue({{$servicePkg}})">Continue<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i></a>
+                                                    <a href="javascript:;" class="btn btn-icon bg-gradient-dark d-lg-block mt-3 mb-0 " wire:click="packageAddOnContinue({{$servicePackage}})">Continue<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i></a>
                                                 </div>
                                             </div>
                                         </div>
