@@ -381,9 +381,9 @@ class CustomerServiceJob extends Component
 
         if($this->showPackageList)
         {
-            $this->servicePackages = ServicePackage::with(['packageDetails'])->where(['Status'=>'A'])->get();
+            $this->servicePackages = ServicePackage::with(['packageDetails'])->where(['Status'=>'A','Division'=>Session::get('user')['station_code']])->get();
             //$this->showPackageAddons=false;
-            dd($this->servicePackages);
+            //dd($this->servicePackages);
         }
         else{
             $this->servicePackages=null;
@@ -1284,5 +1284,9 @@ class CustomerServiceJob extends Component
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'packageServiceListDiv',
         ]);
+    }
+
+    public function packageContinue($servicePackageId){
+        return redirect()->to('submit-package/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$servicePackageId);
     }
 }

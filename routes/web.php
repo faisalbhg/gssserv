@@ -47,8 +47,11 @@ use App\Http\Livewire\CustomerServiceJob;
 use App\Http\Livewire\SubmitCutomerServiceJob;
 use App\Http\Livewire\UpdateJobCardSubmit;
 use App\Http\Livewire\GatePasses;
+use App\Http\Livewire\PackagesBookings;
+
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
+
 
 
 use Illuminate\Http\Request;
@@ -79,6 +82,9 @@ Route::middleware('auth')->group(function () {
     Route::get('job-start',VehicleSearchSave::class)->name('job-start');
     Route::get('customer-service-job/{customer_id}/{vehicle_id}',CustomerServiceJob::class)->name('customer-service-job');
     Route::get('submit-job/{customer_id}/{vehicle_id}', SubmitCutomerServiceJob::class)->name('submit-job');
+
+    //PackagesBookings
+    Route::get('submit-package/{customer_id}/{vehicle_id}/{package_id}', PackagesBookings::class)->name('submit-package');
 
     //oute::get('/', HomePage::class)->name('dashboard');
     //Route::get('/dashboard', HomePage::class)->name('dashboard');

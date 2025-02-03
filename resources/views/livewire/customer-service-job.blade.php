@@ -1040,15 +1040,19 @@
                 <div class="container">
                     <div class="tab-content tab-space">
                         <div class="tab-pane active" id="monthly" role="tabpanel" aria-labelledby="tabs-iconpricing-tab-1">
-                            <div class="row">
+                            <div class="row" id="packageServiceListDiv">
                                 @foreach($servicePackages as $servicePackage)
-
-                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-0 mb-4">
+                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
                                         <div class="card">
                                             <div class="card-header text-center pt-4 pb-3">
-                                                <span class="badge rounded-pill bg-light text-dark">{{$servicePackage->PackageName}}</span>
+                                                <span class="badge rounded-pill bg-light {{config('global.package.type')[$servicePackage->PackageType]['bg_class']}} {{config('global.package.type')[$servicePackage->PackageType]['text_class']}}">{{config('global.package.type')[$servicePackage->PackageType]['title']}}</span>
+                                                <h4>{{$servicePackage->PackageName}}</h4>
+                                                @if($servicePackage->Duration)
                                                 <p class="text-sm font-weight-bold text-dark mt-2 mb-0">Duration: {{$servicePackage->Duration}} Months</p>
+                                                @endif
+                                                @if($servicePackage->PackageKM)
                                                 <p class="text-sm font-weight-bold text-dark">{{$servicePackage->PackageKM}} K.M</p>
+                                                @endif
                                                 
                                             </div>
                                             <div class="card-body text-lg-start text-left pt-0">
@@ -1062,17 +1066,17 @@
                                                         <div class="icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center">
                                                             <i class="fas fa-check opacity-10" aria-hidden="true"></i>
                                                         </div>
-                                                        <?php $totalPrice = $totalPrice+$packageDetails->TotalPrice; ?>
-                                                        <?php $unitPrice = $unitPrice+$packageDetails->UnitPrice; ?>
-                                                        <?php $discountedPrice = $discountedPrice+$packageDetails->DiscountedPrice; ?>
+                                                        <?php $totalPrice = $totalPrice+($packageDetails->TotalPrice*$packageDetails->Quantity); ?>
+                                                        <?php $unitPrice = $unitPrice+($packageDetails->UnitPrice*$packageDetails->Quantity); ?>
+                                                        <?php $discountedPrice = $discountedPrice+($packageDetails->DiscountedPrice*$packageDetails->Quantity); ?>
                                                         
                                                         <div>
                                                             @if($packageDetails->ItemType=='S')
-                                                            <span class="ps-3">{{$packageDetails->labourItemDetails['ItemName']}}</span>
+                                                            <span class="ps-3">{{$packageDetails->Quantity}} x {{$packageDetails->labourItemDetails['ItemName']}}</span>
                                                             @else
                                                             <span class="ps-3">{{$packageDetails->inventoryItemDetails['ItemName']}}</span>
                                                             @endif
-                                                            <p class="h6"><small><s>AED {{$packageDetails->UnitPrice}}</s> {{$packageDetails->DiscountedPrice}}</small></p>
+                                                            <p class="ps-3 h6"><small><s>AED {{$packageDetails->UnitPrice}}</s> {{$packageDetails->DiscountedPrice}}</small></p>
                                                         </div>
                                                     </div>
                                                     @endif  
@@ -1112,12 +1116,21 @@
                                                 <h3 class="text-default font-weight-bold mt-2"></h3>
                                                 <p class="text-center h4"><s><small>AED</small> {{$unitPrice}}</s> <small>AED</small> {{$discountedPrice}}</p>
                                                 <div class="text-center align-center">
-                                                    <a href="javascript:;" class="btn btn-icon bg-gradient-dark d-lg-block mt-3 mb-0 " wire:click="packageAddOnContinue({{$servicePackage}})">Continue<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i></a>
+                                                    <a href="javascript:;" class="btn btn-icon bg-gradient-dark d-lg-block mt-3 mb-0 " wire:click="packageContinue({{$servicePackage->Id}})">Continue<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i></a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
+                                <div wire:loading wire:target="packageContinue" >
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 @if($showPackageAddons)
                                 @include('components.modals.pckageAddOns')
                                 @endif

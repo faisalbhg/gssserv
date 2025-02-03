@@ -159,6 +159,20 @@
                         transform: scale(1);
             }
         }
+        .silver_button
+        {
+            background: radial-gradient(ellipse farthest-corner at right bottom, #E5E4E2 0%, #D6D5D3 8%, #C7C6C4 30%, #F4F3F1 40%, transparent 80%),
+                radial-gradient(ellipse farthest-corner at left top, #F4F3F1 0%, #C7C6C4 8%, #D6D5D3 25%, #E5E4E2 62.5%, #E5E4E2 100%) !important;
+        }
+        .gold_button
+        {
+            background: radial-gradient(ellipse farthest-corner at right bottom, #c39738 0%, #deb761 8%, #c39738 30%, #c39738 40%, transparent 80%),
+                radial-gradient(ellipse farthest-corner at left top, #FFFFFF 0%, #FFFFAC 8%, #D1B464 25%, #5d4a1f 62.5%, #5d4a1f 100%) !important;
+        }
+        .platinum_button
+        {
+            background-image: linear-gradient(0deg, rgba(242, 142, 28, 1) 10%, rgba(210, 116, 0, 1) 20%, rgba(179, 91, 0, 1) 35%, rgba(149, 66, 0, 1) 45%, rgba(118, 43, 0, 1) 55%, rgba(89, 19, 0, 1) 65%, rgba(61, 0, 0, 1) 80%, rgba(37, 0, 1, 1) 90%, rgba(0, 0, 0, 1) 100%) !important;
+        }
     </style>
     @livewireStyles
 
