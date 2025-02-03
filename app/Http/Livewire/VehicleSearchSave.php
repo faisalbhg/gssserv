@@ -39,7 +39,6 @@ class VehicleSearchSave extends Component
 
     public function render()
     {
-        
         $this->countryList = Country::get();
         if($this->plate_country!='AE'){
             $this->otherCountryPlateCode=true;

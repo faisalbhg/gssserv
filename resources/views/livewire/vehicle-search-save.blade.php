@@ -392,10 +392,19 @@
                         </div>
                         <div class="card-body p-3">
                             <div class="row" id="searchVehicleDiv">
+                                <span wire:target="nothing('unique_id')" wire:loading> {{-- new wire:navigating directive --}}
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </span>
                                 @foreach($customers as $customer)
                                 <!--wire:click="selectVehicle({{$customer->TenantId}}, {{$customer->id}})"-->
                                 <div class="col-xl-3 col-md-4 col-sm-6 mb-xl-0 my-4">
-                                    <a href="{{url('customer-service-job/'.$customer->customer_id.'/'.$customer->id)}}"  class="">
+                                    <a href="{{url('customer-service-job/'.$customer->customer_id.'/'.$customer->id)}}"  wire:click="nothing('unique_id')" wire:navigate>
                                         <div class="card card-background move-on-hover">
                                             <div class="full-background" style="background-image: url('{{url("public/storage/".$customer->vehicle_image)}}')"></div>
                                             <div class="card-body pt-5">

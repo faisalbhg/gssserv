@@ -73,18 +73,37 @@
                                 Contract
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="{{ route('cars-taxi') }}">Dubai Car Taxi</a></li><!-- 
+                                <li><a class="dropdown-item" href="{{ route('cars-taxi') }}"  wire:click="cartaxiClick('unique_id1')" wire:navigate>Dubai Car Taxi
+                                    <span wire:target="cartaxiClick('unique_id1')" wire:loading> {{-- new wire:navigating directive --}}
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </a></li><!-- 
                                 <li><a class="dropdown-item" href="{{ route('cars-taxi') }}">Emirates Catering</a></li> -->
                             </ul>
                         </div>
                     </li>
 
                     <li class="nav-item px-0 d-flex align-items-center"  >
-                        <a class="nav-link" href="{{ route('job-start') }}">
+                        <a class="nav-link" href="{{ route('job-start') }}"  wire:click="nothing('unique_id')" wire:navigate>
                             <button class="btn btn-icon btn-sm btn-3 bg-gradient-primary" type="button" wire:click="newVehicleOpen">
                                 <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fa-solid fa-car fa-xl"></i></span>
                                 <span class="btn-inner--text">New Job</span>
                             </button>
+                            <span wire:target="nothing('unique_id')" wire:loading> {{-- new wire:navigating directive --}}
+                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                    <div class="la-ball-beat">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </span>
                         </a>
                     </li>
                     

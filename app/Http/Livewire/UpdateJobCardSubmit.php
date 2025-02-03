@@ -56,12 +56,12 @@ class UpdateJobCardSubmit extends Component
             $this->checklistLabel = json_decode($this->checklistEntry->checklist,true);
             $this->fuel = $this->checklistEntry->fuel;
             $this->vehicle_image = json_decode($this->checklistEntry->vehicle_image,true);
-            $this->vImageR1 = $this->vehicle_image['vImageR1'];
+            /*$this->vImageR1 = $this->vehicle_image['vImageR1'];
             $this->vImageR2 = $this->vehicle_image['vImageR1'];
             $this->vImageF = $this->vehicle_image['vImageF'];
             $this->vImageB = $this->vehicle_image['vImageB'];
             $this->vImageL1 = $this->vehicle_image['vImageL1'];
-            $this->vImageL2 = $this->vehicle_image['vImageL2'];
+            $this->vImageL2 = $this->vehicle_image['vImageL2'];*/
             $this->turn_key_on_check_for_fault_codes = $this->checklistEntry->turn_key_on_check_for_fault_codes;
             $this->start_engine_observe_operation = $this->checklistEntry->start_engine_observe_operation;
             $this->reset_the_service_reminder_alert = $this->checklistEntry->reset_the_service_reminder_alert;
