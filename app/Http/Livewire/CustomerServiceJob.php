@@ -36,12 +36,15 @@ use App\Models\VehicleModels;
 use App\Models\VehicleMakes;
 use App\Models\ServicePackage;
 use App\Models\ServicePackageDetail;
+use App\Models\PackageBookings;
+use App\Models\PackageBookingServices;
+use App\Models\PackageBookingServiceLogs;
 
 
 class CustomerServiceJob extends Component
 {
     use WithFileUploads;
-    public $selectedCustomerVehicle=false, $showSectionsList=false, $showServiceSectionsList=false, $showServiceItems=false, $showItemsSearchResults=false, $showQlItemSearch=false, $showQlEngineOilItems=false, $showQlItemsOnly=false, $showQlItemsList=false, $showPackageList=false, $selectPackageMenu=false;
+    public $selectedCustomerVehicle=false, $showSectionsList=false, $showServiceSectionsList=false, $showServiceItems=false, $showItemsSearchResults=false, $showQlItemSearch=false, $showQlEngineOilItems=false, $showQlItemsOnly=false, $showQlItemsList=false, $showPackageList=false, $selectPackageMenu=false, $showPackageServiceSectionsList=false;
     public $showServiceGroup, $showCheckout;
     public $showVehicleAvailable, $selectedVehicleInfo, $selected_vehicle_id, $customer_id;
     public $servicesGroupList, $service_group_id, $service_group_name, $service_group_code, $station, $section_service_search, $propertyCode, $selectedSectionName;
@@ -59,6 +62,7 @@ class CustomerServiceJob extends Component
     public $mobile, $name, $email, $customer_code, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
     public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
     public $servicePackages, $showPackageAddons=false;
+    public $package_number, $showPackageOtpVerify=false, $package_otp, $package_otp_message;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -151,6 +155,19 @@ class CustomerServiceJob extends Component
         else
         {
             $this->sectionServiceLists=[];
+        }
+
+        if($this->showPackageServiceSectionsList)
+        {
+            $packageBookingServicesQuery = PackageBookingServices::with(['labourItemDetails'])->where(['package_number'=>$this->package_number])->get();
+            $sectionServicePriceLists = [];
+            foreach($packageBookingServicesQuery as $key => $packageServices)
+            {
+                $sectionServicePriceLists[$key]['priceDetails'] = $packageServices->labourItemDetails;
+                $sectionServicePriceLists[$key]['discountDetails']=$packageServices;
+                
+            }
+            $this->sectionServiceLists=$sectionServicePriceLists;
         }
 
         if($this->showServiceItems){
@@ -651,6 +668,81 @@ class CustomerServiceJob extends Component
         ]);*/
         session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
     }
+
+     public function addtoCartPackage($servicePrice,$discount)
+    {
+        $servicePrice = json_decode($servicePrice,true);
+        $discountPrice = json_decode($discount,true);
+        //dd($discountPrice);
+        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']]);
+        if($customerBasketCheck->count())
+        {
+            $customerBasketCheck->increment('quantity', 1);
+            if($discountPrice!=null){
+                $cartUpdate['price_id']=$discountPrice['id'];
+                $cartUpdate['customer_group_id']=$discountPrice['package_id'];
+                $cartUpdate['customer_group_code']=$discountPrice['package_code'];
+                $cartUpdate['min_price']=$discountPrice['unit_price'];
+                $cartUpdate['max_price']=$discountPrice['unit_price'];
+                //$cartUpdate['start_date']=$discountPrice['created_at'];
+                //$cartUpdate['end_date']=$discountPrice['EndDate'];
+                $cartUpdate['discount_perc']=100;
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']])->update($cartUpdate);
+            }
+            
+        }
+        else
+        {
+            $cartInsert = [
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->vehicle_id,
+                'item_id'=>$servicePrice['ItemId'],
+                'item_code'=>$servicePrice['ItemCode'],
+                'cart_item_type'=>3,
+                'company_code'=>$servicePrice['CompanyCode'],
+                'category_id'=>$servicePrice['CategoryId'],
+                'sub_category_id'=>$servicePrice['SubCategoryId'],
+                'brand_id'=>$servicePrice['BrandId'],
+                'bar_code'=>$servicePrice['BarCode'],
+                'item_name'=>$servicePrice['ItemName'],
+                'description'=>$servicePrice['Description'],
+                'division_code'=>$servicePrice['DivisionCode'],
+                'department_code'=>$servicePrice['DepartmentCode'],
+                'section_name'=>$this->selectedSectionName,
+                'department_name'=>$this->service_group_name,
+                'section_code'=>$servicePrice['SectionCode'],
+                'unit_price'=>$servicePrice['UnitPrice'],
+                'quantity'=>1,
+                'created_by'=>Session::get('user')['id'],
+                'created_at'=>Carbon::now(),
+            ];
+            
+            if($discountPrice!=null){
+                $cartInsert['price_id']=$discountPrice['id'];
+                $cartInsert['customer_group_id']=$discountPrice['package_id'];
+                $cartInsert['customer_group_code']=$discountPrice['package_code'];
+                $cartInsert['min_price']=$discountPrice['unit_price'];
+                $cartInsert['max_price']=$discountPrice['unit_price'];
+                //$cartInsert['start_date']=$discountPrice['created_at'];
+                //$cartInsert['end_date']=$discountPrice['EndDate'];
+                $cartInsert['discount_perc']=100;
+            }
+            
+            CustomerServiceCart::insert($cartInsert);
+        }
+        $this->serviceAddedMessgae[$servicePrice['ItemCode']]=true;
+        //$this->dispatchBrowserEvent('closeServicesListModal');
+
+        //dd($this->sectionServiceLists);
+        /*$this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'success',
+            'message' => 'Added to Cart Successfully',
+            'text' => 'service added..!',
+            'cartitemcount'=>\Cart::getTotalQuantity()
+        ]);*/
+        //session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
+    }
+
 
     public function cartSetDownQty($cartId){
         CustomerServiceCart::find($cartId)->decrement('quantity');
@@ -1284,6 +1376,57 @@ class CustomerServiceJob extends Component
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'packageServiceListDiv',
         ]);
+    }
+
+    public function validatePackageContinue(){
+        $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
+        $mobileNumber = isset($customerPackageInfo->customerInfo['Mobile'])?'971'.substr($customerPackageInfo->customerInfo['Mobile'], -9):null;
+        $customerName = isset($customerPackageInfo->customerInfo['TenantName'])?$customerPackageInfo->customerInfo['TenantName']:null;
+        $otpPack = fake()->randomNumber(6);
+        PackageBookings::where(['package_number'=>$this->package_number])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
+        if($mobileNumber!=''){
+            if($mobileNumber=='971566993709'){
+                $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+            }
+        }
+        $this->showPackageOtpVerify=true;
+    }
+
+    public function verifyPackageOtp(){
+        $validatedData = $this->validate([
+            'package_otp' => 'required',
+        ]);
+        if(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp])->exists())
+        {
+            $this->showPackageServiceSectionsList=true;
+            $this->dispatchBrowserEvent('openServicesPackageListModal');
+        }
+        else
+        {
+            $this->showPackageOtpVerify=true;
+            $this->otpVerified=false;
+            $this->otp_message='OTP is not matching..!';
+            $this->dispatchBrowserEvent('scrollto', [
+                'scrollToId' => 'packageOTPVerifyRow',
+            ]);
+        }
+    }
+
+    public function resendPackageOtp(){
+        $this->package_otp=null;
+        $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
+        $mobileNumber = isset($customerPackageInfo->customerInfo['Mobile'])?'971'.substr($customerPackageInfo->customerInfo['Mobile'], -9):null;
+        $customerName = isset($customerPackageInfo->customerInfo['TenantName'])?$customerPackageInfo->customerInfo['TenantName']:null;
+        $otpPack = fake()->randomNumber(6);
+        PackageBookings::where(['package_number'=>$this->package_number])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
+        if($mobileNumber!=''){
+            if($mobileNumber=='971566993709'){
+                $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+            }
+        }
+        $this->showOtpVerify=true;
     }
 
     public function packageContinue($servicePackageId){

@@ -51,5 +51,13 @@ class PackageBookingServices extends Model
         'uppdated_at',
     ];
 
+
+    public function labourItemDetails()
+    {
+        return $this->belongsTo(LaborItemMaster::class,'item_code','ItemCode');
+    }
+
+    
+
    
 }

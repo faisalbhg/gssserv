@@ -10,6 +10,8 @@ class ServicePackage extends Model
     use HasFactory;
 
     protected $table ='ServicePackage';
+    protected $primaryKey = 'Id';
+    public $timestamps = false;
 
     public function packageDetails()
     {

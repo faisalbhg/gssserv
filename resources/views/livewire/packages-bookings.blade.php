@@ -80,20 +80,18 @@
                 </div>
             </div>
         @endif
-         @if($showCheckout)
-            
-
+        @if($showCheckout)
             <div class="row mt-3">
-                <div class="col-md-12 mb-4" >
-                    <div class="card">
+                <div class="col-md-6 col-sm-6 mb-4" >
+                    <div class="card h-100">
                         <div class="card-header text-center pt-4 pb-3">
-                            <span class="badge rounded-pill bg-light {{config('global.package.type')[$packageDetails->PackageType]['bg_class']}} {{config('global.package.type')[$packageDetails->PackageType]['text_class']}}">{{config('global.package.type')[$packageDetails->PackageType]['title']}}</span>
-                            <h4>{{$packageDetails->PackageName}}</h4>
-                            @if($packageDetails->Duration)
-                            <p class="text-sm font-weight-bold text-dark mt-2 mb-0">Duration: {{$packageDetails->Duration}} Months</p>
+                            <span class="badge rounded-pill bg-light {{config('global.package.type')[$packageInfo->PackageType]['bg_class']}} {{config('global.package.type')[$packageInfo->PackageType]['text_class']}}">{{config('global.package.type')[$packageInfo->PackageType]['title']}}</span>
+                            <h4>{{$packageInfo->PackageName}}</h4>
+                            @if($packageInfo->Duration)
+                            <p class="text-sm font-weight-bold text-dark mt-2 mb-0">Duration: {{$packageInfo->Duration}} Months</p>
                             @endif
-                            @if($packageDetails->PackageKM)
-                            <p class="text-sm font-weight-bold text-dark">{{$packageDetails->PackageKM}} K.M</p>
+                            @if($packageInfo->PackageKM)
+                            <p class="text-sm font-weight-bold text-dark">{{$packageInfo->PackageKM}} K.M</p>
                             @endif
                             
                         </div>
@@ -101,16 +99,17 @@
                             <?php $totalPrice=0;?>
                             <?php $unitPrice=0;?>
                             <?php $discountedPrice=0;?>
-                            @foreach($packageDetails->packageDetails as $packageDetails)
+                            @foreach($packageInfo->packageDetails as $packageDetails)
                                 @if($packageDetails->isDefault==1)
                                 <div class="d-flex justify-content-lg-center p-2">
                                     
                                     <div class="icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center">
                                         <i class="fas fa-check opacity-10" aria-hidden="true"></i>
                                     </div>
-                                    <?php $totalPrice = $totalPrice+($packageDetails->TotalPrice*$packageDetails->Quantity); ?>
+                                    <?php $totalPrice = $totalPrice+($packageDetails->UnitPrice*$packageDetails->Quantity); ?>
                                     <?php $unitPrice = $unitPrice+($packageDetails->UnitPrice*$packageDetails->Quantity); ?>
                                     <?php $discountedPrice = $discountedPrice+($packageDetails->DiscountedPrice*$packageDetails->Quantity); ?>
+                                    
                                     
                                     <div>
                                         @if($packageDetails->ItemType=='S')
@@ -118,44 +117,70 @@
                                         @else
                                         <span class="ps-3">{{$packageDetails->inventoryItemDetails['ItemName']}}</span>
                                         @endif
-                                        <p class="ps-3 h6"><small><s>AED {{$packageDetails->UnitPrice}}</s> {{$packageDetails->DiscountedPrice}}</small></p>
+                                        <p class="ps-3 h6"><small><s>AED {{round($packageDetails->UnitPrice)}}</s> {{round($packageDetails->DiscountedPrice)}}</small></p>
                                     </div>
                                 </div>
                                 @endif  
                             @endforeach
                             
                             <h3 class="text-default font-weight-bold mt-2"></h3>
-                            <p class="text-center h4"><s><small>AED</small> {{$unitPrice}}</s> <small>AED</small> {{$discountedPrice}}</p>
+                            <p class="text-center h4"><s><small>AED</small> {{round($totalPrice)}}</s> <small>AED</small> {{round($discountedPrice)}}</p>
                             <div class="text-center align-center">
 
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-12 mb-4" >
-                    <div class="card p-2 mb-4">
+            
+                <div class="col-md-6 col-sm-6 mb-4" >
+                    <div class="card p-2 mb-4 h-100">
                         <div class="card-header text-center pt-4 pb-3">
                             
-                            <h1 class="font-weight-bold mt-2">
-                                Payment Confirmation
-                            </h1>
+                            <h4 class="font-weight-bold mt-2">Payment Confirmation</h4>
                             <hr>
                             
                         </div>
                         <div class="card-body text-lg-left text-center pt-0">
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ $total }}</span></p>
+                            <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ round($total) }}</span></p>
                             @if($totalDiscount>0 )
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ $totalDiscount }}</span></p>
+                            <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ round($totalDiscount) }}</span></p>
                             @endif
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ $tax }}</span></p>
-                            <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ $grand_total }}</span></p>
+                            <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ round($tax) }}</span></p>
+                            <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ round(($grand_total)) }}</span></p>
                             
                             
                         </div>
                         <div class="card-footer text-lg-left text-center pt-0">
+                            <div class="d-flex justify-content-center p-2">
+                                <div class="form-check">
+                                    <a wire:click="confirmPackage()" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Confirm & Submit Package</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if($showOtpVerify)
+                <div class="col-md-12 col-sm-12 mb-4" id="packageOTPVerifyRow">
+                    <div class="card p-2 mb-4">
+                        
+                        <div class="card-body text-lg-left text-center pt-0">
+                            <label for="packageOTPVerify">Package OTP Verify</label>
+                            <div class="input-group">
+                                <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model="package_otp">
+                                <button class="btn btn-outline-success mb-0" type="button" wire:click="verifyPackageOtp">Verify</button>
+                                <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendPackageOtp">Resend</button>
+                            </div>
+                            @error('package_otp') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                            @if($otp_message)<span class="mb-4 text-danger">{{ $otp_message }}</span>@endif
+                        </div>
+                    </div>
+                </div>
+                @endif
+                @if($otpVerified)
+                <div class="col-md-12 col-sm-12 mb-4" id="packagePaymentRow">
+                    <div class="card p-2 mb-4">
+                        
+                        <div class="card-body text-lg-left text-center pt-0">
                             <div class="d-flex justify-content-center p-2">
                                 @if($mobile)
                                 <div class="form-check">
@@ -170,17 +195,41 @@
                                 <div class="form-check">
                                     <a wire:click="completePaymnet('cash')" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Cash Payment<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
                                 </div>
-                                <div class="form-check">
-                                    <a wire:click="payLater('paylater')" class="btn btn-icon bg-gradient-secondary d-lg-block mt-3 mb-0">Pay Later<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
-                                </div>
-
                                 
                             </div>
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
 
+            <div wire:loading wire:target="confirmPackage">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <div wire:loading wire:target="verifyPackageOtp">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <div wire:loading wire:target="resendPackageOtp">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
             <div wire:loading wire:target="completePaymnet">
                 <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                     <div class="la-ball-beat">
@@ -206,8 +255,8 @@
                     <div class="card p-2 mb-4 bg-cover text-center" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
                         <div class="card-body z-index-2 py-2">
                             <h2 class="text-white">Successful..!</h2>
-                            <p class="text-white">The service in under processing</p>
-                            <button type="button" class=" text-white btn bg-gradient-default selectVehicle py-2 " wire:click="dashCustomerJobUpdate('{{$job_number}}')"   >Job Number: {{$job_number}}</button>
+                            <p class="text-white">The package in created successfully</p>
+                            <button type="button" class=" text-white btn bg-gradient-default selectVehicle py-2 "  >Package Number: {{$package_number}}</button>
                         </div>
                         <div class="mask bg-gradient-success border-radius-lg"></div>
                     </div>

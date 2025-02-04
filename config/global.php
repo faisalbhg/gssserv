@@ -246,10 +246,10 @@ return [
         "1"=>[
             "name"=>"mshastra",
             "url"=>"https://mshastra.com/sendurlcomma.aspx",
-            "sms_url"=>"https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE",
+            "sms_url"=>"https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=GSS SERVICE",
             "profileid"=>"20092622",
             "password"=>"buhaleeba@123",
-            "senderid"=>"BuhaleebaRE",
+            "senderid"=>"GSS SERVICE",
         ]
     ],
 

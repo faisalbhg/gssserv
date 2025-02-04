@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('package_code')->nullable();
             $table->integer('item_id')->nullable();
             $table->string('item_code')->nullable();
-            $table->double('unit_price')->nullable();
-            $table->double('discounted_price')->nullable();
+            $table->double('unit_price',  8, 2)->nullable();
+            $table->double('discounted_price',  8, 2)->nullable();
             $table->double('discount_percentage')->nullable();
             $table->string('item_type')->nullable();
             $table->string('frequency')->nullable();

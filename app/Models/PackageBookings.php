@@ -20,6 +20,8 @@ class PackageBookings extends Model
         'package_km',
         'package_date_time',
         'customer_id',
+        'otp_code',
+        'otp_verify',
         'customer_name',
         'customer_mobile',
         'customer_email',
