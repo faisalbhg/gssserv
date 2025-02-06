@@ -22,6 +22,16 @@ class Dashboard extends Component
     protected $listeners = ["selectDate" => 'getSelectedDate'];
     public $pendingCustomersCart;
 
+    function mount(){
+        $user = auth()->user();
+
+        if ($user && isset($user->id)) {
+            Session::put('user', $user);
+        } else {
+            return redirect()->to('/login');
+        }
+    }
+
     public function render()
     {
         

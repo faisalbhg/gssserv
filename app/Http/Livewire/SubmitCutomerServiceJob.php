@@ -22,6 +22,9 @@ use App\Models\MaterialRequest;
 use App\Models\WorkOrderJob;
 use App\Models\JobcardChecklistEntries;
 use App\Models\ServiceChecklist;
+use App\Models\PackageBookings;
+use App\Models\PackageBookingServices;
+use App\Models\PackageBookingServiceLogs;
 
 class SubmitCutomerServiceJob extends Component
 {
@@ -127,6 +130,8 @@ class SubmitCutomerServiceJob extends Component
         $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle','stationInfo'])->where(['job_number'=>$this->job_number])->first();
         //dd($customerjobs);
         $mobileNumber = isset($customerjobs->customerInfo['Mobile'])?'971'.substr($customerjobs->customerInfo['Mobile'], -9):null;
+        $customerName = isset($customerjobs->customerInfo['TenantName'])?$customerjobs->customerInfo['TenantName']:null;
+        $plate_number = $customerjobs->plate_number;
         //dd($mobileNumber);
         //$mobileNumber = substr($customerjobs->mobile, -9);
         $paymentmode = null;
@@ -144,7 +149,8 @@ class SubmitCutomerServiceJob extends Component
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
                 if($customerjobs->customerInfo['Mobile']!=''){
                     if($mobileNumber=='971566993709'){
-                        $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link'])."&CountryCode=ALL");
+                        $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.Session::get('user')->stationName['CorporateName'].'. Our team will update you shortly. To avoid waiting at the cashier, you can pay online using this link: '.$paymentResponse['payment_redirect_link'].'. Alternatively, you can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                        $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                     }
                 }
 
@@ -173,7 +179,8 @@ class SubmitCutomerServiceJob extends Component
             $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>2,'payment_request'=>'card payment','job_create_status'=>1]);
             if($customerjobs->customerInfo['Mobile']!=''){
                 if($mobileNumber=='971566993709'){
-                    $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Complete your payment and proceed. Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.Session::get('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 }
             }
 
@@ -194,7 +201,8 @@ class SubmitCutomerServiceJob extends Component
 
             if($customerjobs->customerInfo['Mobile']!=''){
                 if($mobileNumber=='971566993709'){
-                    $response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Visit '.url('qr/'.$job_number).' for the updates and gate pass')."&CountryCode=ALL");
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.Session::get('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 }
             }
 
@@ -364,6 +372,17 @@ class SubmitCutomerServiceJob extends Component
                     'ItemName'=>$cartData->item_name,
                     'QuantityRequested'=>$cartData->quantity,
                     'Activity2Code'=>Session::get('user')->station_code
+                ]);
+            }
+
+            if($cartData->cart_item_type==3){
+                //dd(PackageBookings::with(['customerPackageServices'])->where(['customer_id'=>$cartData->customer_id,'package_code'=>$cartData->customer_group_code])->first());
+                PackageBookingServices::where([
+                    'item_id'=>$cartData->item_id,
+                    'item_code'=>$cartData->item_code,
+                    'package_code'=>$cartData->customer_group_code,
+                ])->update([
+                    'package_service_use_count'=>$cartData->quantity
                 ]);
             }
             

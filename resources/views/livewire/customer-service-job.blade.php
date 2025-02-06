@@ -1073,8 +1073,25 @@
                                             
                                         </div>
                                         <div class="card-body text-lg-start text-left pt-0">
+                                            @if ($message = Session::get('package_success'))
+                                            <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
+                                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            @endif
+                                            @if ($message = Session::get('package_error'))
+                                            <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                                <span class="alert-text"><strong>Error!</strong> {{ $message }}</span>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            @endif
                                             <div class="form-group">
-                                                <label for="redeemPackageNumber" class="form-control-label">Package Number</label>
                                                 <input class="form-control" type="text" wire:model="package_number" id="redeemPackageNumber" placeholder="Redeem Package Number..!">
                                             </div>
                                             @if($showPackageOtpVerify)
@@ -1088,6 +1105,24 @@
                                                                 <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model="package_otp">
                                                                 <button class="btn btn-outline-success mb-0" type="button" wire:click="verifyPackageOtp">Verify</button>
                                                                 <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendOtp">Resend</button>
+                                                                <div wire:loading wire:target="verifyPackageOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div wire:loading wire:target="resendOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                             @error('package_otp') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                                             @if($package_otp_message)<span class="mb-4 text-danger">{{ $package_otp_message }}</span>@endif
@@ -1246,6 +1281,8 @@
                             <div class="row">
                                 @forelse($sectionServiceLists as $sectionServiceList)
                                 <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
+                                <?php $package_quantity = $sectionServiceList['package_quantity']; ?>
+                                <?php $package_quantity_used = $sectionServiceList['package_quantity_used']; ?>
                                 <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
                                 @if($priceDetails->UnitPrice!=0)
                                 <div class="col-md-6 col-sm-6">
@@ -1276,10 +1313,14 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="d-flex border-radius-lg p-0 mt-2">
-                                                    @if($discountDetails != null)
-                                                    <span class="badge bg-gradient-info">{{round($discountDetails['DiscountPerc'],2)}}%off</span>
+                                                    @if($package_quantity==$package_quantity_used)
+                                                        <span class="badge bg-gradient-danger">Package Used</span>
+                                                    @else
+                                                        @if($discountDetails != null)
+                                                        <span class="badge bg-gradient-info">{{round($discountDetails['DiscountPerc'],2)}}%off</span>
+                                                        @endif
+                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartPackage('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
                                                     @endif
-                                                    <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartPackage('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
                                                 </div>
                                             </div>
                                         </div>

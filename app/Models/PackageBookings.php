@@ -52,6 +52,11 @@ class PackageBookings extends Model
         'uppdated_at',
     ];
 
+    public function customerPackageServices()
+    {
+        return $this->hasMany(PackageBookingServices::class,'package_id','id');
+    }
+
     public function customerInfo()
     {
         //return $this->belongsTo(Customers::class, 'customer_id', 'id');

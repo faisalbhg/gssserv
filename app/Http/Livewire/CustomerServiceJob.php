@@ -83,8 +83,50 @@ class CustomerServiceJob extends Component
         {
             $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
             if($this->plate_state){
+                
+                switch ($this->plate_state) {
+                    case 'Abu Dhabi':
+                        $this->plateStateCode = 1;
+                        $this->plate_category = '242';
+                        break;
+                    case 'Dubai':
+                        $this->plateStateCode = 2;
+                        $this->plate_category = '1';
+                        break;
+                    case 'Sharjah':
+                        $this->plateStateCode = 3;
+                        $this->plate_category = '103';
+                        break;
+                    case 'Ajman':
+                        $plateStateCode = 4;
+                        $this->plate_category = '122';
+                        break;
+                    case 'Umm Al-Qaiwain':
+                        $this->plateStateCode = 5;
+                        $this->plate_category = '134';
+                        break;
+                    case 'Ras Al-Khaimah':
+                        $this->plateStateCode = 6;
+                        $this->plate_category = '147';
+                        break;
+                    case 'Fujairah':
+                        $this->plateStateCode = 7;
+                        $this->plate_category = '169';
+                        break;
+                    
+                    default:
+                        $this->plateStateCode = 2;
+                        $this->plate_category = '1';
+                        break;
+                }
+                //$this->plateEmiratesCategories = PlateEmiratesCategory::where(['plateEmiratesId'=>$this->plateStateCode])->get();
+                
                 $this->plateEmiratesCodes = PlateCode::where(['plateEmiratesId'=>$this->plateStateCode,'is_active'=>1])->get();
+                
+                
+                //dd($this->plateEmiratesCodes);
             }
+
             $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
             $this->listVehiclesMake = VehicleMakes::get();
             if($this->make){
@@ -159,11 +201,17 @@ class CustomerServiceJob extends Component
 
         if($this->showPackageServiceSectionsList)
         {
-            $packageBookingServicesQuery = PackageBookingServices::with(['labourItemDetails'])->where(['package_number'=>$this->package_number])->get();
+            $packageBookingServicesQuery = PackageBookingServices::with(['labourItemDetails'])->where([
+                'package_number'=>$this->package_number,
+                //'package_status'=>2
+            ])->get();
             $sectionServicePriceLists = [];
             foreach($packageBookingServicesQuery as $key => $packageServices)
             {
+                $sectionServicePriceLists[$key]['package_quantity'] = $packageServices->quantity;
+                $sectionServicePriceLists[$key]['package_quantity_used'] = $packageServices->package_service_use_count;
                 $sectionServicePriceLists[$key]['priceDetails'] = $packageServices->labourItemDetails;
+                $packageServices['DiscountPerc']=100;
                 $sectionServicePriceLists[$key]['discountDetails']=$packageServices;
                 
             }
@@ -1380,17 +1428,29 @@ class CustomerServiceJob extends Component
 
     public function validatePackageContinue(){
         $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
-        $mobileNumber = isset($customerPackageInfo->customerInfo['Mobile'])?'971'.substr($customerPackageInfo->customerInfo['Mobile'], -9):null;
-        $customerName = isset($customerPackageInfo->customerInfo['TenantName'])?$customerPackageInfo->customerInfo['TenantName']:null;
-        $otpPack = fake()->randomNumber(6);
-        PackageBookings::where(['package_number'=>$this->package_number])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
-        if($mobileNumber!=''){
-            if($mobileNumber=='971566993709'){
-                $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
-                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+        if($customerPackageInfo->payment_status==2){
+            if($customerPackageInfo->package_status==2){
+                $mobileNumber = isset($customerPackageInfo->customerInfo['Mobile'])?'971'.substr($customerPackageInfo->customerInfo['Mobile'], -9):null;
+                $customerName = isset($customerPackageInfo->customerInfo['TenantName'])?$customerPackageInfo->customerInfo['TenantName']:null;
+                $otpPack = fake()->randomNumber(6);
+                PackageBookings::where(['package_number'=>$this->package_number])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
+                if($mobileNumber!=''){
+                    if($mobileNumber=='971566993709'){
+                        $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
+                        //$response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                    }
+                }
+                $this->showPackageOtpVerify=true;
+                session()->flash('package_success', 'Package is valid, '.$otpPack.' please enter the OTP shared in the registered mobile number..!');
+            }
+            else{
+                session()->flash('package_error', 'Package is invalid !');
             }
         }
-        $this->showPackageOtpVerify=true;
+        else{
+            session()->flash('package_error', 'Package is invalid !');
+        }
+        
     }
 
     public function verifyPackageOtp(){
