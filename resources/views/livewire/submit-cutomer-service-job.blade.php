@@ -85,7 +85,7 @@
                         <div class="card card-profile card-plain">
                             <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Pricing Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
                             <div class="row">
-                                <div class="col-lg-8">
+                                <div class="col-lg-8 col-sm-12">
                                     <div class="card h-100">
                                         
                                         <div class="card-body p-3 pb-0">
@@ -149,6 +149,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <button type="button" class="btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
                                 </div>
                             </div>
                         </div>
