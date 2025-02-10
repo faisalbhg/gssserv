@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Http;
 use LaravelPayfort\Facades\Payfort;
 use Illuminate\Support\Facades\Hash;
 use DB;
-use Spatie\Image\Image;
 
 use App\Models\StateList;
 use App\Models\PlateCode;
