@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="modal-footer z-index-stick">
-                <button type="button" class="btn bg-gradient-secondary" wire:click="closeMarkScrach()"  data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn bg-gradient-secondary" id="clearSignature" >Clear</button>
                 <button type="submit" class="btn bg-gradient-primary" id="saveSignature" >Save</button>
             </div>
