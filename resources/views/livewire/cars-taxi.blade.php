@@ -224,16 +224,16 @@
                     x-on:livewire-upload-error="isUploading = false" 
                     x-on:livewire-upload-progress="progress = $event.detail.progress" 
                     >
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-md-12">
                                 
                                 <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
                                     <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                 </button>
                             </div>
-                        </div>
+                        </div> -->
                         <!-- File Input -->
-                        <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: none;" />
+                        <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: block;" />
                         <!-- Progress Bar -->
                         <div x-show="isUploading">
                             <progress max="100" x-bind:value="progress"></progress>
@@ -566,9 +566,9 @@
 
 <script type="text/javascript">
     window.addEventListener('imageUpload',event=>{ 
-        $('#plateImage').click(function(){
+        /*$('#plateImage').click(function(){
             $("#plateImageFile").trigger('click');
-        });
+        });*/
         $("#upfile1").click(function () {
             $("#file1").trigger('click');
         });
