@@ -66,6 +66,7 @@ class SubmitCutomerServiceJob extends Component
         $this->cartItemCount = $customerServiceCartQuery->count();
         if($this->cartItemCount>0){
             $this->cartItems = $customerServiceCartQuery->get();
+            //dd($this->cartItems);
 
             $total=0;
             $totalDiscount=0;

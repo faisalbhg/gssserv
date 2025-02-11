@@ -140,7 +140,9 @@ class Operations extends Component
             $customerjobs = $customerjobs->where('station', '=', $this->search_station);
             $getCountSalesJob = $getCountSalesJob->where('station', '=', $this->search_station);
         }
-        $customerjobs = $customerjobs->where('is_contract','=',null)->orderBy('id','DESC')->where(['created_by'=>Session::get('user')->id])->paginate(10);
+        $customerjobs = $customerjobs->where('is_contract','=',null)->orderBy('id','DESC');
+        //$customerjobs = $customerjobs->where(['created_by'=>Session::get('user')->id])
+        $customerjobs = $customerjobs->paginate(10);
         //dd($customerjobs);
         $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null)->where(['created_by'=>Session::get('user')->id])->first();
         //dd($customerjobs);

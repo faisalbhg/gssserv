@@ -515,6 +515,15 @@ class CustomerServiceJob extends Component
         if($this->service_group_name =='Quick Lube')
         {
             $this->showQlItemSearch = true;
+            $qlSectionsLists = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')
+                ->where([
+                    'DevelopmentCode'=>$this->service_group_code,
+                    'Operation'=>true,
+                    'PropertyName'=>'Quick Lube',
+                ])->first();
+                dd($qlSectionsLists);
+            $this->propertyCode=$qlSectionsLists->PropertyCode;
+            $this->selectedSectionName = $qlSectionsLists->PropertyName;
         }
         else
         {
@@ -689,6 +698,7 @@ class CustomerServiceJob extends Component
                 'department_code'=>$this->service_group_code,
                 'department_name'=>$this->service_group_name,
                 'section_code'=>$this->propertyCode,
+                'section_name'=>$this->selectedSectionName,
                 'unit_price'=>$items['UnitPrice'],
                 'quantity'=>isset($this->ql_item_qty[$items['ItemId']])?$this->ql_item_qty[$items['ItemId']]:1,
                 'created_by'=>Session::get('user')['id'],
