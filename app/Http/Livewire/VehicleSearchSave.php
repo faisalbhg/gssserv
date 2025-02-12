@@ -489,4 +489,9 @@ class VehicleSearchSave extends Component
         $this->dispatchBrowserEvent('closeAddMakeModel');
     }
 
+    public function nothing($id)
+    {
+            //nothing happen here
+    }
+
 }

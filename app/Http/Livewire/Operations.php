@@ -341,7 +341,7 @@ class Operations extends Component
             'job_departent'=>$services->job_departent+1,
             'job_description'=>json_encode($this),
         ];
-        Customerjoblogs::create($serviceJobUpdateLog);
+        CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
         
         $customerJobServiceDetails = CustomerJobCardServices::where(['job_number'=>$services->job_number])->get();
         $mainJobStatus=true;
@@ -382,7 +382,7 @@ class Operations extends Component
             'job_departent'=>$services->job_departent+1,
             'job_description'=>json_encode($this),
         ];
-        Customerjoblogs::create($serviceJobUpdateLog);
+        CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
         
         $customerJobServiceDetails = CustomerJobCardServices::where(['job_number'=>$services->job_number])->get();
         $mainJobStatus=true;
@@ -432,7 +432,7 @@ class Operations extends Component
                 'job_departent'=>$services->job_departent+1,
                 'job_description'=>json_encode($this),
             ];
-            Customerjoblogs::create($serviceJobUpdateLog);
+            CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
             
             $customerJobServiceDetails = CustomerJobCardServices::where(['job_number'=>$services->job_number])->get();
             $mainJobStatus=true;
@@ -1039,7 +1039,7 @@ class Operations extends Component
 
             $customerJobServiceId = CustomerJobCardservices::create($customerJobServiceData);
 
-            Customerjoblogs::create([
+            CustomerJobCardServiceLogs::create([
                 'job_number'=>$this->job_number,
                 'job_status'=>1,
                 'job_departent'=>1,
@@ -1109,7 +1109,7 @@ class Operations extends Component
             'job_departent'=>$service['job_departent'],
             'job_description'=>json_encode($serviceUpdate),
         ];
-        Customerjoblogs::create($serviceJobUpdateLog);
+        CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
 
         $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service['job_number']])->get();
         //dd($this->customerjobservices);
