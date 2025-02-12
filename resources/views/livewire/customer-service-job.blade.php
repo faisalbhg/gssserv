@@ -458,6 +458,13 @@
                                                             <a href="#" class="p-0 text-danger bg-red-600" wire:click.prevent="removeCart('{{$item->id}}')"><i class="fa fa-trash"></i></a>
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{round($item->unit_price,2)}}</button>
+
+                                                            @if($item->customer_group_code)
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)),2) }}</button>
+                                                            @endif
+                                                        </div>
+                                                        <div class="d-flex align-items-center text-sm">
                                                             @if($item->quantity>1)<span class="px-2 cursor-pointer" wire:click="cartSetDownQty({{ $item->id }})">
                                                                 <i class="fa-solid fa-square-minus fa-xl"></i>
                                                             </span>
@@ -466,13 +473,14 @@
                                                             <span class="px-2 cursor-pointer" wire:click="cartSetUpQty({{ $item->id }})">
                                                                 <i class="fa-solid fa-square-plus fa-xl"></i>
                                                             </span>
-
-                                                            
-                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{round($item->unit_price,2)}}</button>
-
+                                                        </div>
+                                                        <div class="d-flex align-items-center text-sm">
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}}
                                                             @if($item->customer_group_code)
-                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)),2) }}</button>
-                                                            @endif
+                                                            {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)),2)*$item->quantity }}
+                                                            @else
+                                                            {{round($item->unit_price*$item->quantity,2)}}
+                                                            @endif</button>
 
                                                         </div>
 

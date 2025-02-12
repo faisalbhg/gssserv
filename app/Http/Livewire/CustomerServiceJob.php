@@ -895,7 +895,7 @@ class CustomerServiceJob extends Component
             }
             else if($discountGroup['Id']==41)
             {
-                if(Session()->get('user')['station_id']!=1){
+                if(auth()->user('user')['station_id']!=1){
                     $this->engineOilDiscountForm=true;
                     $this->discountCardApplyForm=false;
                     $this->searchStaffId=false;
