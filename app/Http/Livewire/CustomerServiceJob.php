@@ -521,7 +521,7 @@ class CustomerServiceJob extends Component
                     'Operation'=>true,
                     'PropertyName'=>'Quick Lube',
                 ])->first();
-                dd($qlSectionsLists);
+                //dd($qlSectionsLists);
             $this->propertyCode=$qlSectionsLists->PropertyCode;
             $this->selectedSectionName = $qlSectionsLists->PropertyName;
         }
