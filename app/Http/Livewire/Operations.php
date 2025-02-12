@@ -144,7 +144,9 @@ class Operations extends Component
         //$customerjobs = $customerjobs->where(['created_by'=>auth()->user('user')->id])
         $customerjobs = $customerjobs->paginate(10);
         //dd($customerjobs);
-        $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null)->where(['created_by'=>auth()->user('user')->id])->first();
+        $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null);
+        //$getCountSalesJob = $getCountSalesJob->where(['created_by'=>auth()->user('user')->id]);
+        $getCountSalesJob = $getCountSalesJob->first();
         //dd($customerjobs);
 
         /*$customerjobs = Customerjobs::
