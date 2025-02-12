@@ -38,6 +38,7 @@ class VehicleSearchSave extends Component
 
     public function render()
     {
+        //dd(CustomerVehicle::with(['vehicleJobs'])->limit(2)->get());
         $this->countryList = Country::get();
         if($this->plate_country!='AE'){
             $this->otherCountryPlateCode=true;

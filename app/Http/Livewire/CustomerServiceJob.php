@@ -1117,7 +1117,7 @@ class CustomerServiceJob extends Component
         $this->selectedDiscount=null;
         $this->appliedDiscount = null;
         //dd($this->cartItems);
-        foreach($this->cartItems as $items)
+        /*foreach($this->cartItems as $items)
         {
             $cartUpdate['price_id']=null;
             $cartUpdate['customer_group_id']=null;
@@ -1128,7 +1128,7 @@ class CustomerServiceJob extends Component
             $cartUpdate['end_date']=null;
             $cartUpdate['discount_perc']=null;
             CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$items->id])->update($cartUpdate);
-        }
+        }*/
     }
 
     public function applyDiscountOnCart(){

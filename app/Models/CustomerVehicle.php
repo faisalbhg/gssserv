@@ -72,6 +72,11 @@ class CustomerVehicle extends Model
         return $this->hasMany(CustomerDiscountGroup::class,'customer_id','customer_id');
     }
 
+    public function vehicleJobs()
+    {
+        return $this->hasMany(CustomerJobCards::class,'vehicle_id','id');
+    }
+
     public function countryInfo(){
         return $this->belongsTo(Country::class,'plate_country','CountryCode');
     }
