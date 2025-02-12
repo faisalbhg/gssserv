@@ -419,8 +419,7 @@ class VehicleSearchSave extends Component
         
         return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
 
-        dd($customerVehicleDetails);
-
+        
         if($this->mobile){
             $this->searchResult();
         }

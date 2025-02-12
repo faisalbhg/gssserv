@@ -879,7 +879,7 @@ class CustomerServiceJob extends Component
             $this->discountCardApplyForm=false;
             $this->discountForm=false;
             $this->appliedDiscount = $this->selectedDiscount;
-            $this->applyDiscountOnCart();
+            //$this->applyDiscountOnCart();
             //$this->applyItemToTempCart();
             $this->dispatchBrowserEvent('closeDiscountGroupModal');
         }
@@ -964,7 +964,7 @@ class CustomerServiceJob extends Component
             
             
             $this->appliedDiscount = $this->selectedDiscount;
-            $this->applyDiscountOnCart();
+            //$this->applyDiscountOnCart();
             $this->dispatchBrowserEvent('closeDiscountGroupModal');
         }
         else
@@ -999,7 +999,7 @@ class CustomerServiceJob extends Component
             'groupType'=>$getSavedCustDiscount->GroupType,
         ];
         $this->appliedDiscount = $this->selectedDiscount;
-        $this->applyDiscountOnCart();
+        //$this->applyDiscountOnCart();
         $this->dispatchBrowserEvent('closeDiscountGroupModal');
     }
 
@@ -1095,7 +1095,7 @@ class CustomerServiceJob extends Component
         }
 
         $this->appliedDiscount = $this->selectedDiscount;
-        $this->applyDiscountOnCart();
+        //$this->applyDiscountOnCart();
         $this->dispatchBrowserEvent('closeDiscountGroupModal');
 
     }
