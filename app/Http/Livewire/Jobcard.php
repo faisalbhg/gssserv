@@ -195,7 +195,7 @@ class Jobcard extends Component
 
         if($this->selectedCustomerVehicle)
         {
-            $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>Session::get('user')->station_code])->get();
+            $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>auth()->user('user')->station_code])->get();
             //dd($this->servicesGroupList);
         }
         else
@@ -229,7 +229,7 @@ class Jobcard extends Component
             
             $sectionServiceLists = LaborItemMaster::where([
                 'SectionCode'=>$this->propertyCode,
-                'DivisionCode'=>Session::get('user')->station_code,
+                'DivisionCode'=>auth()->user('user')->station_code,
                 'Active'=>1,
             ]);
             $sectionServiceLists = $sectionServiceLists->orderBy('SortIndex','ASC')->get();
@@ -312,7 +312,7 @@ class Jobcard extends Component
                             $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
                                 'ServiceItemId'=>$itemMasterList->ItemId,
                                 'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                'DivisionCode'=>Session::get('user')->station_code,
+                                'DivisionCode'=>auth()->user('user')->station_code,
                             ])->first();
 
                         }else if($this->customerSelectedDiscountGroup['groupType']==2)
@@ -321,7 +321,7 @@ class Jobcard extends Component
                             $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
                                 'ServiceItemId'=>$itemMasterList->ItemId,
                                 'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                'DivisionCode'=>Session::get('user')->station_code,
+                                'DivisionCode'=>auth()->user('user')->station_code,
                             ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
                         }
                         else
@@ -382,7 +382,7 @@ class Jobcard extends Component
                             $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where([
                                 'ServiceItemId'=>$qlItemsList1->ItemId,
                                 'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                'DivisionCode'=>Session::get('user')->station_code,
+                                'DivisionCode'=>auth()->user('user')->station_code,
                             ])->first();
 
                         }else if($this->customerSelectedDiscountGroup['groupType']==2)
@@ -391,7 +391,7 @@ class Jobcard extends Component
                             $qlItemPriceLists1[$key]['discountDetails'] = InventorySalesPrices::where([
                                 'ServiceItemId'=>$qlItemsList1->ItemId,
                                 'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                'DivisionCode'=>Session::get('user')->station_code,
+                                'DivisionCode'=>auth()->user('user')->station_code,
                             ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
                         }
                         else
@@ -430,7 +430,7 @@ class Jobcard extends Component
                                 $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
                                     'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
                                     'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                    'DivisionCode'=>Session::get('user')->station_code,
+                                    'DivisionCode'=>auth()->user('user')->station_code,
                                 ])->first();
 
                             }else if($this->customerSelectedDiscountGroup['groupType']==2)
@@ -439,7 +439,7 @@ class Jobcard extends Component
                                 $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
                                     'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
                                     'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                    'DivisionCode'=>Session::get('user')->station_code,
+                                    'DivisionCode'=>auth()->user('user')->station_code,
                                 ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
                             }
                             else
@@ -473,7 +473,7 @@ class Jobcard extends Component
                                 $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
                                     'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
                                     'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                    'DivisionCode'=>Session::get('user')->station_code,
+                                    'DivisionCode'=>auth()->user('user')->station_code,
                                 ])->first();
 
                             }else if($this->customerSelectedDiscountGroup['groupType']==2)
@@ -482,7 +482,7 @@ class Jobcard extends Component
                                 $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
                                     'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
                                     'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                    'DivisionCode'=>Session::get('user')->station_code,
+                                    'DivisionCode'=>auth()->user('user')->station_code,
                                 ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
                             }
                             else
@@ -524,7 +524,7 @@ class Jobcard extends Component
                             $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
                                 'ServiceItemId'=>$qlItemsList->ItemId,
                                 'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                'DivisionCode'=>Session::get('user')->station_code,
+                                'DivisionCode'=>auth()->user('user')->station_code,
                             ])->first();
 
                         }else if($this->customerSelectedDiscountGroup['groupType']==2)
@@ -533,7 +533,7 @@ class Jobcard extends Component
                             $qlItemPriceLists[$key]['discountDetails'] = InventorySalesPrices::where([
                                 'ServiceItemId'=>$qlItemsList->ItemId,
                                 'CustomerGroupCode'=>$this->customerDiscontGroupCode,
-                                'DivisionCode'=>Session::get('user')->station_code,
+                                'DivisionCode'=>auth()->user('user')->station_code,
                             ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
                         }
                         else
@@ -636,7 +636,7 @@ class Jobcard extends Component
         $this->showPayLaterCheckout=true;
 
         
-        $pendingjob = CustomerJobCards::with(['customerInfo','customerVehicle'])->where(['job_create_status'=>0,'created_by'=>Session::get('user')->id,'job_number'=>$job_number])->first();
+        $pendingjob = CustomerJobCards::with(['customerInfo','customerVehicle'])->where(['job_create_status'=>0,'created_by'=>auth()->user('user')->id,'job_number'=>$job_number])->first();
         if($pendingjob)
         {
             $this->job_number = $pendingjob->job_number;
@@ -941,7 +941,7 @@ class Jobcard extends Component
         $customerVehicleData['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
         $customerVehicleData['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
         $customerVehicleData['is_active']=1;
-        $customerVehicleData['created_by']=Session::get('user')->id;
+        $customerVehicleData['created_by']=auth()->user('user')->id;
 
         if($this->vehicle_image){
             $customerVehicleData['vehicle_image'] = $this->vehicle_image->store('vehicle', 'public');
@@ -1247,7 +1247,7 @@ class Jobcard extends Component
             $customerVehicleUpdate['plate_number_final']=$this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
             $customerVehicleUpdate['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
             $customerVehicleUpdate['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
-            $customerVehicleUpdate['created_by']=Session::get('user')->id;
+            $customerVehicleUpdate['created_by']=auth()->user('user')->id;
             //dd($customerVehicleUpdate);
             CustomerVehicle::where(['id'=>$this->selected_vehicle_id])->update($customerVehicleUpdate);
         }
@@ -1351,7 +1351,7 @@ class Jobcard extends Component
         $customerVehicleInsert['plate_number_final']=$this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
         $customerVehicleInsert['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
         $customerVehicleInsert['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
-        $customerVehicleInsert['created_by']=Session::get('user')->id;
+        $customerVehicleInsert['created_by']=auth()->user('user')->id;
         $customerVehicleInsert['is_active']=1;
         
 
@@ -1409,7 +1409,7 @@ class Jobcard extends Component
                 'section_code'=>$servicePrice->SectionCode,
                 'unit_price'=>$servicePrice->UnitPrice,
                 'quantity'=>1,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
                 'created_at'=>Carbon::now(),
             ];
             if($this->extra_note!=null){
@@ -1477,7 +1477,7 @@ class Jobcard extends Component
                 'section_code'=>$this->propertyCode,
                 'unit_price'=>$items['UnitPrice'],
                 'quantity'=>isset($this->ql_item_qty[$items['ItemId']])?$this->ql_item_qty[$items['ItemId']]:1,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
                 'created_at'=>Carbon::now(),
             ];
             if($this->extra_note!=null){
@@ -2197,8 +2197,8 @@ class Jobcard extends Component
             'job_status'=>1,
             'job_departent'=>1,
             'payment_status'=>0,
-            'created_by'=>Session::get('user')->id,
-            'payment_updated_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
+            'payment_updated_by'=>auth()->user('user')->id,
         ];
         if($this->showQLCheckList==true){
             $customerjobData['ql_km_range']=$this->ql_km_range;
@@ -2215,8 +2215,8 @@ class Jobcard extends Component
         }
         //dd($customerjobData);
         $customerjobId = CustomerJobCards::create($customerjobData);
-        $stationJobNumber = CustomerJobCards::where(['station'=>Session::get('user')->station_code])->count();
-        $this->job_number = 'JOB-'.Session::get('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
+        $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
+        $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
         CustomerJobCards::where(['id'=>$customerjobId->id])->update(['job_number'=>$this->job_number]);
 
         //dd($cartDetails);
@@ -2234,7 +2234,7 @@ class Jobcard extends Component
                 'job_departent'=>1,
                 'is_added'=>0,
                 'is_removed'=>0,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ];
             
             
@@ -2300,7 +2300,7 @@ class Jobcard extends Component
                 'job_departent'=>1,
                 'job_description'=>json_encode($customerJobServiceData),
                 'customer_job__card_service_id'=>$customerJobServiceId->id,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
                 'created_at'=>Carbon::now(),
             ]);
             
@@ -2318,7 +2318,7 @@ class Jobcard extends Component
                     'ItemCode'=>$cartData->item_code,
                     'ItemName'=>$cartData->item_name,
                     'QuantityRequested'=>$cartData->quantity,
-                    'Activity2Code'=>Session::get('user')->station_code
+                    'Activity2Code'=>auth()->user('user')->station_code
                 ]);
             }
             
@@ -2330,7 +2330,7 @@ class Jobcard extends Component
                     "DocumentCode"=>$this->job_number,
                     "DocumentDate"=>$customerjobData['job_date_time'],
                     "Status"=>"A",
-                    "LandlordCode"=>Session::get('user')->station_code,
+                    "LandlordCode"=>auth()->user('user')->station_code,
                 ]
             );
 
@@ -2377,16 +2377,16 @@ class Jobcard extends Component
                 'check_drain_lug_fixed_properly'=>$this->check_drain_lug_fixed_properly,
                 'check_oil_filter_fixed_properly'=>$this->check_oil_filter_fixed_properly,
                 'ubi_comments'=>$this->ubi_comments,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ];
             $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
         }
 
         if($passmetrialRequest==true)
         {
-            Session::get('user')->stationName['PortfolioCode'];
+            auth()->user('user')->stationName['PortfolioCode'];
             try {
-                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update] @companyCode = 'PF/00001', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ");
+                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update] @companyCode = 'PF/00001', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".auth()->user('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ");
 
                 dd($meterialRequestResponse);
 
@@ -2491,7 +2491,7 @@ class Jobcard extends Component
             $this->selectedCustomerVehicle=false;
         }
         try {
-            //DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.Session::get('user')->id.'", @stationcode  = "'.Session::get('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ');
+            //DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ');
         } catch (\Exception $e) {
             //return $e->getMessage();
         }

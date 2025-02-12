@@ -80,7 +80,7 @@ class GatePasses extends Component
             'job_status'=>$this->job_status,
             'job_departent'=>$this->job_status,
             'job_description'=>json_encode($this),
-            'created_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
         ];
         CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
 

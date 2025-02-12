@@ -80,14 +80,14 @@ return [
         'actions' => [
             '0'=>'Created',
             '1'=>'Work Started',
-            '2'=>'Work Completed',
+            '2'=>'Quality Check',
             '3'=>'Ready For Delivery',
             '4'=>'Delivered',
         ],
         'status' => [
             '0'=>'Created',
             '1'=>'Working Progress',
-            '2'=>'Work Completed',
+            '2'=>'Quality Check',
             '3'=>'Ready For Delivery',
             '4'=>'Delivered',
         ],
@@ -138,7 +138,7 @@ return [
     'job_status' => [
         '0'=>'Start',
         '1'=>'Working Progress',
-        '2'=>'Completed',
+        '2'=>'Quality Checked',
         '3'=>'Ready For Delivery',
         '4'=>'Dispatched/Devlivered',
         '5'=>'Delivered',

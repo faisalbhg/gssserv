@@ -145,7 +145,7 @@ class CustomerServiceJob extends Component
 
 
         if($this->showServiceGroup){
-            $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>Session::get('user')['station_code']])->get();
+            $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>auth()->user('user')['station_code']])->get();
         }
         if($this->showSectionsList){
             $this->sectionsLists = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')
@@ -162,7 +162,7 @@ class CustomerServiceJob extends Component
         {
             $sectionServiceLists = LaborItemMaster::where([
                 'SectionCode'=>$this->propertyCode,
-                'DivisionCode'=>Session::get('user')['station_code'],
+                'DivisionCode'=>auth()->user('user')['station_code'],
                 'Active'=>1,
             ]);
             if($this->section_service_search){
@@ -249,7 +249,7 @@ class CustomerServiceJob extends Component
                         $qlInventorySalesPricesQuery = InventorySalesPrices::where([
                                 'ServiceItemId'=>$itemMasterList->ItemId,
                                 'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                'DivisionCode'=>Session::get('user')['station_code'],
+                                'DivisionCode'=>auth()->user('user')['station_code'],
                             ]);
                         if($this->appliedDiscount['groupType']==1)
                         {
@@ -310,7 +310,7 @@ class CustomerServiceJob extends Component
                             $qlKMInventorySalesPricesQuery = InventorySalesPrices::where([
                                     'ServiceItemId'=>$qlItemsList->ItemId,
                                     'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                    'DivisionCode'=>Session::get('user')['station_code'],
+                                    'DivisionCode'=>auth()->user('user')['station_code'],
                                 ]);
                             if($this->appliedDiscount['groupType']==1)
                             {
@@ -355,7 +355,7 @@ class CustomerServiceJob extends Component
                                     $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
                                         'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
                                         'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                        'DivisionCode'=>Session::get('user')['station_code'],
+                                        'DivisionCode'=>auth()->user('user')['station_code'],
                                     ])->first();
 
                                 }else if($this->appliedDiscount['groupType']==2)
@@ -364,7 +364,7 @@ class CustomerServiceJob extends Component
                                     $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
                                         'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
                                         'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                        'DivisionCode'=>Session::get('user')['station_code'],
+                                        'DivisionCode'=>auth()->user('user')['station_code'],
                                     ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
                                 }
                                 else
@@ -399,7 +399,7 @@ class CustomerServiceJob extends Component
                                     $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
                                         'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
                                         'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                        'DivisionCode'=>Session::get('user')['station_code'],
+                                        'DivisionCode'=>auth()->user('user')['station_code'],
                                     ])->first();
 
                                 }else if($this->appliedDiscount['groupType']==2)
@@ -408,7 +408,7 @@ class CustomerServiceJob extends Component
                                     $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
                                         'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
                                         'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                        'DivisionCode'=>Session::get('user')['station_code'],
+                                        'DivisionCode'=>auth()->user('user')['station_code'],
                                     ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
                                 }
                                 else
@@ -446,7 +446,7 @@ class CustomerServiceJob extends Component
 
         if($this->showPackageList)
         {
-            $this->servicePackages = ServicePackage::with(['packageDetails'])->where(['Status'=>'A','Division'=>Session::get('user')['station_code']])->get();
+            $this->servicePackages = ServicePackage::with(['packageDetails'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code']])->get();
             //$this->showPackageAddons=false;
             //dd($this->servicePackages);
         }
@@ -628,7 +628,7 @@ class CustomerServiceJob extends Component
                 'section_code'=>$servicePrice['SectionCode'],
                 'unit_price'=>$servicePrice['UnitPrice'],
                 'quantity'=>1,
-                'created_by'=>Session::get('user')['id'],
+                'created_by'=>auth()->user('user')['id'],
                 'created_at'=>Carbon::now(),
             ];
             
@@ -701,7 +701,7 @@ class CustomerServiceJob extends Component
                 'section_name'=>$this->selectedSectionName,
                 'unit_price'=>$items['UnitPrice'],
                 'quantity'=>isset($this->ql_item_qty[$items['ItemId']])?$this->ql_item_qty[$items['ItemId']]:1,
-                'created_by'=>Session::get('user')['id'],
+                'created_by'=>auth()->user('user')['id'],
                 'created_at'=>Carbon::now(),
             ];
             if($discountPrice!=null){
@@ -771,7 +771,7 @@ class CustomerServiceJob extends Component
                 'section_code'=>$servicePrice['SectionCode'],
                 'unit_price'=>$servicePrice['UnitPrice'],
                 'quantity'=>1,
-                'created_by'=>Session::get('user')['id'],
+                'created_by'=>auth()->user('user')['id'],
                 'created_at'=>Carbon::now(),
             ];
             
@@ -1166,7 +1166,7 @@ class CustomerServiceJob extends Component
                 $discountCartServiceItemPrices = InventorySalesPrices::where([
                     'ServiceItemId'=>$items->item_id,
                     'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                    'DivisionCode'=>Session::get('user')['station_code'],
+                    'DivisionCode'=>auth()->user('user')['station_code'],
                 ]);
                 if($this->appliedDiscount['groupType']==1)
                 {
@@ -1306,7 +1306,7 @@ class CustomerServiceJob extends Component
             $customerVehicleUpdate['plate_number_final']=$this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
             $customerVehicleUpdate['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
             $customerVehicleUpdate['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
-            $customerVehicleUpdate['created_by']=Session::get('user')['id'];
+            $customerVehicleUpdate['created_by']=auth()->user('user')['id'];
             //dd($customerVehicleUpdate);
             CustomerVehicle::where(['id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->update($customerVehicleUpdate);
         }
@@ -1394,7 +1394,7 @@ class CustomerServiceJob extends Component
         $customerVehicleInsert['plate_number_final']=$this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
         $customerVehicleInsert['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
         $customerVehicleInsert['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
-        $customerVehicleInsert['created_by']=Session::get('user')['id'];
+        $customerVehicleInsert['created_by']=auth()->user('user')['id'];
         $customerVehicleInsert['is_active']=1;
         $newcustomer = CustomerVehicle::create($customerVehicleInsert);
         

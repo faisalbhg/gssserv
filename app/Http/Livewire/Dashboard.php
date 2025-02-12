@@ -38,7 +38,7 @@ class Dashboard extends Component
         //'S255'
         //CustomerJobCardServices::truncate();
         //Get Pending Customer
-        $this->pendingCustomersCart =  CustomerServiceCart::with(['customerInfo','vehicleInfo'])->where(['created_by'=>Session::get('user')['id']])->get();
+        $this->pendingCustomersCart =  CustomerServiceCart::with(['customerInfo','vehicleInfo'])->where(['created_by'=>auth()->user('user')['id']])->get();
         //dd($this->pendingCustomersCart);
 
         $getCountSalesJobStatus = CustomerJobCards::select(
@@ -75,13 +75,13 @@ class Dashboard extends Component
             //$getCountSalesJobStatus = $getCountSalesJobStatus->where(['job_date_time'=>$this->selected_date]);
             //$customerjobsQuery = $customerjobsQuery->where(['job_date_time'=>$this->selected_date]);
         
-        $this->getCountSalesJob = $getCountSalesJobStatus->where(['created_by'=>Session::get('user')['id']])->first();
+        $this->getCountSalesJob = $getCountSalesJobStatus->where(['created_by'=>auth()->user('user')['id']])->first();
 
         if($this->filterJobStatus)
         {
             $customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
         }
-        $this->customerjobsLists = $customerjobsQuery->where(['created_by'=>Session::get('user')['id']])->get();
+        $this->customerjobsLists = $customerjobsQuery->where(['created_by'=>auth()->user('user')['id']])->get();
         return view('livewire.home-page');
     }
 

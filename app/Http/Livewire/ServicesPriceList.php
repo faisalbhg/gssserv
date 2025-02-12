@@ -167,8 +167,8 @@ class ServicesPriceList extends Component
             'final_price_after_dicount'=>$this->new_final_price,
             'start_date'=>$this->new_date_from,
             'end_date'=>$this->new_date_to,
-            'station_id'=>Session::get('user')->station_id,
-            'created_by'=>Session::get('user')->station_id,
+            'station_id'=>auth()->user('user')->station_id,
+            'created_by'=>auth()->user('user')->station_id,
             'is_active'=>1,
             'created_at'=>Carbon::now(),
         ];

@@ -84,8 +84,8 @@ class CarsTaxi extends Component
                 $carTaxiJobs = $carTaxiJobs->where('plate_number', 'like',"%$this->search_plate_number%");
             }
             
-            $carTaxiJobs = $carTaxiJobs->where('is_contract','=',1)->orderBy('id','ASC')->where(['created_by'=>Session::get('user')->id])->get();
-            $getCountCarTaxiJob = $getCountCarTaxiJob->where('is_contract','=',1)->where(['created_by'=>Session::get('user')->id])->first();
+            $carTaxiJobs = $carTaxiJobs->where('is_contract','=',1)->orderBy('id','ASC')->where(['created_by'=>auth()->user('user')->id])->get();
+            $getCountCarTaxiJob = $getCountCarTaxiJob->where('is_contract','=',1)->where(['created_by'=>auth()->user('user')->id])->first();
 
             $this->getCountCarTaxiJob = $getCountCarTaxiJob;
             $this->carTaxiJobs = $carTaxiJobs;
@@ -189,7 +189,7 @@ class CarsTaxi extends Component
         //$customerVehicleData['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
         //$customerVehicleData['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
         $customerVehicleData['is_active']=1;
-        $customerVehicleData['created_by']=Session::get('user')->id;
+        $customerVehicleData['created_by']=auth()->user('user')->id;
 
         if($this->plate_number_image){
             $customerVehicleData['plate_number_image'] = $this->plate_number_image->store('plate_number', 'public');
@@ -213,19 +213,19 @@ class CarsTaxi extends Component
             'is_contract'=>1,
             'ct_number'=>$this->ct_number,
             'meter_id'=>$this->meter_id,
-            'station'=>Session::get('user')->stationName['LandlordCode'],
+            'station'=>auth()->user('user')->stationName['LandlordCode'],
             'total_price'=>$this->total,
             'vat'=>$this->tax,
             'grand_total'=>$this->grand_total,
             'job_status'=>1,
             'job_departent'=>1,
             'payment_status'=>0,
-            'created_by'=>Session::get('user')->id,
-            'payment_updated_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
+            'payment_updated_by'=>auth()->user('user')->id,
         ];
         $customerjobId = CustomerJobCards::create($customerjobData);
-        $stationJobNumber = CustomerJobCards::where(['is_contract'=>1,'station'=>Session::get('user')->station_code])->count();
-        $this->job_number = 'JOB-DCT-'.Session::get('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
+        $stationJobNumber = CustomerJobCards::where(['is_contract'=>1,'station'=>auth()->user('user')->station_code])->count();
+        $this->job_number = 'JOB-DCT-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
         CustomerJobCards::where(['id'=>$customerjobId->id])->update(['job_number'=>$this->job_number]);
 
         $customerJobServiceData = [
@@ -235,7 +235,7 @@ class CarsTaxi extends Component
             'job_departent'=>1,
             'is_added'=>0,
             'is_removed'=>0,
-            'created_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
             'item_id'=>$this->carTaxiServiceInfo->ItemId,
             'item_code'=>$this->carTaxiServiceInfo->ItemCode,
             'company_code'=>$this->carTaxiServiceInfo->CompanyCode,
@@ -249,7 +249,7 @@ class CarsTaxi extends Component
             'department_code'=>$this->carTaxiServiceInfo->DepartmentCode,
             'department_name'=>'General Service',
             'section_code'=>$this->carTaxiServiceInfo->SectionCode,
-            'station'=>Session::get('user')->stationName['LandlordCode'],
+            'station'=>auth()->user('user')->stationName['LandlordCode'],
             'service_item_type'=>1,
             'total_price'=>$this->total,
             'quantity'=>1,
@@ -264,7 +264,7 @@ class CarsTaxi extends Component
             'job_departent'=>1,
             'job_description'=>json_encode($customerJobServiceData),
             'customer_job__card_service_id'=>$customerJobServiceId->id,
-            'created_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
             'created_at'=>Carbon::now(),
         ]);
 
@@ -273,7 +273,7 @@ class CarsTaxi extends Component
                 "DocumentCode"=>$this->job_number,
                 "DocumentDate"=>$customerjobData['job_date_time'],
                 "Status"=>"A",
-                "LandlordCode"=>Session::get('user')->station_code,
+                "LandlordCode"=>auth()->user('user')->station_code,
             ]
         );
 
@@ -326,7 +326,7 @@ class CarsTaxi extends Component
             'check_drain_lug_fixed_properly'=>$this->check_drain_lug_fixed_properly,
             'check_oil_filter_fixed_properly'=>$this->check_oil_filter_fixed_properly,
             'ubi_comments'=>$this->ubi_comments,*/
-            'created_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
         ];
         $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
 
@@ -364,7 +364,7 @@ class CarsTaxi extends Component
             'job_status'=>$this->job_status,
             'job_departent'=>$this->job_status,
             'job_description'=>json_encode($this),
-            'created_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
         ];
         CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
 

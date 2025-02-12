@@ -141,10 +141,10 @@ class Operations extends Component
             $getCountSalesJob = $getCountSalesJob->where('station', '=', $this->search_station);
         }
         $customerjobs = $customerjobs->where('is_contract','=',null)->orderBy('id','DESC');
-        //$customerjobs = $customerjobs->where(['created_by'=>Session::get('user')->id])
+        //$customerjobs = $customerjobs->where(['created_by'=>auth()->user('user')->id])
         $customerjobs = $customerjobs->paginate(10);
         //dd($customerjobs);
-        $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null)->where(['created_by'=>Session::get('user')->id])->first();
+        $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null)->where(['created_by'=>auth()->user('user')->id])->first();
         //dd($customerjobs);
 
         /*$customerjobs = Customerjobs::
@@ -279,7 +279,7 @@ class Operations extends Component
             'job_status'=>$services['job_status']+1,
             'job_departent'=>$services['job_departent']+1,
             'job_description'=>json_encode($this),
-            'created_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
         ];
         CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
 
@@ -588,9 +588,9 @@ class Operations extends Component
         
         $this->selected_vehicle_id = $job->vehicle_id;
         $this->customer_type = $job->customer_type;
-        //dd(Session::get('user')->station_id);
+        //dd(auth()->user('user')->station_id);
         $this->service_group_id;
-        $this->station = Session::get('user')->station_id;
+        $this->station = auth()->user('user')->station_id;
         $this->servicesGroups = ServicesGroup::where(['is_active'=>1])->get();
         
         
@@ -804,7 +804,7 @@ class Operations extends Component
                 'section_code'=>$servicePrice->SectionCode,
                 'unit_price'=>$servicePrice->UnitPrice,
                 'quantity'=>1,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
                 'created_at'=>Carbon::now(),
             ];
             if($this->extra_note!=null){
@@ -862,7 +862,7 @@ class Operations extends Component
                 'section_code'=>"U-000225",
                 'unit_price'=>$items['UnitPrice'],
                 'quantity'=>isset($this->ql_item_qty[$items['ItemId']])?$this->ql_item_qty[$items['ItemId']]:1,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
                 'created_at'=>Carbon::now(),
             ];
             if($this->extra_note!=null){
@@ -989,8 +989,8 @@ class Operations extends Component
                 'job_status'=>1,
                 'job_departent'=>1,
                 'payment_status'=>0,
-                'created_by'=>Session::get('user')->id,
-                'payment_updated_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
+                'payment_updated_by'=>auth()->user('user')->id,
             ];
         CustomerJobCards::where(['job_number'=>$job_number])->update($customerJobUpdate);
 
@@ -1009,7 +1009,7 @@ class Operations extends Component
                 'job_departent'=>1,
                 'is_added'=>1,
                 'is_removed'=>0,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ];
             if($cartData['attributes']['service_item']==true)
             {
@@ -1043,7 +1043,7 @@ class Operations extends Component
                 'job_departent'=>1,
                 'job_description'=>json_encode($customerJobServiceData),
                 'customer_job_service_id'=>$customerJobServiceId->id,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ]);
         }
         $this->showServiceType=false;
@@ -1076,7 +1076,7 @@ class Operations extends Component
                 'job_status'=>1,
                 'job_departent'=>1,
                 'payment_status'=>0,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ];
         Customerjobs::where(['job_number'=>$job_number])->update($customerJobUpdate);*/
 

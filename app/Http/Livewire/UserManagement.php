@@ -118,7 +118,7 @@ class UserManagement extends Component
                 'station_id'=>$dtationDtls[0],
                 'station_code'=>$dtationDtls[1],
                 'is_active'=>$this->is_active,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ]);
             session()->flash('success', 'User added successfully !');
         }

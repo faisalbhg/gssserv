@@ -150,7 +150,7 @@ class SubmitCutomerServiceJob extends Component
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
                 if($customerjobs->customerInfo['Mobile']!=''){
                     if($mobileNumber=='971566993709'){
-                        $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.Session::get('user')->stationName['CorporateName'].'. Our team will update you shortly. To avoid waiting at the cashier, you can pay online using this link: '.$paymentResponse['payment_redirect_link'].'. Alternatively, you can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                        $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. To avoid waiting at the cashier, you can pay online using this link: '.$paymentResponse['payment_redirect_link'].'. Alternatively, you can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                     }
                 }
@@ -180,7 +180,7 @@ class SubmitCutomerServiceJob extends Component
             $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>2,'payment_request'=>'card payment','job_create_status'=>1]);
             if($customerjobs->customerInfo['Mobile']!=''){
                 if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.Session::get('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 }
             }
@@ -202,7 +202,7 @@ class SubmitCutomerServiceJob extends Component
 
             if($customerjobs->customerInfo['Mobile']!=''){
                 if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.Session::get('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 }
             }
@@ -217,7 +217,7 @@ class SubmitCutomerServiceJob extends Component
             $this->selectedCustomerVehicle=false;
         }
         try {
-            //DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.Session::get('user')->id.'", @stationcode  = "'.Session::get('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ');
+            //DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ');
         } catch (\Exception $e) {
             //return $e->getMessage();
         }
@@ -246,8 +246,8 @@ class SubmitCutomerServiceJob extends Component
             'plate_number'=>$this->selectedVehicleInfo['plate_number_final'],
             'chassis_number'=>$this->selectedVehicleInfo['chassis_number'],
             'vehicle_km'=>$this->selectedVehicleInfo['vehicle_km'],
-            'station'=>Session::get('user')->stationName['LandlordCode'],
-            /*'customer_discount_id'=>Session::get('user')->stationName['LandlordCode'],
+            'station'=>auth()->user('user')->stationName['LandlordCode'],
+            /*'customer_discount_id'=>auth()->user('user')->stationName['LandlordCode'],
             'discount_id',
             'discount_unit_id',
             'discount_code',
@@ -264,15 +264,15 @@ class SubmitCutomerServiceJob extends Component
             'job_status'=>1,
             'job_departent'=>1,
             'payment_status'=>0,
-            'created_by'=>Session::get('user')->id,
-            'payment_updated_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
+            'payment_updated_by'=>auth()->user('user')->id,
         ];
         if($this->showQLCheckList==true){
             //$customerjobData['ql_km_range']=$this->ql_km_range;
         }
         $customerjobId = CustomerJobCards::create($customerjobData);
-        $stationJobNumber = CustomerJobCards::where(['station'=>Session::get('user')->station_code])->count();
-        $this->job_number = 'JOB-'.Session::get('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
+        $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
+        $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
         CustomerJobCards::where(['id'=>$customerjobId->id])->update(['job_number'=>$this->job_number]);
 
         $meterialRequestItems=[];
@@ -287,7 +287,7 @@ class SubmitCutomerServiceJob extends Component
                 'job_departent'=>1,
                 'is_added'=>0,
                 'is_removed'=>0,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ];
             
             
@@ -304,7 +304,7 @@ class SubmitCutomerServiceJob extends Component
             $customerJobServiceData['department_code']=$cartData->department_code;
             $customerJobServiceData['department_name']=$cartData->department_name;
             $customerJobServiceData['section_code']=$cartData->section_code;
-            $customerJobServiceData['station']=Session::get('user')->stationName['LandlordCode'];
+            $customerJobServiceData['station']=auth()->user('user')->stationName['LandlordCode'];
             $customerJobServiceData['extra_note']=$cartData->extra_note;
             $customerJobServiceData['service_item_type']=$cartData->cart_item_type;
             //dd($customerJobServiceData);
@@ -354,7 +354,7 @@ class SubmitCutomerServiceJob extends Component
                 'job_departent'=>1,
                 'job_description'=>json_encode($customerJobServiceData),
                 'customer_job__card_service_id'=>$customerJobServiceId->id,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
                 'created_at'=>Carbon::now(),
             ]);
             
@@ -372,7 +372,7 @@ class SubmitCutomerServiceJob extends Component
                     'ItemCode'=>$cartData->item_code,
                     'ItemName'=>$cartData->item_name,
                     'QuantityRequested'=>$cartData->quantity,
-                    'Activity2Code'=>Session::get('user')->station_code
+                    'Activity2Code'=>auth()->user('user')->station_code
                 ]);
             }
 
@@ -409,7 +409,7 @@ class SubmitCutomerServiceJob extends Component
                     "DocumentCode"=>$this->job_number,
                     "DocumentDate"=>$customerjobData['job_date_time'],
                     "Status"=>"A",
-                    "LandlordCode"=>Session::get('user')->station_code,
+                    "LandlordCode"=>auth()->user('user')->station_code,
                 ]
             );
 
@@ -456,15 +456,15 @@ class SubmitCutomerServiceJob extends Component
                 'check_drain_lug_fixed_properly'=>$this->check_drain_lug_fixed_properly,
                 'check_oil_filter_fixed_properly'=>$this->check_oil_filter_fixed_properly,
                 'ubi_comments'=>$this->ubi_comments,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ];
             $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
         }
         if($passmetrialRequest==true)
         {
             try {
-                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = '".Session::get('user')->stationName['PortfolioCode']."', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ", [
-                        Session::get('user')->stationName['PortfolioCode'],
+                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = '".auth()->user('user')->stationName['PortfolioCode']."', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".auth()->user('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ", [
+                        auth()->user('user')->stationName['PortfolioCode'],
                         null,
                         $customerjobData['job_date_time'],
                         $this->job_number,
@@ -472,7 +472,7 @@ class SubmitCutomerServiceJob extends Component
                         $this->job_number,
                         "0",
                         $this->job_number,
-                        Session::get('user')->station_code,
+                        auth()->user('user')->station_code,
                         $propertyCodeMR,
                         $unitCodeMR,
                          "1",

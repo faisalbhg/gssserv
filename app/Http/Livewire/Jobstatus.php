@@ -63,7 +63,7 @@ class Jobstatus extends Component
         $serviceJobUpdate = [
             'job_status'=>$services['job_status']+1,
             'job_departent'=>$services['job_status']+1,
-            'updated_by'=>Session::get('user')->id,
+            'updated_by'=>auth()->user('user')->id,
         ];
         foreach(CustomerJobCardServices::where(['job_number'=>$this->job_number])->get() as $customerJobCardServices){
             CustomerJobCardServices::where(['id'=>$customerJobCardServices->id])->update($serviceJobUpdate);
@@ -73,7 +73,7 @@ class Jobstatus extends Component
                 'job_status'=>$services['job_status']+1,
                 'job_departent'=>$services['job_departent']+1,
                 'job_description'=>json_encode($this),
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ];
             CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
         }
@@ -81,7 +81,7 @@ class Jobstatus extends Component
         $mianJobUpdate = [
             'job_status'=>4,
             'job_departent'=>4,
-            'updated_by'=>Session::get('user')->id,
+            'updated_by'=>auth()->user('user')->id,
         ];
         CustomerJobCards::where(['job_number'=>$services['job_number']])->update($mianJobUpdate);
     }

@@ -230,7 +230,7 @@ class UpdateJobCardSubmit extends Component
             $this->showCustomerSignature=false;
         }
         try {
-            //DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.Session::get('user')->id.'", @stationcode  = "'.Session::get('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ');
+            //DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ');
         } catch (\Exception $e) {
             //return $e->getMessage();
         }
@@ -248,7 +248,7 @@ class UpdateJobCardSubmit extends Component
                 $getCustomerJobCardServiceFirst = $getCustomerJobCardServiceQuery->first();
                 $customerJobServiceDataUpdate = [
                     'is_updated'=>1,
-                    'updated_by'=>Session::get('user')->id,
+                    'updated_by'=>auth()->user('user')->id,
                 ];
 
                 $customerJobServiceDiscountAmount=0;
@@ -286,7 +286,7 @@ class UpdateJobCardSubmit extends Component
                     'job_departent'=>1,
                     'job_description'=>json_encode($customerJobServiceDataUpdate),
                     'customer_job__card_service_id'=>$getCustomerJobCardServiceFirst->id,
-                    'created_by'=>Session::get('user')->id,
+                    'created_by'=>auth()->user('user')->id,
                     'created_at'=>Carbon::now(),
                 ]);
                 
@@ -304,7 +304,7 @@ class UpdateJobCardSubmit extends Component
                         'ItemCode'=>$cartData->item_code,
                         'ItemName'=>$cartData->item_name,
                         'QuantityRequested'=>$cartData->quantity,
-                        'Activity2Code'=>Session::get('user')->station_code
+                        'Activity2Code'=>auth()->user('user')->station_code
                     ]);
                 }
 
@@ -317,7 +317,7 @@ class UpdateJobCardSubmit extends Component
                     'job_status'=>1,
                     'job_departent'=>1,
                     'is_added'=>1,
-                    'created_by'=>Session::get('user')->id,
+                    'created_by'=>auth()->user('user')->id,
                 ];
                 
                 
@@ -334,7 +334,7 @@ class UpdateJobCardSubmit extends Component
                 $customerJobServiceData['department_code']=$cartData->department_code;
                 $customerJobServiceData['department_name']=$cartData->department_name;
                 $customerJobServiceData['section_code']=$cartData->section_code;
-                $customerJobServiceData['station']=Session::get('user')->stationName['LandlordCode'];
+                $customerJobServiceData['station']=auth()->user('user')->stationName['LandlordCode'];
                 $customerJobServiceData['extra_note']=$cartData->extra_note;
                 $customerJobServiceData['service_item_type']=$cartData->cart_item_type;
                 //dd($customerJobServiceData);
@@ -373,7 +373,7 @@ class UpdateJobCardSubmit extends Component
                     'job_departent'=>1,
                     'job_description'=>json_encode($customerJobServiceData),
                     'customer_job__card_service_id'=>$customerJobServiceId->id,
-                    'created_by'=>Session::get('user')->id,
+                    'created_by'=>auth()->user('user')->id,
                     'created_at'=>Carbon::now(),
                 ]);
                 
@@ -391,7 +391,7 @@ class UpdateJobCardSubmit extends Component
                         'ItemCode'=>$cartData->item_code,
                         'ItemName'=>$cartData->item_name,
                         'QuantityRequested'=>$cartData->quantity,
-                        'Activity2Code'=>Session::get('user')->station_code
+                        'Activity2Code'=>auth()->user('user')->station_code
                     ]);
                 }
             }
@@ -408,7 +408,7 @@ class UpdateJobCardSubmit extends Component
             'total_price'=>$this->total,
             'vat'=>$this->tax,
             'grand_total'=>$this->grand_total,
-            'updated_by'=>Session::get('user')->id,
+            'updated_by'=>auth()->user('user')->id,
         ];
         if($totalDiscountInJob>0)
         {
@@ -460,15 +460,15 @@ class UpdateJobCardSubmit extends Component
                 'check_drain_lug_fixed_properly'=>$this->check_drain_lug_fixed_properly,
                 'check_oil_filter_fixed_properly'=>$this->check_oil_filter_fixed_properly,
                 'ubi_comments'=>$this->ubi_comments,
-                'updated_by'=>Session::get('user')->id,
+                'updated_by'=>auth()->user('user')->id,
             ];
             $checkListEntryInsert = JobcardChecklistEntries::where(['job_number'=>$this->job_number,'job_id'=>$this->jobDetails->id])->update($checkListEntryData);
         }
         if($passmetrialRequest==true)
         {
             try {
-                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = '".Session::get('user')->stationName['PortfolioCode']."', @documentCode = '".isset($this->jobDetails->meterialRequestResponse)?$this->jobDetails->meterialRequestResponse:null."', @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".Session::get('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ", [
-                        Session::get('user')->stationName['PortfolioCode'],
+                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = '".auth()->user('user')->stationName['PortfolioCode']."', @documentCode = '".isset($this->jobDetails->meterialRequestResponse)?$this->jobDetails->meterialRequestResponse:null."', @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".auth()->user('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ", [
+                        auth()->user('user')->stationName['PortfolioCode'],
                         $this->jobDetails->meterialRequestResponse,
                         $customerjobData['job_date_time'],
                         $this->job_number,
@@ -476,7 +476,7 @@ class UpdateJobCardSubmit extends Component
                         $this->job_number,
                         "0",
                         $this->job_number,
-                        Session::get('user')->station_code,
+                        auth()->user('user')->station_code,
                         $propertyCodeMR,
                         $unitCodeMR,
                          "1",

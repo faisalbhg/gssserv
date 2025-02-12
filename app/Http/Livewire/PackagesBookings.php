@@ -48,7 +48,7 @@ class PackagesBookings extends Component
         }
         if($this->package_id)
         {
-             $packageInfoResult = ServicePackage::with(['packageDetails'])->where(['Status'=>'A','Division'=>Session::get('user')['station_code'],'Id'=>$this->package_id])->first();
+             $packageInfoResult = ServicePackage::with(['packageDetails'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code'],'Id'=>$this->package_id])->first();
              
              $totalPrice=0;
              $unitPrice=0;
@@ -71,8 +71,8 @@ class PackagesBookings extends Component
     
 
     public function confirmPackage(){
-        $stationPKGNumber = PackageBookings::where(['station'=>Session::get('user')->station_code])->count();
-        $this->package_number = 'PKG-'.Session::get('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationPKGNumber+1);
+        $stationPKGNumber = PackageBookings::where(['station'=>auth()->user('user')->station_code])->count();
+        $this->package_number = 'PKG-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationPKGNumber+1);
         $customerPackageData = [
             'package_number'=>$this->package_number,
             'package_name'=>$this->packageInfo->PackageName,
@@ -97,15 +97,15 @@ class PackagesBookings extends Component
             'plate_number'=>$this->selectedVehicleInfo['plate_number_final'],
             'chassis_number'=>$this->selectedVehicleInfo['chassis_number'],
             'vehicle_km'=>$this->selectedVehicleInfo['vehicle_km'],
-            'station'=>Session::get('user')->stationName['LandlordCode'],
+            'station'=>auth()->user('user')->stationName['LandlordCode'],
             'total_price'=>$this->total,
             'vat'=>$this->tax,
             'grand_total'=>$this->grand_total,
             'job_status'=>1,
             'job_departent'=>1,
             'payment_status'=>0,
-            'created_by'=>Session::get('user')->id,
-            'payment_updated_by'=>Session::get('user')->id,
+            'created_by'=>auth()->user('user')->id,
+            'payment_updated_by'=>auth()->user('user')->id,
         ];
         $packageId = PackageBookings::create($customerPackageData);
         
@@ -137,7 +137,7 @@ class PackagesBookings extends Component
                 'section_code'=>$packageDetails->labourItemDetails['SectionCode'],
                 'section_name'=>$packageDetails->labourItemDetails['CompanyCode'],
                 'department_name'=>$packageDetails->labourItemDetails['CompanyCode'],
-                'station'=>Session::get('user')->stationName['LandlordCode'],
+                'station'=>auth()->user('user')->stationName['LandlordCode'],
                 'total_price'=>$this->total,
                 'quantity'=>$packageDetails->Quantity,
                 'vat'=>$this->tax,
@@ -147,7 +147,7 @@ class PackagesBookings extends Component
                 'job_departent'=>1,
                 'is_added'=>0,
                 'is_removed'=>0,
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
             ];
             $customerPackageServiceId = PackageBookingServices::create($customerPkgServiceData);
             
@@ -156,7 +156,7 @@ class PackagesBookings extends Component
                 'customer_package_service_id'=>$customerPackageServiceId->id,
                 'package_status'=>1,
                 'package_description'=>json_encode($customerPkgServiceData),
-                'created_by'=>Session::get('user')->id,
+                'created_by'=>auth()->user('user')->id,
                 'created_at'=>Carbon::now(),
             ]);
 

@@ -400,7 +400,7 @@ class VehicleSearchSave extends Component
         $customerVehicleData['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
         $customerVehicleData['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
         $customerVehicleData['is_active']=1;
-        $customerVehicleData['created_by']=Session::get('user')->id;
+        $customerVehicleData['created_by']=auth()->user('user')->id;
 
         if($this->vehicle_image){
 
