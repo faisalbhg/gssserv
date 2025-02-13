@@ -37,6 +37,7 @@ use Session;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+use DB;
 
 class Operations extends Component
 {
@@ -141,11 +142,11 @@ class Operations extends Component
             $getCountSalesJob = $getCountSalesJob->where('station', '=', $this->search_station);
         }
         $customerjobs = $customerjobs->where('is_contract','=',null)->orderBy('id','DESC');
-        //$customerjobs = $customerjobs->where(['created_by'=>auth()->user('user')->id])
+        $customerjobs = $customerjobs->where(['station'=>auth()->user('user')['station_code']]);
         $customerjobs = $customerjobs->paginate(10);
         //dd($customerjobs);
         $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null);
-        //$getCountSalesJob = $getCountSalesJob->where(['created_by'=>auth()->user('user')->id]);
+        $getCountSalesJob = $getCountSalesJob->where(['station'=>auth()->user('user')['station_code']]);
         $getCountSalesJob = $getCountSalesJob->first();
         //dd($customerjobs);
 
@@ -218,52 +219,8 @@ class Operations extends Component
 
     public function updateQwService($services)
     {
-        /*CustomerJobCardServices::where('job_number','!=',null)->update(['job_status'=>1,'job_departent'=>1]);
-        CustomerJobCards::where('job_number','!=',null)->update(['job_status'=>1,'job_departent'=>1]);
-        dd(CustomerJobCards::where(['job_number'=>$services['job_number']])->get());
-        */
-        //dd($services);
-        //$services = json_decode($services);
-        /*$validatedData = $this->validate([
-            'frontSideBumperCheck' => 'required',
-            'frontSideGrillCheck' => 'required',
-            'frontSideNumberPlateCheck' => 'required',
-            'frontSideHeadLampsCheck' => 'required',
-            'frontSideFogLampsCheck' => 'required',
-            'frontSideHoodCheck' => 'required',
-            'rearSideBumperCheck' => 'required',
-            'rearSideMufflerCheck' => 'required',
-            'rearSideNumberPlateCheck' => 'required',
-            'rearSideTrunkCheck' => 'required',
-            'rearSideLightsCheck' => 'required',
-            'rearSideRoofTopCheck' => 'required',
-            'leftSideWheelCheck' => 'required',
-            'leftSideFenderCheck' => 'required',
-            'leftSideSideMirrorCheck' => 'required',
-            'leftSideDoorGlassInOutCheck' => 'required',
-            'leftSideDoorHandleCheck' => 'required',
-            'leftSideSideStepperCheck' => 'required',
-            'rightSideWheelCheck' => 'required',
-            'rightSideFenderCheck' => 'required',
-            'rightSideSideMirrorCheck' => 'required',
-            'rightSideDoorGlassInOutCheck' => 'required',
-            'rightSideDoorHandleCheck' => 'required',
-            'rightSideSideStepperCheck' => 'required',
-            'innerCabinSmellCheck' => 'required',
-            'innerCabinWindshieldFRRRCheck' => 'required',
-            'innerCabinSteeringWheelCheck' => 'required',
-            'innerCabinGearKnobCheck' => 'required',
-            'innerCabinCentreConsoleCheck' => 'required',
-            'innerCabinAshTryCheck' => 'required',
-            'innerCabinDashboardCheck' => 'required',
-            'innerCabinACVentsFRRRCheck' => 'required',
-            'innerCabinInteriorTrimCheck' => 'required',
-            'innerCabinFloorMatCheck' => 'required',
-            'innerCabinRearViewMirrorCheck' => 'required',
-            'innerCabinLuggageCompCheck' => 'required',
-            'innerCabinRoofTopCheck' => 'required',
-        ]);*/
-        //dd($validatedData);
+
+
         $jobServiceId = $services['id'];
         $this->job_status = $services['job_status']+1;
         $this->job_departent = $services['job_departent']+1;
@@ -289,7 +246,7 @@ class Operations extends Component
             array(
                 \DB::raw('count(case when job_status = 0 then job_status end) new'),
                 \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
-                \DB::raw('count(case when job_status = 2 then job_status end) work_finished'),
+                \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
                 \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
             )
@@ -298,7 +255,7 @@ class Operations extends Component
         if($getCountSalesJobStatus->working_progress>0){
             $mainSTatus=1;
         }
-        else if($getCountSalesJobStatus->work_finished>0){
+        else if($getCountSalesJobStatus->qualitycheck>0){
             $mainSTatus=2;
         }
         else if($getCountSalesJobStatus->ready_to_deliver>0){
@@ -307,16 +264,41 @@ class Operations extends Component
         else if($getCountSalesJobStatus->delivered>0){
             $mainSTatus=4;
         }
-        //dd($mainSTatus);
         $mianJobUpdate = [
             'job_status'=>$mainSTatus,
             'job_departent'=>$mainSTatus,
         ];
-        CustomerJobCards::where(['job_number'=>$services['job_number']])->update($mianJobUpdate);
         
+        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$services['job_number']]);
+        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
+
         $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$services['job_number']])->first();
         $this->jobcardDetails = $job;
         $this->customerjobservices = $job->customerJobServices;
+
+        if($mainSTatus==3)
+        {
+            
+
+            try {
+                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobId = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$services['customer_id'].'" ');
+            } catch (\Exception $e) {
+                //return $e->getMessage();
+            }
+
+
+
+            $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
+            $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
+            if($mobileNumber!=''){
+                if($mobileNumber=='971566993709'){
+                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately. Thank you for choosing GSS! Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                }
+            }
+        }
+        
+        
     }
 
     public function updateGSService($services)

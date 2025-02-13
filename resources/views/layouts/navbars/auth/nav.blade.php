@@ -106,6 +106,35 @@
                             </span>
                         </a>
                     </li>
+                    <li class="nav-item dropdown pe-2 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-dark p-0" id="dropdownMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-lg fa-user cursor-pointer"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end px-2 py-3 ms-n4"
+                            aria-labelledby="dropdownMenuButton">
+                            <li class="mb-2">
+                                
+                                    <div class="d-flex p-2">
+                                        <div class="my-auto">
+                                            
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="text-sm font-weight-normal mb-1">
+                                                <span class="font-weight-bold">{{ auth()->user('user')['name']}}</span>
+                                            </h6>
+                                            <p class="text-xs text-dark mb-0">
+                                                <i class="fa fa-clock me-1"></i>
+                                                {{ auth()->user('user')['stationName']['CorporateName']}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                
+                            </li>
+                            <hr class="horizontal dark mt-3">
+                            <livewire:auth.logout />
+                        </ul>
+                    </li>
                     
                 </ul>
             </div>

@@ -106,6 +106,10 @@
                                         <h6 class="text-primary mb-0 mt-0 ">{{$job->plate_number}}</h6>
                                         <h6 class="mb-0 mt-0">#{{$job->job_number}}</h6>
                                         <h6 class="mb-0 text-sm mt-0">{{$job->makeInfo['vehicle_name']}} - <small>{{$job->modelInfo['vehicle_model_name']}} </small></h6>
+                                        <button class="btn {!!config('global.payment.status_class')[$job->payment_status]!!}" type="button">
+                                            <span class="btn-inner--icon"><i class="fa-solid fa-money-bill-1-wave ms-1 fs-xl" style="font-size: 1.5em;" ></i></span>
+                                            Contract
+                                        </button>
                                     </div>
                                     <div class="ms-auto">
                                         <div class="dropdown">
@@ -113,46 +117,41 @@
                                             <i class="fa fa-ellipsis-v text-lg"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end me-sm-n4 me-n3" aria-labelledby="navbarDropdownMenuLink">
-                                                
-                                                    <div class="timeline timeline-one-side" data-timeline-axis-style="dotted">
-                                                        @foreach(config('global.jobs.actions') as $actionKey => $jobActions)
-                                                        <div class="timeline-block mb-3">
-                                                          <span class="timeline-step">
-                                                            <i class="ni ni-bell-55 @if($job->job_status < $actionKey) text-secondary @else {!!config('global.jobs.status_text_class')[$actionKey]!!}  text-gradient @endif"></i>
-                                                          </span>
-                                                          <div class="timeline-content">
-                                                            <span class="badge badge-sm @if($job->job_status < $actionKey) bg-gradient-secondary @else {!!config('global.jobs.status_btn_class')[$actionKey]!!} @endif">{{$jobActions}}</span>
-                                                          </div>
-                                                        </div>
-                                                        @endforeach
+                                                <div class="timeline timeline-one-side" data-timeline-axis-style="dotted">
+                                                    @foreach(config('global.jobs.actions') as $actionKey => $jobActions)
+                                                    <div class="timeline-block mb-3">
+                                                      <span class="timeline-step">
+                                                        <i class="ni ni-bell-55 @if($job->job_status < $actionKey) text-secondary @else {!!config('global.jobs.status_text_class')[$actionKey]!!}  text-gradient @endif"></i>
+                                                      </span>
+                                                      <div class="timeline-content">
+                                                        <span class="badge badge-sm @if($job->job_status < $actionKey) bg-gradient-secondary @else {!!config('global.jobs.status_btn_class')[$actionKey]!!} @endif">{{$jobActions}}</span>
                                                       </div>
-                                                    
-                                                        
-                                                    
-                                                
+                                                    </div>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                    
-                                    @if($job->job_status==3)
-                                    <span  wire:click="updateQwService('{{$job->job_number}}','4')" class=" my-2 w-100 badge badge-sm {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer"> Mark as {{config('global.jobs.status')[$job->job_status+1]}}</span>
-                                    @endif
-                                  
-                                  <hr class="m-0">
-                                  <p class="text-sm text-dark mb-0"><i class="fa-solid fa-user text-default mt-3"></i> {{$job->customerInfo['TenantName']}}
+                                <hr class="m-0">
+                                <p class="text-sm text-dark mb-0"><i class="fa-solid fa-user text-default mt-3"></i> {{$job->customerInfo['TenantName']}}
                                     @if(isset($job->customerInfo['Mobile']))
-                                    <br><i class="fa-solid fa-phone text-default mb-3"></i> {{$job->customerInfo['Mobile']}}
+                                    <br><i class="fa-solid fa-phone text-dark mb-0"></i> {{$job->customerInfo['Mobile']}}
                                     @endif
                                     @if(isset($job->customerInfo['Email']))
-                                    <br><i class="fa-solid fa-envelop text-default mb-3"></i> {{$job->customerInfo['Email']}}
+                                    <br><i class="fa-solid fa-envelope text-dark mb-0"></i> {{$job->customerInfo['Email']}}
                                     @endif
-                                  </p>
+                                </p>
                                 <hr class="horizontal dark">
                                 <div class="row">
                                     <div class="col-12">
-                                        <span class="w-100 badge badge-sm {!!config('global.jobs.status_btn_class')[$job->job_status]!!}">{{config('global.jobs.status')[$job->job_status]}}</span>
-                                        <small class="text-secondary mb-0">{{ \Carbon\Carbon::parse($job->created_at)->format('d-m-y h:i A') }}</small>
+                                    @if($job->job_status==3 && $job->payment_status==1)
+                                    <span  wire:click="updateQwService('{{$job->job_number}}','4')" class=" my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer"> Mark as {{config('global.jobs.status')[$job->job_status+1]}}</span>
+                                    @else
+                                    <span  class="opacity-2 my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer"> Mark as {{config('global.jobs.status')[$job->job_status+1]}}</span>
+                                    @endif
+                                        
+                                        <!-- <small class="text-secondary mb-0">{{ \Carbon\Carbon::parse($job->created_at)->format('d-m-y h:i A') }}</small> -->
                                     </div>
                                 </div>
                             </div>

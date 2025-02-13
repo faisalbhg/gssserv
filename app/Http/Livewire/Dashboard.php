@@ -72,16 +72,15 @@ class Dashboard extends Component
         $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$startDate, $endDate]);
         $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);
 
-            //$getCountSalesJobStatus = $getCountSalesJobStatus->where(['job_date_time'=>$this->selected_date]);
-            //$customerjobsQuery = $customerjobsQuery->where(['job_date_time'=>$this->selected_date]);
-        
         $this->getCountSalesJob = $getCountSalesJobStatus->where(['created_by'=>auth()->user('user')['id']])->first();
 
         if($this->filterJobStatus)
         {
             $customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
         }
-        $this->customerjobsLists = $customerjobsQuery->where(['created_by'=>auth()->user('user')['id']])->get();
+        $this->customerjobsLists = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']])->get();
+        //dd(auth()->user('user')['station_code']);
+        //dd($this->customerjobsLists);
         return view('livewire.home-page');
     }
 

@@ -37,18 +37,18 @@
     position: relative;
     margin: 0px auto 0;
     padding:10px;
-    background: linear-gradient(0deg, #000, #272727);
+    background: linear-gradient(0deg, #FFF, #FFF);
 }
 
 .block:before, .block:after {
     content: '';
     position: absolute;
-    left: -2px;
-    top: -2px;
+    left: -5px;
+    top: -5px;
     background: {!!config('global.qr_status_color')[$qrdata->job_status]!!};
     background-size: 400%;
-    width: calc(100% + 4px);
-    height: calc(100% + 4px);
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
     z-index: -1;
     animation: steam 20s linear infinite;
 }
@@ -73,12 +73,14 @@
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
-    <div class="row py-4">
-        <div class="col-md-12">
-            <div class="card card-plain text-center">
-                <a href="javascript:;">
-                    <img src="{{asset('img/logos/gss-logo.svg')}}" class="navbar-brand-img h-100" style="width:150px;" alt="...">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-plain pt-4 mb-4 text-center">
+                <a href="javascript:;" class="block">
+                    {!! QrCode::size(180)->generate(url('vehiclestatus/'.$qrdata->job_number)) !!}
+                    <h6 class="card-title text-center">#{{$qrdata->job_number}}</h6>
                 </a>
+                
             </div>
         </div>
     </div>
@@ -88,62 +90,77 @@
             <div class="background-img">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card card-plain text-center">
-                          <a href="javascript:;" class="block">
-                            {!! QrCode::size(250)->generate(url('vehiclestatus/'.$qrdata->job_number)) !!}
-                          </a>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="card card-profile card-plain">
+                                            <div class="position-relative">
+                                                <div class="blur-shadow-image">
+                                                    <img class="w-100 rounded-3 shadow-lg" src="{{url("public/storage/".$qrdata->customerVehicle["vehicle_image"])}}">
+                                                </div>
 
-                          <div class="card-body">
-                            <h4 class="card-title">#{{$qrdata->job_number}}</h4>
-                            <h6 class="category text-gradient h2 {{config('global.jobs.status_text_class')[$qrdata->job_status]}}">Status: {{config('global.jobs.status')[$qrdata->job_status]}}</h6>
-                            <h6 class="category text-gradient h2 {{config('global.payment.status_class')[$qrdata->payment_status]}}">Payment: {{config('global.payment.status')[$qrdata->payment_status]}}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="card card-profile card-plain">
+                                            <div class="card-body text-left p-0">
+                                                <div class="p-md-0 pt-3 text-left">
+                                                    <h5 class="font-weight-bolder mb-0">
+                                                        {{$qrdata->customerVehicle['plate_number_final']}}
+                                                    </h5>
+                                                    <p class="text-uppercase text-sm font-weight-bold mb-2">{{isset($qrdata->makeInfo)?$qrdata->makeInfo['vehicle_name']:''}}, {{isset($qrdata->modelInfo['vehicle_model_name'])?$qrdata->modelInfo['vehicle_model_name']:''}}</p>
+                                                </div>
+                                                @if($qrdata->customerInfo['TenantName'])
+                                                    @if($qrdata->customerInfo['TenantName'])
+                                                    <p class="mb-0">{{$qrdata->customerInfo['TenantName']}}</p>
+                                                    @endif
+                                                    @if($qrdata->customerInfo['Mobile'])
+                                                    <p class="mb-0">{{$qrdata->customerInfo['Mobile']}}</p>
+                                                    @endif
+                                                    @if($qrdata->customerInfo['Email'])
+                                                    <p class="mb-1">{{$qrdata->customerInfo['Email']}}</p>
+                                                    @endif
+                                                @else
+                                                <p class="mb-0">Customer Guest</p>
+                                                @endif
+                                                @if($qrdata->customerVehicle['chassis_number'])
+                                                <p class="mb-1"><b>Chaisis:</b> {{$qrdata->customerVehicle['chassis_number']}}</p>
+                                                @endif
+                                                <button class="btn {!!config('global.payment.status_class')[$qrdata->payment_status]!!}" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-money-bill-1-wave ms-1 fs-xl" style="font-size: 1.5em;" ></i></span>
+                                                    {!!config('global.payment.status')[$qrdata->payment_status]!!}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    
+                                    <div class="col-md-12">
+                                        <div class="timeline timeline-one-side" data-timeline-axis-style="dotted">
+                                            @foreach(config('global.jobs.actions') as $actionKey => $jobActions)
+                                            <div class="timeline-block mb-3">
+                                              <span class="timeline-step">
+                                                <i class="ni ni-bell-55 @if($qrdata->job_status < $actionKey) text-secondary @else {!!config('global.jobs.status_text_class')[$actionKey]!!}  text-gradient @endif"></i>
+                                              </span>
+                                              <div class="timeline-content">
+                                                <span class="badge badge-sm @if($qrdata->job_status < $actionKey) bg-gradient-secondary @else {!!config('global.jobs.status_btn_class')[$actionKey]!!} @endif">{{$jobActions}}</span>
+                                              </div>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                        
+                            
                             <hr class="horizontal dark mt-3">
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <div class="card card-profile card-plain">
-                                                <div class="position-relative">
-                                                    <div class="blur-shadow-image">
-                                                        <img class="w-100 rounded-3 shadow-lg" src="{{url("public/storage/".$qrdata->customerVehicle["vehicle_image"])}}">
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-8">
-                                            <div class="card card-profile card-plain">
-                                                <div class="card-body text-left p-0">
-                                                    <div class="p-md-0 pt-3 text-left">
-                                                        <h5 class="font-weight-bolder mb-0">
-                                                            {{$qrdata->customerVehicle['plate_number_final']}}
-                                                        </h5>
-                                                        <p class="text-uppercase text-sm font-weight-bold mb-2">{{isset($qrdata->makeInfo)?$qrdata->makeInfo['vehicle_name']:''}}, {{isset($qrdata->modelInfo['vehicle_model_name'])?$qrdata->modelInfo['vehicle_model_name']:''}}</p>
-                                                    </div>
-                                                    @if($qrdata->customerInfo['TenantName'])
-                                                        @if($qrdata->customerInfo['TenantName'])
-                                                        <p class="mb-0">{{$qrdata->customerInfo['TenantName']}}</p>
-                                                        @endif
-                                                        @if($qrdata->customerInfo['Mobile'])
-                                                        <p class="mb-0">{{$qrdata->customerInfo['Mobile']}}</p>
-                                                        @endif
-                                                        @if($qrdata->customerInfo['Email'])
-                                                        <p class="mb-1">{{$qrdata->customerInfo['Email']}}</p>
-                                                        @endif
-                                                    @else
-                                                    <p class="mb-0">Customer Guest</p>
-                                                    @endif
-                                                    @if($qrdata->customerVehicle['chassis_number'])
-                                                    <p class="mb-1"><b>Chaisis:</b> {{$qrdata->customerVehicle['chassis_number']}}</p>
-                                                    @endif
-                                                    @if($qrdata->customerVehicle['vehicle_km'])
-                                                    <b>KM Reading:</b> {{$qrdata->customerVehicle['vehicle_km']}}</p>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <!-- <button type="button" class="btn btn-dark">
@@ -168,6 +185,15 @@
             </div>
         </div>
     </section>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card card-plain text-center">
+                <a href="javascript:;">
+                    <img src="{{asset('img/logos/gss-logo.svg')}}" class="navbar-brand-img h-100" style="width:100px;" alt="...">
+                </a>
+            </div>
+        </div>
+    </div>
     
     <!--   Core JS Files   -->
 

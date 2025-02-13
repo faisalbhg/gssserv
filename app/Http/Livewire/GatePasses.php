@@ -42,7 +42,7 @@ class GatePasses extends Component
             $jobsQuery = $jobsQuery->where('plate_number', 'like',"%$this->search_plate_number%");
         }
         
-        $data['jobsResults'] = $jobsQuery->where('job_status','!=',4)->orderBy('id','ASC')->paginate(25);
+        $data['jobsResults'] = $jobsQuery->where('job_status','=',3)->where(['station'=>auth()->user('user')['station_code']])->orderBy('id','ASC')->paginate(25);
         //dd($data);
         return view('livewire.gate-passes',$data);
     }
