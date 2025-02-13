@@ -19,24 +19,28 @@ return [
             '1'=>"Payment Link",
             '2'=>"Pay By Card",
             '3'=>"Cash Payment",
+            '6'=>"Cash In Advance"
         ],
         'type_class'=>[
             '0'=>'bg-gradient-secondary',
             '1'=>'bg-gradient-info',
             '2'=>'bg-gradient-success',
             '3'=>'bg-gradient-primary',
+            '6'=>'bg-gradient-info',
         ],
         'icons'=>[
             '0'=>"fa-solid fa-basket-shopping",
             '1'=>"fa-solid fa-file-invoice-dollar",
             '2'=>"fa-solid fa-credit-card",
             '3'=>"fa-solid fa-money-bill-1",
+            '6'=>"fa-solid fa-money-bill-1",
         ],
         'text_class'=>[
             '0'=>'text-dark',
             '1'=>"text-danger",
             '2'=>"text-danger",
             '3'=>"text-info",
+            '6'=>"text-info",
         ],
         'status'=>[
             '0'=>'Pending',
@@ -44,6 +48,7 @@ return [
             '2'=>'Failed',
             '3'=>'Cancelled',
             '4'=>'Advanced',
+            '6'=>'Advanced',
         ],
         'status_class'=>[
             '0'=>'bg-gradient-primary',
@@ -51,6 +56,7 @@ return [
             '2'=>'bg-gradient-danger',
             '3'=>'bg-gradient-danger',
             '4'=>'bg-gradient-success',
+            '6'=>'bg-gradient-success',
         ],
         'status_icon'=>[
             '0'=>'fas fa-minus',
@@ -58,13 +64,15 @@ return [
             '2'=>'fas fa-minus',
             '3'=>'fas fa-minus',
             '4'=>'fas fa-check',
+            '6'=>'fas fa-check',
         ],
         'status_icon_class'=>[
             '0'=>'btn-outline-danger',
             '1'=>'btn-outline-success',
             '2'=>'btn-outline-danger',
             '3'=>'btn-outline-danger',
-            '3'=>'btn-outline-success',
+            '4'=>'btn-outline-success',
+            '6'=>'btn-outline-success',
         ],
         'status_update'=>[
             '1'=>'Paid',
@@ -313,6 +321,15 @@ return [
             'S161','S162','S231','S237','S169','S033','S232','S234'
         ],
 
+    ],
+    'customize_price_item'=>[
+        'S408'=>[
+            'price'=>[
+                '500',
+                '750',
+                '1000'
+            ]
+        ]
     ],
     'package'=>[
         'type'=>[

@@ -193,6 +193,12 @@ class VehicleSearchSave extends Component
         if(count($this->customers)>0)
         {
             $this->showVehicleAvailable=true;
+            //$this->showForms=false;
+            $this->showCustomerForm=false;
+            $this->showPlateNumber=false;
+            $this->searchByChaisisForm=false;
+            $this->otherVehicleDetailsForm=false;
+            $this->showSaveCustomerButton=false;
         }
         else
         {

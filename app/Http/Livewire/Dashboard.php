@@ -34,11 +34,11 @@ class Dashboard extends Component
 
     public function render()
     {
-        
-        //'S255'
-        //CustomerJobCardServices::truncate();
-        //Get Pending Customer
-        $this->pendingCustomersCart =  CustomerServiceCart::with(['customerInfo','vehicleInfo'])->where(['created_by'=>auth()->user('user')['id']])->get();
+        $this->pendingCustomersCart =  CustomerServiceCart::
+        select()
+        ->with(['customerInfo','vehicleInfo'])->where(['created_by'=>auth()->user('user')['id']])
+        //->groupBy('customer_service_carts.customer_id')
+        ->get();
         //dd($this->pendingCustomersCart);
 
         $getCountSalesJobStatus = CustomerJobCards::select(

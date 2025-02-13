@@ -216,6 +216,28 @@ class SubmitCutomerServiceJob extends Component
             $this->showPayLaterCheckout=false;
             $this->selectedCustomerVehicle=false;
         }
+        else if($mode=='empty')
+        {
+            $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>6,'payment_status'=>1,'payment_request'=>'package','job_create_status'=>1]);
+
+            if($customerjobs->customerInfo['Mobile']!=''){
+                if($mobileNumber=='971566993709'){
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                }
+            }
+            
+
+            CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
+
+            $this->successPage=true;
+            $this->showCheckout =false;
+            $this->cardShow=false;
+            $this->showServiceGroup=false;
+            $this->showPayLaterCheckout=false;
+            $this->selectedCustomerVehicle=false;
+        }
+
         try {
             //DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ');
         } catch (\Exception $e) {
@@ -278,6 +300,9 @@ class SubmitCutomerServiceJob extends Component
         $meterialRequestItems=[];
         $passmetrialRequest = false;
         $totalDiscountInJob=0;
+        $is_package=false;
+        $package_code=null;
+        $package_number=null;
         foreach($this->cartItems as $cartData)
         {
             $customerJobServiceData = [
@@ -322,6 +347,11 @@ class SubmitCutomerServiceJob extends Component
                 $customerJobServiceData['discount_start_date']=$cartData->start_date;
                 $customerJobServiceData['discount_end_date']=$cartData->end_date;
                 $totalDiscountInJob = $totalDiscountInJob+$customerJobServiceDiscountAmount;
+            }
+            if($cartData->cart_item_type==3){
+                $customerJobServiceData['is_package']=1;
+                $customerJobServiceData['package_number']=$cartData->package_number;
+                $customerJobServiceData['package_code']=$cartData->package_code;
             }
 
             
@@ -376,6 +406,7 @@ class SubmitCutomerServiceJob extends Component
                 ]);
             }
 
+
             if($cartData->cart_item_type==3){
                 //dd(PackageBookings::with(['customerPackageServices'])->where(['customer_id'=>$cartData->customer_id,'package_code'=>$cartData->customer_group_code])->first());
                 PackageBookingServices::where([
@@ -385,6 +416,11 @@ class SubmitCutomerServiceJob extends Component
                 ])->update([
                     'package_service_use_count'=>$cartData->quantity
                 ]);
+
+                $is_package=true;
+                $package_code=$cartData->package_code;
+                $package_number=$cartData->package_number;
+
             }
             
 
@@ -493,6 +529,18 @@ class SubmitCutomerServiceJob extends Component
                 //dd($e->getMessage());
                 //return $e->getMessage();
             }
+
+
+        }
+
+        if($is_package==true)
+        {
+            try {
+                DB::select('EXEC [ServicePackage.Redeem.FinancialEntries] @jobnumber = "'.$this->job_number.'", @packagenumber = "'.$package_number.'", @doneby = "'.auth()->user('user')->id.'" ');
+            } catch (\Exception $e) {
+                //return $e->getMessage();
+            }
+
         }
 
 

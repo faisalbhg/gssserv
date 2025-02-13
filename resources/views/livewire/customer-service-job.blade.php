@@ -868,64 +868,92 @@
                         <div class="modal-body py-0">
                             <div class="row">
                                 @forelse($sectionServiceLists as $sectionServiceList)
-                                <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
-                                <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
-                                @if($priceDetails->UnitPrice!=0)
-                                <div class="col-md-6 col-sm-6">
-                                    
-                                    <div class="bg-gray-100 shadow my-3 p-2">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <p class="text-sm text-center font-weight-bold text-dark">{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</p>
-                                                <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea > -->
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="d-flex border-radius-lg p-0 mt-2">
-                                                    <p class="w-100 text-md font-weight-bold text-dark my-auto me-2 float-start">
-                                                    <span class="float-start" @if($discountDetails != null) style="text-decoration: line-through;" @endif>
-                                                        <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{round($priceDetails->UnitPrice,2)}}
-                                                    </span>
-                                                    @if($discountDetails != null)
-                                                    <span  class="float-end">
-                                                    <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{ round($priceDetails->UnitPrice-(($discountDetails['DiscountPerc']/100)*$priceDetails->UnitPrice),2) }}
-                                                    </span>
-                                                    @endif
-                                                    </p>
+                                    <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
+                                    <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
+                                    @if($priceDetails->UnitPrice!=0)
+                                    <div class="col-md-6 col-sm-6">
+                                        
+                                        <div class="bg-gray-100 shadow my-3 p-2">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <p class="text-sm text-center font-weight-bold text-dark">{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</p>
+                                                    <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea > -->
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="d-flex border-radius-lg p-0 mt-2">
-                                                    @if($discountDetails != null)
-                                                    <span class="badge bg-gradient-info">{{round($discountDetails['DiscountPerc'],2)}}%off</span>
-                                                    @endif
-                                                    <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
+                                            <div class="row">
+                                                @if(isset(config('global.customize_price_item')[$priceDetails->ItemCode]))
+                                                <div class="col-12">
+                                                    <select class="form-control w-30 float-start" placeholder="Price" wire:model="customise_service_item_price.{{$priceDetails->ItemId}}" style="padding-left:5px !important;" >
+                                                            <option value="">-Select-</option>
+                                                            @foreach(config('global.customize_price_item')[$priceDetails->ItemCode]['price'] as $customizePriceItem)
+                                                                <option value="{{$customizePriceItem}}">{{$customizePriceItem}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        @error('customise_service_item_price') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                                </div>
+                                                @else
+                                                <div class="col-12">
+                                                    <div class="d-flex border-radius-lg p-0 mt-2">
+                                                        <p class="w-100 text-md font-weight-bold text-dark my-auto me-2 float-start">
+                                                        <span class="float-start" @if($discountDetails != null) style="text-decoration: line-through;" @endif>
+                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{round($priceDetails->UnitPrice,2)}}
+                                                        </span>
+                                                        @if($discountDetails != null)
+                                                        <span  class="float-end">
+                                                        <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{ round($priceDetails->UnitPrice-(($discountDetails['DiscountPerc']/100)*$priceDetails->UnitPrice),2) }}
+                                                        </span>
+                                                        @endif
+                                                        </p>
+                                                        
+                                                    </div>
+                                                </div>
+                                                @endif
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="d-flex border-radius-lg p-0 mt-2">
+                                                        @if($discountDetails != null)
+                                                        <span class="badge bg-gradient-info">{{round($discountDetails['DiscountPerc'],2)}}%off</span>
+                                                        @endif
+                                                        @if(isset(config('global.customize_price_item')[$priceDetails->ItemCode]))
+                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addToCartCP('{{$priceDetails}}','{{$discountDetails}}','{{$customise_service_item_price}}')">Add Now</a>
+                                                        @else
+                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
+                                                        @endif
+                                                        
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        
-                                        
-                                        
-                                        @if(@$serviceAddedMessgae[$priceDetails->ItemCode])
-                                        <div class="text-center">
-                                            <span class="alert-icon"><i class="ni ni-like-2 text-success"></i></span>
-                                            <span class="alert-text text-success"><strong>Success!</strong> Added serves!</span>
-                                            <button type="button" class="btn-close text-success" data-bs-dismiss="alert" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        @endif
+                                            
+                                            
+                                            
+                                            @if(@$serviceAddedMessgae[$priceDetails->ItemCode])
+                                            <div class="text-center">
+                                                <span class="alert-icon"><i class="ni ni-like-2 text-success"></i></span>
+                                                <span class="alert-text text-success"><strong>Success!</strong> Added serves!</span>
+                                                <button type="button" class="btn-close text-success" data-bs-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            @endif
 
+                                        </div>
                                     </div>
-                                </div>
-                                @endif
+                                    @endif
                                 @empty
                                 @endforelse
                                 <div wire:loading wire:target="addtoCart">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div wire:loading wire:target="addtoCartCP">
                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                         <div class="la-ball-beat">
                                             <div></div>
@@ -1076,9 +1104,7 @@
                                     <div class="card h-100">
                                         <div class="card-header text-center pt-4 pb-3">
                                             <span class="badge rounded-pill bg-light text-dark bg-light">Redeem Package</span>
-                                            <h4>Package Number</h4>
-                                            
-                                            
+                                            <h4>Booked Packags</h4>
                                         </div>
                                         <div class="card-body text-lg-start text-left pt-0">
                                             @if ($message = Session::get('package_success'))
@@ -1099,9 +1125,6 @@
                                                 </button>
                                             </div>
                                             @endif
-                                            <div class="form-group">
-                                                <input class="form-control" type="text" wire:model="package_number" id="redeemPackageNumber" placeholder="Redeem Package Number..!">
-                                            </div>
                                             @if($showPackageOtpVerify)
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 mb-4" >
@@ -1112,7 +1135,7 @@
                                                             <div class="form-group">
                                                                 <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model="package_otp">
                                                                 <button class="btn btn-outline-success mb-0" type="button" wire:click="verifyPackageOtp">Verify</button>
-                                                                <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendOtp">Resend</button>
+                                                                <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendPackageOtp">Resend</button>
                                                                 <div wire:loading wire:target="verifyPackageOtp" >
                                                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                                         <div class="la-ball-beat">
@@ -1138,20 +1161,49 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @else
-                                            <div class="text-center align-center">
-                                                <a href="javascript:;" class="btn btn-icon bg-gradient-dark d-lg-block mt-3 mb-0 " wire:click="validatePackageContinue">Continue<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i></a>
-                                                <div wire:loading wire:target="validatePackageContinue" >
-                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                        <div class="la-ball-beat">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
+                                            @endif
+                                            @forelse($customerBookedPackages as $packBookd)
+                                            <?php
+                                            $packageBookedDateTime = new Carbon\Carbon($packBookd->package_date_time);
+                                            $endPackageDateTime = $packageBookedDateTime->addMonth($packBookd->package_duration);
+                                            ?>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="card bg-cover text-center my-2" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                        <div class="card-body z-index-2 py-2 text-center">
+                                                            <span class="badge rounded-pill bg-light {{config('global.package.type')[$packBookd->package_type]['bg_class']}} {{config('global.package.type')[$packBookd->package_type]['text_class']}}">{{config('global.package.type')[$packBookd->package_type]['title']}}</span>
+                                                            <h4 class="text-white">{{$packBookd->package_name}}</h4>
+                                                            @if(\Carbon\Carbon::now()->diffInDays($endPackageDateTime, false)>=0)
+                                                            <button  wire:click="openPackageDetails({{$packBookd}})" class="btn bg-gradient-primary mb-2 btn-sm">Open</button>
+                                                            @else
+                                                            <button class="btn bg-gradient-dark mb-2 btn-sm opacity-7">Expired</button>
+                                                            @endif
                                                         </div>
+                                                        @if(\Carbon\Carbon::now()->diffInDays($endPackageDateTime, false)>=0)
+                                                        <div class="mask bg-gradient-info border-radius-lg"></div>
+                                                        @else
+                                                        <div class="mask bg-gradient-danger border-radius-lg"></div>
+                                                        @endif
+
                                                     </div>
                                                 </div>
                                             </div>
-                                            @endif
+                                            @empty
+                                                <span class="text-danger">empty..!</span>
+                                            @endforelse
+                                            <div wire:loading wire:target="openPackageDetails" >
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group d-none">
+                                                <input class="form-control" type="text" wire:model="package_number" id="redeemPackageNumber" placeholder="Redeem Package Number..!">
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -1178,7 +1230,7 @@
                                                     <div class="d-flex justify-content-lg-start p-2">
                                                         
                                                         <div class="icon icon-shape icon-xs rounded-circle bg-gradient-success shadow text-center">
-                                                            <i class="fas fa-check opacity-10" aria-hidden="true"></i>
+                                                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                                                         </div>
                                                         <?php $totalPrice = $totalPrice+($packageDetails->TotalPrice*$packageDetails->Quantity); ?>
                                                         <?php $unitPrice = $unitPrice+($packageDetails->UnitPrice*$packageDetails->Quantity); ?>
@@ -1195,38 +1247,6 @@
                                                     </div>
                                                     @endif  
                                                 @endforeach
-                                                <!-- <div class="d-flex justify-content-lg-start p-2">
-                                                    <div class="icon icon-shape icon-xs rounded-circle bg-gradient-secondary shadow text-center">
-                                                        <i class="fas fa-minus" aria-hidden="true"></i>
-                                                    </div>
-                                                    <div>
-                                                        <span class="ps-3">Integration help </span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-lg-start p-2">
-                                                    <div class="icon icon-shape icon-xs rounded-circle bg-gradient-secondary shadow text-center">
-                                                        <i class="fas fa-minus" aria-hidden="true"></i>
-                                                    </div>
-                                                    <div>
-                                                        <span class="ps-3">Sketch Files </span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-lg-start  p-2">
-                                                    <div class="icon icon-shape icon-xs rounded-circle bg-gradient-secondary shadow text-center">
-                                                        <i class="fas fa-minus" aria-hidden="true"></i>
-                                                    </div>
-                                                    <div>
-                                                        <span class="ps-3">API Access </span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-lg-start p-2">
-                                                    <div class="icon icon-shape icon-xs rounded-circle bg-gradient-secondary shadow text-center">
-                                                        <i class="fas fa-minus" aria-hidden="true"></i>
-                                                    </div>
-                                                    <div>
-                                                        <span class="ps-3">Complete documentation </span>
-                                                    </div>
-                                                </div> -->
                                                 <h3 class="text-default font-weight-bold mt-2"></h3>
                                                 <p class="text-center h4"><s><small>AED</small> {{$unitPrice}}</s> <small>AED</small> {{$discountedPrice}}</p>
                                                 <div class="text-center align-center">
@@ -1287,7 +1307,7 @@
                         </div>
                         <div class="modal-body py-0">
                             <div class="row">
-                                @forelse($sectionServiceLists as $sectionServiceList)
+                                @forelse($sectionPackageServiceLists as $sectionServiceList)
                                 <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
                                 <?php $package_quantity = $sectionServiceList['package_quantity']; ?>
                                 <?php $package_quantity_used = $sectionServiceList['package_quantity_used']; ?>

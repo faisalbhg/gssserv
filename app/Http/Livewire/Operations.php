@@ -472,6 +472,7 @@ class Operations extends Component
         //dd(CustomerJobCardServices::where(['job_number'=>$job_number])->get());
         //dd(CustomerJobCards::with(['customerInfo','customerJobServices','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first());
         $job = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first();
+        //dd($job);
         $this->jobcardDetails = $job;
         //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
         //dd($this->customerJobServiceLogs);

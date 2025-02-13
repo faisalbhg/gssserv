@@ -265,6 +265,7 @@
                             <div class="card card-profile card-plain">
                                 <div class="card-body text-left p-0">
                                     <div class="p-md-0 pt-3">
+                                        <span class="badge badge-dark text-dark text-lg text-gradient ps-0">#{{$job_number}}</span>
                                         <h5 class="font-weight-bolder mb-0">{{$selectedVehicleInfo['plate_number_final']}}</h5>
                                         <p class="text-uppercase text-sm font-weight-bold mb-2">{{isset($selectedVehicleInfo->makeInfo)?$selectedVehicleInfo->makeInfo['vehicle_name']:''}}, {{isset($selectedVehicleInfo->modelInfo['vehicle_model_name'])?$selectedVehicleInfo->modelInfo['vehicle_model_name']:''}}</p>
                                     </div>
