@@ -30,7 +30,14 @@
     <link id="pagestyle" href="{{asset('css/soft-ui-dashboard.css?v=0.4')}}" rel="stylesheet" />
     <!-- Alpine -->
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+
+    <!--Choosen Css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+
     <style type="text/css">
+        html,body{
+            height: 100%;
+        }
         /*!
          * Load Awesome v1.1.0 (http://github.danielcardoso.net/load-awesome/)
          * Copyright 2015 Daniel Cardoso <@DanielCardoso>
@@ -173,6 +180,22 @@
         {
             background-image: linear-gradient(0deg, rgba(242, 142, 28, 1) 10%, rgba(210, 116, 0, 1) 20%, rgba(179, 91, 0, 1) 35%, rgba(149, 66, 0, 1) 45%, rgba(118, 43, 0, 1) 55%, rgba(89, 19, 0, 1) 65%, rgba(61, 0, 0, 1) 80%, rgba(37, 0, 1, 1) 90%, rgba(0, 0, 0, 1) 100%) !important;
         }
+        .chosen-container-single .chosen-single
+        {
+            border: 1px solid #d2d6da !important;
+            border-radius: 0.5rem !important;
+            background: linear-gradient(#fff 20%, #FFF 50%, #FFF 52%, #f6f6f6 100%);
+            height: 40px;
+            line-height: 40px;
+        }
+        .chosen-container-single .chosen-single div
+        {
+            top:25%;
+        }
+        .chosen-container .chosen-results
+        {
+            padding: 10px 6px;
+        }
     </style>
     @livewireStyles
 
@@ -291,9 +314,10 @@
         });
 
         
-        </script>
-    
+    </script>
 
+    <!--Choosen Js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
     @livewireScripts
 
 

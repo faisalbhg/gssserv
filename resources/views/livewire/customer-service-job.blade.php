@@ -1,15 +1,5 @@
 @push('custom_css')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<style type="text/css">
-    .select2-container--default .select2-selection--single{
-        border: 1px solid #d2d6da !important;
-        border-radius: 0.5rem !important;
-    }
-    .select2-container .select2-selection--single
-    {
-        height: 40px;
-    }
-</style>
+
 @endpush
 <main class="main-content position-relative  border-radius-lg">
     <div class="container-fluid py-2">
@@ -95,7 +85,7 @@
                             <div class="col-md-3 col-sm-4">
                                 <div class="form-group">
                                     <label for="plateEmirates">Country</label>
-                                    <select class="form-control  " wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
+                                    <select class="form-control chosen-select" wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
                                         @foreach(config('global.country') as $country)
                                         <option value="{{$country['CountryCode']}}">{{$country['CountryName']}}</option>
                                         @endforeach
@@ -105,7 +95,7 @@
                             <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="plateEmirates">Plate Emirates</label>
-                                    <select class="form-control  " wire:model="plate_state" name="plate_state" id="plateEmirates" style="padding:0.5rem 0.3rem !important;" >
+                                    <select class="form-control chosen-select" wire:model="plate_state" name="plate_state" id="plateEmirates" style="padding:0.5rem 0.3rem !important;" >
                                         <option value="">-Emirates-</option>
                                         @foreach($stateList as $state)
                                         <option value="{{$state->StateName}}">{{$state->StateName}}</option>
@@ -116,7 +106,7 @@
                             <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="plateCode">Plate Code</label>
-                                    <select class="form-control  " wire:model="plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
+                                    <select class="form-control chosen-select" wire:model="plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
                                         <option value="">-Code-</option>
                                         @foreach($plateEmiratesCodes as $plateCode)
                                         <option value="{{$plateCode->plateColorTitle}}">{{$plateCode->plateColorTitle}}</option>
@@ -179,7 +169,7 @@
                             <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleTypeInput">Vehicle Type</label>
-                                    <select class="form-control selectSearch" id="vehicleTypeInput" wire:model="vehicle_type">
+                                    <select class="form-control chosen-select" id="vehicleTypeInput" wire:model="vehicle_type">
                                         <option value="">-Select-</option>
                                         @foreach($vehicleTypesList as $vehicleType)
                                         <option value="{{$vehicleType->id}}">{{$vehicleType->type_name}}</option>
@@ -191,7 +181,7 @@
                             <div class="col-md-3 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleMakeInput">Vehicle Make</label>
-                                    <select class="form-control selectSearch" id="vehicleMakeInput" wire:model="make" >
+                                    <select class="form-control chosen-select" id="vehicleMakeInput" wire:model="make" >
                                         <option value="">-Select-</option>
                                         @foreach($listVehiclesMake as $vehicleName)
                                         <option value="{{$vehicleName->id}}">{{$vehicleName->vehicle_name}}</option>
@@ -204,7 +194,7 @@
                                 <div class="form-group">
                                     <label for="vehicleModelInput">Vehicle Model</label>
 
-                                    <select class="form-control" id="vehicleModelInput" wire:model="model">
+                                    <select class="form-control chosen-select" id="vehicleModelInput" wire:model="model">
                                         <option value="">-Select-</option>
                                         @foreach($vehiclesModelList as $model)
                                         <option value="{{$model->id}}">{{$model->vehicle_model_name}}</option>
@@ -1403,7 +1393,21 @@
     </div>
 </main>
 @push('custom_script')
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    document.addEventListener('livewire:load', function () {
+        // Initialize Chosen.js
+        $('.chosen-select').chosen({
+            no_results_text: 'Oops, nothing found!'
+        });
+        
+        // Re-initialize Chosen on Livewire updates
+        Livewire.on('chosenUpdated', () => {
+            $('.chosen-select').chosen('destroy').chosen();
+        });
+
+    });
+</script>
+
 <script type="text/javascript">
     window.addEventListener('openServicesListModal',event=>{
         $('#servicePriceModal').modal('show');
@@ -1424,56 +1428,56 @@
     window.addEventListener('selectSearchEvent',event=>{
         $(document).ready(function () {
 
-            $('#plateState').select2();
+            /*$('#plateState').select2();
             $('#vehicleTypeInput').select2();
             $('#vehicleMakeInput').select2();
             $('#vehicleModelInput').select2();
-            $('#plateCode').select2();
+            $('#plateCode').select2();*/
 
-            $('#plateState').on('change', function (e) {
-                var plateStateVal = $('#plateState').select2("val");
+            $('#plateEmirates').on('change', function (e) {
+                var plateStateVal = $('#plateEmirates').val();
                 @this.set('plate_state', plateStateVal);
             });
             $('#vehicleTypeInput').on('change', function (e) {
-                var vehicleTypeVal = $('#vehicleTypeInput').select2("val");
+                var vehicleTypeVal = $('#vehicleTypeInput').val();
                 @this.set('vehicle_type', vehicleTypeVal);
             });
             $('#vehicleMakeInput').on('change', function (e) {
-                var makeVal = $('#vehicleMakeInput').select2("val");
+                var makeVal = $('#vehicleMakeInput').val();
                 @this.set('make', makeVal);
             });
             $('#vehicleModelInput').on('change', function (e) {
-                var modelVal = $('#vehicleModelInput').select2("val");
+                var modelVal = $('#vehicleModelInput').val();
                 @this.set('model', modelVal);
             });
             $('#plateCode').on('change', function (e) {
-                var stateCodeVal = $('#plateCode').select2("val");
+                var stateCodeVal = $('#plateCode').val();
                 @this.set('plate_code', stateCodeVal);
             });
 
 
-            $('#seachItemByCategory').select2();
+            /*$('#seachItemByCategory').select2();
             $('#seachItemBySubCategory').select2();
-            $('#seachByBrand').select2();
+            $('#seachByBrand').select2();*/
 
             
 
             $('#seachItemByCategory').on('change', function (e) {
-                var catVal = $('#seachItemByCategory').select2("val");
+                var catVal = $('#seachItemByCategory').val();
                 @this.set('item_search_category', catVal);
             });
             $('#seachItemBySubCategory').on('change', function (e) {
-                var subCatVal = $('#seachItemBySubCategory').select2("val");
+                var subCatVal = $('#seachItemBySubCategory').val();
                 @this.set('item_search_subcategory', subCatVal);
             });
             $('#seachByItemBrand').on('change', function (e) {
-                var BrandVal = $('#seachByItemBrand').select2("val");
+                var BrandVal = $('#seachByItemBrand').val();
                 @this.set('item_search_brand', BrandVal);
             });
 
             $('#qlSeachByBrand').select2();
             $('#qlSeachByBrand').on('change', function (e) {
-                var BrandVal = $('#qlSeachByBrand').select2("val");
+                var BrandVal = $('#qlSeachByBrand').val();
                 @this.set('ql_search_brand', BrandVal);
             });
         });

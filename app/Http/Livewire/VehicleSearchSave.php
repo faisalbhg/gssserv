@@ -21,14 +21,15 @@ use App\Models\Vehicletypes;
 use App\Models\VehicleModels;
 use App\Models\VehicleMakes;
 use App\Models\Country;
+use App\Models\TenantMasterCustomers;
 
 class VehicleSearchSave extends Component
 {
     use WithFileUploads;
     public $searchByMobileNumber = true, $showSearchByMobileBtn=true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false, $showAddMakeModelNew=false;
-    public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false, $numberPlateRequired=true;
-    public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category=2, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
-    public $countryList = [], $stateList=[], $plateEmiratesCategories=[], $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
+    public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false, $numberPlateRequired=true, $searchByContractBtn=false, $showSearchContractCustomers=false, $showSaveContractCustomerVehicle=false, $showSaveCustomerVehicleOnly=false;
+    public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category=2, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km, $contract_customer_id;
+    public $countryList = [], $stateList=[], $plateEmiratesCategories=[], $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[], $contractCustomersList=[];
     public $editCustomerAndVehicle=false;
     public $customers=[];
     public $showVehicleAvailable=false;
@@ -38,6 +39,14 @@ class VehicleSearchSave extends Component
 
     public function render()
     {
+        /*$this->isValidInput = $this->getErrorBag()->count();
+        if($this->isValidInput>0)
+        {
+            //dd($this->getErrorBag()->messages()['plate_code']);
+        }*/
+
+        //dd($this->getErrorBag()->messages() );
+        //dd();
         //dd(CustomerVehicle::with(['vehicleJobs'])->limit(2)->get());
         $this->countryList = Country::get();
         if($this->plate_country!='AE'){
@@ -68,7 +77,7 @@ class VehicleSearchSave extends Component
         {
             $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
             if($this->plate_state){
-                
+                //dd($this->plate_state);
                 switch ($this->plate_state) {
                     case 'Abu Dhabi':
                         $this->plateStateCode = 1;
@@ -83,7 +92,7 @@ class VehicleSearchSave extends Component
                         $this->plate_category = '103';
                         break;
                     case 'Ajman':
-                        $plateStateCode = 4;
+                        $this->plateStateCode = 4;
                         $this->plate_category = '122';
                         break;
                     case 'Umm Al-Qaiwain':
@@ -122,6 +131,7 @@ class VehicleSearchSave extends Component
             $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
             $this->listVehiclesMake = VehicleMakes::get();
             if($this->make){
+                //dd($this->make);
                 $this->vehiclesModelList = VehicleModels::where(['vehicle_make_id'=>$this->make])->get();
             }
         }
@@ -131,8 +141,30 @@ class VehicleSearchSave extends Component
             $this->listVehiclesMake = [];
             $this->vehiclesModelList = [];
         }
+
+
+        if($this->showSearchContractCustomers)
+        {
+            if($this->contract_customer_id && $this->showSearchContractCustomers)
+            {
+                $this->customer_id = $this->contract_customer_id;
+                $this->showSaveContractCustomerVehicle=true;
+                $this->getCustomerVehicleSearch('contract_customer_name');
+                if(count($this->customers)>0)
+                {
+                    $this->showVehicleAvailable=true;
+                }
+            }
+            $this->contractCustomersList = TenantMasterCustomers::where(['discountgroup'=>14])->get();
+        }
+        else
+        {
+            $this->contractCustomersList=[];
+        }
+        
         //$this->dispatchBrowserEvent('imageUpload');
         $this->dispatchBrowserEvent('selectSearchEvent');
+        $this->emit('chosenUpdated');
         return view('livewire.vehicle-search-save');
     }
 
@@ -141,6 +173,9 @@ class VehicleSearchSave extends Component
         $this->addVehicleFormBtn=false;
         $this->cancelEdidAddFormBtn=false;
         $this->showSaveCustomerButton=false;
+        $this->showSaveCustomerVehicleOnly=false;
+        $this->showVehicleAvailable=false;
+        $this->customers=[];
         switch ($searchId) {
             case '1':
                 $this->searchByMobileNumberBtn=true;
@@ -154,6 +189,8 @@ class VehicleSearchSave extends Component
                 $this->searchByChaisisForm=false;
                 $this->showSearchByChaisisButton=false;
                 $this->otherVehicleDetailsForm=false;
+                $this->searchByContractBtn=false;
+                $this->showSearchContractCustomers=false;
                 break;
             case '2':
                 $this->searchByMobileNumberBtn=false;
@@ -168,6 +205,8 @@ class VehicleSearchSave extends Component
                 $this->searchByChaisisForm=false;
                 $this->showSearchByChaisisButton=false;
                 $this->otherVehicleDetailsForm=false;
+                $this->searchByContractBtn=false;
+                $this->showSearchContractCustomers=false;
                 break;
             case '3':
                 $this->searchByMobileNumberBtn=false;
@@ -182,6 +221,24 @@ class VehicleSearchSave extends Component
                 $this->dispatchBrowserEvent('imageUpload');
                 $this->showSearchByChaisisButton=true;
                 $this->otherVehicleDetailsForm=false;
+                $this->searchByContractBtn=false;
+                $this->showSearchContractCustomers=false;
+                break;
+            case '4':
+                $this->searchByMobileNumberBtn=false;
+                $this->searchByMobileNumber=false;
+                $this->showByMobileNumber=false;
+                $this->showCustomerForm=false;
+                $this->searchByPlateBtn=false;
+                $this->showPlateNumber=false;
+                $this->showSearchByPlateNumberButton=false;
+                $this->searchByChaisisBtn=false;
+                $this->searchByChaisisForm=false;
+                $this->showSearchByChaisisButton=false;
+                $this->otherVehicleDetailsForm=false;
+                $this->searchByContractBtn=true;
+                $this->showSearchContractCustomers=true;
+                
                 break;
         }
     }
@@ -199,6 +256,7 @@ class VehicleSearchSave extends Component
             $this->searchByChaisisForm=false;
             $this->otherVehicleDetailsForm=false;
             $this->showSaveCustomerButton=false;
+            $this->showSearchContractCustomers=false;
         }
         else
         {
@@ -220,6 +278,10 @@ class VehicleSearchSave extends Component
         }
         $this->dispatchBrowserEvent('imageUpload');
         $this->dispatchBrowserEvent('selectSearchEvent'); 
+    }
+
+    public function searchContractCustomer(){
+        $this->getCustomerVehicleSearch('contract_customer_name');
     }
 
     public function clickSearchByPlateNumber(){
@@ -270,6 +332,7 @@ class VehicleSearchSave extends Component
 
     public function clickSearchByChaisisNumber(){
         $this->mobile=null;
+        //dd($this->chassis_number);
         $validatedData = $this->validate([
             'chassis_number' => 'required',
         ]);
@@ -303,7 +366,7 @@ class VehicleSearchSave extends Component
     }
 
     public function getCustomerVehicleSearch($serachBy){
-        $ssearchCustomerVehicleQuery = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo']);
+        $searchCustomerVehicleQuery = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo']);
         if($serachBy=='mobile'){
             $validatedData = $this->validate([
                 'mobile'=> 'required',
@@ -311,17 +374,34 @@ class VehicleSearchSave extends Component
             if($this->mobile[0]=='0'){
                 $this->mobile = ltrim($this->mobile, $this->mobile[0]);
             }
-            $ssearchCustomerVehicleQuery = $ssearchCustomerVehicleQuery->where(function ($query) {
-                $query->whereRelation('customerInfoMaster', 'mobile', 'like', "%$this->mobile%");
+            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where(function ($query) {
+                $query->whereRelation('customerInfoMaster', 'Mobile', 'like', "%$this->mobile%");
             });
         }
         if($serachBy=='plate'){
-            $ssearchCustomerVehicleQuery = $ssearchCustomerVehicleQuery->where('plate_code', 'like', "%{$this->plate_code}%")->where('plate_number', 'like', "%{$this->plate_number}%");
+            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('plate_code', 'like', "%{$this->plate_code}%")->where('plate_number', 'like', "%{$this->plate_number}%");
         }
         if($serachBy=='chaisis'){
-            $ssearchCustomerVehicleQuery = $ssearchCustomerVehicleQuery->where('chassis_number', 'like', "%{$this->chassis_number}%");
+            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('chassis_number', 'like', "%{$this->chassis_number}%");
         }
-        $this->customers = $ssearchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1)->get();
+        if($serachBy=='contract_customer_name')
+        {
+            $validatedData = $this->validate([
+                'contract_customer_id'=> 'required',
+            ]);
+            
+            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('customer_id', '=', $this->contract_customer_id);
+        }
+        $this->customers = $searchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1)->get();
+        //dd($this->customers);
+    }
+
+    public function saveContractVehicle(){
+        $this->showForms=true;
+        $this->showPlateNumber=true;
+        $this->searchByChaisisForm=true;
+        $this->otherVehicleDetailsForm=true;
+        $this->showSaveCustomerVehicleOnly=true;
     }
 
     public function saveVehicleCustomer(){
@@ -438,6 +518,75 @@ class VehicleSearchSave extends Component
             $this->dispatchBrowserEvent('scrollToSearchVehicle'); 
         }
         session()->flash('success', 'Vehicle is Added  Successfully !');        
+    }
+
+    public function saveContractCustomerVehicle(){
+        if($this->plate_country=='AE'){
+            $validatedData = $this->validate([
+                'plate_state' => 'required',
+                'plate_code' => 'required',
+                'plate_number' => 'required',
+                'vehicle_image'=>'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
+                'vehicle_type'=>'required',
+                'make'=>'required',
+                'model'=>'required',
+            ]);
+        }
+        else
+        {
+            $validatedData = $this->validate([
+                'plate_number' => 'required',
+                'vehicle_image'=>'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
+                'vehicle_type'=>'required',
+                'make'=>'required',
+                'model'=>'required',
+            ]);
+
+        }
+
+        
+
+        
+        //dd($this->customer_id);
+
+        //Save Customer Vehicle
+        $customerVehicleData['customer_id']=$this->customer_id;
+        $customerVehicleData['vehicle_type']=$this->vehicle_type;
+        $customerVehicleData['make']=$this->make;
+        $customerVehicleData['model']=$this->model;
+        $customerVehicleData['plate_country']=$this->plate_country;
+        $customerVehicleData['plate_state']=isset($this->plate_state)?$this->plate_state:'';
+        $customerVehicleData['plate_category']=$this->plate_category;
+        $customerVehicleData['plate_code']=$this->plate_code;
+        $customerVehicleData['plate_number']=$this->plate_number;
+        $completePlateNumber = $this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
+        if($this->plate_country!='AE')
+        {
+            $plateNumberCode = Country::where(['CountryCode'=>$this->plate_country])->first();
+            $completePlateNumber = $plateNumberCode->NumberPlate.' '.$this->plate_code.' '.$this->plate_number;
+        }
+        $customerVehicleData['plate_number_final']=$completePlateNumber;
+        $customerVehicleData['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
+        $customerVehicleData['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
+        $customerVehicleData['is_active']=1;
+        $customerVehicleData['created_by']=auth()->user('user')->id;
+
+        if($this->vehicle_image){
+
+            $customerVehicleData['vehicle_image'] = $this->vehicle_image->store('vehicle', 'public');
+        }
+
+        if($this->plate_number_image){
+            $customerVehicleData['plate_number_image'] = $this->plate_number_image->store('plate_number', 'public');
+        }
+
+        if($this->chaisis_image){
+            $customerVehicleData['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
+        }
+        $customerVehicleDetails = CustomerVehicle::create($customerVehicleData);
+        $this->vehicle_id = $customerVehicleDetails->id;
+        
+        return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
     }
 
     public function saveByPlateNumber(){

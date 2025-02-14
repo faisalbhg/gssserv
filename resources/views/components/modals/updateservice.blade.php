@@ -185,18 +185,32 @@
                                                                             <?php $discountPS=0;?>
                                                                             @foreach($customerjobservices as $serviceItems)
                                                                             <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                                                                                <div class="d-flex align-items-center">
+                                                                                <div class="d-flex align-items-left">
                                                                                     <button class="btn btn-icon-only btn-rounded  mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
                                                                                     <div class="d-flex">
                                                                                         <h6 class="mb-1 text-dark text-sm">{{$serviceItems->item_name}}<br>
                                                                                         <small>
-                                                                                            {{$serviceItems->item_code}} - {{$serviceItems->department_code}}
+                                                                                            {{$serviceItems->item_code}} 
+                                                                                            @if($serviceItems->department_name) - {{$serviceItems->department_name}} @endif
                                                                                         </small>
+                                                                                        @if($serviceItems->discount_code)
+                                                                                        <label class="badge bg-gradient-info cursor-pointer badge-sm">{{strtolower($serviceItems->discount_title)}} {{ $serviceItems->discount_percentage }}% Off </label>
+                                                                                        @endif
                                                                                         </h6>
+                                                                                        
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                                                                {{config('global.CURRENCY')}} {{round($serviceItems->grand_total,2)}}
+                                                                                    <div class="d-flex mx-2">
+                                                                                        {{$serviceItems->quantity}} x {{$serviceItems->total_price}}
+                                                                                    </div>
+                                                                                    <div class="d-none d-flex">
+                                                                                        <span>
+                                                                                        
+                                                                                        {{config('global.CURRENCY')}} {{round($serviceItems->grand_total,2)}}
+                                                                                        
+                                                                                    </span>
+                                                                                    </div>
                                                                                 </div>
                                                                             </li>
                                                                             <?php $discountPS = $discountPS+$serviceItems->discount_amount; ?>
@@ -214,7 +228,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                                                                {{config('global.CURRENCY')}} {{round($total_price,2)}}
+                                                                                {{config('global.CURRENCY')}} {{round($jobcardDetails->total_price,2)}}
                                                                                 </div>
                                                                             </li>
                                                                             @if($discountPS>0)
@@ -240,7 +254,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                                                                {{config('global.CURRENCY')}} {{round($vat,2)}}
+                                                                                {{config('global.CURRENCY')}} {{round($jobcardDetails->vat,2)}}
                                                                                 </div>
                                                                             </li>
                                                                             <hr class="horizontal dark mt-3">
@@ -254,7 +268,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-md font-weight-bold">
-                                                                                {{config('global.CURRENCY')}} {{round(($total_price+$vat),2)}}
+                                                                                {{config('global.CURRENCY')}} {{round(($jobcardDetails->grand_total),2)}}
                                                                                 </div>
                                                                             </li>
                                                                             

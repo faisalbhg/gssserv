@@ -191,6 +191,13 @@ class CustomerServiceJob extends Component
                     $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
                     
                 }
+                else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
+                {
+                    $discountLaborSalesPrices = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->selectedVehicleInfo->customerInfoMaster['TenantCode']]);
+                    $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
+                    //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
+                    $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
+                }
                 else
                 {
                     $sectionServicePriceLists[$key]['discountDetails']=null;
@@ -473,7 +480,7 @@ class CustomerServiceJob extends Component
         $this->openServiceGroup();
         $this->getCartInfo();
         $this->dispatchBrowserEvent('selectSearchEvent');
-
+        $this->emit('chosenUpdated');
         return view('livewire.customer-service-job');
     }
 
@@ -550,6 +557,7 @@ class CustomerServiceJob extends Component
         
         $this->showVehicleAvailable = false;
         $this->selectedVehicleInfo=$customers;
+        //dd($this->selectedVehicleInfo);
 
         $this->mobile = $customers->customerInfoMaster['Mobile'];
         $this->name = $customers->customerInfoMaster['TenantName'];

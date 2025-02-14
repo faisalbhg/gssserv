@@ -10,6 +10,8 @@ class TenantMasterCustomers extends Model
     use HasFactory;
 
     protected $table = 'TenantMaster';
+    protected $primaryKey = 'TenantId';
+    public $timestamps = false;
 
     protected $fillable = [
         "TenantId",

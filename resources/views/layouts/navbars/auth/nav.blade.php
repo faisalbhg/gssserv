@@ -145,3 +145,4 @@
         <hr class="horizontal dark mt-0">
     </nav>
 
+</main>
