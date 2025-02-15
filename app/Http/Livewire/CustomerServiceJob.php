@@ -358,7 +358,7 @@ class CustomerServiceJob extends Component
 
                 if($this->showQlItemsOnly)
                 {
-                    if(in_array($this->ql_search_category, config('global.ql_all_item_search_category')))
+                    if($this->ql_search_category==40 || $this->ql_search_category==43)
                     {
 
                         $qlMakeModelCategoryItems = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
