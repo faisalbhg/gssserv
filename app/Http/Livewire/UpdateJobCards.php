@@ -70,7 +70,7 @@ class UpdateJobCards extends Component
         {
             $this->customerJobDetails();
             $this->selectVehicle();
-            $this->applyItemToTempCart();
+            
         }
 
     }
@@ -388,7 +388,7 @@ class UpdateJobCards extends Component
         }
         
 
-
+        $this->applyItemToTempCart();
         $this->tempServiceCart = TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'job_number'=>$this->job_number])->get();
 
 
@@ -399,6 +399,7 @@ class UpdateJobCards extends Component
 
     public function customerJobDetails(){
         $this->jobDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo'])->where(['job_number'=>$this->job_number])->first();
+        //dd($this->jobDetails);
         $this->customer_id = $this->jobDetails->customer_id;
         $this->vehicle_id = $this->jobDetails->vehicle_id;
     }
@@ -674,119 +675,122 @@ class UpdateJobCards extends Component
 
     public function applyItemToTempCart(){
         foreach($this->jobDetails->customerJobServices as $customerJobServices){
-            //dd($customerJobServices);
-            $customerBasketCheck = TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'item_id'=>$customerJobServices->item_id]);
-            if($customerBasketCheck->count())
+            if($customerJobServices->is_removed!=1)
             {
-                if(!empty($this->appliedDiscount)){
-                    if($customerJobServices->service_item_type==1){
-                    
-                        $discountSalePriceQuery = LaborItemMaster::with(['discountServicePrice' => function ($query) {
-                            $query->where('CustomerGroupCode', '=', $this->appliedDiscount['code']);
-                            //$query->where('StartDate', '<=', Carbon::now());
-                            //$query->where('EndDate', '=', null);
-                        }])->where(['ItemId'=>$customerJobServices->item_id])->first();
-                        $discountSalePrice= $discountSalePriceQuery->discountServicePrice;
-
-                    }
-                    else if($customerJobServices->service_item_type==2)
-                    {
-                        $discountSalePriceQuery = InventoryItemMaster::with(['discountItemPrice' => function ($query) {
-                            $query->where('CustomerGroupCode', '=', $this->appliedDiscount['code']);
-                            //$query->where('StartDate', '<=', Carbon::now());
-                            //$query->where('EndDate', '=', null);
-                        }])->where(['ItemId'=>$customerJobServices->item_id])->first();
-                        $discountSalePrice= $discountSalePriceQuery->discountItemPrice;
-                    }
-                    $cartUpdate=[];
-                    if($discountSalePrice){
-                        $cartUpdate['price_id']=$discountSalePrice->PriceID;
-                        $cartUpdate['customer_group_id']=$discountSalePrice->CustomerGroupId;
-                        $cartUpdate['customer_group_code']=$discountSalePrice->CustomerGroupCode;
-                        $cartUpdate['min_price']=$discountSalePrice->MinPrice;
-                        $cartUpdate['max_price']=$discountSalePrice->MaxPrice;
-                        $cartUpdate['start_date']=$discountSalePrice->StartDate;
-                        $cartUpdate['end_date']=$discountSalePrice->EndDate;
-                        $cartUpdate['discount_perc']=$discountSalePrice->DiscountPerc;
-                        TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'item_id'=>$customerJobServices->item_id,'job_number'=>$this->job_number])->update($cartUpdate);
-                    }
-
-                }
-            }
-            else
-            {
-                $cartInsert = [
-                    'customer_id'=>$this->jobDetails->customer_id,
-                    'vehicle_id'=>$this->jobDetails->vehicle_id,
-                    'item_id'=>$customerJobServices->item_id,
-                    'item_code'=>$customerJobServices->item_code,
-                    'cart_item_type'=>$customerJobServices->service_item_type,
-                    'company_code'=>$customerJobServices->company_code,
-                    'category_id'=>$customerJobServices->category_id,
-                    'sub_category_id'=>$customerJobServices->sub_category_id,
-                    'brand_id'=>$customerJobServices->brand_id,
-                    'bar_code'=>$customerJobServices->bar_code,
-                    'item_name'=>$customerJobServices->item_name,
-                    'description'=>$customerJobServices->description,
-                    'division_code'=>$customerJobServices->division_code,
-                    'department_code'=>$customerJobServices->department_code,
-                    'department_name'=>$customerJobServices->department_name,
-                    'section_code'=>$customerJobServices->section_code,
-                    'unit_price'=>$customerJobServices->total_price,
-                    'quantity'=>$customerJobServices->quantity,
-                    'created_by'=>auth()->user('user')->id,
-                    'created_at'=>Carbon::now(),
-                    'job_number'=>$customerJobServices->job_number,
-                ];
-
-                if(!empty($this->appliedDiscount)){
-                    if($customerJobServices->service_item_type==1){
-                    
-                        $discountSalePriceQuery = LaborItemMaster::with(['discountServicePrice' => function ($query) {
-                            $query->where('CustomerGroupCode', '=', $this->appliedDiscount['code']);
-                            //$query->where('StartDate', '<=', Carbon::now());
-                            //$query->where('EndDate', '=', null);
-                        }])->where(['ItemId'=>$customerJobServices->item_id])->first();
-                        $discountSalePrice= $discountSalePriceQuery->discountServicePrice;
-
-                    }
-                    else if($customerJobServices->service_item_type==2)
-                    {
-                        $discountSalePriceQuery = InventoryItemMaster::with(['discountItemPrice' => function ($query) {
-                            $query->where('CustomerGroupCode', '=', $this->appliedDiscount['code']);
-                            //$query->where('StartDate', '<=', Carbon::now());
-                            //$query->where('EndDate', '=', null);
-                        }])->where(['ItemId'=>$items->item_id])->first();
-                        $discountSalePrice= $discountSalePriceQuery->discountItemPrice;
-                    }
-
-                    if($discountSalePrice){
-                        $cartInsert['price_id']=$discountSalePrice->PriceID;
-                        $cartInsert['customer_group_id']=$discountSalePrice->CustomerGroupId;
-                        $cartInsert['customer_group_code']=$discountSalePrice->CustomerGroupCode;
-                        $cartInsert['min_price']=$discountSalePrice->MinPrice;
-                        $cartInsert['max_price']=$discountSalePrice->MaxPrice;
-                        $cartInsert['start_date']=$discountSalePrice->StartDate;
-                        $cartInsert['end_date']=$discountSalePrice->EndDate;
-                        $cartInsert['discount_perc']=$discountSalePrice->DiscountPerc;
+                //dd($customerJobServices);
+                $customerBasketCheck = TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'item_id'=>$customerJobServices->item_id,'job_number'=>$this->job_number]);
+                //dd($customerBasketCheck->count());
+                if($customerBasketCheck->count())
+                {
+                    if(!empty($this->appliedDiscount)){
+                        if($customerJobServices->service_item_type==1){
                         
-                    }
+                            $discountSalePriceQuery = LaborItemMaster::with(['discountServicePrice' => function ($query) {
+                                $query->where('CustomerGroupCode', '=', $this->appliedDiscount['code']);
+                                //$query->where('StartDate', '<=', Carbon::now());
+                                //$query->where('EndDate', '=', null);
+                            }])->where(['ItemId'=>$customerJobServices->item_id])->first();
+                            $discountSalePrice= $discountSalePriceQuery->discountServicePrice;
 
+                        }
+                        else if($customerJobServices->service_item_type==2)
+                        {
+                            $discountSalePriceQuery = InventoryItemMaster::with(['discountItemPrice' => function ($query) {
+                                $query->where('CustomerGroupCode', '=', $this->appliedDiscount['code']);
+                                //$query->where('StartDate', '<=', Carbon::now());
+                                //$query->where('EndDate', '=', null);
+                            }])->where(['ItemId'=>$customerJobServices->item_id])->first();
+                            $discountSalePrice= $discountSalePriceQuery->discountItemPrice;
+                        }
+                        $cartUpdate=[];
+                        if($discountSalePrice){
+                            $cartUpdate['price_id']=$discountSalePrice->PriceID;
+                            $cartUpdate['customer_group_id']=$discountSalePrice->CustomerGroupId;
+                            $cartUpdate['customer_group_code']=$discountSalePrice->CustomerGroupCode;
+                            $cartUpdate['min_price']=$discountSalePrice->MinPrice;
+                            $cartUpdate['max_price']=$discountSalePrice->MaxPrice;
+                            $cartUpdate['start_date']=$discountSalePrice->StartDate;
+                            $cartUpdate['end_date']=$discountSalePrice->EndDate;
+                            $cartUpdate['discount_perc']=$discountSalePrice->DiscountPerc;
+                            TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'item_id'=>$customerJobServices->item_id,'job_number'=>$this->job_number])->update($cartUpdate);
+                        }
+
+                    }
                 }
                 else
                 {
-                    $cartInsert['price_id']=$customerJobServices->discount_id;
-                    $cartInsert['customer_group_id']=$customerJobServices->discount_id;
-                    $cartInsert['customer_group_code']=$customerJobServices->discount_code;
-                    $cartInsert['min_price']=$customerJobServices->discount_amount;
-                    $cartInsert['max_price']=$customerJobServices->discount_amount;
-                    $cartInsert['start_date']=$customerJobServices->discount_start_date;
-                    $cartInsert['end_date']=$customerJobServices->discount_end_date;
-                    $cartInsert['discount_perc']=$customerJobServices->discount_percentage;
-                }
-                TempCustomerServiceCart::insert($cartInsert);
-            }
+                    $cartInsert = [
+                        'customer_id'=>$this->jobDetails->customer_id,
+                        'vehicle_id'=>$this->jobDetails->vehicle_id,
+                        'item_id'=>$customerJobServices->item_id,
+                        'item_code'=>$customerJobServices->item_code,
+                        'cart_item_type'=>$customerJobServices->service_item_type,
+                        'company_code'=>$customerJobServices->company_code,
+                        'category_id'=>$customerJobServices->category_id,
+                        'sub_category_id'=>$customerJobServices->sub_category_id,
+                        'brand_id'=>$customerJobServices->brand_id,
+                        'bar_code'=>$customerJobServices->bar_code,
+                        'item_name'=>$customerJobServices->item_name,
+                        'description'=>$customerJobServices->description,
+                        'division_code'=>$customerJobServices->division_code,
+                        'department_code'=>$customerJobServices->department_code,
+                        'department_name'=>$customerJobServices->department_name,
+                        'section_code'=>$customerJobServices->section_code,
+                        'unit_price'=>$customerJobServices->total_price,
+                        'quantity'=>$customerJobServices->quantity,
+                        'created_by'=>auth()->user('user')->id,
+                        'created_at'=>Carbon::now(),
+                        'job_number'=>$customerJobServices->job_number,
+                    ];
 
+                    if(!empty($this->appliedDiscount)){
+                        if($customerJobServices->service_item_type==1){
+                        
+                            $discountSalePriceQuery = LaborItemMaster::with(['discountServicePrice' => function ($query) {
+                                $query->where('CustomerGroupCode', '=', $this->appliedDiscount['code']);
+                                //$query->where('StartDate', '<=', Carbon::now());
+                                //$query->where('EndDate', '=', null);
+                            }])->where(['ItemId'=>$customerJobServices->item_id])->first();
+                            $discountSalePrice= $discountSalePriceQuery->discountServicePrice;
+
+                        }
+                        else if($customerJobServices->service_item_type==2)
+                        {
+                            $discountSalePriceQuery = InventoryItemMaster::with(['discountItemPrice' => function ($query) {
+                                $query->where('CustomerGroupCode', '=', $this->appliedDiscount['code']);
+                                //$query->where('StartDate', '<=', Carbon::now());
+                                //$query->where('EndDate', '=', null);
+                            }])->where(['ItemId'=>$items->item_id])->first();
+                            $discountSalePrice= $discountSalePriceQuery->discountItemPrice;
+                        }
+
+                        if($discountSalePrice){
+                            $cartInsert['price_id']=$discountSalePrice->PriceID;
+                            $cartInsert['customer_group_id']=$discountSalePrice->CustomerGroupId;
+                            $cartInsert['customer_group_code']=$discountSalePrice->CustomerGroupCode;
+                            $cartInsert['min_price']=$discountSalePrice->MinPrice;
+                            $cartInsert['max_price']=$discountSalePrice->MaxPrice;
+                            $cartInsert['start_date']=$discountSalePrice->StartDate;
+                            $cartInsert['end_date']=$discountSalePrice->EndDate;
+                            $cartInsert['discount_perc']=$discountSalePrice->DiscountPerc;
+                            
+                        }
+
+                    }
+                    else
+                    {
+                        $cartInsert['price_id']=$customerJobServices->discount_id;
+                        $cartInsert['customer_group_id']=$customerJobServices->discount_id;
+                        $cartInsert['customer_group_code']=$customerJobServices->discount_code;
+                        $cartInsert['min_price']=$customerJobServices->discount_amount;
+                        $cartInsert['max_price']=$customerJobServices->discount_amount;
+                        $cartInsert['start_date']=$customerJobServices->discount_start_date;
+                        $cartInsert['end_date']=$customerJobServices->discount_end_date;
+                        $cartInsert['discount_perc']=$customerJobServices->discount_percentage;
+                    }
+                    TempCustomerServiceCart::insert($cartInsert);
+                }
+            }
             
         }
     }

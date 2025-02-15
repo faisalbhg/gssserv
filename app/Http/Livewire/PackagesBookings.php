@@ -166,11 +166,11 @@ class PackagesBookings extends Component
         $mobileNumber = isset($this->mobile)?'971'.substr($this->mobile, -9):null;
         $customerName = isset($this->name)?$this->name:null;
         if($mobileNumber!=''){
-            if($mobileNumber=='971566993709'){
+            //if($mobileNumber=='971566993709'){
                 $otpPack = $customerPackageData['otp_code'];
                 $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
                 $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-            }
+            //}
         }
         $this->showOtpVerify=true;
         $this->dispatchBrowserEvent('scrollto', [
@@ -210,10 +210,10 @@ class PackagesBookings extends Component
         $otpPack = fake()->randomNumber(6);
         PackageBookings::where(['package_number'=>$this->package_number,'customer_id'=>$this->customer_id])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
         if($mobileNumber!=''){
-            if($mobileNumber=='971566993709'){
+            //if($mobileNumber=='971566993709'){
                 $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
                 $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-            }
+            //}
         }
         $this->showOtpVerify=true;
     }
@@ -233,11 +233,11 @@ class PackagesBookings extends Component
             if(array_key_exists('payment_redirect_link', $paymentResponse))
             {
                 if($customerPackageInfo->customerInfo['Mobile']!=''){
-                    if($mobileNumber=='971566993709'){
+                    //if($mobileNumber=='971566993709'){
                         $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link:'.$paymentResponse['payment_redirect_link'].'. For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
 
-                    }
+                    //}
                 }
 
                 PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send']);
@@ -260,10 +260,10 @@ class PackagesBookings extends Component
             $paymentmode = "O";
             PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>2,'payment_request'=>'card payment']);
             if($customerPackageInfo->customerInfo['Mobile']!=''){
-                if($mobileNumber=='971566993709'){
+                //if($mobileNumber=='971566993709'){
                     $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle for package, Refer Package No. #'.$this->package_number.'. Please complete the payment to use the package. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                }
+                //}
             }
             $this->successPage=true;
             $this->otpVerified =false;
@@ -276,10 +276,10 @@ class PackagesBookings extends Component
             $paymentmode = "C";
             PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>3,'payment_request'=>'cash payment']);
             if($customerPackageInfo->customerInfo['Mobile']!=''){
-                if($mobileNumber=='971566993709'){
+                //if($mobileNumber=='971566993709'){
                     $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle for package, Refer Package No. #'.$this->package_number.'. Please complete the payment to use the package. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                }
+                //}
             }
 
             $this->successPage=true;

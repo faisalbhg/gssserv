@@ -161,7 +161,8 @@ class UpdateJobCardSubmit extends Component
         $this->updateJob();
 
         
-        $mobileNumber = isset($this->selectedVehicleInfo->customerInfoMaster['Mobile'])?'971'.substr($this->selectedVehicleInfo->customerInfoMaster['Mobile'], -9):null;
+        //$mobileNumber = isset($this->selectedVehicleInfo->customerInfoMaster['Mobile'])?'971'.substr($this->selectedVehicleInfo->customerInfoMaster['Mobile'], -9):null;
+        $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
         $paymentmode = null;
         if($mode=='link')
         {
@@ -173,9 +174,8 @@ class UpdateJobCardSubmit extends Component
             if(array_key_exists('payment_redirect_link', $paymentResponse))
             {
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
-                if($mobileNumber!=null){
-                    //$response = Http::get("https://mshastra.com/sendurlcomma.aspx?user=20092622&pwd=buhaleeba@123&senderid=BuhaleebaRE&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link'])."&CountryCode=ALL");
-                }
+                $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. To avoid waiting at the cashier, you can pay online using this link: '.$paymentResponse['payment_redirect_link'].'. Alternatively, you can pay at the cashier via card or cash. For assistance, call 800477823.');
+                        $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
 
                 $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send','job_create_status'=>1]);
 

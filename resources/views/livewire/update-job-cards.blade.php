@@ -356,7 +356,6 @@
             </div>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 my-2">
-                    @if(count($jobDetails->customerJobServices)>0)
                         <div class="card card-profile card-plain">
                             <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Order Summary </h6>
                             <div class="row">
@@ -493,7 +492,6 @@
                                 </div>
                             </div>
                         </div>
-                    @endif
                 </div>
             </div>
         @endif
