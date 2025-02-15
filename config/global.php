@@ -19,6 +19,7 @@ return [
             '1'=>"Payment Link",
             '2'=>"Pay By Card",
             '3'=>"Cash Payment",
+            '4'=>"Pay By Credit",
             '6'=>"Cash In Advance"
         ],
         'type_class'=>[
@@ -26,6 +27,7 @@ return [
             '1'=>'bg-gradient-info',
             '2'=>'bg-gradient-success',
             '3'=>'bg-gradient-primary',
+            '4'=>'bg-gradient-danger',
             '6'=>'bg-gradient-info',
         ],
         'icons'=>[
@@ -33,6 +35,7 @@ return [
             '1'=>"fa-solid fa-file-invoice-dollar",
             '2'=>"fa-solid fa-credit-card",
             '3'=>"fa-solid fa-money-bill-1",
+            '4'=>"fa-solid fa-money-bill-1",
             '6'=>"fa-solid fa-money-bill-1",
         ],
         'text_class'=>[
@@ -40,6 +43,7 @@ return [
             '1'=>"text-danger",
             '2'=>"text-danger",
             '3'=>"text-info",
+            '4'=>"text-danger",
             '6'=>"text-info",
         ],
         'status'=>[

@@ -37,10 +37,14 @@ class CarsTaxi extends Component
     public $grand_total, $total, $tax, $job_number;
     public $showlistCarTaxiToday=true, $searchDate;
     public $carTaxiJobs, $getCountCarTaxiJob;
-    public $showUpdateModel = false, $filterTab='total', $filter = [0,1,2,3,4], $search_job_number = '', $search_job_date, $search_plate_number;
+    public $showUpdateModel = false, $filterTab='total', $filter = [0,1,2,3,4], $search_ct_number = '', $search_meter_number = '', $search_job_date, $search_plate_number, $selected_item_id, $all_car_taxi_Service=[], $selectedCarTaxiService, $selectedCarTaxiEntry=false;
 
     public function render()
     {
+        $carTaxiServiceInfoQuery = LaborItemMaster::where(['Active'=>1,'DivisionCode'=>auth()->user('user')['station_code'],])->whereIn('ItemCode', config('global.carTexiItems'))->where('UnitPrice','>',0);
+        $this->all_car_taxi_Service = $carTaxiServiceInfoQuery->get();
+        //dd($this->all_car_taxi_Service);
+
         if($this->showlistCarTaxiToday)
         {
             $this->plateEmiratesCodes = [];
@@ -66,14 +70,19 @@ class CarsTaxi extends Component
             );
 
 
-            $carTaxiJobs = CustomerJobCards::with(['makeInfo','modelInfo']);
+            $carTaxiJobs = CustomerJobCards::with(['customerJobServices','makeInfo','modelInfo']);
             if($this->filter){
                 $carTaxiJobs = $carTaxiJobs->whereIn('job_status', $this->filter);
             }
-            if($this->search_job_number)
+            if($this->search_ct_number)
             {
-                $carTaxiJobs = $carTaxiJobs->where('job_number', 'like', "%{$this->search_job_number}%");
-                $getCountCarTaxiJob = $getCountCarTaxiJob->where('job_number', 'like', "%{$this->search_job_number}%");
+                $carTaxiJobs = $carTaxiJobs->where('ct_number', 'like', "%{$this->search_ct_number}%");
+                //$getCountCarTaxiJob = $getCountCarTaxiJob->where('job_number', 'like', "%{$this->search_job_number}%");
+            }
+            if($this->search_meter_number)
+            {
+                $carTaxiJobs = $carTaxiJobs->where('meter_id', 'like', "%{$this->search_meter_number}%");
+                //$getCountCarTaxiJob = $getCountCarTaxiJob->where('job_number', 'like', "%{$this->search_job_number}%");
             }
             if($this->search_job_date){
                 $carTaxiJobs = $carTaxiJobs->whereBetween('job_date_time', [$this->search_job_date." 00:00:00",$this->search_job_date." 23:59:59"]);
@@ -135,15 +144,11 @@ class CarsTaxi extends Component
             }
             $this->checklistLabels = ServiceChecklist::get();
 
-            $carTaxiServiceInfoQuery = LaborItemMaster::where([
-                    //'SectionCode'=>$this->propertyCode,
-                    'Active'=>1
-                ])->whereIn('ItemCode', config('global.carTexiItems'))->where('UnitPrice','>',0);
-            $carTaxiServiceItemsSum = $carTaxiServiceInfoQuery->sum('UnitPrice');
-            $carTaxiServiceItemsExist = $carTaxiServiceInfoQuery->exists();
-            $this->carTaxiServiceInfo = $carTaxiServiceInfoQuery->get();
-            if($carTaxiServiceItemsExist){
-                $this->total = $carTaxiServiceItemsSum;
+            
+
+            
+            if($this->selectedCarTaxiEntry){
+                $this->total = $this->selectedCarTaxiService['UnitPrice'];
                 $this->tax = $this->total * (config('global.TAX_PERCENT') / 100);
                 $this->grand_total = $this->total+$this->tax;
             }
@@ -167,8 +172,10 @@ class CarsTaxi extends Component
         $this->dispatchBrowserEvent('filterTab',['tabName'=>$this->filterTab]);
     }
 
-    public function addNewCarTaxi()
+    public function addNewCarTaxi($service)
     {
+        $this->selectedCarTaxiService = $service;
+        $this->selectedCarTaxiEntry=true;
         $this->showlistCarTaxiToday=false;
     }
 
@@ -235,6 +242,7 @@ class CarsTaxi extends Component
             'job_status'=>1,
             'job_departent'=>1,
             'payment_status'=>0,
+            'payment_type'=>4,
             'created_by'=>auth()->user('user')->id,
             'payment_updated_by'=>auth()->user('user')->id,
         ];
@@ -251,19 +259,19 @@ class CarsTaxi extends Component
             'is_added'=>0,
             'is_removed'=>0,
             'created_by'=>auth()->user('user')->id,
-            'item_id'=>$this->carTaxiServiceInfo->ItemId,
-            'item_code'=>$this->carTaxiServiceInfo->ItemCode,
-            'company_code'=>$this->carTaxiServiceInfo->CompanyCode,
-            'category_id'=>$this->carTaxiServiceInfo->CategoryId,
-            'sub_category_id'=>$this->carTaxiServiceInfo->SubCategoryId,
-            'brand_id'=>$this->carTaxiServiceInfo->BrandId,
-            'bar_code'=>$this->carTaxiServiceInfo->BarCode,
-            'item_name'=>$this->carTaxiServiceInfo->ItemName,
-            'description'=>$this->carTaxiServiceInfo->Description,
-            'division_code'=>$this->carTaxiServiceInfo->DivisionCode,
-            'department_code'=>$this->carTaxiServiceInfo->DepartmentCode,
+            'item_id'=>$this->selectedCarTaxiService['ItemId'],
+            'item_code'=>$this->selectedCarTaxiService['ItemCode'],
+            'company_code'=>$this->selectedCarTaxiService['CompanyCode'],
+            'category_id'=>$this->selectedCarTaxiService['CategoryId'],
+            'sub_category_id'=>$this->selectedCarTaxiService['SubCategoryId'],
+            'brand_id'=>$this->selectedCarTaxiService['BrandId'],
+            'bar_code'=>$this->selectedCarTaxiService['BarCode'],
+            'item_name'=>$this->selectedCarTaxiService['ItemName'],
+            'description'=>$this->selectedCarTaxiService['Description'],
+            'division_code'=>$this->selectedCarTaxiService['DivisionCode'],
+            'department_code'=>$this->selectedCarTaxiService['DepartmentCode'],
             'department_name'=>'General Service',
-            'section_code'=>$this->carTaxiServiceInfo->SectionCode,
+            'section_code'=>$this->selectedCarTaxiService['SectionCode'],
             'station'=>auth()->user('user')->stationName['LandlordCode'],
             'service_item_type'=>1,
             'total_price'=>$this->total,
@@ -362,6 +370,7 @@ class CarsTaxi extends Component
 
     public function updateQwService($job_number,$status)
     {
+        //dd($job_number.$status);
         $this->job_status = $status;
         $this->job_departent = $status;
         

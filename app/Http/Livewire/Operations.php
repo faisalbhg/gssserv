@@ -276,12 +276,12 @@ class Operations extends Component
         $this->jobcardDetails = $job;
         $this->customerjobservices = $job->customerJobServices;
 
-        if($mainSTatus==3)
+        if($mainSTatus==4)
         {
             
 
             try {
-                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobId = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$services['customer_id'].'" ');
+                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$services['customer_id'].'" ');
             } catch (\Exception $e) {
                 //return $e->getMessage();
             }

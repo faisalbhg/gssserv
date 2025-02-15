@@ -39,6 +39,34 @@
         @if($showlistCarTaxiToday)
             <section class="py-3">
                 <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 mb-4">
+                        <div class="card h-100 cursor-pointer">
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <h5 class="text-danger text-left"><i class="fa-solid fa-car  text-danger mb-3"></i>  Add New <i class="fa fa-plus text-danger mb-3"></i></h5>
+                                <div class="row">
+                                    @foreach($all_car_taxi_Service as $carTaxiServ)
+                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <a href="javascript:;" wire:click="addNewCarTaxi({{$carTaxiServ}})">
+                                        <button class="btn @if($carTaxiServ->ItemCode=='S255') bg-gradient-info @else bg-gradient-dark @endif">{{$carTaxiServ->ItemName}}</button>
+                                    </a>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <div wire:loading wire:target="addNewCarTaxi">
+                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                <div class="la-ball-beat">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount total">
                         <div class="card bg-gradient-dark shadow text-white">
                             <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('total')">
@@ -93,27 +121,27 @@
                         <h5>Dubai Car Taxi Contract List On {{\Carbon\Carbon::parse($search_job_date)->format('dS M Y')}}</h5>
                     </div>
                 </div>
-                <div class="row mt-lg-4 mt-2">
-                    <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
-                        <div class="card h-100 cursor-pointer" wire:click="addNewCarTaxi">
-                            <div class="card-body d-flex flex-column justify-content-center text-center">
-                                <a href="javascript:;" wire:click="addNewCarTaxi">
-                                    <i class="fa-solid fa-car  text-danger mb-3"></i>
-                                    <h5 class=" text-danger"> Add New <i class="fa fa-plus text-danger mb-3"></i></h5>
-                                </a>
-                            </div>
+                <div class="row">
+                    <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+                        <label>CT Number</label>
+                        <div class="form-group">
+                            <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Search CT Number" wire:model="search_ct_number" />
                         </div>
-                        <div wire:loading wire:target="addNewCarTaxi">
-                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                <div class="la-ball-beat">
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
+                    <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+                        <label>Meeter Number</label>
+                        <div class="form-group">
+                            <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Search Meeter Number" wire:model="search_meeter_number" />
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+                        <label>Plate Search</label>
+                        <div class="form-group">
+                            <input style="padding:0.5rem 0.3rem !important;" type="text" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="search_plate_number" name="plate_number" placeholder="Number Plate">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-lg-4 mt-2">
                     @foreach($carTaxiJobs as $taxiJob)
                         <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
                             <div class="card">
@@ -133,13 +161,17 @@
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-end me-sm-n4 me-n3" aria-labelledby="navbarDropdownMenuLink">
                                                     @foreach(config('global.jobs.actions') as $actionKey => $jobActions)
-                                                        @if($taxiJob->job_status+1 < $actionKey)
-                                                            <a class="dropdown-item" style="text-decoration: line-through;">{{$jobActions}}</a>
-                                                        @elseif($taxiJob->job_status+1 == $actionKey)
-                                                            <a class="dropdown-item {!!config('global.jobs.status_text_class')[$actionKey]!!}" wire:click="updateQwService('{{$taxiJob->job_number}}','{{$actionKey}}')" href="javascript:;">{{$jobActions}}</a>
+                                                        @if($taxiJob->job_status>=$actionKey)
+                                                        <a class="dropdown-item {!!config('global.jobs.status_text_class')[$actionKey]!!}">{{$jobActions}}</a>
+                                                        @elseif($taxiJob->job_status+1==$actionKey)
+                                                        <a class="dropdown-item {!!config('global.jobs.status_text_class')[$actionKey]!!}" @if($actionKey!=4) wire:click="updateQwService('{{$taxiJob->job_number}}','{{$actionKey}}')" @else style="text-decoration: line-through;" @endif >{{$jobActions}}</a>
                                                         @else
-                                                            <a class="dropdown-item {!!config('global.jobs.status_text_class')[$actionKey]!!}">{{$jobActions}}</a>
+                                                        <a class="dropdown-item" style="text-decoration: line-through;">{{$jobActions}}</a>
                                                         @endif
+
+
+                                                        
+
                                                         
                                                     @endforeach
                                                 </div>
@@ -156,8 +188,10 @@
                                       </p>
                                     <hr class="horizontal dark">
                                     <div class="row">
-                                        <div class="col-12">
-                                            <span class="{!!config('global.jobs.status_text_class')[$taxiJob->job_status]!!} text-center w-100"> #{{$taxiJob->ct_number}}</span>
+                                        <div class="col-12 text-center">
+                                            <span class="{!!config('global.jobs.status_text_class')[$taxiJob->job_status]!!} text-center w-100 d-none"> #{{$taxiJob->job_number}}</span>
+                                            <button class="btn @if($taxiJob->customerJobServices[0]['item_code']=='S255') bg-gradient-info @else bg-gradient-dark @endif">
+                                            {{$taxiJob->customerJobServices[0]['item_name']}}</button>
                                             <span class="w-100 badge badge-sm {!!config('global.jobs.status_btn_class')[$taxiJob->job_status]!!}">{{config('global.jobs.status')[$taxiJob->job_status]}}</span>
                                             <small class="text-secondary mb-0">{{ \Carbon\Carbon::parse($taxiJob->created_at)->format('d-m-y h:i A') }}</small>
                                         </div>

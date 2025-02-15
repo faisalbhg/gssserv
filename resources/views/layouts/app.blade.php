@@ -22,10 +22,10 @@
             </div>
         @else
             @include('layouts.navbars.auth.sidebar')
-            @include('layouts.navbars.auth.nav')
+                @include('layouts.navbars.auth.nav')
             
-            {{ $slot }}
-            <main>
+                {{ $slot }}
+            
                 <div class="container-fluid">
                     <div class="row">
                         @include('layouts.footers.auth.footer')

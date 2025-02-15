@@ -18,7 +18,7 @@ class UserManagement extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $title, $buttonName, $user_id, $name, $email, $password, $showpasswordinput=false, $phone, $user_type, $station_id, $created_by, $updated_by, $is_active, $is_blocked, $userId, $manageUser = false,$users, $stationsList, $departmentsList;
+    public $title, $buttonName, $user_id, $name, $email, $password, $showpasswordinput=false, $phone, $user_type, $station_id, $created_by, $updated_by, $is_active, $is_blocked, $userId, $manageUser = false,$users, $stationsList, $departmentsList,$search_station;
 
 
     public function render()
@@ -28,7 +28,13 @@ class UserManagement extends Component
         "station_code" => "LL/00004",
         "station_id" => "4"]);
         dd(User::get());*/
-        $data['usersList'] = User::with(['stationName'])->paginate(10);
+
+        $usersQuery = User::with(['stationName']);
+        if($this->search_station){
+            $usersQuery = $usersQuery->where('station_code', '=', $this->search_station);
+        }
+        $usersQuery = $usersQuery->paginate(20);
+        $data['usersList'] = $usersQuery;
         $this->stationsList = Landlord::all();
         $this->departmentsList = Department::all();
         //dd($this->stationsList);

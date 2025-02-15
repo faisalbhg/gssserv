@@ -45,53 +45,85 @@
             </div>
 
             <div class="row">
-      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
-        <label>Job Number</label>
-        <div class="form-group">
-          <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Search Job Number" wire:model="search_job_number" />
-          <div wire:loading wire:target="search_job_number">
-                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                    <div class="la-ball-beat">
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2">
+                    <label>Job Number</label>
+                    <div class="form-group">
+                      <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Search Job Number" wire:model="search_job_number" />
+                      <div wire:loading wire:target="search_job_number">
+                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                <div class="la-ball-beat">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
-        <label>Job Date</label>
-        <div class="form-group">
-          <input type="date"  class="form-control" placeholder="Search Job Date" wire:model="search_job_date" />
-          <div wire:loading wire:target="search_job_date">
-                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                    <div class="la-ball-beat">
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2">
+                    <label>Job Date</label>
+                    <div class="form-group">
+                      <input type="date"  class="form-control" placeholder="Search Job Date" wire:model="search_job_date" />
+                      <div wire:loading wire:target="search_job_date">
+                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                <div class="la-ball-beat">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
-        <label>Plate Search</label>
-        <div class="form-group">
-          <input style="padding:0.5rem 0.3rem !important;" type="text" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="search_plate_number" name="plate_number" placeholder="Number Plate">
-          <div wire:loading wire:target="search_plate_number">
-                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                    <div class="la-ball-beat">
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2">
+                    <label>Plate Search</label>
+                    <div class="form-group">
+                        <input style="padding:0.5rem 0.3rem !important;" type="text" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="search_plate_number" name="plate_number" placeholder="Number Plate">
+                        <div wire:loading wire:target="search_plate_number">
+                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                <div class="la-ball-beat">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2">
+                    <label>CT Number</label>
+                    <div class="form-group">
+                        <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Search CT Number" wire:model="search_ct_number" />
+                        <div wire:loading wire:target="search_ct_number">
+                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                <div class="la-ball-beat">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-4 col-sm-4 mb-xl-2 mb-2">
+                    <label>Meeter Number</label>
+                    <div class="form-group">
+                        <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Search Meeter Number" wire:model="search_meeter_number" />
+                        <div wire:loading wire:target="search_meeter_number">
+                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                <div class="la-ball-beat">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+              
             </div>
-        </div>
-      </div>
-      
-    </div>
             <div class="row mt-lg-4 mt-2">
                 
                 @forelse($jobsResults as $job)
@@ -108,7 +140,7 @@
                                         <h6 class="mb-0 text-sm mt-0">{{$job->makeInfo['vehicle_name']}} - <small>{{$job->modelInfo['vehicle_model_name']}} </small></h6>
                                         <button class="btn {!!config('global.payment.status_class')[$job->payment_status]!!}" type="button">
                                             <span class="btn-inner--icon"><i class="fa-solid fa-money-bill-1-wave ms-1 fs-xl" style="font-size: 1.5em;" ></i></span>
-                                            Contract
+                                            {!!config('global.payment.type')[$job->payment_status]!!}
                                         </button>
                                     </div>
                                     <div class="ms-auto">
@@ -145,12 +177,17 @@
                                 <hr class="horizontal dark">
                                 <div class="row">
                                     <div class="col-12">
-                                    @if($job->job_status==3 && $job->payment_status==1)
-                                    <span  wire:click="updateQwService('{{$job->job_number}}','4')" class=" my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer"> Mark as {{config('global.jobs.status')[$job->job_status+1]}}</span>
-                                    @else
-                                    <span  class="opacity-2 my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer"> Mark as {{config('global.jobs.status')[$job->job_status+1]}}</span>
-                                    @endif
-                                        
+                                        @if($job->job_status==3)
+                                            @if($job->payment_type!=4)
+                                                <span  @if($job->payment_status==1) wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class=" my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer" @else class="opacity-2 my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}" @endif > Mark as {{config('global.jobs.status')[$job->job_status+1]}}</span>
+
+                                            @else
+                                            
+                                                <span wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class=" my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer" > Mark as {{config('global.jobs.status')[$job->job_status+1]}}</span>
+                                            
+
+                                            @endif
+                                        @endif
                                         <!-- <small class="text-secondary mb-0">{{ \Carbon\Carbon::parse($job->created_at)->format('d-m-y h:i A') }}</small> -->
                                     </div>
                                 </div>

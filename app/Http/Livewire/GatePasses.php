@@ -22,7 +22,7 @@ use App\Models\CustomerJobCardServiceLogs;
 
 class GatePasses extends Component
 {
-    public $filterTab='total', $filter = [0,1,2,3,4], $search_job_number = '', $search_job_date, $search_plate_number;
+    public $filterTab='total', $filter = [0,1,2,3,4], $search_job_number = '', $search_job_date, $search_plate_number, $search_ct_number = '', $search_meter_number = '';
 
     public function render()
     {
@@ -40,6 +40,15 @@ class GatePasses extends Component
         if($this->search_plate_number)
         {
             $jobsQuery = $jobsQuery->where('plate_number', 'like',"%$this->search_plate_number%");
+        }
+
+        if($this->search_ct_number)
+        {
+            $jobsQuery = $jobsQuery->where('ct_number', 'like', "%{$this->search_ct_number}%");
+        }
+        if($this->search_meter_number)
+        {
+            $jobsQuery = $jobsQuery->where('meter_id', 'like', "%{$this->search_meter_number}%");
         }
         
         $data['jobsResults'] = $jobsQuery->where('job_status','=',3)->where(['station'=>auth()->user('user')['station_code']])->orderBy('id','ASC')->paginate(25);
@@ -61,8 +70,9 @@ class GatePasses extends Component
     }
 
 
-    public function updateQwService($job_number,$status)
+    public function updateQwService($job_number,$status,$customer_id)
     {
+        ///dd($customer_id);
         $this->job_status = $status;
         $this->job_departent = $status;
         
@@ -91,6 +101,14 @@ class GatePasses extends Component
         ];
         CustomerJobCards::where(['job_number'=>$job_number])->update($mianJobUpdate);
         
-        
+        if($this->job_status==4)
+        {
+            try {
+                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$customer_id.'" ');
+            } catch (\Exception $e) {
+                //dd($e->getMessage());
+                //return $e->getMessage();
+            }
+        }
     }
 }

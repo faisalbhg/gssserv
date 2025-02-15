@@ -1,6 +1,6 @@
 <main class="main-content position-relative h-100 border-radius-lg">
     <div class="container-fluid py-2">
-
+       
         <div class="row">
             <div class="col-md-8 mb-2">
                 @if($manageUser)
@@ -12,8 +12,28 @@
                 <div class="card mb-4 mx-4">
                     <div class="card-header pb-0">
                         <div class="d-flex flex-row justify-content-between">
+
                             <div>
                                 <h5 class="mb-0">All Users</h5>
+                            </div>
+                            <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+                                <div class="form-group">
+                                    <select class="form-control" id="stationSelect" wire:model="search_station">
+                                        <option value="">-Select-</option>
+                                        @foreach($stationsList as $station)
+                                            <option value="{{$station->LandlordCode}}">{{$station->CorporateName}}</option>
+                                    @endforeach
+                                    </select>
+                                    <div wire:loading wire:target="search_station">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <button wire:click="addUser()" class="btn bg-gradient-primary btn-sm" type="button">+ New User</button>
                         </div>
