@@ -358,52 +358,9 @@ class CustomerServiceJob extends Component
 
                 if($this->showQlItemsOnly)
                 {
-
-                    if($this->ql_search_category!=43)
+                    if(in_array($this->ql_search_category, config('global.ql_all_item_search_category')))
                     {
-                        $qlMakeModelCategoryItems = ItemMakeModel::with(['itemDetails'])->where(function ($query) {
-                            $query->whereRelation('itemDetails', 'CategoryId', '=', $this->ql_search_category);
-                        })->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
 
-                        $qlMakeModelCatItmDetails = [];
-                        foreach($qlMakeModelCategoryItems as $key => $qlItemMakeModelItem){
-                            $qlMakeModelCatItm = $qlItemMakeModelItem->itemDetails;
-                            $qlMakeModelCatItmDetails[$key]['priceDetails'] = $qlMakeModelCatItm;
-                            if(!empty($this->appliedDiscount)){
-                            
-                                if($this->appliedDiscount['groupType']==1)
-                                {
-
-                                    $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
-                                        'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
-                                        'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                        'DivisionCode'=>auth()->user('user')['station_code'],
-                                    ])->first();
-
-                                }else if($this->appliedDiscount['groupType']==2)
-                                {
-                                    
-                                    $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
-                                        'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
-                                        'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                                        'DivisionCode'=>auth()->user('user')['station_code'],
-                                    ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
-                                }
-                                else
-                                {
-                                    $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
-                                }
-                                
-                            }
-                            else
-                            {
-                                $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
-                            }
-
-                        }
-                    }
-                    else
-                    {
                         $qlMakeModelCategoryItems = InventoryItemMaster::whereIn("InventoryPosting",['1','7'])->where('Active','=',1);
                         $qlMakeModelCategoryItems = $qlMakeModelCategoryItems->where('CategoryId','=',$this->ql_search_category);
                         $qlMakeModelCategoryItems=$qlMakeModelCategoryItems->get();
@@ -445,6 +402,49 @@ class CustomerServiceJob extends Component
                             }
                         }
 
+                    }
+                    else
+                    {
+                        $qlMakeModelCategoryItems = ItemMakeModel::with(['itemDetails'])->where(function ($query) {
+                            $query->whereRelation('itemDetails', 'CategoryId', '=', $this->ql_search_category);
+                        })->where(['makeid'=>$this->selectedVehicleInfo->make,'modelid'=>$this->selectedVehicleInfo->model])->get();
+
+                        $qlMakeModelCatItmDetails = [];
+                        foreach($qlMakeModelCategoryItems as $key => $qlItemMakeModelItem){
+                            $qlMakeModelCatItm = $qlItemMakeModelItem->itemDetails;
+                            $qlMakeModelCatItmDetails[$key]['priceDetails'] = $qlMakeModelCatItm;
+                            if(!empty($this->appliedDiscount)){
+                            
+                                if($this->appliedDiscount['groupType']==1)
+                                {
+
+                                    $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
+                                        'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
+                                        'CustomerGroupCode'=>$this->appliedDiscount['code'],
+                                        'DivisionCode'=>auth()->user('user')['station_code'],
+                                    ])->first();
+
+                                }else if($this->appliedDiscount['groupType']==2)
+                                {
+                                    
+                                    $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
+                                        'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
+                                        'CustomerGroupCode'=>$this->appliedDiscount['code'],
+                                        'DivisionCode'=>auth()->user('user')['station_code'],
+                                    ])->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )->first();
+                                }
+                                else
+                                {
+                                    $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
+                                }
+                                
+                            }
+                            else
+                            {
+                                $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
+                            }
+
+                        }
                     }
                     $this->quickLubeItemsList = $qlMakeModelCatItmDetails;
                 }

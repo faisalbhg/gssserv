@@ -654,9 +654,12 @@ class UpdateJobCards extends Component
         $this->confirming = $id;
     }
 
-    public function kill($id)
+    public function kill($id,$item_id)
     {
+        //dd($item_id);
+        //dd($id);
         TempCustomerServiceCart::find($id)->delete();
+        CustomerJobCardServices::where(['job_number'=>$this->job_number,'item_id'=>$item_id])->update(['is_removed'=>1]);
         //CustomerJobCardServices::destroy($id);
     }
     public function safe($id)

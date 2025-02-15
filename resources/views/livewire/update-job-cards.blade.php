@@ -385,7 +385,7 @@
 
                                                             @if($confirming===$item->id)
                                                             <p>
-                                                                <label class="p-0 text-success bg-red-600 cursor-pointer float-start" wire:click.prevent="kill({{ $item->id }})"><i class="fa fa-trash"></i> Yes</label>
+                                                                <label class="p-0 text-success bg-red-600 cursor-pointer float-start" wire:click.prevent="kill({{ $item->id }},{{ $item->item_id }})"><i class="fa fa-trash"></i> Yes</label>
                                                                 <label class="p-0 text-info bg-red-600 cursor-pointer float-end" wire:click.prevent="safe({{ $item->id }})"><i class="fa fa-trash"></i> No</label>
                                                             </p>
 

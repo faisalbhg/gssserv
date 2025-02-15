@@ -238,8 +238,11 @@ return [
         "finance"=>[
             "1","4"
         ],
-        'security'=>[
+        "security"=>[
             "1","2","6"
+        ],
+        "service"=>[
+            "1","2","3","4"
         ]
     ],
     "sorting"=>[
@@ -350,6 +353,10 @@ return [
                 'text_class'=>'text-white',
             ],
         ],
+    ],
+
+    'ql_all_item_search_category'=>[
+        43,40
     ]
 
 ]

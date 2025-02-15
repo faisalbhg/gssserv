@@ -396,6 +396,9 @@ class UpdateJobCardSubmit extends Component
                 }
             }
         }
+
+        CustomerJobCardServices::where(['job_number'=>$this->job_number,'is_removed'=>1])->delete();
+
         //end temp cart loop
         $updateJobCardHeader = [
             'vehicle_type'=>isset($this->selectedVehicleInfo['vehicle_type'])?$this->selectedVehicleInfo['vehicle_type']:0,
