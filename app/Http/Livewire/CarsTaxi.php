@@ -134,13 +134,16 @@ class CarsTaxi extends Component
                 $this->vehiclesModelList = VehicleModels::where(['vehicle_make_id'=>$this->make])->get();
             }
             $this->checklistLabels = ServiceChecklist::get();
-            $this->carTaxiServiceInfo = LaborItemMaster::where([
+
+            $carTaxiServiceInfoQuery = LaborItemMaster::where([
                     //'SectionCode'=>$this->propertyCode,
-                    'Active'=>1,
-                    'ItemCode'=>'S255'
-                ])->where('UnitPrice','>',0)->first();
-            if($this->carTaxiServiceInfo){
-                $this->total = $this->carTaxiServiceInfo->UnitPrice;
+                    'Active'=>1
+                ])->whereIn('ItemCode', config('global.carTexiItems'))->where('UnitPrice','>',0);
+            $carTaxiServiceItemsSum = $carTaxiServiceInfoQuery->sum('UnitPrice');
+            $carTaxiServiceItemsExist = $carTaxiServiceInfoQuery->exists();
+            $this->carTaxiServiceInfo = $carTaxiServiceInfoQuery->get();
+            if($carTaxiServiceItemsExist){
+                $this->total = $carTaxiServiceItemsSum;
                 $this->tax = $this->total * (config('global.TAX_PERCENT') / 100);
                 $this->grand_total = $this->total+$this->tax;
             }

@@ -463,7 +463,7 @@
                         </div>
                         <div class="card-body p-3">
                             <div class="row" id="searchVehicleDiv">
-                                <span wire:target="nothing('unique_id')" wire:loading> {{-- new wire:navigating directive --}}
+                                <span wire:target="nothing('unique_id')" wire:loading>
                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                         <div class="la-ball-beat">
                                             <div></div>
@@ -473,7 +473,6 @@
                                     </div>
                                 </span>
                                 @foreach($customers as $customer)
-                                <!--wire:click="selectVehicle({{$customer->TenantId}}, {{$customer->id}})"-->
                                 <div class="col-xl-3 col-md-4 col-sm-6 mb-xl-0 my-4">
                                     <a href="{{url('customer-service-job/'.$customer->customer_id.'/'.$customer->id)}}"  wire:click="nothing('unique_id')" wire:navigate>
                                         <div class="card card-background move-on-hover">
@@ -496,17 +495,6 @@
                                     </a>
                                 </div>
                                 @endforeach
-                                
-                                <!-- <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
-                                    <div class="card h-100 card-plain border">
-                                        <div class="card-body d-flex flex-column justify-content-center text-center" wire:click="addNewVehicle()">
-                                            <a href="javascript:;">
-                                                <i class="fa fa-plus text-secondary mb-3" aria-hidden="true"></i>
-                                                <h5 class=" text-secondary"> New Vehicle </h5>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
                     </div>

@@ -356,7 +356,11 @@ return [
     ],
 
     'ql_all_item_search_category'=>[
-        43,40
+        "43","40"
+    ],
+
+    'carTexiItems'=>[
+        'S255','S408'
     ]
 
 ]

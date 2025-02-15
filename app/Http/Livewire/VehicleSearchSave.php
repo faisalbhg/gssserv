@@ -163,7 +163,12 @@ class VehicleSearchSave extends Component
         }
         if($this->contract_customer_id)
         {
-           $this->showSaveContractCustomerVehicle=true; 
+            //$this->getCustomerVehicleSearch('contract_customer_name');
+            if(count($this->customers)>0)
+            {
+                $this->showVehicleAvailable=true;
+            }
+            $this->showSaveContractCustomerVehicle=true; 
         }
         
         
