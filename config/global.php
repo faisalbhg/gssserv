@@ -226,6 +226,7 @@ return [
         "4"=>"Sales",
         "5"=>"Finance",
         "6"=>"Security",
+        "7"=>"Quality",
     ],
     "user_type_access"=>[
         "administrator"=>[

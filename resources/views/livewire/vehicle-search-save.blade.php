@@ -68,9 +68,9 @@
                 <div class="card-body p-0">
                     
                     @if($showSearchContractCustomers)
-                        <div class="row">
-                            <div class="col-md-4 col-sm-6">
-                                <label for="contractCustomerNameInput">Contract Customer Name </label>
+                        <div class="row p-4">
+                            <div class="col-md-6 col-sm-6">
+                                <label for="saveContractCustomerNameButton">Contract Customer</label>
                                 <div class="form-group">
                                     <select class="form-control chosen-select" wire:model="contract_customer_id"  name="contract_customer_id" id="contractCustomerNameInput" style="padding-left:10px !important;">
                                         <option value="">-Select Contract Customers--</option>
@@ -79,35 +79,38 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                @error('contract_customer_name') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                @error('contract_customer_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                             </div>
-                            @if($showSaveContractCustomerVehicle)
-                            <div class="col-md-6 col-sm-6">
-                                <label for="saveContractCustomerNameButton"></label>
-                                <div class="input-group mt-1">
-                                    <button type="button" wire:click="saveContractVehicle()" class="btn btn-info btn-sm">Add New Vehicle</button>
-                                    <div wire:loading wire:target="saveContractVehicle">
-                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                            <div class="la-ball-beat">
-                                                <div></div>
-                                                <div></div>
-                                                <div></div>
+                        
+                        @if($showSaveContractCustomerVehicle)
+                            
+                                <div class="col-md-6 col-sm-6">
+                                    <label for="saveContractCustomerNameButton"></label>
+                                    <div class="input-group mt-1">
+                                        <button type="button" wire:click="saveContractVehicle()" class="btn btn-info btn-sm" id="saveContractCustomerNameButton">Add New Vehicle</button>
+                                        <div wire:loading wire:target="saveContractVehicle">
+                                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                <div class="la-ball-beat">
+                                                    <div></div>
+                                                    <div></div>
+                                                    <div></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            @endif
-                        </div>
+                           
+                        @endif
+                         </div>
                     @endif
 
                     @if($searchByMobileNumber)
                         <div class="row">
                             @if($showByMobileNumber)
-                                <div class="col-md-4 col-sm-6">
+                                <div class="col-md-6 col-sm-6">
                                     <label for="mobilenumberInput">Mobile Number </label>
-                                    <div class="input-group mb-3">
-                                        <input type="number" class="form-control" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-MobileSearch" wire:model="mobile"  name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="10" id="mobilenumberInput" style="padding-left:10px !important;">
+                                    <div class="input-group mb-3"  >
+                                        <input  type="number" class="form-control @error('mobile') btn-outline-danger @enderror" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-MobileSearch" wire:model="mobile"  name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="10" id="mobilenumberInput" style="padding-left:10px !important;">
                                         <button wire:click="searchResult" class="btn btn-outline-primary mb-0" type="button" id="button-MobileSearch">Search</button>
                                         <div wire:loading wire:target="searchResult">
                                             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
@@ -119,22 +122,21 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @error('mobile') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                    
                                 </div>
                             @endif
                             @if ($showCustomerForm)
                                 <div class="col-md-4  col-sm-6">
                                     <div class="form-group openDiv">
                                         <label for="nameInput">Name</label>
-                                        <input type="text" class="form-control" wire:model.defer="name" name="name" placeholder="Name" id="nameInput">
-                                        @error('name') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                        <input type="text" class="form-control @error('name') btn-outline-danger @enderror" wire:model.defer="name" name="name" placeholder="Name" id="nameInput">
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6">
                                     <div class="form-group openName">
                                         <label for="emailInput">Email</label>
-                                        <input type="email" wire:model.defer="email" name="email" class="form-control" id="emailInput" placeholder="Email">
-                                        @error('email') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                        <input type="email" wire:model.defer="email" name="email" class="form-control @error('email') btn-outline-danger @enderror" id="emailInput" placeholder="Email">
+                                        
                                     </div>
                                 </div>
                             @endif
@@ -155,7 +157,7 @@
                                         </div>
                                     </div> -->
                                     <!-- File Input -->
-                                    <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: block;" />
+                                    <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: block;" class="@error('plate_number_image') btn-outline-danger @enderror" />
                                     <!-- Progress Bar -->
                                     <div x-show="isUploading">
                                         <progress max="100" x-bind:value="progress"></progress>
@@ -201,14 +203,13 @@
                             <div class="col-md-4 col-sm-3">
                                 <div class="form-group">
                                     <label for="plateCode">Plate Code</label>
-                                    <select class="form-control chosen-select" wire:model="plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
+                                    <select class="form-control chosen-select @error('plate_code') btn-outline-danger @enderror" wire:model="plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
                                         <option value="">-Code-</option>
                                         @foreach($plateEmiratesCodes as $plateCode)
                                         <option value="{{$plateCode->plateColorTitle}}">{{$plateCode->plateColorTitle}}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                @error('plate_code') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                             </div>
                             @else
                             <div class="col-md-4 col-sm-3">
@@ -219,13 +220,13 @@
                                 @error('plate_code') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                             </div>
                             @endif
-                            <div class="col-md-4 col-sm-6">
+                            <div class="col-md-5 col-sm-5">
                                 <div class="form-group">
                                     <label for="plateNumber">Plate Number</label>
                                     <input style="padding:0.5rem 0.3rem !important;" type="number" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="plate_number" name="plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Number">
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-6">
+                            <div class="col-md-4 col-sm-4">
                                 <div class="form-group">
                                     <label for="plateNumber"></label>
                                     <div class="form-check form-switch mt-1">
@@ -267,7 +268,7 @@
                                         </div>
                                     </div> -->
                                     <!-- File Input -->
-                                    <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture style="display: block;" />
+                                    <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture style="display: block;" class="" />
                                     <!-- Progress Bar -->
                                     <div x-show="isUploading">
                                         <progress max="100" x-bind:value="progress"></progress>
@@ -276,12 +277,12 @@
                                 @if ($vehicle_image)
                                 <img class="img-fluid border-radius-lg w-30" src="{{ $vehicle_image->temporaryUrl() }}">
                                 @endif
-                                @error('vehicle_image') <span class="text-danger">{{ $message }}</span> @enderror
+                                @error('vehicle_image') <span class="text-danger">Vehicle Picture Required</span> @enderror
                             </div>
                             <div class="col-md-3 col-sm-5">
                                 <div class="form-group">
                                     <label for="vehicleTypeInput">Vehicle Type</label>
-                                    <select class="form-control chosen-select" id="vehicleTypeInput" wire:model="vehicle_type">
+                                    <select class="form-control chosen-select  @error('vehicle_type') btn-outline-danger @enderror" id="vehicleTypeInput" wire:model="vehicle_type">
                                         <option value="">-Select-</option>
                                         @foreach($vehicleTypesList as $vehicleType)
                                         <option value="{{$vehicleType->id}}">{{$vehicleType->type_name}}</option>
@@ -577,8 +578,8 @@
             //$('#plateCode').select2();
             //$('#contractCustomerNameInput').select2();
             $('#contractCustomerNameInput').on('change', function (e) {
-                var contractCustomer = $('#contractCustomerNameInput').val();
-                @this.set('contract_customer_id', contractCustomer);
+                var contractCustomerVal = $('#contractCustomerNameInput').val();
+                @this.set('contract_customer_id', contractCustomerVal);
             });
             $('#plateCountry').on('change', function (e) {
                 var plateCountryVal = $('#plateCountry').val();

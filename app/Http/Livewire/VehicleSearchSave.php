@@ -143,24 +143,29 @@ class VehicleSearchSave extends Component
         }
 
 
-        if($this->showSearchContractCustomers)
+        
+        /*if($this->showSearchContractCustomers)
         {
-            if($this->contract_customer_id && $this->showSearchContractCustomers)
+            if($this->contract_customer_id)
             {
-                $this->customer_id = $this->contract_customer_id;
-                $this->showSaveContractCustomerVehicle=true;
+                //$this->customer_id = $this->contract_customer_id;
+                
                 $this->getCustomerVehicleSearch('contract_customer_name');
                 if(count($this->customers)>0)
                 {
                     $this->showVehicleAvailable=true;
                 }
             }
+            
+        }*/
+        if($this->showSearchContractCustomers){
             $this->contractCustomersList = TenantMasterCustomers::where(['discountgroup'=>14])->get();
         }
-        else
+        if($this->contract_customer_id)
         {
-            $this->contractCustomersList=[];
+           $this->showSaveContractCustomerVehicle=true; 
         }
+        
         
         //$this->dispatchBrowserEvent('imageUpload');
         $this->dispatchBrowserEvent('selectSearchEvent');
@@ -397,11 +402,30 @@ class VehicleSearchSave extends Component
     }
 
     public function saveContractVehicle(){
+
+        //
+
         $this->showForms=true;
         $this->showPlateNumber=true;
         $this->searchByChaisisForm=true;
         $this->otherVehicleDetailsForm=true;
-        $this->showSaveCustomerVehicleOnly=true;
+        $this->showSaveCustomerButton=true;
+
+
+        /*$this->showVehicleAvailable=false;
+        $this->showForms=true;
+        $this->searchByMobileNumber=true;
+        $this->showByMobileNumber=true;
+        $this->showCustomerForm=true;
+        $this->showPlateNumber=true;
+        $this->showSearchByPlateNumberButton=false;
+        $this->searchByChaisisForm=true;
+        $this->showSearchByChaisisButton=false;
+        $this->otherVehicleDetailsForm=true;
+        $this->updateVehicleFormBtn=false;
+        $this->addVehicleFormBtn=false;
+        $this->cancelEdidAddFormBtn=false;
+        $this->showSaveCustomerButton=true;*/
     }
 
     public function saveVehicleCustomer(){
@@ -425,6 +449,7 @@ class VehicleSearchSave extends Component
             $validateSaveVehicle['make'] = 'required';
             $validateSaveVehicle['model'] = 'required';
         }
+        //dd($validateSaveVehicle);
         $validatedData = $this->validate($validateSaveVehicle);
 
         //Save Customer
@@ -521,28 +546,27 @@ class VehicleSearchSave extends Component
     }
 
     public function saveContractCustomerVehicle(){
-        if($this->plate_country=='AE'){
-            $validatedData = $this->validate([
-                'plate_state' => 'required',
-                'plate_code' => 'required',
-                'plate_number' => 'required',
-                'vehicle_image'=>'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
-                'vehicle_type'=>'required',
-                'make'=>'required',
-                'model'=>'required',
-            ]);
+        if($this->numberPlateRequired)
+        {
+            $validateSaveVehicle['plate_country']='required';
+            $validateSaveVehicle['plate_number']='required';
+            $validateSaveVehicle['plate_code']='required';
+            if($this->plate_country=='AE'){
+                $validateSaveVehicle['plate_state']='required';
+            }
+            $validateSaveVehicle['vehicle_image'] = 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048';
+            $validateSaveVehicle['vehicle_type'] = 'required';
+            $validateSaveVehicle['make'] = 'required';
+            $validateSaveVehicle['model'] = 'required';
         }
         else
         {
-            $validatedData = $this->validate([
-                'plate_number' => 'required',
-                'vehicle_image'=>'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048',
-                'vehicle_type'=>'required',
-                'make'=>'required',
-                'model'=>'required',
-            ]);
-
+            $validateSaveVehicle['vehicle_image'] = 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048';
+            $validateSaveVehicle['vehicle_type'] = 'required';
+            $validateSaveVehicle['make'] = 'required';
+            $validateSaveVehicle['model'] = 'required';
         }
+        $validatedData = $this->validate($validateSaveVehicle);
 
         
 
