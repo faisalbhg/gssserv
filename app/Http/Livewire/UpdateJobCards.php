@@ -70,7 +70,7 @@ class UpdateJobCards extends Component
         {
             $this->customerJobDetails();
             $this->selectVehicle();
-            
+            $this->applyItemToTempCart();
         }
 
     }
@@ -388,7 +388,7 @@ class UpdateJobCards extends Component
         }
         
 
-        $this->applyItemToTempCart();
+        
         $this->tempServiceCart = TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'job_number'=>$this->job_number])->get();
 
 
@@ -398,13 +398,11 @@ class UpdateJobCards extends Component
     }
 
     public function customerJobDetails(){
-        $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo'])->where(['job_number'=>$this->job_number]);
-
-        $customerJobCardsQuery = $customerJobCardsQuery->where(function ($query) {
-                $query->whereRelation('customerJobServices', 'is_removed', '!=', 1);
-            });
+        $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo']);
+        $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
 
         $this->jobDetails =  $customerJobCardsQuery->first();
+        //dd($this->jobDetails);
         $this->customer_id = $this->jobDetails->customer_id;
         $this->vehicle_id = $this->jobDetails->vehicle_id;
     }
@@ -664,8 +662,9 @@ class UpdateJobCards extends Component
     {
         //dd($item_id);
         //dd($id);
-        TempCustomerServiceCart::find($id)->delete();
-        CustomerJobCardServices::where(['job_number'=>$this->job_number,'item_id'=>$item_id])->update(['is_removed'=>1]);
+        TempCustomerServiceCart::where(['id'=>$id])->delete();
+        CustomerJobCardServices::where(['job_number'=>$this->job_number,'item_id'=>$item_id])->delete();
+        $this->applyItemToTempCart();
         //CustomerJobCardServices::destroy($id);
     }
     public function safe($id)
