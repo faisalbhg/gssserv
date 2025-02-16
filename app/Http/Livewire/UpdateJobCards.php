@@ -679,13 +679,12 @@ class UpdateJobCards extends Component
     }
 
     public function applyItemToTempCart(){
+        //dd($this->jobDetails->customerJobServices);
         foreach($this->jobDetails->customerJobServices as $customerJobServices){
-            if($customerJobServices->is_removed!=1)
-            {
+            
                 //dd($customerJobServices);
                 $customerBasketCheck = TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'item_id'=>$customerJobServices->item_id,'job_number'=>$this->job_number]);
-                //dd($customerBasketCheck->count());
-                if($customerBasketCheck->count())
+                if($customerBasketCheck->count()>0)
                 {
                     if(!empty($this->appliedDiscount)){
                         if($customerJobServices->service_item_type==1){
@@ -708,6 +707,7 @@ class UpdateJobCards extends Component
                             $discountSalePrice= $discountSalePriceQuery->discountItemPrice;
                         }
                         $cartUpdate=[];
+                        //dd($discountSalePrice);
                         if($discountSalePrice){
                             $cartUpdate['price_id']=$discountSalePrice->PriceID;
                             $cartUpdate['customer_group_id']=$discountSalePrice->CustomerGroupId;
@@ -721,6 +721,7 @@ class UpdateJobCards extends Component
                         }
 
                     }
+
                 }
                 else
                 {
@@ -795,7 +796,7 @@ class UpdateJobCards extends Component
                     }
                     TempCustomerServiceCart::insert($cartInsert);
                 }
-            }
+            
             
         }
     }
@@ -877,11 +878,11 @@ class UpdateJobCards extends Component
     {
         $items = json_decode($items,true);
         $discountPrice = json_decode($discount,true);
-        $customerBasketCheck = TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'item_id'=>$items['ItemId']]);
-        if($customerBasketCheck->count())
+        $customerBasketCheck = TempCustomerServiceCart::where(['customer_id'=>$this->jobDetails->customer_id,'vehicle_id'=>$this->jobDetails->vehicle_id,'item_id'=>$items['ItemId'],'job_number'=>$this->job_number]);
+        if($customerBasketCheck->count()>0)
         {
             $customerBasketCheck->increment('quantity', 1);
-            if(!empty($discountPrice)){
+            if($discountPrice!=null){
                 $cartUpdate['price_id']=$discountPrice['PriceID'];
                 $cartUpdate['customer_group_id']=$discountPrice['CustomerGroupId'];
                 $cartUpdate['customer_group_code']=$discountPrice['CustomerGroupCode'];
@@ -890,6 +891,7 @@ class UpdateJobCards extends Component
                 $cartUpdate['start_date']=$discountPrice['StartDate'];
                 $cartUpdate['end_date']=$discountPrice['EndDate'];
                 $cartUpdate['discount_perc']=$discountPrice['DiscountPerc'];
+                dd($cartUpdate);
                 TempCustomerServiceCart::where([
                     'customer_id'=>$this->jobDetails->customer_id,
                     'vehicle_id'=>$this->jobDetails->vehicle_id,
