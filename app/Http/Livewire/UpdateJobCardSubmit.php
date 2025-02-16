@@ -241,6 +241,9 @@ class UpdateJobCardSubmit extends Component
         $passmetrialRequest = false;
         $totalDiscountInJob=0;
         //dd($this->jobDetails->meterialRequestResponse);
+        MaterialRequest::where([
+                    'sessionId'=>$this->job_number
+                ])->delete();
         foreach($this->cartItems as $cartData)
         {
             $getCustomerJobCardServiceQuery = CustomerJobCardServices::where(['job_number'=>$this->job_number,'item_id'=>$cartData->item_id,'item_code'=>$cartData->item_code]);
@@ -309,6 +312,14 @@ class UpdateJobCardSubmit extends Component
                         'Activity2Code'=>auth()->user('user')->station_code
                     ]);
                 }
+
+                $meterialRequestItems = MaterialRequest::create([
+                    'sessionId'=>$this->job_number,
+                    'ItemCode'=>$cartData->item_code,
+                    'ItemName'=>$cartData->item_name,
+                    'QuantityRequested'=>$cartData->quantity,
+                    'Activity2Code'=>auth()->user('user')->station_code
+                ]);
 
             }
             else
