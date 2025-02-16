@@ -414,7 +414,8 @@ class VehicleSearchSave extends Component
         $this->showPlateNumber=true;
         $this->searchByChaisisForm=true;
         $this->otherVehicleDetailsForm=true;
-        $this->showSaveCustomerButton=true;
+        $this->saveContractCustomerVehicle=true;
+        $this->showSaveCustomerVehicleOnly=true;
 
 
         /*$this->showVehicleAvailable=false;
@@ -573,7 +574,7 @@ class VehicleSearchSave extends Component
         }
         $validatedData = $this->validate($validateSaveVehicle);
 
-        
+        $this->customer_id = $this->contract_customer_id;
 
         
         //dd($this->customer_id);

@@ -398,8 +398,13 @@ class UpdateJobCards extends Component
     }
 
     public function customerJobDetails(){
-        $this->jobDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo'])->where(['job_number'=>$this->job_number])->first();
-        //dd($this->jobDetails);
+        $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo'])->where(['job_number'=>$this->job_number]);
+
+        $customerJobCardsQuery = $customerJobCardsQuery->where(function ($query) {
+                $query->whereRelation('customerJobServices', 'is_removed', '!=', 1);
+            });
+
+        $this->jobDetails =  $customerJobCardsQuery->first();
         $this->customer_id = $this->jobDetails->customer_id;
         $this->vehicle_id = $this->jobDetails->vehicle_id;
     }

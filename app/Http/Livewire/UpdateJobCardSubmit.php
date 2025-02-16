@@ -236,16 +236,18 @@ class UpdateJobCardSubmit extends Component
         }
     }
     public function updateJob(){
-
+        //dd($this->jobDetails->job_date_time);
         //start temp cart loop
         $passmetrialRequest = false;
         $totalDiscountInJob=0;
+        //dd($this->jobDetails->meterialRequestResponse);
         foreach($this->cartItems as $cartData)
         {
             $getCustomerJobCardServiceQuery = CustomerJobCardServices::where(['job_number'=>$this->job_number,'item_id'=>$cartData->item_id,'item_code'=>$cartData->item_code]);
             if($getCustomerJobCardServiceQuery->exists())
             {
                 $getCustomerJobCardServiceFirst = $getCustomerJobCardServiceQuery->first();
+                //dd($getCustomerJobCardServiceFirst);
                 $customerJobServiceDataUpdate = [
                     'is_updated'=>1,
                     'updated_by'=>auth()->user('user')->id,
@@ -469,11 +471,12 @@ class UpdateJobCardSubmit extends Component
         }
         if($passmetrialRequest==true)
         {
+            //dd($this->jobDetails->meterialRequestResponse);
             try {
-                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = '".auth()->user('user')->stationName['PortfolioCode']."', @documentCode = '".isset($this->jobDetails->meterialRequestResponse)?$this->jobDetails->meterialRequestResponse:null."', @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".auth()->user('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ", [
+                $meterialRequestResponse = DB::select('EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = "'.auth()->user('user')->stationName['PortfolioCode'].'", @documentCode = "'.$this->jobDetails->meterialRequestResponse.'", @documentDate = "'.$this->jobDetails->job_date_time.'", @SessionId = "'.$this->job_number.'", @sourceType = "J", @sourceCode = "'.$this->job_number.'", @locationId = "0", @referenceNo = "'.$this->job_number.'", @LandlordCode = "'.auth()->user('user')->station_code.'", @propertyCode = "'.$propertyCodeMR.'", @UnitCode = "'.$unitCodeMR.'", @IsApprove = "1", @doneby = "admin", @documentCode_out = null ', [
                         auth()->user('user')->stationName['PortfolioCode'],
                         $this->jobDetails->meterialRequestResponse,
-                        $customerjobData['job_date_time'],
+                        $this->jobDetails->job_date_time,
                         $this->job_number,
                         "J",
                         $this->job_number,
