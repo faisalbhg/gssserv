@@ -144,7 +144,7 @@
                 <div class="row mt-lg-4 mt-2">
                     @foreach($carTaxiJobs as $taxiJob)
                         <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
-                            <div class="card" wire:click="customerJobUpdate('{{$jobs->taxiJob}}')">
+                            <div class="card" wire:click="customerJobUpdate('{{$taxiJob}}')">
                                 <div class="card-body p-3">
                                     <div class="d-flex">
                                         <div class="avatar avatar-xl bg-gradient-dark border-radius-md p-0 shadow">
