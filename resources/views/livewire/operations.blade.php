@@ -108,7 +108,6 @@
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Customer</th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Job</th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Pricec</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2 align-middle text-center">Status</th>
                     <!-- <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Department</th> -->
                     <th></th>
                   </tr>
@@ -153,6 +152,9 @@
                         <div class="d-flex flex-column justify-content-center">
                           <h6 class="mb-0 text-sm">{{$jobs->job_number}}</h6>
                           <p class="text-sm font-weight-bold mb-0">{{ \Carbon\Carbon::parse($jobs->job_date_time)->format('dS M Y h:i A') }}</p>
+                          @if(auth()->user('user')->user_type==1)
+                          <small>Created By: {{$jobs->createdInfo['name']}}</small>
+                          @endif
                         </div>
                       </div>
                     </td>
@@ -172,10 +174,7 @@
                       <p class="text-sm font-weight-bold mb-0"></p>
                     </td>
                     
-                    <td class="align-middle text-center">
-
-                      
-                    </td>
+                    
                     
                     <td class="align-middle">
 

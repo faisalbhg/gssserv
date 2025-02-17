@@ -123,7 +123,7 @@ class Operations extends Component
         );
 
 
-        $customerjobs = CustomerJobCards::with(['customerInfo','makeInfo','modelInfo']);
+        $customerjobs = CustomerJobCards::with(['customerInfo','makeInfo','modelInfo','createdInfo']);
         if($this->filter){
             $customerjobs = $customerjobs->whereIn('job_status', $this->filter);
         }
@@ -152,7 +152,8 @@ class Operations extends Component
         $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null);
         if(auth()->user('user')->user_type!=1){
             $customerjobs = $customerjobs->where(['station'=>auth()->user('user')['station_code']]);
-            $getCountSalesJob = $getCountSalesJob->where(['station'=>auth()->user('user')['station_code']]);    
+            $getCountSalesJob = $getCountSalesJob->where(['station'=>auth()->user('user')['station_code']]); 
+            //$customerjobs=$customerjobs->with('createdInfo');
         }
         $customerjobs = $customerjobs->where('is_contract','=',null)->orderBy('id','DESC');
         $customerjobs = $customerjobs->paginate(10);

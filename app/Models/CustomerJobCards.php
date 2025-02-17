@@ -104,6 +104,10 @@ class CustomerJobCards extends Model
         return $this->belongsTo(VehicleModels::class,'model','id');
     }
 
+    public function createdInfo(){
+        return $this->belongsTo(User::class,'created_by','id');
+    }
+
     
 
     
