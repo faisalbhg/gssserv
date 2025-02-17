@@ -313,13 +313,7 @@ class UpdateJobCardSubmit extends Component
                     ]);
                 }
 
-                $meterialRequestItems = MaterialRequest::create([
-                    'sessionId'=>$this->job_number,
-                    'ItemCode'=>$cartData->item_code,
-                    'ItemName'=>$cartData->item_name,
-                    'QuantityRequested'=>$cartData->quantity,
-                    'Activity2Code'=>auth()->user('user')->station_code
-                ]);
+                
 
             }
             else
@@ -484,7 +478,7 @@ class UpdateJobCardSubmit extends Component
         {
             //dd($this->jobDetails->meterialRequestResponse);
             try {
-                $meterialRequestResponse = DB::select('EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = "'.auth()->user('user')->stationName['PortfolioCode'].'", @documentCode = "'.$this->jobDetails->meterialRequestResponse.'", @documentDate = "'.$this->jobDetails->job_date_time.'", @SessionId = "'.$this->job_number.'", @sourceType = "J", @sourceCode = "'.$this->job_number.'", @locationId = "0", @referenceNo = "'.$this->job_number.'", @LandlordCode = "'.auth()->user('user')->station_code.'", @propertyCode = "'.$propertyCodeMR.'", @UnitCode = "'.$unitCodeMR.'", @IsApprove = "1", @doneby = "admin", @documentCode_out = null ', [
+                $meterialRequestResponse = DB::select('EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = ?, @documentCode = ?, @documentDate = ?, @SessionId = ?, @sourceType = ?, @sourceCode = ?, @locationId = ?, @referenceNo = ?, @LandlordCode = ?, @propertyCode = ?, @UnitCode = ?, @IsApprove = ?, @doneby = ?, @documentCode_out = ? ', [
                         auth()->user('user')->stationName['PortfolioCode'],
                         $this->jobDetails->meterialRequestResponse,
                         $this->jobDetails->job_date_time,
