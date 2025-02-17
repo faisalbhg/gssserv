@@ -159,7 +159,7 @@ class VehicleSearchSave extends Component
             
         }*/
         if($this->showSearchContractCustomers){
-            $this->contractCustomersList = TenantMasterCustomers::where(['discountgroup'=>14])->get();
+            $this->contractCustomersList = TenantMasterCustomers::where(['discountgroup'=>14])->orWhere(['Paymethod'=>2])->get();
         }
         if($this->contract_customer_id)
         {

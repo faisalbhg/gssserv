@@ -1,4 +1,4 @@
-<main class="main-content mt-1 border-radius-lg">
+<main class="main-content mt-1 border-radius-lg h-100">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-1 border-radius-xl shadow-none position-sticky blur shadow-blur mt-1 left-auto z-index-sticky" id="navbarBlur"
         navbar-scroll="true">
         <div class="container-fluid py-1 px-3">

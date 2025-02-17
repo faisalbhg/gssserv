@@ -474,6 +474,7 @@ class UpdateJobCardSubmit extends Component
             ];
             $checkListEntryInsert = JobcardChecklistEntries::where(['job_number'=>$this->job_number,'job_id'=>$this->jobDetails->id])->update($checkListEntryData);
         }
+        
         if($passmetrialRequest==true)
         {
             //dd($this->jobDetails->meterialRequestResponse);
