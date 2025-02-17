@@ -144,7 +144,7 @@
                 <div class="row mt-lg-4 mt-2">
                     @foreach($carTaxiJobs as $taxiJob)
                         <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
-                            <div class="card" wire:click="customerJobUpdate('{{$taxiJob}}')">
+                            <div class="card cursor-pointer" wire:click="customerJobUpdate('{{$taxiJob->job_number}}')">
                                 <div class="card-body p-3">
                                     <div class="d-flex">
                                         <div class="avatar avatar-xl bg-gradient-dark border-radius-md p-0 shadow">
@@ -164,7 +164,7 @@
                                                         @if($taxiJob->job_status>=$actionKey)
                                                         <a class="dropdown-item {!!config('global.jobs.status_text_class')[$actionKey]!!}">{{$jobActions}}</a>
                                                         @elseif($taxiJob->job_status+1==$actionKey)
-                                                        <a class="dropdown-item {!!config('global.jobs.status_text_class')[$actionKey]!!}" @if($actionKey!=4) wire:click="updateQwService('{{$taxiJob->job_number}}','{{$actionKey}}')" @else style="text-decoration: line-through;" @endif >{{$jobActions}}</a>
+                                                        <a class="dropdown-item {!!config('global.jobs.status_text_class')[$actionKey]!!}" @if($actionKey!=4) wire:click="updateCarTaxiHomeService('{{$taxiJob->job_number}}','{{$actionKey}}')" @else style="text-decoration: line-through;" @endif >{{$jobActions}}</a>
                                                         @else
                                                         <a class="dropdown-item" style="text-decoration: line-through;">{{$jobActions}}</a>
                                                         @endif
@@ -202,6 +202,15 @@
                     @endforeach
                 </div>
                 <div wire:loading wire:target="updateQwService">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+                <div wire:loading wire:target="customerJobUpdate">
                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                         <div class="la-ball-beat">
                             <div></div>
@@ -578,11 +587,12 @@
                 </div>
             @endif
             @include('components.modals.customerSignatureModel')
-            @if($updateService)
-            @include('components.modals.updateservice')
-            @endif
+            
         @endif
     </div>
+    @if($updateService)
+            @include('components.modals.updateservice')
+            @endif
 </main>
 @push('custom_script')
 <script type="text/javascript">

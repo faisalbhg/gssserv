@@ -44,6 +44,8 @@ class CarsTaxi extends Component
     public $checkListDetails, $vehicleSidesImages, $vehicleCheckedChecklist;
     public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $search_plate_state, $search_plate_code, $search_station;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
+    public $customerjobservices =[];
+    public $job_status, $job_departent;
 
     public function render()
     {
@@ -374,7 +376,7 @@ class CarsTaxi extends Component
         
     }
 
-    public function updateQwService($job_number,$status)
+    public function updateCarTaxiHomeService($job_number,$status)
     {
         //dd($job_number.$status);
         $this->job_status = $status;
@@ -408,6 +410,92 @@ class CarsTaxi extends Component
         
     }
 
+
+    public function updateQwService($services)
+    {
+
+
+        $jobServiceId = $services['id'];
+        $this->job_status = $services['job_status']+1;
+        $this->job_departent = $services['job_departent']+1;
+        
+        $serviceJobUpdate = [
+            'job_status'=>$services['job_status']+1,
+            'job_departent'=>$services['job_status']+1,
+        ];
+        //dd($serviceJobUpdate);
+        CustomerJobCardServices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
+
+        $serviceJobUpdateLog = [
+            'job_number'=>$services['job_number'],
+            'customer_job__card_service_id'=>$jobServiceId,
+            'job_status'=>$services['job_status']+1,
+            'job_departent'=>$services['job_departent']+1,
+            'job_description'=>json_encode($this),
+            'created_by'=>auth()->user('user')->id,
+        ];
+        CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
+
+        $getCountSalesJobStatus = CustomerJobCardServices::select(
+            array(
+                \DB::raw('count(case when job_status = 0 then job_status end) new'),
+                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
+                \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
+                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
+                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+            )
+        )->where(['job_number'=>$services['job_number']])->first();
+        //dd($getCountSalesJobStatus);
+        if($getCountSalesJobStatus->working_progress>0){
+            $mainSTatus=1;
+        }
+        else if($getCountSalesJobStatus->qualitycheck>0){
+            $mainSTatus=2;
+        }
+        else if($getCountSalesJobStatus->ready_to_deliver>0){
+            $mainSTatus=3;
+        }
+        else if($getCountSalesJobStatus->delivered>0){
+            $mainSTatus=4;
+        }
+        $mianJobUpdate = [
+            'job_status'=>$mainSTatus,
+            'job_departent'=>$mainSTatus,
+        ];
+        
+        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$services['job_number']]);
+        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
+
+        $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$services['job_number']])->first();
+        $this->jobcardDetails = $job;
+        $this->customerjobservices = $job->customerJobServices;
+
+        if($mainSTatus==4)
+        {
+            
+
+            try {
+                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$services['customer_id'].'" ');
+            } catch (\Exception $e) {
+                //return $e->getMessage();
+            }
+
+
+
+            //$mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
+            $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+            $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
+            if($mobileNumber!=''){
+                //if($mobileNumber=='971566993709'){
+                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately. Thank you for choosing GSS! Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                //}
+            }
+        }
+        
+        
+    }
+
     public function customerJobUpdate($job_number)
     {
         $this->showVehicleImageDetails=false;
@@ -419,6 +507,7 @@ class CarsTaxi extends Component
         $this->jobcardDetails = $job;
         //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
         //dd($this->customerJobServiceLogs);
+        //dd($this->jobcardDetails);
         if($this->jobcardDetails->checklistInfo!=null){
             $this->checkListDetails=$this->jobcardDetails->checklistInfo;
             $this->checklistLabels = ServiceChecklist::get();
