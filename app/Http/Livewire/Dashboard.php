@@ -62,24 +62,24 @@ class Dashboard extends Component
             )
         );
         $customerjobsQuery = CustomerJobCards::with(['customerInfo']);
-        if($this->selected_date)
-        {
-    
-            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 00:00:00');
-            $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 23:59:59');
+
+        if($this->selected_date){
+            $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+            $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
         }
         else
         {
+            
             $this->selected_date = Carbon::now()->format('Y-m-d');
-            $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 00:00:00');
-            $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $this->selected_date.' 23:59:59');
-
+            //dd($this->selected_date);
+            $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+            $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
         }
 
-        $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$startDate, $endDate]);
-        $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);
+        /*$getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$startDate, $endDate]);
+        $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);*/
 
-        $this->getCountSalesJob = $getCountSalesJobStatus->where(['created_by'=>auth()->user('user')['id']])->first();
+        $this->getCountSalesJob = $getCountSalesJobStatus->where(['station'=>auth()->user('user')['station_code']])->first();
 
         if($this->filterJobStatus)
         {

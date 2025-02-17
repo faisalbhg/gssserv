@@ -288,12 +288,7 @@
             $('#newKmReadingForm').hide();
         });
 
-        
-
-
-  
         window.addEventListener('swal:modal', event => { 
-            
             Swal.fire({
                 icon: event.detail.type,
                 html: event.detail.message,

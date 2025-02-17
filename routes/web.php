@@ -82,6 +82,9 @@ Route::middleware('auth')->group(function () {
     Route::get('job-start',VehicleSearchSave::class)->name('job-start');
     Route::get('customer-service-job/{customer_id}/{vehicle_id}',CustomerServiceJob::class)->name('customer-service-job');
     Route::get('submit-job/{customer_id}/{vehicle_id}', SubmitCutomerServiceJob::class)->name('submit-job');
+    //UpdateCustomerJobs
+    Route::get('customer-service-job/{customer_id}/{vehicle_id}/{job_number}',CustomerServiceJob::class)->name('customer-service-job');
+    Route::get('submit-job-update/{customer_id}/{vehicle_id}/{job_number}', SubmitCutomerServiceJob::class)->name('submit-job-update');
 
     //PackagesBookings
     Route::get('submit-package/{customer_id}/{vehicle_id}/{package_id}', PackagesBookings::class)->name('submit-package');

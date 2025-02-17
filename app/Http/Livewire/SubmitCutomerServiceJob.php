@@ -37,10 +37,16 @@ class SubmitCutomerServiceJob extends Component
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
         $this->vehicle_id = $request->vehicle_id;
+        $this->job_numbber = $request->job_number;
         if($this->vehicle_id && $this->customer_id)
         {
             $this->getCustomerCart();
             $this->selectVehicle();
+        }
+
+        if($this->job_number)
+        {
+            $this->customerJobDetails();
         }
 
     }
@@ -61,13 +67,61 @@ class SubmitCutomerServiceJob extends Component
         return view('livewire.submit-cutomer-service-job');
     }
 
+    public function customerJobDetails(){
+        //dd(JobcardChecklistEntries::where(['job_number'=>'JOB-GWW-00000028'])->get());
+        $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo']);
+        $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
+        $this->jobDetails =  $customerJobCardsQuery->first();
+        //dd($this->jobDetails);
+        $this->showFuelScratchCheckList=true;
+        $this->checklistEntry = JobcardChecklistEntries::where(['job_number'=>$this->job_number])->first();
+        //dd($this->checklistEntry);
+        if($this->checklistEntry){
+            //dd($this->checklistEntry);
+            $this->checklistLabel = json_decode($this->checklistEntry->checklist,true);
+            $this->fuel = $this->checklistEntry->fuel;
+            $this->vehicle_image = json_decode($this->checklistEntry->vehicle_image,true);
+            /*$this->vImageR1 = $this->vehicle_image['vImageR1'];
+            $this->vImageR2 = $this->vehicle_image['vImageR1'];
+            $this->vImageF = $this->vehicle_image['vImageF'];
+            $this->vImageB = $this->vehicle_image['vImageB'];
+            $this->vImageL1 = $this->vehicle_image['vImageL1'];
+            $this->vImageL2 = $this->vehicle_image['vImageL2'];*/
+            $this->turn_key_on_check_for_fault_codes = $this->checklistEntry->turn_key_on_check_for_fault_codes;
+            $this->start_engine_observe_operation = $this->checklistEntry->start_engine_observe_operation;
+            $this->reset_the_service_reminder_alert = $this->checklistEntry->reset_the_service_reminder_alert;
+            $this->stick_update_service_reminder_sticker_on_b_piller = $this->checklistEntry->stick_update_service_reminder_sticker_on_b_piller;
+            $this->interior_cabin_inspection_comments = $this->checklistEntry->interior_cabin_inspection_comments;
+            $this->check_power_steering_fluid_level = $this->checklistEntry->check_power_steering_fluid_level;
+            $this->check_power_steering_tank_cap_properly_fixed = $this->checklistEntry->check_power_steering_tank_cap_properly_fixed;
+            $this->check_brake_fluid_level = $this->checklistEntry->check_brake_fluid_level;
+            $this->brake_fluid_tank_cap_properly_fixed = $this->checklistEntry->brake_fluid_tank_cap_properly_fixed;
+            $this->check_engine_oil_level = $this->checklistEntry->check_engine_oil_level;
+            $this->check_radiator_coolant_level = $this->checklistEntry->check_radiator_coolant_level;
+            $this->check_radiator_cap_properly_fixed = $this->checklistEntry->check_radiator_cap_properly_fixed;
+            $this->top_off_windshield_washer_fluid = $this->checklistEntry->top_off_windshield_washer_fluid;
+            $this->check_windshield_cap_properly_fixed = $this->checklistEntry->check_windshield_cap_properly_fixed;
+            $this->underHoodInspectionComments = $this->checklistEntry->underHoodInspectionComments;
+            $this->check_for_oil_leaks_engine_steering = $this->checklistEntry->check_for_oil_leaks_engine_steering;
+            $this->check_for_oil_leak_oil_filtering = $this->checklistEntry->check_for_oil_leak_oil_filtering;
+            $this->check_drain_lug_fixed_properly = $this->checklistEntry->check_drain_lug_fixed_properly;
+            $this->check_oil_filter_fixed_properly = $this->checklistEntry->check_oil_filter_fixed_properly;
+            $this->ubi_comments = $this->checklistEntry->ubi_comments;
+            $this->customerSignature = $this->checklistEntry->signature;
+        }
+        
+    }
+
     public function getCustomerCart(){
         $customerServiceCartQuery = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id]);
+        if($this->job_number)
+        {
+            $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>$this->job_number]);
+        }
         $this->cartItemCount = $customerServiceCartQuery->count();
         if($this->cartItemCount>0){
             $this->cartItems = $customerServiceCartQuery->get();
-            //dd($this->cartItems);
-
+            
             $total=0;
             $totalDiscount=0;
             $serviceIncludeArray=[];
@@ -112,7 +166,14 @@ class SubmitCutomerServiceJob extends Component
     }   
 
     public function updateServiceItem(){
-        return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
+        if($this->job_number)
+        {
+            return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$this->job_number);
+        }
+        else
+        {
+            return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
+        }
     }
 
     public function clickShowSignature()
@@ -123,10 +184,8 @@ class SubmitCutomerServiceJob extends Component
     }
 
     public function completePaymnet($mode){
-        if($this->job_number==Null){
-            $this->createJob();
-        }
-        $job_number = $this->job_number;
+        $this->createJob();
+        $this->job_number;
         
         $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle','stationInfo'])->where(['job_number'=>$this->job_number])->first();
         //$mobileNumber = isset($customerjobs->customerInfo['Mobile'])?'971'.substr($customerjobs->customerInfo['Mobile'], -9):null;
@@ -147,15 +206,15 @@ class SubmitCutomerServiceJob extends Component
             //dd($merchant_reference);
             if(array_key_exists('payment_redirect_link', $paymentResponse))
             {
-                //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
+                //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$this->job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
                 if($customerjobs->customerInfo['Mobile']!=''){
                     //if($mobileNumber=='971566993709'){
-                        $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. To avoid waiting at the cashier, you can pay online using this link: '.$paymentResponse['payment_redirect_link'].'. Alternatively, you can pay at the cashier via card or cash. For assistance, call 800477823.');
+                        $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$this->job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. To avoid waiting at the cashier, you can pay online using this link: '.$paymentResponse['payment_redirect_link'].'. Alternatively, you can pay at the cashier via card or cash. For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                     //}
                 }
 
-                $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send','job_create_status'=>1]);
+                $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send','job_create_status'=>1]);
 
                 CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
 
@@ -177,15 +236,15 @@ class SubmitCutomerServiceJob extends Component
         else if($mode=='card')
         {
             $paymentmode = "O";
-            $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>2,'payment_request'=>'card payment','job_create_status'=>1]);
+            $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>2,'payment_request'=>'card payment','job_create_status'=>1]);
             if($customerjobs->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$this->job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
 
-            CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
+            
 
             $this->successPage=true;
             $this->showCheckout =false;
@@ -198,16 +257,16 @@ class SubmitCutomerServiceJob extends Component
         else if($mode=='cash')
         {
             $paymentmode = "C";
-            $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>3,'payment_request'=>'cash payment','job_create_status'=>1]);
+            $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>3,'payment_request'=>'cash payment','job_create_status'=>1]);
 
             if($customerjobs->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$this->job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
 
-            CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
+            
 
             $this->successPage=true;
             $this->showCheckout =false;
@@ -218,17 +277,17 @@ class SubmitCutomerServiceJob extends Component
         }
         else if($mode=='empty')
         {
-            $customerjobId = CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_type'=>6,'payment_status'=>1,'payment_request'=>'package','job_create_status'=>1]);
+            $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>6,'payment_status'=>1,'payment_request'=>'package','job_create_status'=>1]);
 
             if($customerjobs->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$this->job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
             
 
-            CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
+            
 
             $this->successPage=true;
             $this->showCheckout =false;
@@ -238,11 +297,16 @@ class SubmitCutomerServiceJob extends Component
             $this->selectedCustomerVehicle=false;
         }
 
-        try {
-            //DB::select('EXEC [dbo].[CreateFinancialEntries_Operation] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "'.$paymentmode.'", @customer_id = "'.$customerjobs->customer_id.'" ');
-        } catch (\Exception $e) {
-            //return $e->getMessage();
+        $customerServiceCartQuery = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'job_number'=>$this->job_number]);
+        if($customerServiceCartQuery->exists()){
+            $customerServiceCartQuery = $customerServiceCartQuery->delete();
         }
+        else
+        {
+            CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
+        }
+
+        
 
 
     }
@@ -250,16 +314,18 @@ class SubmitCutomerServiceJob extends Component
     
 
     public function createJob(){
-
-        
+        $job_update = false;
+        if($this->job_number){
+            $job_update = true;
+            MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
+        }
         $customerjobData = [
-            'job_number'=>Carbon::now()->format('y').Carbon::now()->format('m').Carbon::now()->format('d').rand(1,1000),
+            
             'job_date_time'=>Carbon::now(),
             'customer_id'=>$this->customer_id,
             'customer_name'=>$this->mobile,
             'customer_email'=>$this->email,
             'customer_mobile'=>$this->name,
-            //'customer_type'=>$this->customer_type,
             'vehicle_id'=>$this->vehicle_id,
             'vehicle_type'=>isset($this->selectedVehicleInfo['vehicle_type'])?$this->selectedVehicleInfo['vehicle_type']:0,
             'make'=>$this->selectedVehicleInfo['make'],
@@ -269,33 +335,31 @@ class SubmitCutomerServiceJob extends Component
             'chassis_number'=>$this->selectedVehicleInfo['chassis_number'],
             'vehicle_km'=>$this->selectedVehicleInfo['vehicle_km'],
             'station'=>auth()->user('user')->stationName['LandlordCode'],
-            /*'customer_discount_id'=>auth()->user('user')->stationName['LandlordCode'],
-            'discount_id',
-            'discount_unit_id',
-            'discount_code',
-            'discount_title',
-            'discount_percentage',
-            'discount_amount',
-            'coupon_used',
-            'coupon_type',
-            'coupon_code',
-            'coupon_amount',*/
             'total_price'=>$this->total,
             'vat'=>$this->tax,
             'grand_total'=>$this->grand_total,
             'job_status'=>1,
             'job_departent'=>1,
             'payment_status'=>0,
-            'created_by'=>auth()->user('user')->id,
-            'payment_updated_by'=>auth()->user('user')->id,
+            //'payment_updated_by'=>auth()->user('user')->id,
         ];
-        if($this->showQLCheckList==true){
-            //$customerjobData['ql_km_range']=$this->ql_km_range;
+        if($this->job_number)
+        {
+            $customerjobData['updated_by']=auth()->user('user')->id;
+            CustomerJobCards::where(['job_number'=>$this->job_number])->update($customerjobData);
+            $customerjobId = $this->jobDetails->id;
         }
-        $customerjobId = CustomerJobCards::create($customerjobData);
-        $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
-        $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
-        CustomerJobCards::where(['id'=>$customerjobId->id])->update(['job_number'=>$this->job_number]);
+        else
+        {
+            $customerjobData['created_by']=auth()->user('user')->id;
+            $createdCustomerJob = CustomerJobCards::create($customerjobData);
+            $customerjobId = $createdCustomerJob->id;
+            $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
+            $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
+            CustomerJobCards::where(['id'=>$customerjobId])->update(['job_number'=>$this->job_number]);
+        }
+        
+        
 
         $meterialRequestItems=[];
         $passmetrialRequest = false;
@@ -307,12 +371,11 @@ class SubmitCutomerServiceJob extends Component
         {
             $customerJobServiceData = [
                 'job_number'=>$this->job_number,
-                'job_id'=>$customerjobId->id,
+                'job_id'=>$customerjobId,
                 'job_status'=>1,
                 'job_departent'=>1,
                 'is_added'=>0,
                 'is_removed'=>0,
-                'created_by'=>auth()->user('user')->id,
             ];
             
             
@@ -365,28 +428,42 @@ class SubmitCutomerServiceJob extends Component
             $customerJobServiceData['vat']=$tax;
             $customerJobServiceData['grand_total']=$grand_total;
 
-            /*if($this->customerSelectedDiscountGroup)
+            if($job_update==true){
+                $customerJobServiceData['updated_by']=auth()->user('user')->id;
+                $customerJobServiceQuery = CustomerJobCardServices::where([
+                    'job_number'=>$this->job_number,
+                    'job_id'=>$customerjobId,
+                    'item_id'=>$cartData->item_id,
+                    'item_code'=>$cartData->item_code,
+                ]);
+                if($customerJobServiceQuery->exists()){
+                    $customerJobServiceQuery->update($customerJobServiceData);
+                    $customerJobServiceId = $customerJobServiceQuery->first();    
+                }
+                else
+                {
+                    $customerJobServiceData['created_by']=auth()->user('user')->id;
+                    $customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
+                }
+                
+            }
+            else
             {
-                $customerJobServiceData['customer_discount_id']=$this->customerSelectedDiscountGroup['id'];
-                $customerJobServiceData['discount_id']=$this->customerSelectedDiscountGroup['discount_id'];
-                $customerJobServiceData['discount_unit_id']=$this->customerSelectedDiscountGroup['discount_unit_id'];
-                $customerJobServiceData['discount_code']=$this->customerSelectedDiscountGroup['discount_code'];
-                $customerJobServiceData['discount_title']=$this->customerSelectedDiscountGroup['discount_title'];
-                $customerJobServiceData['discount_percentage'] = $cartData->discount_perc;
-                $customerJobServiceData['discount_amount'] = round((($cartData->discount_perc/100)*$cartData->unit_price),2);
-            }*/
-            //dd($customerJobServiceData);
-            $customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
+                $customerJobServiceData['created_by']=auth()->user('user')->id;
+                $customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
+            }
+            //dd($customerJobServiceId);
             
             CustomerJobCardServiceLogs::create([
                 'job_number'=>$this->job_number,
                 'job_status'=>1,
                 'job_departent'=>1,
-                'job_description'=>json_encode($customerJobServiceData),
+                'job_description'=>json_encode($customerJobServiceId),
                 'customer_job__card_service_id'=>$customerJobServiceId->id,
                 'created_by'=>auth()->user('user')->id,
                 'created_at'=>Carbon::now(),
             ]);
+
             
             if($cartData->cart_item_type==2){
 
@@ -435,19 +512,11 @@ class SubmitCutomerServiceJob extends Component
             $customerjobData['discount_title']=$discountGroupCode;
             $customerjobData['discount_percentage']=$discountGroupDiscountPercentage;*/
             $customerjobDataUpdate['discount_amount']=$totalDiscountInJob;
-            CustomerJobCards::where(['id'=>$customerjobId->id])->update($customerjobDataUpdate);
+            CustomerJobCards::where(['id'=>$customerjobId])->update($customerjobDataUpdate);
         }
 
 
-
-        WorkOrderJob::create(
-                [
-                    "DocumentCode"=>$this->job_number,
-                    "DocumentDate"=>$customerjobData['job_date_time'],
-                    "Status"=>"A",
-                    "LandlordCode"=>auth()->user('user')->station_code,
-                ]
-            );
+        
 
         $vehicle_image=[];
         //dd($vehicle_image);
@@ -464,8 +533,6 @@ class SubmitCutomerServiceJob extends Component
             
 
             $checkListEntryData = [
-                'job_number'=>$this->job_number,
-                'job_id'=>$customerjobId->id,
                 'checklist'=>json_encode($this->checklistLabel),
                 'fuel'=>$this->fuel,
                 'scratches_found'=>$this->scratchesFound,
@@ -492,18 +559,86 @@ class SubmitCutomerServiceJob extends Component
                 'check_drain_lug_fixed_properly'=>$this->check_drain_lug_fixed_properly,
                 'check_oil_filter_fixed_properly'=>$this->check_oil_filter_fixed_properly,
                 'ubi_comments'=>$this->ubi_comments,
-                'created_by'=>auth()->user('user')->id,
             ];
-            $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
+            if($job_update==true){
+                $checkListEntryData['updated_by']=auth()->user('user')->id;
+                $checkListEntryInsert = JobcardChecklistEntries::where(['job_number'=>$this->job_number])->update($checkListEntryData);
+            }
+            else
+            {
+                $checkListEntryData['job_number']=$this->job_number;
+                $checkListEntryData['job_id']=$customerjobId;
+                $checkListEntryData['created_by']=auth()->user('user')->id;
+
+                $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
+            }
         }
-        
-        if($passmetrialRequest==true)
+
+        if($job_update!=true){
+
+            if($is_package==true)
+            {
+                try {
+                    DB::select('EXEC [ServicePackage.Redeem.FinancialEntries] @jobnumber = "'.$this->job_number.'", @packagenumber = "'.$package_number.'", @doneby = "'.auth()->user('user')->id.'" ');
+                } catch (\Exception $e) {
+                    //return $e->getMessage();
+                }
+
+            }
+
+
+            WorkOrderJob::create(
+                [
+                    "DocumentCode"=>$this->job_number,
+                    "DocumentDate"=>$customerjobData['job_date_time'],
+                    "Status"=>"A",
+                    "LandlordCode"=>auth()->user('user')->station_code,
+                ]
+            );
+            if($passmetrialRequest==true )
+            {
+                try {
+                    $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = '".auth()->user('user')->stationName['PortfolioCode']."', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".auth()->user('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ", [
+                            auth()->user('user')->stationName['PortfolioCode'],
+                            null,
+                            $customerjobData['job_date_time'],
+                            $this->job_number,
+                            "J",
+                            $this->job_number,
+                            "0",
+                            $this->job_number,
+                            auth()->user('user')->station_code,
+                            $propertyCodeMR,
+                            $unitCodeMR,
+                             "1",
+                             "admin",
+                             null
+                        ]);
+
+                    $meterialRequestResponse = json_encode($meterialRequestResponse[0],true);
+                    $meterialRequestResponse = json_decode($meterialRequestResponse,true);
+                    CustomerJobCards::where(['id'=>$customerjobId])->update(['meterialRequestResponse'=>$meterialRequestResponse['refCode']]);
+
+                    /*'division_code'=>"LL/00004",
+                    'department_code'=>"PP/00037",
+                    'section_code'=>"U-000225",*/
+
+
+                } catch (\Exception $e) {
+                    //dd($e->getMessage());
+                    //return $e->getMessage();
+                }
+
+
+            }
+        }
+        else
         {
             try {
-                $meterialRequestResponse = DB::select("EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = '".auth()->user('user')->stationName['PortfolioCode']."', @documentCode = null, @documentDate = '".$customerjobData['job_date_time']."', @SessionId = '".$this->job_number."', @sourceType = 'J', @sourceCode = '".$this->job_number."', @locationId = '0', @referenceNo = '".$this->job_number."', @LandlordCode = '".auth()->user('user')->station_code."', @propertyCode = '".$propertyCodeMR."', @UnitCode = '".$unitCodeMR."', @IsApprove = '1', @doneby = 'admin', @documentCode_out = null ", [
+                $meterialRequestResponse = DB::select('EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = ?, @documentCode = ?, @documentDate = ?, @SessionId = ?, @sourceType = ?, @sourceCode = ?, @locationId = ?, @referenceNo = ?, @LandlordCode = ?, @propertyCode = ?, @UnitCode = ?, @IsApprove = ?, @doneby = ?, @documentCode_out = ? ', [
                         auth()->user('user')->stationName['PortfolioCode'],
-                        null,
-                        $customerjobData['job_date_time'],
+                        $this->jobDetails->meterialRequestResponse,
+                        $this->jobDetails->job_date_time,
                         $this->job_number,
                         "J",
                         $this->job_number,
@@ -519,7 +654,7 @@ class SubmitCutomerServiceJob extends Component
 
                 $meterialRequestResponse = json_encode($meterialRequestResponse[0],true);
                 $meterialRequestResponse = json_decode($meterialRequestResponse,true);
-                CustomerJobCards::where(['id'=>$customerjobId->id])->update(['meterialRequestResponse'=>$meterialRequestResponse['refCode']]);
+                CustomerJobCards::where(['job_number'=>$this->job_number])->update(['meterialRequestResponse'=>$meterialRequestResponse['refCode']]);
 
                 /*'division_code'=>"LL/00004",
                 'department_code'=>"PP/00037",
@@ -530,19 +665,11 @@ class SubmitCutomerServiceJob extends Component
                 //dd($e->getMessage());
                 //return $e->getMessage();
             }
-
-
         }
+        
+        
 
-        if($is_package==true)
-        {
-            try {
-                DB::select('EXEC [ServicePackage.Redeem.FinancialEntries] @jobnumber = "'.$this->job_number.'", @packagenumber = "'.$package_number.'", @doneby = "'.auth()->user('user')->id.'" ');
-            } catch (\Exception $e) {
-                //return $e->getMessage();
-            }
-
-        }
+        
 
 
         $this->showCheckList=false;

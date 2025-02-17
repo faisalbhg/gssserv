@@ -31,6 +31,7 @@ use App\Models\ItemCategories;
 use App\Models\InventoryBrand;
 use App\Models\InventoryItemMaster;
 use App\Models\Landlord;
+use App\Models\TempCustomerServiceCart;
 
 use Carbon\Carbon;
 use Session;
@@ -140,15 +141,22 @@ class Operations extends Component
             $customerjobs = $customerjobs->where('plate_number', 'like',"%$this->search_plate_number%");
         }
         if($this->search_station){
-            $customerjobs = $customerjobs->where('station', '=', $this->search_station);
-            $getCountSalesJob = $getCountSalesJob->where('station', '=', $this->search_station);
+            //dd($this->search_station);
+            $customerjobs = $customerjobs->where(['station'=>$this->search_station]);
+            $getCountSalesJob = $getCountSalesJob->where(['station'=>$this->search_station]);
         }
-        $customerjobs = $customerjobs->where('is_contract','=',null)->orderBy('id','DESC');
-        $customerjobs = $customerjobs->where(['station'=>auth()->user('user')['station_code']]);
-        $customerjobs = $customerjobs->paginate(10);
+        
+        
+        
         //dd($customerjobs);
         $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null);
-        $getCountSalesJob = $getCountSalesJob->where(['station'=>auth()->user('user')['station_code']]);
+        if(auth()->user('user')->user_type!=1){
+            $customerjobs = $customerjobs->where(['station'=>auth()->user('user')['station_code']]);
+            $getCountSalesJob = $getCountSalesJob->where(['station'=>auth()->user('user')['station_code']]);    
+        }
+        $customerjobs = $customerjobs->where('is_contract','=',null)->orderBy('id','DESC');
+        $customerjobs = $customerjobs->paginate(10);
+        
         $getCountSalesJob = $getCountSalesJob->first();
         //dd($customerjobs);
 
@@ -193,7 +201,7 @@ class Operations extends Component
         switch($statusFilter){
             case 'total': $this->filter = [0,1,2,3,4];break;
             case 'working_progress': $this->filter = [1];break;
-            case 'work_finished': $this->filter = [2];break;
+            case 'work_finished': $this->filter = [2,3];break;
             case 'ready_to_deliver': $this->filter = [3];break;
             case 'delivered': $this->filter = [4];break;
         }
@@ -1099,6 +1107,56 @@ class Operations extends Component
 
         $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service['job_number']])->get();
         //dd($this->customerjobservices);
+    }
+
+    public function addNewServiceItemsJob($job_number){
+        //dd($this->jobcardDetails->customerJobServices);
+        foreach($this->jobcardDetails->customerJobServices as $customerJobServices){
+            $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'item_id'=>$customerJobServices->item_id,'job_number'=>$job_number]);
+            if($customerBasketCheck->count()==0)
+            {
+                $cartInsert = [
+                    'customer_id'=>$this->jobcardDetails->customer_id,
+                    'vehicle_id'=>$this->jobcardDetails->vehicle_id,
+                    'item_id'=>$customerJobServices->item_id,
+                    'item_code'=>$customerJobServices->item_code,
+                    'cart_item_type'=>$customerJobServices->service_item_type,
+                    'company_code'=>$customerJobServices->company_code,
+                    'category_id'=>$customerJobServices->category_id,
+                    'sub_category_id'=>$customerJobServices->sub_category_id,
+                    'brand_id'=>$customerJobServices->brand_id,
+                    'bar_code'=>$customerJobServices->bar_code,
+                    'item_name'=>$customerJobServices->item_name,
+                    'description'=>$customerJobServices->description,
+                    'division_code'=>$customerJobServices->division_code,
+                    'department_code'=>$customerJobServices->department_code,
+                    'department_name'=>$customerJobServices->department_name,
+                    'section_code'=>$customerJobServices->section_code,
+                    'unit_price'=>$customerJobServices->total_price,
+                    'quantity'=>$customerJobServices->quantity,
+                    'created_by'=>auth()->user('user')->id,
+                    'created_at'=>Carbon::now(),
+                    'job_number'=>$customerJobServices->job_number,
+                ];
+                $cartInsert['price_id']=$customerJobServices->discount_id;
+                $cartInsert['customer_group_id']=$customerJobServices->discount_id;
+                $cartInsert['customer_group_code']=$customerJobServices->discount_code;
+                $cartInsert['min_price']=$customerJobServices->discount_amount;
+                $cartInsert['max_price']=$customerJobServices->discount_amount;
+                $cartInsert['start_date']=$customerJobServices->discount_start_date;
+                $cartInsert['end_date']=$customerJobServices->discount_end_date;
+                $cartInsert['discount_perc']=$customerJobServices->discount_percentage;
+
+                CustomerServiceCart::insert($cartInsert);
+            }
+            else
+            {
+                $customerBasketCheck->increment('quantity', 1);
+            }
+        }
+        //dd(CustomerServiceCart::where(['job_number'=>$this->job_number])->get());
+        return redirect()->to('customer-service-job/'.$this->jobcardDetails->customer_id.'/'.$this->jobcardDetails->vehicle_id.'/'.$job_number);
+
     }
 
 }

@@ -51,6 +51,9 @@
                             <div class="card card-profile card-plain">
                                 <div class="card-body text-left p-0">
                                     <div class="p-md-0 pt-3">
+                                        @if($job_number)
+                                        <span class="badge badge-dark text-dark text-lg text-gradient ps-0">#{{$job_number}}</span>
+                                        @endif
                                         <h5 class="font-weight-bolder mb-0">{{$selectedVehicleInfo['plate_number_final']}}</h5>
                                         <p class="text-uppercase text-sm font-weight-bold mb-2">{{isset($selectedVehicleInfo->makeInfo)?$selectedVehicleInfo->makeInfo['vehicle_name']:''}}, {{isset($selectedVehicleInfo->modelInfo['vehicle_model_name'])?$selectedVehicleInfo->modelInfo['vehicle_model_name']:''}}</p>
                                     </div>
@@ -73,6 +76,7 @@
                                     @if($selectedVehicleInfo['vehicle_km'])
                                     <b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
                                     @endif
+                                    <button type="button" class="btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +89,7 @@
                         <div class="card card-profile card-plain">
                             <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Pricing Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
                             <div class="row">
-                                <div class="col-lg-8 col-sm-12">
+                                <div class="col-lg-12 col-sm-12">
                                     <div class="card h-100">
                                         
                                         <div class="card-body p-3 pb-0">
@@ -149,9 +153,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-4 col-sm-12">
-                                    <button type="button" class="btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
                                 </div>
                             </div>
                         </div>

@@ -83,6 +83,7 @@
               </div>
           </div>
       </div>
+      
       <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount delivered">
           <div class="card bg-gradient-success shadow text-white">
               <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('delivered')">

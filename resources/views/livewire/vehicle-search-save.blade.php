@@ -45,7 +45,7 @@
                 </div>
                 <div class="px-2">
                     <button wire:click="clickSearchBy('4')" class="btn @if($searchByContractBtn) bg-gradient-primary @else bg-gradient-default @endif mb-0" data-toggle="modal" data-target="#new-board-modal">
-                        Contract Customer
+                        Contract/Credit  Customer
                     </button>
                 </div>
 

@@ -18,8 +18,7 @@
                     </div>
                     <div class="d-flex">
                     @if($jobcardDetails->payment_status==0)
-                    <a href="{{ url('update_jobcard/'.$jobcardDetails->job_number) }}">
-                      <button  type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end">Add New Service/Items</button>
+                      <button wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end cursor-pointer">Add New Service/Items</button>
                     @endif
                       <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
                     </div>
@@ -202,7 +201,7 @@
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
                                                                                     <div class="d-flex mx-2">
-                                                                                        {{$serviceItems->quantity}} x {{$serviceItems->total_price}}
+                                                                                        {{$serviceItems->quantity}} x {{round($serviceItems->total_price,2)}}
                                                                                     </div>
                                                                                     <div class="d-none d-flex">
                                                                                         <span>
@@ -1620,12 +1619,20 @@
 
     <div wire:loading wire:target="updateQwService">
       <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-          <div class="la-ball-beat">
-              <div></div>
-              <div></div>
-              <div></div>
-          </div>
-      </div>
+        <div class="la-ball-beat">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <div wire:loading wire:target="addNewServiceItemsJob">
+      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+        <div class="la-ball-beat">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
 
     <div wire:loading wire:target="clickQlOperation">
       <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >

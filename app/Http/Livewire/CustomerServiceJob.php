@@ -40,6 +40,7 @@ use App\Models\PackageBookings;
 use App\Models\PackageBookingServices;
 use App\Models\PackageBookingServiceLogs;
 use App\Models\CustomerJobCards;
+use App\Models\CustomerJobCardServices;
 
 
 class CustomerServiceJob extends Component
@@ -65,14 +66,22 @@ class CustomerServiceJob extends Component
     public $servicePackages, $showPackageAddons=false;
     public $package_number, $package_code, $showPackageOtpVerify=false, $package_otp, $package_otp_message, $customerBookedPackages=[], $showOpenPackageDetails=false, $sectionPackageServiceLists=[];
     public $customize_price=-1, $customise_service_item_price;
+    public $showTempCart=false,$jobDetails, $tempCartItems, $tempCartItemCount;
+    public $confirming;
+    public $customizedErrorMessage=[];
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
         $this->vehicle_id = $request->vehicle_id;
+        $this->job_number = $request->job_number;
         if($this->vehicle_id && $this->customer_id)
         {
             $this->selectVehicle();
             //$this->checkExistingJobs();
+        }
+        if($this->job_number)
+        {
+            $this->customerJobDetails();
         }
 
     }
@@ -523,7 +532,7 @@ class CustomerServiceJob extends Component
     {
         $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
         $this->cartItemCount = count($this->cartItems); 
-        if(count($this->cartItems)>0)
+        if($this->cartItemCount>0)
         {
             $this->cardShow=true;
         }
@@ -531,10 +540,15 @@ class CustomerServiceJob extends Component
         {
             $this->cardShow=false;
         }
+
+
     }
 
     public function openServiceGroup(){
         $this->showServiceGroup=true;
+        $this->dispatchBrowserEvent('scrollto', [
+            'scrollToId' => 'servceGroup',
+        ]);
     }
 
     public function getSectionServices($section)
@@ -646,71 +660,97 @@ class CustomerServiceJob extends Component
         $validatedData = $this->validate([
             'customise_service_item_price' => 'required',
         ]);
-        dd($this->customise_service_item_price);
+        //dd($this->customise_service_item_price);
     }
     public function addtoCart($servicePrice,$discount)
     {
+
         //dd($customize_price);
-        
+        $addtoCartAllowed=false;
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
-        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']]);
-        if($customerBasketCheck->count())
+        if($servicePrice['CustomizePrice']==1)
         {
-            $customerBasketCheck->increment('quantity', 1);
-            if($discountPrice!=null){
-                $cartUpdate['price_id']=$discountPrice['PriceID'];
-                $cartUpdate['customer_group_id']=$discountPrice['CustomerGroupId'];
-                $cartUpdate['customer_group_code']=$discountPrice['CustomerGroupCode'];
-                $cartUpdate['min_price']=$discountPrice['MinPrice'];
-                $cartUpdate['max_price']=$discountPrice['MaxPrice'];
-                $cartUpdate['start_date']=$discountPrice['StartDate'];
-                $cartUpdate['end_date']=$discountPrice['EndDate'];
-                $cartUpdate['discount_perc']=$discountPrice['DiscountPerc'];
-                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']])->update($cartUpdate);
+            if(($this->customise_service_item_price[$servicePrice['ItemId']] >= $servicePrice['MinPrice']) && ($this->customise_service_item_price[$servicePrice['ItemId']] <= $servicePrice['MaxPrice'])){
+                $servicePrice['UnitPrice'] = $this->customise_service_item_price[$servicePrice['ItemId']];
+                $this->customizedErrorMessage[$servicePrice['ItemId']] = false;
+                $addtoCartAllowed = true;
             }
-            
-        }
-        else
-        {
-            $cartInsert = [
-                'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->vehicle_id,
-                'item_id'=>$servicePrice['ItemId'],
-                'item_code'=>$servicePrice['ItemCode'],
-                'cart_item_type'=>1,
-                'company_code'=>$servicePrice['CompanyCode'],
-                'category_id'=>$servicePrice['CategoryId'],
-                'sub_category_id'=>$servicePrice['SubCategoryId'],
-                'brand_id'=>$servicePrice['BrandId'],
-                'bar_code'=>$servicePrice['BarCode'],
-                'item_name'=>$servicePrice['ItemName'],
-                'description'=>$servicePrice['Description'],
-                'division_code'=>$servicePrice['DivisionCode'],
-                'department_code'=>$servicePrice['DepartmentCode'],
-                'section_name'=>$this->selectedSectionName,
-                'department_name'=>$this->service_group_name,
-                'section_code'=>$servicePrice['SectionCode'],
-                'unit_price'=>$servicePrice['UnitPrice'],
-                'quantity'=>1,
-                'created_by'=>auth()->user('user')['id'],
-                'created_at'=>Carbon::now(),
-            ];
-            
-            if($discountPrice!=null){
-                $cartInsert['price_id']=$discountPrice['PriceID'];
-                $cartInsert['customer_group_id']=$discountPrice['CustomerGroupId'];
-                $cartInsert['customer_group_code']=$discountPrice['CustomerGroupCode'];
-                $cartInsert['min_price']=$discountPrice['MinPrice'];
-                $cartInsert['max_price']=$discountPrice['MaxPrice'];
-                $cartInsert['start_date']=$discountPrice['StartDate'];
-                $cartInsert['end_date']=$discountPrice['EndDate'];
-                $cartInsert['discount_perc']=$discountPrice['DiscountPerc'];
+            else
+            {
+                $addtoCartAllowed = false;
+                $this->customizedErrorMessage[$servicePrice['ItemId']] = true;
             }
-            
-            CustomerServiceCart::insert($cartInsert);
         }
-        $this->serviceAddedMessgae[$servicePrice['ItemCode']]=true;
+        else{
+            $addtoCartAllowed = true;
+        }
+
+        if($addtoCartAllowed==true){
+
+            $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']]);
+            if($customerBasketCheck->count())
+            {
+                $customerBasketCheck->increment('quantity', 1);
+                if($discountPrice!=null){
+                    $cartUpdate['price_id']=$discountPrice['PriceID'];
+                    $cartUpdate['customer_group_id']=$discountPrice['CustomerGroupId'];
+                    $cartUpdate['customer_group_code']=$discountPrice['CustomerGroupCode'];
+                    $cartUpdate['min_price']=$discountPrice['MinPrice'];
+                    $cartUpdate['max_price']=$discountPrice['MaxPrice'];
+                    $cartUpdate['start_date']=$discountPrice['StartDate'];
+                    $cartUpdate['end_date']=$discountPrice['EndDate'];
+                    $cartUpdate['discount_perc']=$discountPrice['DiscountPerc'];
+                    CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']])->update($cartUpdate);
+                }
+                
+            }
+            else
+            {
+                $cartInsert = [
+                    'customer_id'=>$this->customer_id,
+                    'vehicle_id'=>$this->vehicle_id,
+                    'item_id'=>$servicePrice['ItemId'],
+                    'item_code'=>$servicePrice['ItemCode'],
+                    'cart_item_type'=>1,
+                    'company_code'=>$servicePrice['CompanyCode'],
+                    'category_id'=>$servicePrice['CategoryId'],
+                    'sub_category_id'=>$servicePrice['SubCategoryId'],
+                    'brand_id'=>$servicePrice['BrandId'],
+                    'bar_code'=>$servicePrice['BarCode'],
+                    'item_name'=>$servicePrice['ItemName'],
+                    'description'=>$servicePrice['Description'],
+                    'division_code'=>$servicePrice['DivisionCode'],
+                    'department_code'=>$servicePrice['DepartmentCode'],
+                    'section_name'=>$this->selectedSectionName,
+                    'department_name'=>$this->service_group_name,
+                    'section_code'=>$servicePrice['SectionCode'],
+                    'unit_price'=>$servicePrice['UnitPrice'],
+                    'quantity'=>1,
+                    'created_by'=>auth()->user('user')['id'],
+                    'created_at'=>Carbon::now(),
+                ];
+                
+                if($discountPrice!=null){
+                    $cartInsert['price_id']=$discountPrice['PriceID'];
+                    $cartInsert['customer_group_id']=$discountPrice['CustomerGroupId'];
+                    $cartInsert['customer_group_code']=$discountPrice['CustomerGroupCode'];
+                    $cartInsert['min_price']=$discountPrice['MinPrice'];
+                    $cartInsert['max_price']=$discountPrice['MaxPrice'];
+                    $cartInsert['start_date']=$discountPrice['StartDate'];
+                    $cartInsert['end_date']=$discountPrice['EndDate'];
+                    $cartInsert['discount_perc']=$discountPrice['DiscountPerc'];
+                }
+                if($this->job_number)
+                {
+                    $cartInsert['job_number']=$this->job_number;
+                }
+                
+                CustomerServiceCart::insert($cartInsert);
+            }
+            $this->serviceAddedMessgae[$servicePrice['ItemCode']]=true;
+        }
+        
         //$this->dispatchBrowserEvent('closeServicesListModal');
 
         //dd($this->sectionServiceLists);
@@ -778,6 +818,10 @@ class CustomerServiceJob extends Component
                 $cartInsert['start_date']=$discountPrice['StartDate'];
                 $cartInsert['end_date']=$discountPrice['EndDate'];
                 $cartInsert['discount_perc']=$discountPrice['DiscountPerc'];
+            }
+            if($this->job_number)
+            {
+                $cartInsert['job_number']=$this->job_number;
             }
             CustomerServiceCart::insert($cartInsert);
         }
@@ -852,6 +896,10 @@ class CustomerServiceJob extends Component
                 //$cartInsert['start_date']=$discountPrice['created_at'];
                 //$cartInsert['end_date']=$discountPrice['EndDate'];
                 $cartInsert['discount_perc']=100;
+            }
+            if($this->job_number)
+            {
+                $cartInsert['job_number']=$this->job_number;
             }
             
             CustomerServiceCart::insert($cartInsert);
@@ -941,7 +989,7 @@ class CustomerServiceJob extends Component
             'id'=>$discountGroup['Id'],
             'groupType'=>$discountGroup['GroupType'],
         ];
-        if($discountGroup['GroupType']==2)
+        if($discountGroup['GroupType']==2 || $discountGroup['GroupType']==6 )
         {
 
             $this->discountCardApplyForm=false;
@@ -1475,7 +1523,12 @@ class CustomerServiceJob extends Component
     }
 
     public function submitService(){
-        return redirect()->to('submit-job/'.$this->customer_id.'/'.$this->vehicle_id);
+        if($this->job_number){
+            return redirect()->to('submit-job-update/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$this->job_number);
+        }
+        else{
+            return redirect()->to('submit-job/'.$this->customer_id.'/'.$this->vehicle_id);
+        }
     }
 
     public function openPackages(){
@@ -1573,5 +1626,42 @@ class CustomerServiceJob extends Component
 
     public function packageContinue($servicePackageId){
         return redirect()->to('submit-package/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$servicePackageId);
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->confirming = $id;
+    }
+
+    public function kill($id,$item_id)
+    {
+        //dd($item_id);
+        //dd($id);
+        CustomerServiceCart::where(['id'=>$id])->delete();
+        if($this->job_number){
+            $chheckCustomerJobServiceQuery = CustomerJobCardServices::where(['job_number'=>$this->job_number,'item_id'=>$item_id]);
+            if($chheckCustomerJobServiceQuery->exists()){
+                $chheckCustomerJobServiceQuery->delete();
+            }
+        }
+        
+        
+        
+    }
+
+
+    public function customerJobDetails(){
+        $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo']);
+        $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
+
+        $this->jobDetails =  $customerJobCardsQuery->first();
+        $this->customer_id = $this->jobDetails->customer_id;
+        $this->vehicle_id = $this->jobDetails->vehicle_id;
+        $this->showTempCart = true;
+    }
+
+    public function checkCustomizedPrice($itemId)
+    {
+        dd($this->customise_service_item_price[$itemId]);
     }
 }
