@@ -109,7 +109,7 @@
                                             <p class="text-xs font-weight-bold mb-0">{{$user->stationName['CorporateName']}}</p>
                                         </td>
                                         <td class="text-center">
-                                            {{$user->user_type}}
+                                            {{<p class="text-xs font-weight-bold mb-0">{{config('global.user_type')[$user->user_type]}}</p>}}
                                         </td>
                                         <td class="text-center">
                                             <span class="text-secondary text-xs font-weight-bold">{{$user->created_at}}</span>
