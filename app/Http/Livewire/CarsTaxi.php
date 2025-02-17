@@ -38,10 +38,16 @@ class CarsTaxi extends Component
     public $showlistCarTaxiToday=true, $searchDate;
     public $carTaxiJobs, $getCountCarTaxiJob;
     public $showUpdateModel = false, $filterTab='total', $filter = [0,1,2,3,4], $search_ct_number = '', $search_meter_number = '', $search_job_date, $search_plate_number, $selected_item_id, $all_car_taxi_Service=[], $selectedCarTaxiService, $selectedCarTaxiEntry=false;
+    public $jobCustomerInfo,$updateService=false;
+    public $jobcardDetails, $showaddServiceItems=false;
+    public $showVehicleImageDetails=false;
+    public $checkListDetails, $vehicleSidesImages, $vehicleCheckedChecklist;
+    public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $search_plate_state, $search_plate_code, $search_station;
+    public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
 
     public function render()
     {
-        $carTaxiServiceInfoQuery = LaborItemMaster::where(['Active'=>1,'DivisionCode'=>auth()->user('user')['station_code'],])->whereIn('ItemCode', config('global.carTexiItems'))->where('UnitPrice','>',0);
+        $carTaxiServiceInfoQuery = LaborItemMaster::where(['Active'=>1,'DivisionCode'=>auth()->user('user')['station_code'],])->where('UnitPrice','>',0)->whereIn('ItemCode', config('global.carTexiItems'));
         $this->all_car_taxi_Service = $carTaxiServiceInfoQuery->get();
         //dd($this->all_car_taxi_Service);
 
@@ -400,5 +406,75 @@ class CarsTaxi extends Component
         CustomerJobCards::where(['job_number'=>$job_number])->update($mianJobUpdate);
         
         
+    }
+
+    public function customerJobUpdate($job_number)
+    {
+        $this->showVehicleImageDetails=false;
+        $this->updateService=true;
+        //dd(CustomerJobCardServices::where(['job_number'=>$job_number])->get());
+        //dd(CustomerJobCards::with(['customerInfo','customerJobServices','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first());
+        $job = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first();
+        //dd($job);
+        $this->jobcardDetails = $job;
+        //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
+        //dd($this->customerJobServiceLogs);
+        if($this->jobcardDetails->checklistInfo!=null){
+            $this->checkListDetails=$this->jobcardDetails->checklistInfo;
+            $this->checklistLabels = ServiceChecklist::get();
+            $this->vehicleCheckedChecklist = json_decode($this->jobcardDetails->checklistInfo['checklist'],true);
+            $this->vehicleSidesImages = json_decode($this->jobcardDetails->checklistInfo['vehicle_image'],true);
+            $this->turn_key_on_check_for_fault_codes = $this->checkListDetails['turn_key_on_check_for_fault_codes'];
+            $this->start_engine_observe_operation = $this->checkListDetails['start_engine_observe_operation'];
+            $this->reset_the_service_reminder_alert = $this->checkListDetails['reset_the_service_reminder_alert'];
+            $this->stick_update_service_reminder_sticker_on_b_piller = $this->checkListDetails['stick_update_service_reminder_sticker_on_b_piller'];
+            $this->interior_cabin_inspection_comments = $this->checkListDetails['interior_cabin_inspection_comments'];
+            $this->check_power_steering_fluid_level = $this->checkListDetails['check_power_steering_fluid_level'];
+            $this->check_power_steering_tank_cap_properly_fixed = $this->checkListDetails['check_power_steering_tank_cap_properly_fixed'];
+            $this->check_brake_fluid_level = $this->checkListDetails['check_brake_fluid_level'];
+            $this->brake_fluid_tank_cap_properly_fixed = $this->checkListDetails['brake_fluid_tank_cap_properly_fixed'];
+            $this->check_engine_oil_level = $this->checkListDetails['check_engine_oil_level'];
+            $this->check_radiator_coolant_level = $this->checkListDetails['check_radiator_coolant_level'];
+            $this->check_radiator_cap_properly_fixed = $this->checkListDetails['check_radiator_cap_properly_fixed'];
+            $this->top_off_windshield_washer_fluid = $this->checkListDetails['top_off_windshield_washer_fluid'];
+            $this->check_windshield_cap_properly_fixed = $this->checkListDetails['check_windshield_cap_properly_fixed'];
+            $this->underHoodInspectionComments = $this->checkListDetails['underHoodInspectionComments'];
+            $this->check_for_oil_leaks_engine_steering = $this->checkListDetails['check_for_oil_leaks_engine_steering'];
+            $this->check_for_oil_leak_oil_filtering = $this->checkListDetails['check_for_oil_leak_oil_filtering'];
+            $this->check_drain_lug_fixed_properly = $this->checkListDetails['check_drain_lug_fixed_properly'];
+            $this->check_oil_filter_fixed_properly = $this->checkListDetails['check_oil_filter_fixed_properly'];
+            $this->ubi_comments = $this->checkListDetails['ubi_comments'];
+            //dd($this->checkListDetails);
+        }
+        
+        $this->job_number = $job->job_number;
+        $this->job_date_time = $job->job_date_time;
+        $this->customerDetails = true;
+        $this->vehicle_image = $job->vehicle_image;
+        $this->make = $job->make;
+        $this->model = $job->model;
+        $this->plate_number = $job->plate_number;
+        $this->chassis_number = $job->chassis_number;
+        $this->vehicle_km = $job->vehicle_km;
+        $this->name = $job->customerInfo['name'];
+        $this->email = $job->customerInfo['email'];
+        $this->mobile = $job->customerInfo['mobile'];
+        //$this->customerType = $job->customerInfo->customertype['customer_type'];
+        $this->payment_status = $job->payment_status;
+        $this->payment_type = $job->payment_type;
+        $this->job_status = $job->job_status;
+        $this->job_departent = $job->job_departent;
+        $this->total_price = $job->total_price;
+        $this->vat = $job->vat;
+        $this->grand_total = $job->grand_total;
+
+        $this->jobCustomerInfo = $job->customerInfo;
+
+        $this->customerjobservices = $job->customerJobServices;
+        //dd($this->customerjobservices);
+        //dd($this);
+        
+        $this->dispatchBrowserEvent('showServiceUpdate');
+        $this->dispatchBrowserEvent('hideQwChecklistModel');
     }
 }

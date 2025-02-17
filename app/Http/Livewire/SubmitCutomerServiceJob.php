@@ -496,6 +496,7 @@ class SubmitCutomerServiceJob extends Component
             ];
             $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
         }
+        
         if($passmetrialRequest==true)
         {
             try {
