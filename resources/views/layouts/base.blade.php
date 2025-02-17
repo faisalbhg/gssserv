@@ -192,10 +192,11 @@
         {
             top:25%;
         }
-        .chosen-container .chosen-results
+        .chosen-container .chosen-results, .chosen-container .chosen-results li
         {
-            padding: 10px 6px;
+            padding: 15px 6px;
         }
+
     </style>
     @livewireStyles
 

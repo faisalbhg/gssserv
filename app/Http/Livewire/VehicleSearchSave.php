@@ -163,12 +163,8 @@ class VehicleSearchSave extends Component
         }
         if($this->contract_customer_id)
         {
-            //$this->getCustomerVehicleSearch('contract_customer_name');
-            if(count($this->customers)>0)
-            {
-                $this->showVehicleAvailable=true;
-            }
             $this->showSaveContractCustomerVehicle=true; 
+            //$this->getCustomerVehicleSearch('contract_customer_name');
         }
         
         
@@ -290,8 +286,12 @@ class VehicleSearchSave extends Component
         $this->dispatchBrowserEvent('selectSearchEvent'); 
     }
 
-    public function searchContractCustomer(){
+    public function searchContractCustomerVehicle(){
         $this->getCustomerVehicleSearch('contract_customer_name');
+        if(count($this->customers)>0)
+        {
+            $this->showVehicleAvailable=true;
+        }
     }
 
     public function clickSearchByPlateNumber(){
@@ -403,13 +403,14 @@ class VehicleSearchSave extends Component
             $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('customer_id', '=', $this->contract_customer_id);
         }
         $this->customers = $searchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1)->get();
+        
         //dd($this->customers);
     }
 
     public function saveContractVehicle(){
 
         //
-
+        $this->showVehicleAvailable=false;
         $this->showForms=true;
         $this->showPlateNumber=true;
         $this->searchByChaisisForm=true;
