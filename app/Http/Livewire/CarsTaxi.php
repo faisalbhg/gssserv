@@ -47,7 +47,7 @@ class CarsTaxi extends Component
 
     public function render()
     {
-        $carTaxiServiceInfoQuery = LaborItemMaster::where(['Active'=>1,'DivisionCode'=>auth()->user('user')['station_code'],])->where('UnitPrice','>',0)->whereIn('ItemCode', config('global.carTexiItems'));
+        $carTaxiServiceInfoQuery = LaborItemMaster::where(['Active'=>1,'DivisionCode'=>auth()->user('user')['station_code'],])->where('UnitPrice','>',0)->whereIn('ItemCode', ['S255','S408']);
         $this->all_car_taxi_Service = $carTaxiServiceInfoQuery->get();
         //dd($this->all_car_taxi_Service);
 
