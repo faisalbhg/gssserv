@@ -991,7 +991,7 @@ class CustomerServiceJob extends Component
     public function clickDiscountGroup(){
         $this->discountSearch=true;
         $this->showDiscountDroup=true;
-        $this->customerGroupLists = LaborCustomerGroup::get();
+        $this->customerGroupLists = LaborCustomerGroup::where('GroupType','!=',5)->get();
         $this->dispatchBrowserEvent('openDiscountGroupModal');
     }
 
