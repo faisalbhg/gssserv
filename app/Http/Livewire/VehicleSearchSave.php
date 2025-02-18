@@ -22,6 +22,7 @@ use App\Models\VehicleModels;
 use App\Models\VehicleMakes;
 use App\Models\Country;
 use App\Models\TenantMasterCustomers;
+use App\Models\CustomerServiceCart;
 
 class VehicleSearchSave extends Component
 {
@@ -36,18 +37,14 @@ class VehicleSearchSave extends Component
     public $customer_id, $vehicle_id;
     public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
     public $otherCountryPlateCode;
+    public $pendingCustomersCart;
 
     public function render()
     {
-        /*$this->isValidInput = $this->getErrorBag()->count();
-        if($this->isValidInput>0)
-        {
-            //dd($this->getErrorBag()->messages()['plate_code']);
-        }*/
+        $pendingCustomersCartQuery = CustomerServiceCart::with(['customerInfo','vehicleInfo']);
+        $pendingCustomersCartQuery = $pendingCustomersCartQuery->where(['created_by'=>auth()->user('user')['id']]);
+        $this->pendingCustomersCart =  $pendingCustomersCartQuery->get();
 
-        //dd($this->getErrorBag()->messages() );
-        //dd();
-        //dd(CustomerVehicle::with(['vehicleJobs'])->limit(2)->get());
         $this->countryList = Country::get();
         if($this->plate_country!='AE'){
             $this->otherCountryPlateCode=true;
@@ -172,6 +169,10 @@ class VehicleSearchSave extends Component
         $this->dispatchBrowserEvent('selectSearchEvent');
         $this->emit('chosenUpdated');
         return view('livewire.vehicle-search-save');
+    }
+
+    public function selectPendingVehicle($customer_id,$vehicle_id){
+        return redirect()->to('/customer-service-job/'.$customer_id.'/'.$vehicle_id);
     }
 
     public function clickSearchBy($searchId){

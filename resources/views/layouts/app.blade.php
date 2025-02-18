@@ -17,8 +17,9 @@
                 @include('layouts.navbars.auth.nav-profile')
                 <div>
                     {{ $slot }}
-                    @include('layouts.footers.auth.footer')
+                    
                 </div>
+                @include('layouts.footers.auth.footer')
             </div>
         @else
             @include('layouts.navbars.auth.sidebar')
@@ -26,12 +27,9 @@
             
                 {{ $slot }}
             
-                <div class="container-fluid">
-                    <div class="row">
-                        @include('layouts.footers.auth.footer')
-                    </div>
-                </div>
+                
             </main>
+             @include('layouts.footers.auth.footer')
         @endif
     @endauth
 

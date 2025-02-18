@@ -8,6 +8,7 @@ use App\Models\CustomerJobCards;
 use App\Models\CustomerJobCardServices;
 use App\Models\CustomerJobCardServiceLogs;
 use App\Models\CustomerServiceCart;
+use App\Models\Landlord;
 
 use Carbon\Carbon;
 use Session;
@@ -20,7 +21,7 @@ class Dashboard extends Component
 {
     public $getCountSalesJob, $customerjobsLists, $selected_date, $filterJobStatus, $jobList, $homeCountIconeBg='bg-gradient-dark';
     protected $listeners = ["selectDate" => 'getSelectedDate'];
-    public $pendingCustomersCart;
+    public $pendingCustomersCart, $search_station;
 
     function mount(){
         $user = auth()->user();
@@ -41,13 +42,6 @@ class Dashboard extends Component
 
     public function render()
     {
-        $this->pendingCustomersCart =  CustomerServiceCart::
-        select()
-        ->with(['customerInfo','vehicleInfo'])->where(['created_by'=>auth()->user('user')['id']])
-        //->groupBy('customer_service_carts.customer_id')
-        ->get();
-        //dd($this->pendingCustomersCart);
-
         $getCountSalesJobStatus = CustomerJobCards::select(
             array(
                 \DB::raw('count(DISTINCT(customer_id)) customers'),
@@ -71,23 +65,24 @@ class Dashboard extends Component
         {
             
             $this->selected_date = Carbon::now()->format('Y-m-d');
-            //dd($this->selected_date);
             $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
             $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
         }
+        
+        if($this->search_station){
+            $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>auth()->user('user')['station_code']]);
+            $customerjobsQuery = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']]);
+        }
 
-        /*$getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$startDate, $endDate]);
-        $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);*/
-
-        $this->getCountSalesJob = $getCountSalesJobStatus->where(['station'=>auth()->user('user')['station_code']])->first();
 
         if($this->filterJobStatus)
         {
             $customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
         }
-        $this->customerjobsLists = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']])->get();
-        //dd(auth()->user('user')['station_code']);
-        //dd($this->customerjobsLists);
+
+        $this->getCountSalesJob = $getCountSalesJobStatus->first();
+        $this->customerjobsLists = $customerjobsQuery->get();
+        $this->stationsList = Landlord::all();
         return view('livewire.home-page');
     }
 

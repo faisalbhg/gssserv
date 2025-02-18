@@ -238,7 +238,7 @@
     {{ $slot }}
 
     <!--   Core JS Files   -->
-
+    
     <script src="{{asset('js/core/popper.min.js')}}"></script>
     <script src="{{asset('js/core/bootstrap.min.js')}}"></script>
     <script src="{{asset('js/plugins/smooth-scrollbar.min.js')}}"></script>
@@ -314,6 +314,20 @@
 
     <!--Choosen Js-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+        <script type="text/javascript">
+        document.addEventListener('livewire:load', function () {
+            // Initialize Chosen.js
+            $('.chosen-select').chosen({
+                no_results_text: 'Oops, nothing found!'
+            });
+            
+            // Re-initialize Chosen on Livewire updates
+            Livewire.on('chosenUpdated', () => {
+                $('.chosen-select').chosen('destroy').chosen();
+            });
+
+        });
+    </script>
     @livewireScripts
 
 

@@ -46,8 +46,8 @@ use App\Models\CustomerJobCardServices;
 class CustomerServiceJob extends Component
 {
     use WithFileUploads;
-    public $selectedCustomerVehicle=false, $showSectionsList=false, $showServiceSectionsList=false, $showServiceItems=false, $showItemsSearchResults=false, $showQlItemSearch=false, $showQlEngineOilItems=false, $showQlItemsOnly=false, $showQlItemsList=false, $showPackageList=false, $selectPackageMenu=false, $showPackageServiceSectionsList=false;
-    public $showServiceGroup, $showCheckout;
+    public $selectedCustomerVehicle=false, $showSectionsList=false, $showServiceSectionsList=false, $showServiceItems=false, $showItemsSearchResults=false, $showQlItemSearch=false, $showQlEngineOilItems=false, $showQlItemsOnly=false, $showQlItemsList=false, $showPackageList=false, $selectPackageMenu=false, $showPackageServiceSectionsList=false, $showAddMakeModelNew=false;
+    public $showServiceGroup=true, $showCheckout;
     public $showVehicleAvailable, $selectedVehicleInfo, $selected_vehicle_id, $customer_id;
     public $servicesGroupList, $service_group_id, $service_group_name, $service_group_code, $station, $section_service_search, $propertyCode, $selectedSectionName;
     public $selectServiceItems, $sectionsLists;
@@ -69,6 +69,7 @@ class CustomerServiceJob extends Component
     public $showTempCart=false,$jobDetails, $tempCartItems, $tempCartItemCount;
     public $confirming;
     public $customizedErrorMessage=[];
+    public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -90,7 +91,21 @@ class CustomerServiceJob extends Component
     public function render()
     {
         
+        if($this->new_make)
+        {
+            $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->get();
+            //dd($this->makeSearchResult);
+            if($this->showAddNewModel && $this->new_model)
+            {
+                $this->modelSearchResult = VehicleModels::where('vehicle_make_name','=',$this->new_make)->where('vehicle_model_name','like',"%{$this->new_model}%")->get();
+                //dd($this->modelSearchResult);
 
+            }
+        }
+        else
+        {
+            $this->showAddNewModel=false;
+        }
         //dd($this->propertyCode);
         if($this->editCUstomerInformation || $this->addNewVehicleInformation)
         {
@@ -486,7 +501,7 @@ class CustomerServiceJob extends Component
         }
 
 
-        $this->openServiceGroup();
+        //$this->openServiceGroup();
         $this->getCartInfo();
         $this->dispatchBrowserEvent('selectSearchEvent');
         $this->emit('chosenUpdated');
@@ -1663,5 +1678,41 @@ class CustomerServiceJob extends Component
     public function checkCustomizedPrice($itemId)
     {
         dd($this->customise_service_item_price[$itemId]);
+    }
+
+    public function addMakeModel(){
+        $this->showAddMakeModelNew=true;
+        $this->dispatchBrowserEvent('openAddMakeModel');
+    }
+
+    public function saveMakeInfo(){
+        $validatedData = $this->validate([
+            'new_make' => 'required',
+        ]);
+        $newMakeSave = VehicleMakes::create([
+            "vehicle_name" => $this->new_make
+        ]);
+        $this->new_make_id = $newMakeSave->id;
+        $this->showAddNewModel=true;
+    }
+    public function selectMakeInfoSave($makeInfo){
+        $makeInfo = json_decode($makeInfo,true);
+        $this->new_make_id = $makeInfo['id'];
+        $this->new_make = $makeInfo['vehicle_name'];
+        $this->showAddNewModel=true;
+    }
+
+    public function saveModelInfo()
+    {
+        $validatedData = $this->validate([
+            'new_make' => 'required',
+            'new_model' => 'required',
+        ]);
+        $newMakeSave = VehicleModels::create([
+            'vehicle_make_id'=>$this->new_make_id,
+            'vehicle_make_name'=>$this->new_make,
+            'vehicle_model_name'=>$this->new_model,
+        ]);
+        $this->dispatchBrowserEvent('closeAddMakeModel');
     }
 }

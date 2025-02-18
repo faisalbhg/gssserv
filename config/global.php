@@ -23,7 +23,7 @@ return [
             '6'=>"Cash In Advance"
         ],
         'type_class'=>[
-            '0'=>'bg-gradient-secondary',
+            '0'=>'bg-gradient-dark',
             '1'=>'bg-gradient-info',
             '2'=>'bg-gradient-success',
             '3'=>'bg-gradient-primary',

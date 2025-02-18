@@ -511,6 +511,43 @@
                 </div>
             </div>
         @endif
+
+        @if(count($pendingCustomersCart)>0)
+        <div class="row mt-2">
+            <div class="col-lg-6 col-7">
+                <h6>{{count($pendingCustomersCart)}} - Pending Job Creation</h6>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <?php $arrayCustomersPendingJobs = []; ?>
+            @forelse($pendingCustomersCart as $pendingvehicle)
+                    @if(!in_array($pendingvehicle->vehicle_id, $arrayCustomersPendingJobs))
+                        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 my-4">
+                            <a href="javascript:;" wire:click="selectPendingVehicle({{$pendingvehicle->customer_id}},{{$pendingvehicle->vehicle_id}})" class="">
+                                <div class="card card-background move-on-hover">
+                                    <div class="full-background" style="background-image: url('{{url("public/storage/".$pendingvehicle->vehicleInfo["vehicle_image"])}}')"></div>
+                                    <div class="card-body pt-5">
+                                        <h4 class="text-white mb-0 pb-0">
+                                            @if($pendingvehicle->customerInfo['TenantName'])
+                                                {{$pendingvehicle->customerInfo['TenantName']}}
+                                            @else
+                                            Guest
+                                            @endif
+                                        </h4>
+                                        <p class="mt-0 pt-0"><small>{{$pendingvehicle->customerInfo['Email']}}, {{$pendingvehicle->customerInfo['Mobile']}}</small></p>
+                                        <p class="mb-0">{{$pendingvehicle->vehicleInfo['makeInfo']['vehicle_name']}}, {{$pendingvehicle->vehicleInfo['modelInfo']['vehicle_model_name']}}</p>
+                                        <p>{{$pendingvehicle->vehicleInfo['plate_number_final']}}</p>
+                                        <span class="text-xs">{{ \Carbon\Carbon::parse($pendingvehicle->created_at)->diffForHumans() }} </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php array_push($arrayCustomersPendingJobs, $pendingvehicle->vehicle_id);?>
+                    @endif
+                @empty
+                @endforelse
+        </div>
+        @endif
     </div>
     <div wire:loading wire:target="saveByPlateNumber">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
@@ -536,20 +573,7 @@
 </main>
 
 @push('custom_script')
-<script>
-    document.addEventListener('livewire:load', function () {
-        // Initialize Chosen.js
-        $('.chosen-select').chosen({
-            no_results_text: 'Oops, nothing found!'
-        });
-        
-        // Re-initialize Chosen on Livewire updates
-        Livewire.on('chosenUpdated', () => {
-            $('.chosen-select').chosen('destroy').chosen();
-        });
 
-    });
-</script>
 
 <script type="text/javascript">
     window.addEventListener('mobile0Remove',event=>{
@@ -660,13 +684,7 @@
         // event.detail.progress contains a number between 1 and 100 as the upload progresses.
     });
 
-    window.addEventListener('mobile0Remove',event=>{
-        $("#mobilenumberInput").on("input", function() {
-            if (/^0/.test(this.value)) {
-                this.value = this.value.replace(/^0/, "")
-            }
-        });
-    });
+    
 </script>
 
 @endpush

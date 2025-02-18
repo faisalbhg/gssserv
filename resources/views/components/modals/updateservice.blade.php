@@ -842,7 +842,7 @@
                                                 </p> -->
                                             </div>
                                             <div class="col-md-4">
-                                                @if($services->job_status!=3)
+                                                @if($services->job_status!=3 && $services->job_status<3)
                                                 <a class="btn btn-link text-dark p-0 m-0" wire:click="updateQwService({{$services}})">
                                                     <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                 </a>

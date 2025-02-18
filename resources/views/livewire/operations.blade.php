@@ -167,6 +167,8 @@
                           <span class="badge badge-sm {{config('global.payment.status_class')[$jobs->payment_status]}}">{{config('global.payment.status')[$jobs->payment_status]}}</span>
                           @if($jobs->payment_type!=null)
                           <p class="text-sm text-gradient {{config('global.payment.text_class')[$jobs->payment_type]}}  font-weight-bold mb-0">{{config('global.payment.type')[$jobs->payment_type]}}</p>
+                          @else
+                          <p class="text-sm text-gradient text-dark font-weight-bold mb-0">Pay Later </p>
                           @endif
 
                         </div>

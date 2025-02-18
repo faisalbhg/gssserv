@@ -1,7 +1,7 @@
 @push('custom_css')
 
 @endpush
-<main class="main-content position-relative  border-radius-lg">
+<main class="main-content position-relative  border-radius-lg h-100">
     <div class="container-fluid py-2">
     
         @if ($message = Session::get('success'))
@@ -34,7 +34,7 @@
                                         <label for="mobilenumberInput">Mobile Number </label>
                                         <div class="input-group mb-0">
                                             <span class="input-group-text px-0">+971</span>
-                                            <input class="form-control" placeholder="Mobile Number" type="number" name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="9" id="mobilenumberInput">
+                                            <input  type="number" class="form-control @error('mobile') btn-outline-danger @enderror" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-MobileSearch" wire:model="mobile"  name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="10" id="mobilenumberInput" style="padding-left:10px !important;">
                                         </div>
                                         @error('mobile') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                     </div>
@@ -44,15 +44,13 @@
                                 <div class="col-md-4  col-sm-6">
                                     <div class="form-group openDiv">
                                         <label for="nameInput">Name</label>
-                                        <input type="text" class="form-control" wire:model.defer="name" name="name" placeholder="Name" id="nameInput">
-                                        @error('name') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                        <input type="text" class="form-control @error('name') btn-outline-danger @enderror" wire:model.defer="name" name="name" placeholder="Name" id="nameInput">
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6">
                                     <div class="form-group openName">
                                         <label for="emailInput">Email</label>
-                                        <input type="email" wire:model.defer="email" name="email" class="form-control" id="emailInput" placeholder="Email">
-                                        @error('email') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                        <input type="email" wire:model.defer="email" name="email" class="form-control @error('email') btn-outline-danger @enderror" id="emailInput" placeholder="Email">
                                     </div>
                                 </div>
                             @endif
@@ -84,8 +82,8 @@
                             </div>
                             <div class="col-md-3 col-sm-4">
                                 <div class="form-group">
-                                    <label for="plateEmirates">Country</label>
-                                    <select class="form-control chosen-select" wire:model="plate_country"  id="PlateCountry" name="PlateCountry" aria-invalid="false"><option value="">Select</option>
+                                    <label for="plateCountry">Country</label>
+                                    <select class="form-control chosen-select" wire:model="plate_country"  id="plateCountry" name="plate_country" aria-invalid="false"><option value="">Select</option>
                                         @foreach(config('global.country') as $country)
                                         <option value="{{$country['CountryCode']}}">{{$country['CountryName']}}</option>
                                         @endforeach
@@ -166,16 +164,22 @@
                                 @endif
                                 @error('vehicle_image') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-3 col-sm-5">
                                 <div class="form-group">
                                     <label for="vehicleTypeInput">Vehicle Type</label>
-                                    <select class="form-control chosen-select" id="vehicleTypeInput" wire:model="vehicle_type">
+                                    <select class="form-control chosen-select  @error('vehicle_type') btn-outline-danger @enderror" id="vehicleTypeInput" wire:model="vehicle_type">
                                         <option value="">-Select-</option>
                                         @foreach($vehicleTypesList as $vehicleType)
                                         <option value="{{$vehicleType->id}}">{{$vehicleType->type_name}}</option>
                                         @endforeach
                                     </select>
                                     @error('vehicle_type') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-4">
+                                <label for="AddVehicleMakeInput mb-2"></label>
+                                <div class="form-group">
+                                    <button type="button" wire:click="addMakeModel()" class="btn btn-info btn-sm mt-2" id="AddVehicleMakeInput">Add Make Model</button>
                                 </div>
                             </div>
                             <div class="col-md-3 col-sm-6">
@@ -260,7 +264,7 @@
                                 </div>
                             </div>
                         @endif
-                        </div>
+                        
                     @endif
 
                     <div class="row">
@@ -1415,7 +1419,21 @@
         @include('components.modals.discountGroups')
         @endif
 
+        @if($showAddMakeModelNew)
+        @include('components.modals.addMakeModelNew')
+        @endif
+
         <div wire:loading wire:target="addtoCartItem">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+
+        <div wire:loading wire:target="addMakeModel">
             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                 <div class="la-ball-beat">
                     <div></div>
@@ -1427,22 +1445,9 @@
     </div>
 </main>
 @push('custom_script')
-<script>
-    document.addEventListener('livewire:load', function () {
-        // Initialize Chosen.js
-        $('.chosen-select').chosen({
-            no_results_text: 'Oops, nothing found!'
-        });
-        
-        // Re-initialize Chosen on Livewire updates
-        Livewire.on('chosenUpdated', () => {
-            $('.chosen-select').chosen('destroy').chosen();
-        });
-
-    });
-</script>
 
 <script type="text/javascript">
+    
     window.addEventListener('openServicesListModal',event=>{
         $('#servicePriceModal').modal('show');
     });
@@ -1457,16 +1462,8 @@
         $('#servicePackagePriceModal').modal('hide');
     });
 
-    
-
     window.addEventListener('selectSearchEvent',event=>{
         $(document).ready(function () {
-
-            /*$('#plateState').select2();
-            $('#vehicleTypeInput').select2();
-            $('#vehicleMakeInput').select2();
-            $('#vehicleModelInput').select2();
-            $('#plateCode').select2();*/
 
             $('#plateEmirates').on('change', function (e) {
                 var plateStateVal = $('#plateEmirates').val();
@@ -1489,13 +1486,6 @@
                 @this.set('plate_code', stateCodeVal);
             });
 
-
-            /*$('#seachItemByCategory').select2();
-            $('#seachItemBySubCategory').select2();
-            $('#seachByBrand').select2();*/
-
-            
-
             $('#seachItemByCategory').on('change', function (e) {
                 var catVal = $('#seachItemByCategory').val();
                 @this.set('item_search_category', catVal);
@@ -1509,12 +1499,26 @@
                 @this.set('item_search_brand', BrandVal);
             });
 
-            $('#qlSeachByBrand').select2();
             $('#qlSeachByBrand').on('change', function (e) {
                 var BrandVal = $('#qlSeachByBrand').val();
                 @this.set('ql_search_brand', BrandVal);
             });
         });
+    });
+
+    
+    window.addEventListener('openDiscountGroupModal',event=>{
+        $('#discountGroupModal').modal('show');
+    });
+    window.addEventListener('closeDiscountGroupModal',event=>{
+        $('#discountGroupModal').modal('hide');
+    });
+
+    window.addEventListener('openAddMakeModel', event=>{
+        $('#addMakeModelModel').modal('show');
+    });
+    window.addEventListener('closeAddMakeModel', event=>{
+        $('#addMakeModelModel').modal('hide');
     });
 
     window.addEventListener('scrolltopQl',event=>{
@@ -1525,13 +1529,5 @@
         });
     });
 
-    window.addEventListener('openDiscountGroupModal',event=>{
-        $('#discountGroupModal').modal('show');
-    });
-    window.addEventListener('closeDiscountGroupModal',event=>{
-        $('#discountGroupModal').modal('hide');
-    });
-
-    
 </script>
 @endpush

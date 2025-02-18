@@ -32,43 +32,30 @@
 @endpush
 <main class="main-content position-relative  border-radius-lg">
     <div class="container-fluid py-2">
-        <div class="row mt-2">
-            <div class="col-lg-6 col-7">
-                <h6>{{count($pendingCustomersCart)}} - Pending Job Creation</h6>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <?php $arrayCustomersPendingJobs = []; ?>
-            @forelse($pendingCustomersCart as $pendingvehicle)
-                    @if(!in_array($pendingvehicle->vehicle_id, $arrayCustomersPendingJobs))
-                        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 my-4">
-                            <a href="javascript:;" wire:click="selectPendingVehicle({{$pendingvehicle->customer_id}},{{$pendingvehicle->vehicle_id}})" class="">
-                                <div class="card card-background move-on-hover">
-                                    <div class="full-background" style="background-image: url('{{url("public/storage/".$pendingvehicle->vehicleInfo["vehicle_image"])}}')"></div>
-                                    <div class="card-body pt-5">
-                                        <h4 class="text-white mb-0 pb-0">
-                                            @if($pendingvehicle->customerInfo['TenantName'])
-                                                {{$pendingvehicle->customerInfo['TenantName']}}
-                                            @else
-                                            Guest
-                                            @endif
-                                        </h4>
-                                        <p class="mt-0 pt-0"><small>{{$pendingvehicle->customerInfo['Email']}}, {{$pendingvehicle->customerInfo['Mobile']}}</small></p>
-                                        <p class="mb-0">{{$pendingvehicle->vehicleInfo['makeInfo']['vehicle_name']}}, {{$pendingvehicle->vehicleInfo['modelInfo']['vehicle_model_name']}}</p>
-                                        <p>{{$pendingvehicle->vehicleInfo['plate_number_final']}}</p>
-                                        <span class="text-xs">{{ \Carbon\Carbon::parse($pendingvehicle->created_at)->diffForHumans() }} </span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <?php array_push($arrayCustomersPendingJobs, $pendingvehicle->vehicle_id);?>
-                    @endif
-                @empty
-                @endforelse
-        </div>
+        
         
 
-        <p class="h5 mt-2">Jobs Over View @if($selected_date) On {{ \Carbon\Carbon::parse($selected_date)->format('dS M Y') }} @endif</p>
+        <p class="h5 mt-2">Jobs Over View @if($selected_date) On {{ \Carbon\Carbon::parse($selected_date)->format('dS M Y') }} @endif @if(auth()->user('user')->user_type==1)
+        <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+            <div class="form-group">
+                <select class="form-control" id="stationSelect" wire:model="search_station">
+                    <option value="">-Select Station-</option>
+                    @foreach($stationsList as $station)
+                    <option value="{{$station->LandlordCode}}">{{$station->CorporateName}}</option>
+                    @endforeach
+                </select>
+                <div wire:loading wire:target="search_station">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif </p>
         <div class="row  mb-4">
             <div class="col-md-6">
                 <div class="card mb-0">
