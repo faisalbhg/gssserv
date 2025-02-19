@@ -466,14 +466,7 @@
                             <h5 class="font-weight-bold mt-2">Interior Vehicle Images</h5>
                         </div>
                         <div class="card-body text-left pt-0">
-                            <div class="row m-4">
-
-                                <div class="col-md-12 col-sm-12">
-                                    <input type="file" id="roofImgFile" wire:model="roof_images" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="roofimg" src="@if($roof_images) {{$roof_images->temporaryUrl()}} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                            </div>
+                            
                             <div class="row m-4">
                                 <div class="col-md-6 col-sm-6">
                                     <input type="file" id="dashImage1File" wire:model="dash_image1" accept="image/*" capture style="display:none"/>
@@ -519,9 +512,16 @@
                                     @error('back_seat3') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="backSeat4ImageFile" wire:model="back_seat4" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="backSeat4Image" src="@if ($back_seat4) {{ $back_seat4->temporaryUrl() }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
+                                    <input type="file" id="backSeat4ImageFile1" wire:model="back_seat4" accept="image/*" capture style="display:none"/>
+                                    <img class="w-100" id="backSeat4Image1" src="@if ($back_seat4) {{ $back_seat4->temporaryUrl() }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
                                     @error('back_seat4') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <input type="file" id="backSeat3ImageFile1" wire:model="roof_images" accept="image/*" capture style="display:none"/>
+                                    <img class="w-100" id="backSeat3Image1" src="@if ($roof_images) {{ $roof_images->temporaryUrl() }} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
+                                    @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                             </div>
                         </div>
@@ -641,10 +641,7 @@
         $("#upfile6").click(function () {
             $("#file6").trigger('click');
         });
-
-        $("#roofimg").click(function () {
-            $("#roofimgFile").trigger('click');
-        });
+        
         $("#dashImage1").click(function () {
             $("#dashImage1File").trigger('click');
         });
@@ -668,6 +665,12 @@
         });
         $("#backSeat4Image").click(function () {
             $("#backSeat4ImageFile").trigger('click');
+        });
+        $("#backSeat4Image1").click(function () {
+            $("#backSeat4ImageFile1").trigger('click');
+        });
+        $('#backSeat3Image1').click(function(){
+            $("#backSeat3ImageFile1").trigger('click');
         });
     });
 </script>

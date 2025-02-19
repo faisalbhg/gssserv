@@ -31,7 +31,7 @@ use App\Models\LaborItemMaster;
 class CarsTaxi extends Component
 {
     use WithFileUploads;
-    public $customer_id=259, $vehicle_id, $mobile, $name, $ct_number, $meter_id, $plate_number_image, $plate_code, $plate_number, $vehicle_type, $make, $model, $checklistLabel, $fuel, $scratchesFound, $scratchesNotFound, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature,$roof_images, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $photo;
+    public $customer_id=259, $vehicle_id, $mobile, $name, $ct_number, $meter_id, $plate_number_image, $plate_code, $plate_number, $vehicle_type, $make, $model, $checklistLabel, $fuel, $scratchesFound, $scratchesNotFound, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature,$roof_images, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $photo, $car_roof_images;
     public $plateEmiratesCodes=[], $vehicleTypesList=[], $listVehiclesMake=[], $vehiclesModelList=[], $checklistLabels=[], $carTaxiServiceInfo;
     public $isValidInput;
     public $grand_total, $total, $tax, $job_number;
@@ -49,6 +49,7 @@ class CarsTaxi extends Component
 
     public function render()
     {
+        //dd(LaborItemMaster::where(['Active'=>1])->whereIn('ItemCode', ['S255','S408'])->get());
         $carTaxiServiceInfoQuery = LaborItemMaster::where(['Active'=>1,'DivisionCode'=>auth()->user('user')['station_code'],])->where('UnitPrice','>',0)->whereIn('ItemCode', ['S255','S408']);
         $this->all_car_taxi_Service = $carTaxiServiceInfoQuery->get();
         //dd($this->all_car_taxi_Service);

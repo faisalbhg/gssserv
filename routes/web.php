@@ -48,6 +48,7 @@ use App\Http\Livewire\SubmitCutomerServiceJob;
 use App\Http\Livewire\UpdateJobCardSubmit;
 use App\Http\Livewire\GatePasses;
 use App\Http\Livewire\PackagesBookings;
+use App\Http\Livewire\MaterialRequisition;
 
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
@@ -144,6 +145,9 @@ Route::middleware('auth')->group(function () {
 
     //GatePasses
     Route::get('gatepasses',GatePasses::class)->name('gatepasses');
+
+    //Forman Material Requisition
+    Route::get('material-requisition',MaterialRequisition::class)->name('material-requisition');
 
 
 

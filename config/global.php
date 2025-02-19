@@ -231,6 +231,7 @@ return [
         "5"=>"Finance",
         "6"=>"Security",
         "7"=>"Quality",
+        "8"=>"Section Forman",
     ],
     "user_type_access"=>[
         "administrator"=>[
@@ -247,6 +248,9 @@ return [
         ],
         "service"=>[
             "1","2","3","4"
+        ],
+        "section-forman"=>[
+            "1","2","8"
         ]
     ],
     "sorting"=>[

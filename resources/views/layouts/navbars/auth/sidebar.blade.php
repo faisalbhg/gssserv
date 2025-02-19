@@ -68,6 +68,18 @@
                 </a>
             </li>
 
+            <li class="nav-item pb-2 {{!in_array((auth()->user('user')->user_type),config('global.user_type_access')['section-forman']) ? 'd-none': ''}}">
+                <a class="nav-link {{ in_array(request()->route()->getName(),['section-forman']) ? 'active' : ' ' }}"
+                    href="{{ route('material-requisition') }}">
+                    <div
+                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i style="font-size: 1rem;" class="fa-solid fa-recycle fa-lg ps-2 pe-2 text-center
+                        {{ in_array(request()->route()->getName(),['section-forman']) ? 'text-white' : 'text-dark' }}"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Material Requisition</span>
+                </a>
+            </li>
+
             <!-- <li class="nav-item mt-2 {{!in_array((auth()->user('user')->user_type),config('global.user_type_access')['finance']) ? 'd-none': ''}}">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Finance</h6>
             </li>
