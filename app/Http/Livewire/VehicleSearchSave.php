@@ -56,7 +56,7 @@ class VehicleSearchSave extends Component
 
         if($this->new_make)
         {
-            $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->get();
+            $this->makeSearchResult = VehicleMakes::where('is_deleted','=',null)->where('vehicle_name','like',"%{$this->new_make}%")->get();
             //dd($this->makeSearchResult);
             if($this->showAddNewModel && $this->new_model)
             {
@@ -125,8 +125,9 @@ class VehicleSearchSave extends Component
         }
         
         if($this->otherVehicleDetailsForm){
+            //dd(VehicleMakes::limit(1)->get());
             $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
-            $this->listVehiclesMake = VehicleMakes::get();
+            $this->listVehiclesMake = VehicleMakes::where('is_deleted','=',null)->get();
             if($this->make){
                 //dd($this->make);
                 $this->vehiclesModelList = VehicleModels::where(['vehicle_make_id'=>$this->make])->get();

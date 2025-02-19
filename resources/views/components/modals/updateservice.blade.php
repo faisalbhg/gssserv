@@ -20,6 +20,8 @@
                     @if($jobcardDetails->payment_status==0)
                       <button wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end cursor-pointer">Add New Service/Items</button>
                     @endif
+                        <i class="far fa-calendar-alt me-2" aria-hidden="true"></i>
+                        <small>{{ \Carbon\Carbon::parse($jobcardDetails->job_date_time)->format('dS M Y h:i A') }}</small>
                       <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
                     </div>
                 </div>
@@ -32,16 +34,16 @@
                                 <!-- move-on-hover-->
                                 <div class="full-background" style="background-image: url('{{url("public/storage/".$jobcardDetails->vehicle_image)}}')"></div>
                                 <div class="card-body pt-2">
-                                    @if($jobCustomerInfo['TenantName'])
-                                    <h4 class="text-white mb-0 pb-0 text-white">{{$jobCustomerInfo['TenantName']}}</h4>
+                                    @if($jobcardDetails->customerInfo['TenantName'])
+                                    <h4 class="text-white mb-0 pb-0 text-white">{{$jobcardDetails->customerInfo['TenantName']}}</h4>
                                     @else
                                     Guest
                                     @endif
-                                    @if($jobCustomerInfo['Mobile'])
-                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobCustomerInfo['Mobile']}}</small></p>
+                                    @if($jobcardDetails->customerInfo['Mobile'])
+                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobcardDetails->customerInfo['Mobile']}}</small></p>
                                     @endif
-                                    @if($jobCustomerInfo['Email'])
-                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobCustomerInfo['Email']}}</small></p>
+                                    @if($jobcardDetails->customerInfo['Email'])
+                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobcardDetails->customerInfo['Email']}}</small></p>
                                     @endif
                                     <!--ID image-->
                                     <hr class="horizontal dark mt-3">
@@ -54,12 +56,11 @@
                                         <li class="list-group-item border-0 p-0 pb-0 mb-0 bg-transparent border-radius-lg">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$job_status]}} shadow text-center m-2">
+                                                    <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$jobcardDetails->job_status]}} shadow text-center m-2">
                                                         <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
                                                     </div>
                                                     @if($jobcardDetails->job_status)
-                                                    <h6 class="my-2 text-sm text-white">
-                                                        Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$jobcardDetails->job_status]}} pb-2">{{config('global.jobs.status')[$jobcardDetails->job_status]}}</span> 
+                                                    <h6 class="my-2 text-sm text-white"><span class="text-sm badge badge-sm {{config('global.jobs.status_btn_class')[$jobcardDetails->job_status]}} pb-2">{{config('global.jobs.status')[$jobcardDetails->job_status]}}</span> 
                                                     </h6>
                                                     @endif
                                                 </div>
@@ -76,8 +77,7 @@
                                                         @endif
                                                     </div>
                                                     <h6 class="my-2 text-sm text-white">
-                                                        @if($jobcardDetails->payment_type)
-                                                        Payment Status: <span class="text-sm {{config('global.payment.text_class')[$jobcardDetails->payment_type]}} pb-2">{{config('global.payment.type')[$jobcardDetails->payment_type]}}</span> - <span class=" {{config('global.payment.status_class')[$jobcardDetails->payment_status]}} text-gradient text-sm">{{config('global.payment.status')[$jobcardDetails->payment_status]}}</span>
+                                                        @if($jobcardDetails->payment_type) <span class="badge badge-sm {{config('global.payment.status_class')[$jobcardDetails->payment_status]}} text-sm btn-sm"> {{config('global.payment.type')[$jobcardDetails->payment_type]}} {{config('global.payment.status')[$jobcardDetails->payment_status]}}</span>
                                                         @endif
                                                     </h6>
                                                     
@@ -90,8 +90,8 @@
                                                     
                                                     <div class=" float-start">
                                                         @if($jobcardDetails->payment_type==1 && $jobcardDetails->payment_status==0)
-                                                        <button type="button" wire:click="resendPaymentLink('{{$job_number}}')" class="mt-2 btn btn-sm bg-gradient-success px-2">Re send Payment link</button>
-                                                        <button type="button" wire:click="checkPaymentStatus('{{$jobcardDetails->job_number}}','1')" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button>
+                                                        <button type="button" wire:click="resendPaymentLink('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-success px-2">Re send Payment link</button>
+                                                        <button type="button" wire:click="checkPaymentStatus('{{$jobcardDetails->job_number}}','{{$jobOrderReference}}','{{$jobcardDetails->stationInfo['StationID']}}')" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button>
                                                         @endif
                                                         @if ($message = Session::get('paymentLinkStatusSuccess'))
                                                             <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
@@ -167,22 +167,22 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="card h-100 mb-4">
-                                                                    <div class="card-header pb-0 p-2">
+                                                                    <!-- <div class="card-header pb-0 p-2">
                                                                         <div class="row">
                                                                             <div class="col-md-6">
                                                                                 <h6 class="mb-0">Billing Summary</h6>
                                                                             </div>
                                                                             <div class="col-md-6 d-flex justify-content-end align-items-center">
                                                                                 <i class="far fa-calendar-alt me-2" aria-hidden="true"></i>
-                                                                                <small>{{ \Carbon\Carbon::parse($job_date_time)->format('dS M Y h:i A') }}</small>
+                                                                                <small>{{ \Carbon\Carbon::parse($jobcardDetails->job_date_time)->format('dS M Y h:i A') }}</small>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
+                                                                    </div> -->
                                                                     <div class="card-body pt-4 p-2">
                                                                         <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-0">Items/Services</h6>
                                                                         <ul class="list-group">
                                                                             <?php $discountPS=0;?>
-                                                                            @foreach($customerjobservices as $serviceItems)
+                                                                            @foreach($jobcardDetails->customerJobServices as $serviceItems)
                                                                             <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
                                                                                 <div class="d-flex align-items-left">
                                                                                     <button class="btn btn-icon-only btn-rounded  mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
@@ -797,7 +797,7 @@
                         <!-- <h6 class="mb-0">Services Information</h6>
                          <hr class="mt-0">
                          --><ul class="list-group">
-                            @forelse( $customerjobservices as $services)
+                            @forelse( $jobcardDetails->customerJobServices as $services)
                             <li class="list-group-item border-0  p-2 mb-2 border-radius-lg">
                                 <div class="card">
                                     <div class="card-body p-2">
@@ -1616,7 +1616,14 @@
             </div>
        </div>
     </div>
-
+    <div wire:loading wire:target="checkPaymentStatus">
+      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+        <div class="la-ball-beat">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
     <div wire:loading wire:target="updateQwService">
       <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
         <div class="la-ball-beat">

@@ -93,7 +93,7 @@ class CustomerServiceJob extends Component
         
         if($this->new_make)
         {
-            $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->get();
+            $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->where('is_deleted','=',null)->get();
             //dd($this->makeSearchResult);
             if($this->showAddNewModel && $this->new_model)
             {
@@ -156,7 +156,7 @@ class CustomerServiceJob extends Component
             }
 
             $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
-            $this->listVehiclesMake = VehicleMakes::get();
+            $this->listVehiclesMake = VehicleMakes::where('is_deleted','=',null)->get();
             if($this->make){
                 $this->vehiclesModelList = VehicleModels::where(['vehicle_make_id'=>$this->make])->get();
             }

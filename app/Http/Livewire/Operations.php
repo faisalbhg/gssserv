@@ -77,13 +77,14 @@ class Operations extends Component
     public $jobcardDetails, $showaddServiceItems=false;
     public $showVehicleImageDetails=false;
     public $checkListDetails, $checklistLabels, $vehicleSidesImages, $vehicleCheckedChecklist, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature;
-    public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $plateEmiratesCodes=[], $search_plate_state, $search_plate_code, $search_plate_number, $search_station;
+    public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $plateEmiratesCodes=[], $search_plate_state, $search_plate_code, $search_plate_number, $search_station, $search_payment;
     public $selectedVehicleInfo, $selectedCustomerVehicle=false, $showSectionsList=false, $selectServiceItems, $showPackageList=false, $selectPackageMenu=false, $showServiceSectionsList=false;
     public $propertyCode, $selectedSectionName;
     public $servicesGroupList, $sectionsLists=[], $sectionServiceLists=[];
     public $customerDiscontGroupId, $customerDiscontGroupCode;
     public $quickLubeItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $showQuickLubeItemSearchItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
     public $customerJobServiceLogs;
+    public $jobOrderReference;
 
 
     
@@ -139,6 +140,10 @@ class Operations extends Component
         if($this->search_plate_number)
         {
             $customerjobs = $customerjobs->where('plate_number', 'like',"%$this->search_plate_number%");
+        }
+        if($this->search_payment)
+        {
+            $customerjobs = $customerjobs->where('payment_type', '=',$this->search_payment);
         }
         if($this->search_station){
             //dd($this->search_station);
@@ -463,11 +468,16 @@ class Operations extends Component
     {
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
-        //dd(CustomerJobCardServices::where(['job_number'=>$job_number])->get());
-        //dd(CustomerJobCards::with(['customerInfo','customerJobServices','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first());
-        $job = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first();
-        //dd($job);
-        $this->jobcardDetails = $job;
+        $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
+        $this->jobOrderReference=null;
+        if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0)
+        {
+            $paymentResponse = json_decode($this->jobcardDetails->payment_response,true);
+            $paymentResponseOrderResponse =json_decode(json_decode($paymentResponse['order_response'],true),true);
+            $this->jobOrderReference = $paymentResponseOrderResponse['orderReference'];
+            //$this->checkPaymentStatus($this->jobcardDetails->job_number,$paymentResponseOrderResponse['orderReference'],$this->jobcardDetails->stationInfo['StationID']);
+        }
+        
         //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
         //dd($this->customerJobServiceLogs);
         if($this->jobcardDetails->checklistInfo!=null){
@@ -498,51 +508,31 @@ class Operations extends Component
             //dd($this->checkListDetails);
         }
         
-        $this->job_number = $job->job_number;
-        $this->job_date_time = $job->job_date_time;
-        $this->customerDetails = true;
-        $this->vehicle_image = $job->vehicle_image;
-        $this->make = $job->make;
-        $this->model = $job->model;
-        $this->plate_number = $job->plate_number;
-        $this->chassis_number = $job->chassis_number;
-        $this->vehicle_km = $job->vehicle_km;
-        $this->name = $job->customerInfo['name'];
-        $this->email = $job->customerInfo['email'];
-        $this->mobile = $job->customerInfo['mobile'];
-        //$this->customerType = $job->customerInfo->customertype['customer_type'];
-        $this->payment_status = $job->payment_status;
-        $this->payment_type = $job->payment_type;
-        $this->job_status = $job->job_status;
-        $this->job_departent = $job->job_departent;
-        $this->total_price = $job->total_price;
-        $this->vat = $job->vat;
-        $this->grand_total = $job->grand_total;
-
-        $this->jobCustomerInfo = $job->customerInfo;
-
-        $this->customerjobservices = $job->customerJobServices;
-        //dd($this->customerjobservices);
-        //dd($this);
-        
         $this->dispatchBrowserEvent('showServiceUpdate');
         $this->dispatchBrowserEvent('hideQwChecklistModel');
     }
     
 
-    public function checkPaymentStatus($job_number)
+    public function checkPaymentStatus($job_number, $order_ref, $station)
     {
-        $arrData['order_number'] = $job_number;
-        $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post('http://172.23.140.170/gssapi/api/check-payment-status',$arrData);
-        if(json_decode($response)->payment_status!=0)
+        //,$order_ref,$station
+        $arrData['job_number'] = $job_number;
+        $arrData['order_number'] = $order_ref;
+        $arrData['station'] = $station;
+        $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.synchronize_single_paymenkLink_url'),$arrData);
+        $paymentResponse = json_decode($response,true);
+        //dd($paymentResponse['order_response']['orderReference']);
+        if($paymentResponse['order_response']['status']=='PURCHASED' || $paymentResponse['order_response']['status']=='CAPTURED' )
         {
-            CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_status'=>json_decode($response)->payment_status]);
-            session()->flash('paymentLinkStatusSuccess', 'Payment Link is not yet paid..!');
+            CustomerJobCards::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
+            session()->flash('paymentLinkStatusSuccess', 'Payment Link is paid..!');
+            //$this->payment_status = 1;
         }
         else
         {
             session()->flash('paymentLinkStatusError', 'Payment Link is not yet paid..!');
         }
+        $this->customerJobUpdate($paymentResponse['order_response']['orderReference']);
     }
 
     public function selectVehicle($customerId,$vehicleId){

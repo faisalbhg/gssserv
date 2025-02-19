@@ -179,7 +179,7 @@ class Jobcard extends Component
             //Get all veicle type list
             
             //Get Vehicle Make List
-            $this->listVehiclesMake = VehicleMakes::get();
+            $this->listVehiclesMake = VehicleMakes::where('is_deleted','=',null)->get();
             if($this->make){
                 $this->vehiclesModelList = VehicleModels::where(['vehicle_make_id'=>$this->make])->get();
             }

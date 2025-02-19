@@ -72,6 +72,7 @@ class Dashboard extends Component
         if($this->search_station){
             $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>auth()->user('user')['station_code']]);
             $customerjobsQuery = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']]);
+            $this->dispatchBrowserEvent('datePicker');
         }
 
 

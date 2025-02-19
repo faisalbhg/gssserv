@@ -257,6 +257,7 @@ return [
     ],
     //'bhr-paymenkLink_payment_url'=>'https://bhr.ae/payment-app/api/pbl-payment-panel',
     'paymenkLink_payment_url'=>'https://gsstations.ae/gssapi/api/new-payment-link',
+    'synchronize_single_paymenkLink_url'=>'https://gsstations.ae/gssapi/api/single-pbl-synch-payment-panel',
     
     'sms'=>[
         "1"=>[

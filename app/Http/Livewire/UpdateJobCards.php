@@ -84,7 +84,7 @@ class UpdateJobCards extends Component
                 $this->plateEmiratesCodes = PlateCode::where(['plateEmiratesId'=>$this->plateStateCode,'is_active'=>1])->get();
             }
             $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
-            $this->listVehiclesMake = VehicleMakes::get();
+            $this->listVehiclesMake = VehicleMakes::where('is_deleted','=',null)->get();
             if($this->make){
                 $this->vehiclesModelList = VehicleModels::where(['vehicle_make_id'=>$this->make])->get();
             }

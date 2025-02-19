@@ -17,8 +17,10 @@
                       <h5 class=" modal-title" id="serviceUpdateModalLabel">#{{$jobcardDetails->job_number}}</h5>
                     </div>
                     <div class="d-flex">
-                      <button wire:click="addNewServiceItem('{{$jobcardDetails->job_number}}')" type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end">Add New Service/Items</button>
-                      <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
+                        @if($jobcardDetails->payment_status!=1)
+                        <button wire:click="addNewServiceItem('{{$jobcardDetails->job_number}}')" type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end">Add New Service/Items</button>
+                        @endif
+                        <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
                     </div>
                 </div>
                 
