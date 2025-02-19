@@ -55,7 +55,7 @@ class Dashboard extends Component
                 \DB::raw('SUM(grand_total) as saletotal'),
             )
         );
-        $customerjobsQuery = CustomerJobCards::with(['customerInfo']);
+        $customerjobsQuery = CustomerJobCards::with(['customerInfo','createdInfo']);
 
         if($this->selected_date){
             $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
@@ -70,8 +70,8 @@ class Dashboard extends Component
         }
         
         if($this->search_station){
-            $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>auth()->user('user')['station_code']]);
-            $customerjobsQuery = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']]);
+            $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>$this->search_station]);
+            $customerjobsQuery = $customerjobsQuery->where(['station'=>$this->search_station]);
             $this->dispatchBrowserEvent('datePicker');
         }
 
@@ -84,13 +84,14 @@ class Dashboard extends Component
         $this->getCountSalesJob = $getCountSalesJobStatus->first();
         $this->customerjobsLists = $customerjobsQuery->get();
         $this->stationsList = Landlord::all();
+        $this->dispatchBrowserEvent('datePicker');
         return view('livewire.home-page');
     }
 
     public function getSelectedDate( $date ) {
         if(Carbon::parse($date)->format('Y-m-d')!=$this->selected_date){
             $this->selected_date = Carbon::parse($date)->format('Y-m-d');
-            $this->dispatchBrowserEvent('datePicker');
+            
         }
         //dd($this->selected_date);
         
