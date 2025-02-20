@@ -308,10 +308,10 @@
                                     <p>Note: Minor surface scratches defects, stone chipping, scratches on glasses etc. are included</p>
                                 </ul>
                                 <hr class="horizontal gray-light my-4 mb-4">
-                                <h6 class="mb-0">Vehicle Scratches Found</h6>
+                                <h6 class="mb-0">Found</h6>
                                 <p class="text-sm">{{$checkListDetails->scratches_found}}</p>
 
-                                <h6 class="mt-3">Vehicle Scratches Not Found</h6>
+                                <h6 class="mt-3">Not Found</h6>
                                 <p class="text-sm">{{$checkListDetails->scratches_notfound}}</p>
                                 <hr class="horizontal gray-light my-4 mb-4">
                             </div>

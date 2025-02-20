@@ -102,11 +102,16 @@ class CarsTaxi extends Component
                 $carTaxiJobs = $carTaxiJobs->where('plate_number', 'like',"%$this->search_plate_number%");
             }
             
-            $carTaxiJobs = $carTaxiJobs->where('is_contract','=',1)->orderBy('id','ASC')->where(['created_by'=>auth()->user('user')->id])->get();
-            $getCountCarTaxiJob = $getCountCarTaxiJob->where('is_contract','=',1)->where(['created_by'=>auth()->user('user')->id])->first();
+            $carTaxiJobs = $carTaxiJobs->where('is_contract','=',1)->orderBy('id','ASC');
+            if(auth()->user('user')->user_type!=1){
+                $carTaxiJobs = $carTaxiJobs->where(['created_by'=>auth()->user('user')->id]);
+                $getCountCarTaxiJob = $getCountCarTaxiJob->where(['created_by'=>auth()->user('user')->id]);
+            }
+            
+            $getCountCarTaxiJob = $getCountCarTaxiJob->where('is_contract','=',1);
 
-            $this->getCountCarTaxiJob = $getCountCarTaxiJob;
-            $this->carTaxiJobs = $carTaxiJobs;
+            $this->getCountCarTaxiJob = $getCountCarTaxiJob->first();
+            $this->carTaxiJobs = $carTaxiJobs->get();
         }
         else
         {
