@@ -200,7 +200,7 @@ class CarsTaxi extends Component
         $validatedData = $this->validate([
             'ct_number' => 'required',
             'meter_id' => 'required',
-            'plate_code' => 'required',
+            //'plate_code' => 'required',
             'plate_number' => 'required',
             'plate_number_image' => 'required',
             'make' => 'required',
@@ -502,19 +502,23 @@ class CarsTaxi extends Component
     {
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
-        //dd(CustomerJobCardServices::where(['job_number'=>$job_number])->get());
-        //dd(CustomerJobCards::with(['customerInfo','customerJobServices','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first());
-        $job = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo'])->where(['job_number'=>$job_number])->first();
-        //dd($job);
-        $this->jobcardDetails = $job;
-        //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
-        //dd($this->customerJobServiceLogs);
-        //dd($this->jobcardDetails);
+        $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
+        $this->jobOrderReference=null;
+        if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0)
+        {
+            $paymentResponse = json_decode($this->jobcardDetails->payment_response,true);
+            $paymentResponseOrderResponse =json_decode(json_decode($paymentResponse['order_response'],true),true);
+            $this->jobOrderReference = $paymentResponseOrderResponse['orderReference'];
+            //$this->checkPaymentStatus($this->jobcardDetails->job_number,$paymentResponseOrderResponse['orderReference'],$this->jobcardDetails->stationInfo['StationID']);
+        }
+        
+        if($this->jobcardDetails->is_contract)
         if($this->jobcardDetails->checklistInfo!=null){
             $this->checkListDetails=$this->jobcardDetails->checklistInfo;
             $this->checklistLabels = ServiceChecklist::get();
             $this->vehicleCheckedChecklist = json_decode($this->jobcardDetails->checklistInfo['checklist'],true);
             $this->vehicleSidesImages = json_decode($this->jobcardDetails->checklistInfo['vehicle_image'],true);
+            //dd($this->vehicleSidesImages);
             $this->turn_key_on_check_for_fault_codes = $this->checkListDetails['turn_key_on_check_for_fault_codes'];
             $this->start_engine_observe_operation = $this->checkListDetails['start_engine_observe_operation'];
             $this->reset_the_service_reminder_alert = $this->checkListDetails['reset_the_service_reminder_alert'];
@@ -538,34 +542,16 @@ class CarsTaxi extends Component
             //dd($this->checkListDetails);
         }
         
-        $this->job_number = $job->job_number;
-        $this->job_date_time = $job->job_date_time;
-        $this->customerDetails = true;
-        $this->vehicle_image = $job->vehicle_image;
-        $this->make = $job->make;
-        $this->model = $job->model;
-        $this->plate_number = $job->plate_number;
-        $this->chassis_number = $job->chassis_number;
-        $this->vehicle_km = $job->vehicle_km;
-        $this->name = $job->customerInfo['name'];
-        $this->email = $job->customerInfo['email'];
-        $this->mobile = $job->customerInfo['mobile'];
-        //$this->customerType = $job->customerInfo->customertype['customer_type'];
-        $this->payment_status = $job->payment_status;
-        $this->payment_type = $job->payment_type;
-        $this->job_status = $job->job_status;
-        $this->job_departent = $job->job_departent;
-        $this->total_price = $job->total_price;
-        $this->vat = $job->vat;
-        $this->grand_total = $job->grand_total;
-
-        $this->jobCustomerInfo = $job->customerInfo;
-
-        $this->customerjobservices = $job->customerJobServices;
-        //dd($this->customerjobservices);
-        //dd($this);
-        
         $this->dispatchBrowserEvent('showServiceUpdate');
         $this->dispatchBrowserEvent('hideQwChecklistModel');
+    }
+
+    public function openVehicleImageDetails(){
+        $this->showVehicleImageDetails=true;
+    }
+
+    public function closeVehicleImageDetails()
+    {
+        $this->showVehicleImageDetails=false;
     }
 }

@@ -258,7 +258,7 @@
                         @error('meter_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                     </div>
                 </div>
-                <div class="col-md-2 col-sm-2">
+                <div class="col-md-4 col-sm-4">
                     <label for="plateImageFile" >Plate Image</label>
                     <div 
                     x-data="{ isUploading: false, progress: 0 }" 
@@ -287,7 +287,7 @@
                         <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                     @endif
                 </div>
-                <div class="col-md-2 col-sm-2">
+                <div class="col-md-2 col-sm-2 d-none">
                     <div class="form-group">
                         <label for="plateCode">Plate Code</label>
                         <select class="form-control  " wire:model="plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
@@ -738,7 +738,7 @@
             $('#vehicleTypeInput').select2();
             $('#vehicleMakeInput').select2();
             $('#vehicleModelInput').select2();
-            $('#plateCode').select2();
+            //$('#plateCode').select2();
 
             $('#vehicleTypeInput').on('change', function (e) {
                 var vehicleTypeVal = $('#vehicleTypeInput').select2("val");
@@ -752,10 +752,10 @@
                 var modelVal = $('#vehicleModelInput').select2("val");
                 @this.set('model', modelVal);
             });
-            $('#plateCode').on('change', function (e) {
+            /*$('#plateCode').on('change', function (e) {
                 var stateCodeVal = $('#plateCode').select2("val");
                 @this.set('plate_code', stateCodeVal);
-            });
+            });*/
         });
     });
 </script>
