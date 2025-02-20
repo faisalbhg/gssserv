@@ -232,14 +232,20 @@ return [
         "6"=>"Security",
         "7"=>"Quality",
         "8"=>"Section Forman",
+        "9"=>"Mechanical",
     ],
     "user_type_access"=>[
         "administrator"=>[
             "1"
         ],
         "operation"=>[
-            "1","2","3","4"
+            "1","2","3","4","8","9"
         ],
+        "section-forman"=>[
+            "1","2","8"
+        ],
+
+        
         "finance"=>[
             "1","4"
         ],
@@ -247,10 +253,14 @@ return [
             "1","2","6"
         ],
         "service"=>[
-            "1","2","3","4"
+            "1","2","3","4","9"
         ],
-        "section-forman"=>[
-            "1","2","8"
+        
+        "mechanical"=>[
+            "1","2","3","4",
+        ],
+        "quality"=>[
+            "1","2","7",
         ]
     ],
     "sorting"=>[

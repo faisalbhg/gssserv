@@ -25,6 +25,7 @@ class Dashboard extends Component
 
     function mount(){
         $user = auth()->user();
+        
         if(auth()->user('user')->user_type==6)
         {
             return redirect()->to('gatepasses');
@@ -33,6 +34,7 @@ class Dashboard extends Component
         {
             return redirect()->to('jobs');
         }
+
         if ($user && isset($user->id)) {
             Session::put('user', $user);
         } else {
