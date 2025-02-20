@@ -1,4 +1,4 @@
-<main class="main-content mt-1 border-radius-lg h-100">
+<main class="main-content mt-1 border-radius-lg">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-1 border-radius-xl shadow-none position-sticky blur shadow-blur mt-1 left-auto z-index-sticky" id="navbarBlur"
         navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
@@ -69,7 +69,7 @@
 
                     <li class="nav-item px-0 d-flex align-items-center"  >
                         <div class="dropdown">
-                            <button class="btn bg-gradient-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-sm bg-gradient-danger dropdown-toggle " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fa-solid fa-car fa-xl"></i></span>
                                 Contract
                             </button>
@@ -110,7 +110,10 @@
                     <li class="nav-item dropdown pe-2 d-flex align-items-center">
                         <a href="javascript:;" class="nav-link text-dark p-0" id="dropdownMenuButton"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-lg fa-user cursor-pointer"></i>
+                            <button class="btn btn-icon btn-sm btn-3 bg-gradient-default px-2" type="button" wire:click="newVehicleOpen">
+                                <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fas fa-lg fa-user fa-xl cursor-pointer"></i></span>
+                            </button>
+                            
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3 ms-n4"
                             aria-labelledby="dropdownMenuButton">

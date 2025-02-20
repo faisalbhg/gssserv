@@ -163,8 +163,9 @@ class CarsTaxi extends Component
             }
             
             $this->dispatchBrowserEvent('selectSearchEvent'); 
+            $this->dispatchBrowserEvent('imageUpload');
         }
-        $this->dispatchBrowserEvent('imageUpload');
+        
         return view('livewire.cars-taxi');
     }
 

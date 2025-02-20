@@ -1,4 +1,82 @@
 @push('custom_css')
+<style type="text/css">
+ 
+:root {
+    --m1-tabs-bg: #e1e1e1;
+    --m1-tab-text: #888;
+    --m1-tab-bg: #f7f7f7;
+    --m1-tab-hover-text: #ffc107;
+    --m1-tab-hover-bg: #fff;
+    --m1-tab-active-text: #fff;
+    --m1-tab-active-bg: #ffc107;
+}
+
+.tab-content .tab-pane {
+    margin: 0;
+    padding: 0.2em 0;
+    color: rgba(40,44,42,0.05);
+    font-weight: 900;
+    font-size: 4em;
+    line-height: 1;
+    text-align: center;
+}
+
+#model_1 .tabs-container {
+    /*background: var(--m1-tabs-bg);*/
+}
+#model_1 .nav-tabs {
+    text-align: center;
+    border: 4px solid transparent;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    border: 0; 
+}
+#model_1 .nav .nav-item {
+    text-align: center;
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+#model_1 .nav .nav-link {
+    background-color: var(--m1-tab-bg);
+    color: var(--m1-tab-text);
+    transition: background-color 0.2s, color 0.2s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 2.5;
+    border: 0;
+    border-radius: 0;
+    outline: none;
+} 
+#model_1 .nav .nav-link:hover {
+    background-color: var(--m1-tab-hover-bg);
+    color: var(--m1-tab-hover-text);
+}
+#model_1 .nav .nav-link.active,
+#model_1 .nav .nav-link.active:hover {
+    background: var(--m1-tab-active-bg);
+    color: var(--m1-tab-active-text);
+}
+#model_1 .nav i {
+    display: inline-block;
+    margin: 0 0.4em 0 0;
+    vertical-align: middle;
+    text-transform: none;
+    font-size: 1.3em;
+    line-height: 1;
+    speak: none;
+    -webkit-backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+</style>
 @endpush
 <main class="main-content position-relative  border-radius-lg h-100">
     <div class="container-fluid py-2">
@@ -20,12 +98,27 @@
             </button>
         </div>
         @endif
+        <section id="model_1" class="mb-4">      
+            <div class="tabs-container">
+                <ul class="nav nav-tabs container mx-0 shadow pe-0" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link @if($showWalkingCustomerPanel) active @endif text-uppercase font-weight-bolder" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" wire:click="customerPanelTab('1')"><i class="fa fa-user"></i>Walking Customer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @if($showContractCustomerPanel) active @endif text-uppercase font-weight-bolder" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false" wire:click="customerPanelTab('2')"><i class="fa fa-home"></i>Contract / Credit Customer</a>
+                    </li>
+                    
+                </ul>
+            </div>
+            
+        </section>
 
         <div class="d-flex mt-0 mb-3 mx-0">
             <div class=" d-flex">
                 <!-- <h5 class="mb-1 text-gradient text-dark">
                     <a href="javascript:;">Search By: </a>
                 </h5> -->
+                @if($showWalkingCustomerPanel)
                 <div class="px-2 position-relative ">
                     <button wire:click="clickSearchBy('1')" class="btn @if($searchByMobileNumberBtn) bg-gradient-primary @else bg-gradient-default @endif  mb-0" data-toggle="modal" data-target="#new-board-modal">
                         Mobile Number
@@ -43,13 +136,23 @@
                         Chaisis Number
                     </button>
                 </div>
-                <div class="px-2">
+                @endif
+                <!-- <div class="px-2">
                     <button wire:click="clickSearchBy('4')" class="btn @if($searchByContractBtn) bg-gradient-primary @else bg-gradient-default @endif mb-0" data-toggle="modal" data-target="#new-board-modal">
                         Contract/Credit  Customer
                     </button>
-                </div>
+                </div> -->
 
                 <div wire:loading wire:target="clickSearchBy">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+                <div wire:loading wire:target="customerPanelTab">
                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                         <div class="la-ball-beat">
                             <div></div>

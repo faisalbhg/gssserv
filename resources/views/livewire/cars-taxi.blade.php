@@ -413,120 +413,114 @@
                 </div>
                 <div class="col-md-12 mb-4">
                     <div class="card">
-                        <div class="card-header text-center pt-4 pb-3">
-                            <h5 class="font-weight-bold mt-2">Exterior Vehicle Images</h5>
-                        </div>
+                        
                         <div class="card-body text-left pt-0">
                             <div class="row">
-
                                 <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file1" wire:model="vImageR1" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-end" id="upfile1" src="@if($vImageR1) {{$vImageR1->temporaryUrl()}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer"  />
-                                    @error('vImageR1') <span class="text-danger">Missing Image..!</span> @enderror
+                                    <h5 class="font-weight-bold mt-2">Exterior Vehicle Images</h5>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="file1" wire:model="vImageR1" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail float-end" id="upfile1" src="{{asset('img/checklist/car1.png')}}" style="cursor:pointer"  />
+                                            @error('vImageR1') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="file2" wire:model="vImageR2" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail float-start" id="upfile2" src="{{asset('img/checklist/car2.png')}}" style="cursor:pointer"  />
+                                            @error('vImageR2') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="file3" wire:model="vImageF" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail float-end" id="upfile3" src="{{asset('img/checklist/car3.jpg')}}" style="cursor:pointer"  />
+                                            @error('vImageF') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="file4" wire:model="vImageB" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail float-start" id="upfile4" src="{{asset('img/checklist/car4.jpg')}}" style="cursor:pointer"  />
+                                            @error('vImageB') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="file5" wire:model="vImageL1" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail float-end" id="upfile5" src="{{asset('img/checklist/car5.png')}}" style="cursor:pointer"  />
+                                            @error('vImageL1') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="file6" wire:model="vImageL2" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail float-start" id="upfile6" src="{{asset('img/checklist/car6.png')}}" style="cursor:pointer"   />
+                                            @error('vImageL2') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file2" wire:model="vImageR2" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-start" id="upfile2" src="@if ($vImageR2) {{ $vImageR2->temporaryUrl() }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer"  />
-                                    @error('vImageR2') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <hr>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file3" wire:model="vImageF" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-end" id="upfile3" src="@if ($vImageF) {{ $vImageF->temporaryUrl() }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('vImageF') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file4" wire:model="vImageB" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-start" id="upfile4" src="@if ($vImageB) {{ $vImageB->temporaryUrl() }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('vImageB') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <hr>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file5" wire:model="vImageL1" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-end" id="upfile5" src="@if ($vImageL1) {{ $vImageL1->temporaryUrl() }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer"  />
-                                    @error('vImageL1') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file6" wire:model="vImageL2" accept="image/*" capture style="display:none"/>
-                                    <img class="w-75 float-start" id="upfile6" src="@if ($vImageL2) {{ $vImageL2->temporaryUrl() }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer"   />
-                                    @error('vImageL2') <span class="text-danger">Missing Image..!</span> @enderror
+                                    <h5 class="font-weight-bold mt-2">Interior Vehicle Images</h5>
+                                    <div class="row m-4">
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="dashImage1File" wire:model="dash_image1" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="dashImage1" src="{{asset('img/dashImage1.jpg')}}" style="cursor:pointer"  />
+                                            @error('dash_image1') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="dashImage2File" wire:model="dash_image2" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="dashImage2" src="{{asset('img/dashImage2.jpg')}}" style="cursor:pointer"  />
+                                            @error('dash_image2') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <hr>
+                                    </div>
+                                    <div class="row m-4">
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="passengerSeatImageFile" wire:model="passenger_seat_image" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="passengerSeatImage" src="{{asset('img/passangerSeat1.jpg')}}" style="cursor:pointer"  />
+                                            @error('passenger_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="driverSeatImageFile" wire:model="driver_seat_image" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="driverSeatImage" src="{{asset('img/driverSeat1.jpg')}}" style="cursor:pointer"  />
+                                            @error('driver_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <hr>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="backSeat1ImageFile" wire:model="back_seat1" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="{{asset('img/backSeat1.jpg')}}" style="cursor:pointer"  />
+                                            @error('back_seat1') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="backSeat1ImageFile" wire:model="back_seat1" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="{{asset('img/backSeat2.jpg')}}" style="cursor:pointer"   />
+                                            @error('back_seat2') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="backSeat3ImageFile" wire:model="back_seat3" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat3Image" src="{{asset('img/backSeat1.jpg')}}" style="cursor:pointer"  />
+                                            @error('back_seat3') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <input type="file" id="backSeat4ImageFile1" wire:model="back_seat4" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat4Image1" src="{{asset('img/backSeat2.jpg')}}" style="cursor:pointer"   />
+                                            @error('back_seat4') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12">
+                                            <input type="file" id="backSeat3ImageFile1" wire:model="roof_images" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat3Image1" src="{{asset('img/roofimage1.jpg')}}" style="cursor:pointer"  />
+                                            @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-12 mb-4">
-                    <div class="card">
-                        <div class="card-header text-center pt-4 pb-3">
-                            <h5 class="font-weight-bold mt-2">Interior Vehicle Images</h5>
-                        </div>
-                        <div class="card-body text-left pt-0">
-                            
-                            <div class="row m-4">
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="dashImage1File" wire:model="dash_image1" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="dashImage1" src="@if ($dash_image1) {{ $dash_image1->temporaryUrl() }} @else {{asset('img/dashImage1.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('dash_image1') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="dashImage2File" wire:model="dash_image2" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="dashImage2" src="@if ($dash_image2) {{ $dash_image2->temporaryUrl() }} @else {{asset('img/dashImage2.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('dash_image2') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <hr>
-                            </div>
-                            <div class="row m-4">
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="passengerSeatImageFile" wire:model="passenger_seat_image" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="passengerSeatImage" src="@if ($passenger_seat_image) {{ $passenger_seat_image->temporaryUrl() }} @else {{asset('img/passangerSeat1.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('passenger_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="driverSeatImageFile" wire:model="driver_seat_image" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="driverSeatImage" src="@if ($driver_seat_image) {{ $driver_seat_image->temporaryUrl() }} @else {{asset('img/driverSeat1.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('driver_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <hr>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="backSeat1ImageFile" wire:model="back_seat1" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="backSeat1Image" src="@if ($back_seat1) {{ $back_seat1->temporaryUrl() }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('back_seat1') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="backSeat1ImageFile" wire:model="back_seat1" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="backSeat1Image" src="@if ($back_seat2) {{ $back_seat2->temporaryUrl() }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
-                                    @error('back_seat2') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="backSeat3ImageFile" wire:model="back_seat3" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="backSeat3Image" src="@if ($back_seat3) {{ $back_seat3->temporaryUrl() }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('back_seat3') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="backSeat4ImageFile1" wire:model="back_seat4" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="backSeat4Image1" src="@if ($back_seat4) {{ $back_seat4->temporaryUrl() }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
-                                    @error('back_seat4') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12">
-                                    <input type="file" id="backSeat3ImageFile1" wire:model="roof_images" accept="image/*" capture style="display:none"/>
-                                    <img class="w-100" id="backSeat3Image1" src="@if ($roof_images) {{ $roof_images->temporaryUrl() }} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
-                                    @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
 
 
                 
@@ -673,6 +667,56 @@
             $("#backSeat3ImageFile1").trigger('click');
         });
     });
+
+    $("#upfile1").click(function () {
+        $("#file1").trigger('click');
+    });
+    $("#upfile2").click(function () {
+        $("#file2").trigger('click');
+    });
+    $("#upfile3").click(function () {
+        $("#file3").trigger('click');
+    });
+    $("#upfile4").click(function () {
+        $("#file4").trigger('click');
+    });
+    $("#upfile5").click(function () {
+        $("#file5").trigger('click');
+    });
+    $("#upfile6").click(function () {
+        $("#file6").trigger('click');
+    });
+    
+    $("#dashImage1").click(function () {
+        $("#dashImage1File").trigger('click');
+    });
+    $("#dashImage2").click(function () {
+        $("#dashImage2File").trigger('click');
+    });
+    $("#passengerSeatImage").click(function () {
+        $("#passengerSeatImageFile").trigger('click');
+    });
+    $("#driverSeatImage").click(function () {
+        $("#driverSeatImageFile").trigger('click');
+    });
+    $("#backSeat1Image").click(function () {
+        $("#backSeat1ImageFile").trigger('click');
+    });
+    $("#backSeat2Image").click(function () {
+        $("#backSeat2ImageFile").trigger('click');
+    });
+    $("#backSeat3Image").click(function () {
+        $("#backSeat3ImageFile").trigger('click');
+    });
+    $("#backSeat4Image").click(function () {
+        $("#backSeat4ImageFile").trigger('click');
+    });
+    $("#backSeat4Image1").click(function () {
+        $("#backSeat4ImageFile1").trigger('click');
+    });
+    $('#backSeat3Image1').click(function(){
+        $("#backSeat3ImageFile1").trigger('click');
+    });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript">
@@ -758,5 +802,6 @@ window.addEventListener('showSignature',event=>{
     // Remove single file from multiple uploaded files
     @this.removeUpload('plate_number_image', uploadedFilename, successCallback)
 </script>
+
 
 @endpush

@@ -27,6 +27,7 @@ use App\Models\CustomerServiceCart;
 class VehicleSearchSave extends Component
 {
     use WithFileUploads;
+    public $showWalkingCustomerPanel = true, $showContractCustomerPanel=false;
     public $searchByMobileNumber = true, $showSearchByMobileBtn=true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false, $showAddMakeModelNew=false;
     public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false, $numberPlateRequired=true, $searchByContractBtn=false, $showSearchContractCustomers=false, $showSaveContractCustomerVehicle=false, $showSaveCustomerVehicleOnly=false;
     public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category=2, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km, $contract_customer_id;
@@ -174,6 +175,57 @@ class VehicleSearchSave extends Component
 
     public function selectPendingVehicle($customer_id,$vehicle_id){
         return redirect()->to('/customer-service-job/'.$customer_id.'/'.$vehicle_id);
+    }
+
+    public function customerPanelTab($tab)
+    {
+        switch ($tab) {
+            case '1':
+                $this->showWalkingCustomerPanel = true;
+                $this->showContractCustomerPanel = false;
+
+                $this->searchByMobileNumberBtn=true;
+                $this->searchByMobileNumber=true;
+                $this->showByMobileNumber=true;
+                $this->showCustomerForm=false;
+                $this->searchByPlateBtn=false;
+                $this->showPlateNumber=false;
+                $this->showSearchByPlateNumberButton=false;
+                $this->searchByChaisisBtn=false;
+                $this->searchByChaisisForm=false;
+                $this->showSearchByChaisisButton=false;
+                $this->otherVehicleDetailsForm=false;
+                $this->searchByContractBtn=false;
+                $this->showSearchContractCustomers=false;
+                
+                break;
+            
+            case '2':
+                $this->showWalkingCustomerPanel = false;
+                $this->showContractCustomerPanel = true;
+
+                $this->searchByMobileNumberBtn=false;
+                $this->searchByMobileNumber=false;
+                $this->showByMobileNumber=false;
+                $this->showCustomerForm=false;
+                $this->searchByPlateBtn=false;
+                $this->showPlateNumber=false;
+                $this->showSearchByPlateNumberButton=false;
+                $this->searchByChaisisBtn=false;
+                $this->searchByChaisisForm=false;
+                $this->showSearchByChaisisButton=false;
+                $this->otherVehicleDetailsForm=false;
+                $this->searchByContractBtn=true;
+                $this->showSearchContractCustomers=true;
+
+                break;
+
+            default:
+                $this->showWalkingCustomerPanel = true;
+                $this->showContractCustomerPanel = false;
+                break;
+        }
+
     }
 
     public function clickSearchBy($searchId){
