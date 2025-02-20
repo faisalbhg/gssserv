@@ -41,7 +41,7 @@ class CarsTaxi extends Component
     public $jobCustomerInfo,$updateService=false;
     public $jobcardDetails, $showaddServiceItems=false;
     public $showVehicleImageDetails=false;
-    public $checkListDetails, $vehicleSidesImages, $vehicleCheckedChecklist;
+    public $checkListDetails, $vehicleSidesImages=[], $vehicleCheckedChecklist;
     public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $search_plate_state, $search_plate_code, $search_station;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
     public $customerjobservices =[];
@@ -521,6 +521,7 @@ class CarsTaxi extends Component
             $this->checklistLabels = ServiceChecklist::get();
             $this->vehicleCheckedChecklist = json_decode($this->jobcardDetails->checklistInfo['checklist'],true);
             $this->vehicleSidesImages = json_decode($this->jobcardDetails->checklistInfo['vehicle_image'],true);
+            //dd($this->vehicleSidesImages);
             $this->turn_key_on_check_for_fault_codes = $this->checkListDetails['turn_key_on_check_for_fault_codes'];
             $this->start_engine_observe_operation = $this->checkListDetails['start_engine_observe_operation'];
             $this->reset_the_service_reminder_alert = $this->checkListDetails['reset_the_service_reminder_alert'];

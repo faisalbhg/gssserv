@@ -763,7 +763,6 @@
                             
                             <div class="card-body text-left pt-0">
                                 <div class="row">
-                                    {{$vehicleSidesImages}}
                                     <div class="col-md-6 col-sm-6">
                                         <input type="file" id="img1File" wire:model="vImageR1" accept="image/*" capture style="display:block"/>
                                         <img class="w-75 float-end" id="img1" src="@if($vehicleSidesImages['vImageR1']) {{ url('public/storage/'.$vehicleSidesImages['vImageR1'])}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img1')" />
