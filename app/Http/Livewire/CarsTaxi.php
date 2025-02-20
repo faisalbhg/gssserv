@@ -507,7 +507,7 @@ class CarsTaxi extends Component
     {
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
-        $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
+        $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number,'is_contract'=>1])->first();
         $this->jobOrderReference=null;
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0)
         {
@@ -516,14 +516,11 @@ class CarsTaxi extends Component
             $this->jobOrderReference = $paymentResponseOrderResponse['orderReference'];
             //$this->checkPaymentStatus($this->jobcardDetails->job_number,$paymentResponseOrderResponse['orderReference'],$this->jobcardDetails->stationInfo['StationID']);
         }
-        
-        if($this->jobcardDetails->is_contract)
-        if($this->jobcardDetails->checklistInfo!=null){
+        if($this->jobcardDetails->checklistInfo){
             $this->checkListDetails=$this->jobcardDetails->checklistInfo;
             $this->checklistLabels = ServiceChecklist::get();
             $this->vehicleCheckedChecklist = json_decode($this->jobcardDetails->checklistInfo['checklist'],true);
             $this->vehicleSidesImages = json_decode($this->jobcardDetails->checklistInfo['vehicle_image'],true);
-            //dd($this->vehicleSidesImages);
             $this->turn_key_on_check_for_fault_codes = $this->checkListDetails['turn_key_on_check_for_fault_codes'];
             $this->start_engine_observe_operation = $this->checkListDetails['start_engine_observe_operation'];
             $this->reset_the_service_reminder_alert = $this->checkListDetails['reset_the_service_reminder_alert'];

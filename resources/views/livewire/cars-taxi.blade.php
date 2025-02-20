@@ -580,10 +580,11 @@
                     </div>
                 </div>
             @endif
-            @include('components.modals.customerSignatureModel')
+            
             
         @endif
     </div>
+    @include('components.modals.customerSignatureModel')
     @if($updateService)
             @include('components.modals.updateservice')
             @endif
@@ -613,10 +614,10 @@
       $('#serviceUpdateModal').modal('hide');
     });
 
-    window.addEventListener('imageUpload',event=>{ 
-        /*$('#plateImage').click(function(){
+    /*window.addEventListener('imageUpload',event=>{ 
+        $('#plateImage').click(function(){
             $("#plateImageFile").trigger('click');
-        });*/
+        });
         $("#upfile1").click(function () {
             $("#file1").trigger('click');
         });
@@ -716,7 +717,7 @@
     });
     $('#backSeat3Image1').click(function(){
         $("#backSeat3ImageFile1").trigger('click');
-    });
+    });*/
 </script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript">
