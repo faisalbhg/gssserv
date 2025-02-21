@@ -140,7 +140,8 @@
                                         <h6 class="mb-0 text-sm mt-0">{{$job->makeInfo['vehicle_name']}} - <small>{{$job->modelInfo['vehicle_model_name']}} </small></h6>
                                         <button class="btn {!!config('global.payment.status_class')[$job->payment_status]!!}" type="button">
                                             <span class="btn-inner--icon"><i class="fa-solid fa-money-bill-1-wave ms-1 fs-xl" style="font-size: 1.5em;" ></i></span>
-                                            {!!config('global.payment.type')[$job->payment_status]!!}
+                                            {!!config('global.payment.status')[$job->payment_status]!!}
+                                            
                                         </button>
                                     </div>
                                     <div class="ms-auto">
