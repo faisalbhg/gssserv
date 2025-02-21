@@ -28,7 +28,7 @@ class MaterialRequisition extends Component
     protected $paginationTheme = 'bootstrap';
     public $showServiceGroup=true, $showQWServiceMRItems=false, $showQWServiceMRSections=false;
     public $servicesGroupList,$sectionsLists, $service_group_id, $service_group_name, $service_group_code, $station, $propertyCode, $selectedSectionName;
-    public $mt_serive_item_search, $serviceMRAddedMessgae=[],$mRCartItems = [], $mRCartItemCount, $mRCardShow=false, $ql_item_qty, $confirming;
+    public $mt_serive_item_search, $serviceMRAddedMessgae=[],$mRCartItems = [], $mRCartItemCount, $mRCardShow=false, $mrItemQty, $confirming;
     public function render()
     {
         $this->getMRCartInfo();
@@ -49,7 +49,7 @@ class MaterialRequisition extends Component
             $this->showQWServiceMRItemsResults=true;
             $inventoryItemMasterLists = InventoryItemMaster::where('Active','=',1);
             if($this->mt_serive_item_search){
-                $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->mt_serive_item_search}%");
+                $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->mt_serive_item_search}%")->orWhere('ItemCode','like',"%{$this->mt_serive_item_search}%");
             }
             //dd($inventoryItemMasterLists->paginate(1));
             $data['serviceItemsList']=$inventoryItemMasterLists->whereIn('CategoryId',['21',])->paginate(20);
@@ -118,7 +118,7 @@ class MaterialRequisition extends Component
                 'section_code'=>$this->propertyCode,
                 'section_name'=>$this->selectedSectionName,
                 'unit_price'=>$items['UnitPrice'],
-                'quantity'=>isset($this->ql_item_qty[$items['ItemId']])?$this->ql_item_qty[$items['ItemId']]:1,
+                'ml_quantity'=>isset($this->mrItemQty[$items['ItemId']])?$this->mrItemQty[$items['ItemId']]:1,
                 'created_by'=>auth()->user('user')['id'],
                 'created_at'=>Carbon::now(),
             ];

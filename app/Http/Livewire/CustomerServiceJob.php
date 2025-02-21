@@ -778,11 +778,12 @@ class CustomerServiceJob extends Component
         //session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
     }
 
-    public function addtoCartItem($items,$discount)
+    public function addtoCartItem($ItemCode,$discount)
     {
-        $items = json_decode($items,true);
+        $items = InventoryItemMaster::where(['ItemCode'=>$ItemCode])->first();
+
         $discountPrice = json_decode($discount,true);
-        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items['ItemId']]);
+        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId]);
         if($customerBasketCheck->count())
         {
             $customerBasketCheck->increment('quantity', 1);
@@ -795,7 +796,7 @@ class CustomerServiceJob extends Component
                 $cartUpdate['start_date']=$discountPrice->StartDate;
                 $cartUpdate['end_date']=$discountPrice->EndDate;
                 $cartUpdate['discount_perc']=$discountPrice->DiscountPerc;
-                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items['ItemId']])->update($cartUpdate);
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->update($cartUpdate);
             }
             
         }
@@ -804,23 +805,23 @@ class CustomerServiceJob extends Component
             $cartInsert = [
                 'customer_id'=>$this->customer_id,
                 'vehicle_id'=>$this->vehicle_id,
-                'item_id'=>$items['ItemId'],
-                'item_code'=>$items['ItemCode'],
-                'company_code'=>$items['CompanyCode'],
-                'category_id'=>$items['CategoryId'],
-                'sub_category_id'=>$items['SubCategoryId'],
-                'brand_id'=>$items['BrandId'],
-                'bar_code'=>$items['BarCode'],
-                'item_name'=>$items['ItemName'],
+                'item_id'=>$items->ItemId,
+                'item_code'=>$items->ItemCode,
+                'company_code'=>$items->CompanyCode,
+                'category_id'=>$items->CategoryId,
+                'sub_category_id'=>$items->SubCategoryId,
+                'brand_id'=>$items->BrandId,
+                'bar_code'=>$items->BarCode,
+                'item_name'=>$items->ItemName,
                 'cart_item_type'=>2,
-                'description'=>$items['Description'],
+                'description'=>$items->Description,
                 'division_code'=>$this->station,
                 'department_code'=>$this->service_group_code,
                 'department_name'=>$this->service_group_name,
                 'section_code'=>$this->propertyCode,
                 'section_name'=>$this->selectedSectionName,
-                'unit_price'=>$items['UnitPrice'],
-                'quantity'=>isset($this->ql_item_qty[$items['ItemId']])?$this->ql_item_qty[$items['ItemId']]:1,
+                'unit_price'=>$items->UnitPrice,
+                'quantity'=>isset($this->ql_item_qty[$items->ItemId])?$this->ql_item_qty[$items->ItemId]:1,
                 'created_by'=>auth()->user('user')['id'],
                 'created_at'=>Carbon::now(),
             ];
@@ -840,7 +841,7 @@ class CustomerServiceJob extends Component
             }
             CustomerServiceCart::insert($cartInsert);
         }
-        $this->serviceAddedMessgae[$items['ItemCode']]=true;
+        $this->serviceAddedMessgae[$items->ItemCode]=true;
         //dd($this->sectionServiceLists);
         /*$this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',

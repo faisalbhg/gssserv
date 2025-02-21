@@ -68,14 +68,8 @@
                                                         
                                                     </div>
                                                     <div class="d-flex align-items-center text-sm">
-                                                        @if($item->quantity>1)<span class="px-2 cursor-pointer" wire:click="cartSetDownQty({{ $item->id }})">
-                                                            <i class="fa-solid fa-square-minus fa-xl"></i>
-                                                        </span>
-                                                        @endif
-                                                        {{$item->quantity}}
-                                                        <span class="px-2 cursor-pointer" wire:click="cartSetUpQty({{ $item->id }})">
-                                                            <i class="fa-solid fa-square-plus fa-xl"></i>
-                                                        </span>
+                                                        
+                                                        <label class="btn btn-outline-light text-dark">{{$item->ml_quantity}}</label>
                                                     </div>
                                                     
                                                 </li>
@@ -182,12 +176,12 @@
         @endif
         @if($showQWServiceMRItems)
             <div class="row" id="serviceItemsListDiv">
-                <div class="col-md-4 col-sm-6">
+                <div class="col-md-6 col-sm-6">
                     <div class="form-group">
                         <input type="text" wire:model="mt_serive_item_search" name="" id="seachByItemName" class=" mt-2 form-control" placeholder="Search Item Name..!">
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-6">
+                <div class="col-md-4 col-sm-6 d-none">
                     <div class="form-group">
                         <label for="seachByItemSubmit"></label>
                         <button class=" mt-2 btn bg-gradient-info" wire:click="searchServiceItems">Search</button>
@@ -214,7 +208,7 @@
                                     </p>
                                 </div>
                                 <div class="card-body text-lg-left text-center p-2">
-                                    <input type="number" class="form-control w-30 float-start" placeholder="Qty" wire:model.defer="ql_item_qty.{{$servicesItem->ItemId}}" style="padding-left:5px !important;" />
+                                    <input type="text" class="form-control w-30 float-start" placeholder="Qty" wire:model.defer="mrItemQty.{{$servicesItem->ItemId}}" style="padding-left:5px !important;" />
                                     <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem({{$servicesItem}})">Add Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
                                     </a>
                                 </div>

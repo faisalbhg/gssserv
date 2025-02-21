@@ -800,7 +800,7 @@
                                     </div>
                                     <div class="card-body text-lg-left text-center p-2">
                                         <input type="number" class="form-control w-30 float-start" placeholder="Qty" wire:model.defer="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" style="padding-left:5px !important;" />
-                                        <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$qlItemPriceDetails}}','{{$qlItemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                                        <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$qlItemPriceDetails->ItemCode}}','{{$qlItemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
                                         </a>
                                     </div>
                                     @if(@$serviceAddedMessgae[$qlItemPriceDetails->ItemCode])
@@ -1100,7 +1100,7 @@
                                 </div>
                                 <div class="card-body text-lg-left text-center p-2">
                                     <input type="number" class="form-control w-30 float-start" placeholder="Qty" wire:model.defer="ql_item_qty.{{$itemPriceDetails->ItemId}}" style="padding-left:5px !important;" />
-                                    <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$itemPriceDetails}}','{{$itemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                                    <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$itemPriceDetails->ItemCode}}','{{$itemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
                                     </a>
                                 </div>
                                 @if(@$serviceAddedMessgae[$itemPriceDetails->ItemCode])

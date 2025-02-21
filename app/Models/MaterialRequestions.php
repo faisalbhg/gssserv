@@ -40,6 +40,7 @@ class MaterialRequestions extends Model
         'discount_perc',
         'unit_price',
         'quantity',
+        'ml_quantity',
         'save_type',
         'created_by',
         'updated_by',
