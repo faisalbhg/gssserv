@@ -558,7 +558,7 @@
                                         <span class="mb-2 text-lg text-dark text-bold">
                                         Grand Total:
                                         </span>
-                                        <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($grand_total,2)}}</span>
+                                        <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($grand_total)}}</span>
                                     </div>
                                     @if($cardShow)
                                     <button type="button" class="btn bg-gradient-success btn-sm float-end" wire:click="submitService()">Confirm & Continue</button>

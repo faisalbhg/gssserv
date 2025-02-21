@@ -323,9 +323,9 @@ class SubmitCutomerServiceJob extends Component
             
             'job_date_time'=>Carbon::now(),
             'customer_id'=>$this->customer_id,
-            'customer_name'=>$this->mobile,
+            'customer_name'=>$this->name,
             'customer_email'=>$this->email,
-            'customer_mobile'=>$this->name,
+            'customer_mobile'=>$this->mobile,
             'vehicle_id'=>$this->vehicle_id,
             'vehicle_type'=>isset($this->selectedVehicleInfo['vehicle_type'])?$this->selectedVehicleInfo['vehicle_type']:0,
             'make'=>$this->selectedVehicleInfo['make'],
