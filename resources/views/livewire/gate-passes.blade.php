@@ -184,7 +184,7 @@
 
                                             @else
                                             
-                                                <span wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class=" my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer" > Mark as {{config('global.jobs.status')[$job->job_status+1]}}</span>
+                                                <button wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class=" my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer" > Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
                                             
 
                                             @endif
