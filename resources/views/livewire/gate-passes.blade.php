@@ -180,11 +180,11 @@
                                     <div class="col-12">
                                         @if($job->job_status==3)
                                             @if($job->payment_type!=4)
-                                                <span  @if($job->payment_status==1) wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class=" my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer" @else class="opacity-2 my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}" @endif > Mark as {{config('global.jobs.status')[$job->job_status+1]}}</span>
+                                                <button  @if($job->payment_status==1) wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class=" my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer" @else class="opacity-2 my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}" @endif > Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
 
                                             @else
                                             
-                                                <button wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class=" my-2 w-100 badge text-white text-lg  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer" > Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
+                                                <button wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class=" btn  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer" > Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
                                             
 
                                             @endif
