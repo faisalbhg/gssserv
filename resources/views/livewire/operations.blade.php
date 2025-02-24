@@ -61,6 +61,26 @@
         </div>
         </div>
       </div>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label for="selectJobType">Job Type</label>
+        <div class="form-group">
+          <select class="form-control" id="selectJobType" wire:model="search_jobType">
+            <option value="">-Select-</option>
+            <option >Quick Wash</option>
+            <option >General Service</option>
+            <option >Quick Lube</option>
+          </select>
+          <div wire:loading wire:target="search_jobType">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        </div>
+      </div>
       @endif
     </div>
   

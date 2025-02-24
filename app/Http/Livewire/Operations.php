@@ -82,7 +82,7 @@ class Operations extends Component
     public $propertyCode, $selectedSectionName;
     public $servicesGroupList, $sectionsLists=[], $sectionServiceLists=[];
     public $customerDiscontGroupId, $customerDiscontGroupCode;
-    public $quickLubeItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $showQuickLubeItemSearchItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range;
+    public $quickLubeItemsList=[], $quickLubeItemSearch='', $qlFilterOpen=false, $showQlItems=false, $showQlEngineOilItems=false, $showQlCategoryFilterItems=false, $showQuickLubeItemSearchItems=false, $itemQlCategories=[],  $ql_search_category, $ql_search_subcategory, $qlBrandsLists=[], $ql_search_brand, $ql_km_range, $search_jobType;
     public $customerJobServiceLogs;
     public $jobOrderReference;
 
@@ -149,6 +149,12 @@ class Operations extends Component
             //dd($this->search_station);
             $customerjobs = $customerjobs->where(['station'=>$this->search_station]);
             $getCountSalesJob = $getCountSalesJob->where(['station'=>$this->search_station]);
+        }
+        if($this->search_jobType){
+            //dd($this->search_station);
+            $customerjobs = $customerjobs->with(['customerJobServices'])->where(function ($query) {
+                $query->whereRelation('customerJobServices', 'department_name', '=', $this->search_jobType);
+            });
         }
         
         

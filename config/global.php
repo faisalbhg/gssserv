@@ -145,6 +145,11 @@ return [
             '3'=>'bg-gradient-info',
             '4'=>'bg-gradient-success',
         ],
+        'job_type' => [
+            "1"=>"Quick Wash",
+            "2"=>"General Service",
+            "3"=>"Quick Lube"
+        ],
     ],
 
     'job_status' => [

@@ -15,13 +15,14 @@
                 <div class="d-sm-flex justify-content-between">
                     <div>
                       <h5 class=" modal-title" id="serviceUpdateModalLabel">#{{$jobcardDetails->job_number}}</h5>
+                        <i class="far fa-calendar-alt me-2" aria-hidden="true"></i>
+                        <small>{{ \Carbon\Carbon::parse($jobcardDetails->job_date_time)->format('dS M Y h:i A') }}</small>
                     </div>
                     <div class="d-flex">
                     @if($jobcardDetails->payment_status==0)
                       <button wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end cursor-pointer">Add New Service/Items</button>
                     @endif
-                        <i class="far fa-calendar-alt me-2" aria-hidden="true"></i>
-                        <small>{{ \Carbon\Carbon::parse($jobcardDetails->job_date_time)->format('dS M Y h:i A') }}</small>
+                        
                       <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
                     </div>
                 </div>
@@ -929,7 +930,7 @@
                                         </div>
                                         <hr class="horizontal dark mt-0 mb-1">
                                         @if($services->service_item_type==1)
-                                            @if($services->department_code=='PP/00035')
+                                            @if($services->department_name=='Quick Wash')
 
                                                 @if($services->job_status==1)
                                                 <div class="row">
@@ -1130,10 +1131,10 @@
 
 
                                             
-                                            @if( ($services->department_code=='PP/00036' || $services->department_code=='PP/00037')) 
+                                            @if( ($services->department_name=='General Service' || $services->department_name=='Quick Lube')) 
                                                 @if($services->job_status==1)
                                                 <div class="row">
-                                                    @if($services->department_code=='PP/00036')
+                                                    @if($services->department_name=='General Service')
                                                     
                                                     <div class="col-md-4 mb-4">
                                                         <div class="card">
@@ -1477,12 +1478,12 @@
                                                 @if($services->job_status!=4)
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        @if($services->service_group_code=='PP/00036')
+                                                        @if($services->department_name=='General Service')
 
                                                         <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateGSService({{$services->id}})">
                                                             <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                         </a>
-                                                        @elseif($services->service_group_code=='PP/00037')
+                                                        @elseif($services->department_name=='Quick Lube')
                                                         <a class="btn btn-link text-dark p-0 mb-0 float-end" wire:click="updateQLService('{{$services}}')">
                                                             <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                         </a>
