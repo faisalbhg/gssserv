@@ -126,13 +126,13 @@
                                             <p class="text-xs font-weight-bold mb-0">{{$items->unit_messure}}</p>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{round($items->sale_price,2)}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{custom_round($items->sale_price)}}</p>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{round($items->vat,2)}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{custom_round($items->vat)}}</p>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{round(($items->sale_price+$items->vat),2)}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{custom_round(($items->sale_price+$items->vat))}}</p>
                                         </td>
                                         <td class="text-center">
                                             <p class="text-xs font-weight-bold mb-0 badge bg-gradient-dark">{{ \Carbon\Carbon::parse($items->start_date)->format('dS M Y H:i A') }} - {{ \Carbon\Carbon::parse($items->end_date)->format('dS M Y H:i A') }}</p>

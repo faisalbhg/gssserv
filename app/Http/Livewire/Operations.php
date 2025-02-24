@@ -970,9 +970,9 @@ class Operations extends Component
         
         $customerJobUpdate = 
             [
-                'total_price'=>round(($total+$oldTotalPrice),2),
-                'vat'=>round(($tax+$oldVat),2),
-                'grand_total'=>round(($grand_total+$oldGrandTotal),2),
+                'total_price'=>custom_round(($total+$oldTotalPrice)),
+                'vat'=>custom_round(($tax+$oldVat)),
+                'grand_total'=>custom_round(($grand_total+$oldGrandTotal)),
                 'job_status'=>1,
                 'job_departent'=>1,
                 'payment_status'=>0,
@@ -1057,9 +1057,9 @@ class Operations extends Component
 
         $customerJobUpdate = 
             [
-                'total_price'=>round(($total+$oldTotalPrice),2),
-                'vat'=>round(($tax+$oldVat),2),
-                'grand_total'=>round(($grand_total+$oldGrandTotal),2),
+                'total_price'=>custom_round(($total+$oldTotalPrice),2),
+                'vat'=>custom_round(($tax+$oldVat),2),
+                'grand_total'=>custom_round(($grand_total+$oldGrandTotal),2),
                 'job_status'=>1,
                 'job_departent'=>1,
                 'payment_status'=>0,

@@ -326,7 +326,7 @@
                                 </td>
                                 
                                 <td>
-                                  <p class="text-sm font-weight-bold mb-0">AED {{round($jobs->grand_total,2)}}</p>
+                                  <p class="text-sm font-weight-bold mb-0">AED {{custom_round($jobs->grand_total)}}</p>
                                 </td>
                                 <td>
                                     <span class="badge badge-sm {{config('global.payment.status_class')[$jobs->payment_status]}}">{{config('global.payment.status')[$jobs->payment_status]}}</span>

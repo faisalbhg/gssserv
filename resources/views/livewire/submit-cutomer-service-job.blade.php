@@ -116,10 +116,10 @@
                                                             
 
                                                             
-                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{round($item->unit_price)}}</button>
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{custom_round($item->unit_price)}}</button>
 
                                                             @if($item->customer_group_code)
-                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price))) }}</button>
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ custom_round($item->unit_price-(($item->discount_perc/100)*($item->unit_price))) }}</button>
                                                             @endif
 
                                                         </div>
@@ -129,7 +129,7 @@
                                                     <?php
                                                     $total = $total+$item->unit_price*$item->quantity;
                                                     if($item->discount_perc){
-                                                        $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*$item->unit_price)*$item->quantity);
+                                                        $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*$item->unit_price)*$item->quantity);
                                                         //echo $totalDiscount;
                                                     }
                                                     ?>

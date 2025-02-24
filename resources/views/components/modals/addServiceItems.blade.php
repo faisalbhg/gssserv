@@ -162,10 +162,10 @@
                                                                 </span>
 
                                                                 
-                                                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{round($item->unit_price,2)}}</button>
+                                                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{custom_round($item->unit_price)}}</button>
 
                                                                 @if($item->customer_group_code)
-                                                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)),2) }}</button>
+                                                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ custom_round($item->unit_price-(($item->discount_perc/100)*($item->unit_price))) }}</button>
                                                                 @endif
 
                                                             </div>
@@ -174,7 +174,7 @@
                                                         <hr class="horizontal dark mt-0 mb-2">
                                                         <?php
                                                         $total = $total+$item->unit_price*$item->quantity;
-                                                        $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2);
+                                                        $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*($item->unit_price*$item->quantity)));
                                                         ?>
                                                     @endforeach
                                                     <?php
@@ -194,33 +194,33 @@
                                             <span class="mb-2 text-sm">
                                             Product Price:
                                             </span>
-                                            <span class="text-dark font-weight-bold ms-2">{{config('global.CURRENCY')}} {{round($total,2)}}</span>
+                                            <span class="text-dark font-weight-bold ms-2">{{config('global.CURRENCY')}} {{custom_round($total)}}</span>
                                         </div>
                                         <div class="d-flex justify-content-between">
                                             <span class="mb-2 text-sm">
                                             Discount:
                                             </span>
-                                            <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalDiscount,2)}}</span>
+                                            <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{custom_round($totalDiscount)}}</span>
                                         </div>
                                         <hr class="horizontal dark my-2">
                                         <div class="d-flex justify-content-between mt-2">
                                             <span class="mb-2 text-md text-dark text-bold">
                                             Total:
                                             </span>
-                                            <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalAfterDisc,2)}}</span>
+                                            <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{custom_round($totalAfterDisc)}}</span>
                                         </div>
                                         <div class="d-flex justify-content-between">
                                             <span class="text-sm">
                                             Taxes:
                                             </span>
-                                            <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($tax,2)}}</span>
+                                            <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{custom_round($tax)}}</span>
                                         </div>
                                         <hr class="horizontal dark my-2">
                                         <div class="d-flex justify-content-between mt-2">
                                             <span class="mb-2 text-lg text-dark text-bold">
                                             Grand Total:
                                             </span>
-                                            <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($grand_total,2)}}</span>
+                                            <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{custom_round($grand_total)}}</span>
                                         </div>
                                         <button type="button" class="btn bg-gradient-success btn-sm float-end" wire:click="submitService()">Confirm & Continue</button>
                                     </div>
@@ -409,16 +409,16 @@
                                                         <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$qlItemPriceDetails->ItemId}}"></textarea > -->
                                                         <div class="ms-auto">
                                                             @if(!empty($qlItemDiscountDetails))
-                                                                <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc,2)}}%off</span>
+                                                                <span class="badge bg-gradient-info">{{custom_round($qlItemDiscountDetails->DiscountPerc)}}%off</span>
                                                             @endif
                                                         </div>
                                                     </div>
                                                     <div class="card-body text-lg-left text-center pt-0">
-                                                        <h4 class="my-auto me-2" @if($qlItemDiscountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($qlItemPriceDetails->UnitPrice,2)}}
+                                                        <h4 class="my-auto me-2" @if($qlItemDiscountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{custom_round($qlItemPriceDetails->UnitPrice)}}
                                                         </h4>
                                                         @if($qlItemDiscountDetails != null)
                                                         <h4 class="my-auto">
-                                                        <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($qlItemPriceDetails->UnitPrice-(($qlItemDiscountDetails->DiscountPerc/100)*$qlItemPriceDetails->UnitPrice),2) }}
+                                                        <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ custom_round($qlItemPriceDetails->UnitPrice-(($qlItemDiscountDetails->DiscountPerc/100)*$qlItemPriceDetails->UnitPrice)) }}
                                                         </h4>
                                                         @endif
                                                         <div class="row">
@@ -512,7 +512,7 @@
                                             <h6>{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</h6>
                                             <div class="ms-auto">
                                                 @if(!empty($discountDetails))
-                                                    <span class="badge bg-gradient-info">{{round($discountDetails->DiscountPerc,2)}}%off</span>
+                                                    <span class="badge bg-gradient-info">{{custom_round($discountDetails->DiscountPerc)}}%off</span>
                                                 @endif
                                                 
                                             </div>
@@ -523,11 +523,11 @@
                                         <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea > -->
                                         <div class="d-flex border-radius-lg p-0 mt-2">
                                             
-                                            <h4 class="my-auto me-2" @if($discountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{round($priceDetails->UnitPrice,2)}}
+                                            <h4 class="my-auto me-2" @if($discountDetails != null) style="text-decoration: line-through;" @endif>{{config('global.CURRENCY')}} {{custom_round($priceDetails->UnitPrice)}}
                                             </h4>
                                             @if($discountDetails != null)
                                             <h4 class="my-auto">
-                                            <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($priceDetails->UnitPrice-(($discountDetails->DiscountPerc/100)*$priceDetails->UnitPrice),2) }}
+                                            <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ custom_round($priceDetails->UnitPrice-(($discountDetails->DiscountPerc/100)*$priceDetails->UnitPrice)) }}
                                             </h4>
                                             
                                             @endif
@@ -615,7 +615,7 @@
                                             </h4>
                                             <small>{{$itemPriceDetails->ItemCode}}</small>
                                             <h4 class="font-weight-bold mt-2">
-                                                <small>AED</small>{{round($itemPriceDetails->UnitPrice,2)}}
+                                                <small>AED</small>{{custom_round($itemPriceDetails->UnitPrice)}}
                                             </h4>
                                         </div>
                                         <div class="card-body text-lg-left text-center pt-0">

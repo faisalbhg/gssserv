@@ -25,7 +25,7 @@
                         <span class="w-100 badge badge-sm {{config('global.payment.status_class')[$jobDetails->payment_status]}}">Payment: {{config('global.payment.status')[$jobDetails->payment_status]}}</span>
                         <div class="text-center py-1">
                             <div class="d-flex flex-column justify-content-center">
-                              <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">AED {{round($jobDetails->grand_total,2)}}</span></p>
+                              <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">AED {{custom_round($jobDetails->grand_total)}}</span></p>
                               <hr class="my-1">
                               @if($jobDetails->payment_type!=null)
                               <p class="text-sm text-gradient {{config('global.payment.text_class')[$jobDetails->payment_type]}}  font-weight-bold mb-0">{{config('global.payment.type')[$jobDetails->payment_type]}}</p>

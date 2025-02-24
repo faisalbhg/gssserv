@@ -75,9 +75,9 @@
                                     </div>
                                     @endif
                                     <div class="col-4 my-auto text-end">
-                                        <p class="mb-0"><strong>AED {{round($customerJobServices->total_price,2)}}</strong></p>
+                                        <p class="mb-0"><strong>AED {{custom_round($customerJobServices->total_price)}}</strong></p>
                                         <p class="text-xxs mt-0 mb-0">Qty: <a href="javascript:;">{{$customerJobServices->quantity}}</a></p>
-                                        <p class="text-xs mt-0 mb-0">Vat: <a href="javascript:;">{{round($customerJobServices->vat,2)}}</a></p>
+                                        <p class="text-xs mt-0 mb-0">Vat: <a href="javascript:;">{{custom_round($customerJobServices->vat)}}</a></p>
                                     </div>
                                     <hr class="mt-1">
                                     @endforeach
@@ -113,7 +113,7 @@
                                         <h6 class="mb-3">Order Summary</h6>
                                         <div class="d-flex justify-content-between">
                                             <span class="mb-2 text-sm">Product Price:</span>
-                                            <span class="text-dark font-weight-bold ms-2">{{round($jobInvoiceDetails->total_price,2)}}</span>
+                                            <span class="text-dark font-weight-bold ms-2">{{custom_round($jobInvoiceDetails->total_price)}}</span>
                                         </div>
                                         <div class="d-flex justify-content-between">
                                             <span class="mb-2 text-sm">Discount:</span>
@@ -121,11 +121,11 @@
                                         </div>
                                         <div class="d-flex justify-content-between">
                                             <span class="text-sm">Vat:</span>
-                                            <span class="text-dark ms-2 font-weight-bold">AED {{round($jobInvoiceDetails->vat,2)}}</span>
+                                            <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($jobInvoiceDetails->vat)}}</span>
                                         </div>
                                         <div class="d-flex justify-content-between mt-4">
                                             <span class="mb-2 text-lg">Total:</span>
-                                            <span class="text-dark text-lg ms-2 font-weight-bold">AED {{round($jobInvoiceDetails->total_price+$jobInvoiceDetails->vat,2)}}</span>
+                                            <span class="text-dark text-lg ms-2 font-weight-bold">AED {{custom_round($jobInvoiceDetails->total_price+$jobInvoiceDetails->vat)}}</span>
                                         </div>
 
                                         <div class="card card-body border card-plain border-radius-lg d-flex align-items-center flex-row">

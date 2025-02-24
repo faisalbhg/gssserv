@@ -156,7 +156,7 @@
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center text-dark text-gradient text-sm font-weight-bold">
-                                            {{config('global.CURRENCY')}} {{round($total_price,2)}}
+                                            {{config('global.CURRENCY')}} {{custom_round($total_price)}}
                                         </div>
                                     </li>
                                     <li class="list-group-item border-0 d-flex justify-content-between p-0 mb-0 border-radius-lg">
@@ -167,7 +167,7 @@
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center text-dark text-gradient text-sm font-weight-bold">
-                                            {{config('global.CURRENCY')}} {{round($vat,2)}}
+                                            {{config('global.CURRENCY')}} {{custom_round($vat)}}
                                         </div>
                                     </li>
                                     <li class="list-group-item border-0 d-flex justify-content-between p-0 mb-0 border-radius-lg">
@@ -178,7 +178,7 @@
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center text-dark text-gradient text-md font-weight-bold">
-                                            {{config('global.CURRENCY')}} {{round(($total_price+$vat),2)}}
+                                            {{config('global.CURRENCY')}} {{custom_round(($total_price+$vat))}}
                                         </div>
                                     </li>
                                     <li class="list-group-item border-0 d-flex justify-content-between p-0 mb-2 border-radius-lg">

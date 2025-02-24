@@ -117,14 +117,14 @@
                                         @else
                                         <span class="ps-3">{{$packageDetails->inventoryItemDetails['ItemName']}}</span>
                                         @endif
-                                        <p class="ps-3 h6"><small><s>AED {{round($packageDetails->UnitPrice)}}</s> {{round($packageDetails->DiscountedPrice)}}</small></p>
+                                        <p class="ps-3 h6"><small><s>AED {{custom_round($packageDetails->UnitPrice)}}</s> {{custom_round($packageDetails->DiscountedPrice)}}</small></p>
                                     </div>
                                 </div>
                                 @endif  
                             @endforeach
                             
                             <h3 class="text-default font-weight-bold mt-2"></h3>
-                            <p class="text-center h4"><s><small>AED</small> {{round($totalPrice)}}</s> <small>AED</small> {{round($discountedPrice)}}</p>
+                            <p class="text-center h4"><s><small>AED</small> {{custom_round($totalPrice)}}</s> <small>AED</small> {{custom_round($discountedPrice)}}</p>
                             <div class="text-center align-center">
 
                             </div>
@@ -141,12 +141,12 @@
                             
                         </div>
                         <div class="card-body text-lg-left text-center pt-0">
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ round($total) }}</span></p>
+                            <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ custom_round($total) }}</span></p>
                             @if($totalDiscount>0 )
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ round($totalDiscount) }}</span></p>
+                            <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ custom_round($totalDiscount) }}</span></p>
                             @endif
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ round($tax) }}</span></p>
-                            <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ round(($grand_total)) }}</span></p>
+                            <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ custom_round($tax) }}</span></p>
+                            <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ custom_round(($grand_total)) }}</span></p>
                             
                             
                         </div>

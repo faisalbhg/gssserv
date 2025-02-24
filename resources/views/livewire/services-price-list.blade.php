@@ -166,7 +166,7 @@
                                             <p class="text-xs font-weight-bold mb-0">{{$servicePrice->serviceInfo['service_name']}}</p>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">AED {{round($servicePrice->unit_price,2)}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">AED {{custom_round($servicePrice->unit_price)}}</p>
                                         </td>
                                         <td class="text-center">
                                             <p class="text-xs font-weight-bold mb-0">
@@ -190,7 +190,7 @@
                                         </td>
                                         <td class="text-center">
                                             @if($servicePrice->discount_amount)
-                                            <p class="text-xs font-weight-bold mb-0">AED {{round($servicePrice->final_price_after_dicount,2)}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">AED {{custom_round($servicePrice->final_price_after_dicount)}}</p>
                                             @endif
                                         </td>
                                         <td class="text-center">

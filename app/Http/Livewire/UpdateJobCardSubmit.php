@@ -114,7 +114,7 @@ class UpdateJobCardSubmit extends Component
                     $discountGroupCode = $item->customer_group_code;
                     $discountGroupDiscountPercentage = $item->discount_perc;
                     $discountGroupPrice = $item->customer_id;
-                    $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2);
+                    $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*($item->unit_price*$item->quantity)));
                 }
                 if($item->department_name=='Quick Lube'  || $item->department_name=='General Service')
                 {
@@ -265,7 +265,7 @@ class UpdateJobCardSubmit extends Component
                     $customerJobServiceDataUpdate['discount_code']=$cartData->customer_group_code;
                     $customerJobServiceDataUpdate['discount_title']=$cartData->customer_group_code;
                     $customerJobServiceDataUpdate['discount_percentage'] = $cartData->discount_perc;
-                    $customerJobServiceDiscountAmount = round((($cartData->discount_perc/100)*($cartData->unit_price*$cartData->quantity)),2);
+                    $customerJobServiceDiscountAmount = custom_round((($cartData->discount_perc/100)*($cartData->unit_price*$cartData->quantity)));
                     $customerJobServiceDataUpdate['discount_amount'] = $customerJobServiceDiscountAmount;
                     $customerJobServiceDataUpdate['discount_start_date']=$cartData->start_date;
                     $customerJobServiceDataUpdate['discount_end_date']=$cartData->end_date;
@@ -354,7 +354,7 @@ class UpdateJobCardSubmit extends Component
                     $customerJobServiceData['discount_code']=$cartData->customer_group_code;
                     $customerJobServiceData['discount_title']=$cartData->customer_group_code;
                     $customerJobServiceData['discount_percentage'] = $cartData->discount_perc;
-                    $customerJobServiceDiscountAmount = round((($cartData->discount_perc/100)*($cartData->unit_price*$cartData->quantity)),2);
+                    $customerJobServiceDiscountAmount = custom_round((($cartData->discount_perc/100)*($cartData->unit_price*$cartData->quantity)));
                     $customerJobServiceData['discount_amount'] = $customerJobServiceDiscountAmount;
                     $customerJobServiceData['discount_start_date']=$cartData->start_date;
                     $customerJobServiceData['discount_end_date']=$cartData->end_date;

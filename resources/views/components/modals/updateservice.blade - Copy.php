@@ -154,7 +154,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                                                                {{config('global.CURRENCY')}} {{round($serviceItems->grand_total,2)}}
+                                                                                {{config('global.CURRENCY')}} {{custom_round($serviceItems->grand_total)}}
                                                                                 </div>
                                                                             </li>
                                                                             <?php $discountPS = $discountPS+$serviceItems->discount_amount; ?>
@@ -185,7 +185,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                                                                {{config('global.CURRENCY')}} {{round($discountPS,2)}}
+                                                                                {{config('global.CURRENCY')}} {{custom_round($discountPS)}}
                                                                                 </div>
                                                                             </li>
                                                                             @endif
@@ -198,7 +198,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                                                                {{config('global.CURRENCY')}} {{round($vat,2)}}
+                                                                                {{config('global.CURRENCY')}} {{custom_round($vat)}}
                                                                                 </div>
                                                                             </li>
                                                                             <hr class="horizontal dark mt-3">
@@ -212,7 +212,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center text-success text-gradient text-md font-weight-bold">
-                                                                                {{config('global.CURRENCY')}} {{round(($total_price+$vat),2)}}
+                                                                                {{config('global.CURRENCY')}} {{custom_round(($total_price+$vat))}}
                                                                                 </div>
                                                                             </li>
                                                                             
@@ -272,13 +272,13 @@
                                                 @endif
                                                 
                                                 <!-- <p class="text-sm font-weight-bold mb-0">
-                                                    <span class="mb-2 text-xs">Price: <span class="text-dark ms-2 font-weight-bold">AED {{round($services->total_price,2)}}</span></span>
+                                                    <span class="mb-2 text-xs">Price: <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($services->total_price)}}</span></span>
                                                 </p>
                                                 <p class="text-sm font-weight-bold mb-0">
-                                                    <span class="text-xs">VAT: <span class="text-dark ms-2 font-weight-bold">AED {{round($services->vat,2)}}</span></span>
+                                                    <span class="text-xs">VAT: <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($services->vat)}}</span></span>
                                                 </p>
                                                 <p class="text-sm font-weight-bold mb-2">
-                                                    <span class="text-md text-dark">Grand Total: <span class="text-dark ms-2 font-weight-bold">AED {{round($services->grand_total,2)}}</span></span>
+                                                    <span class="text-md text-dark">Grand Total: <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($services->grand_total)}}</span></span>
                                                 </p> -->
                                             </div>
                                             <div class="col-md-4">

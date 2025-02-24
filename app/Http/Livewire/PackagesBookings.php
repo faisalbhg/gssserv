@@ -58,10 +58,10 @@ class PackagesBookings extends Component
                 $totalPrice = $totalPrice+($packgInfo->UnitPrice*$packgInfo->Quantity);
                 $discountedPrice = $discountedPrice+($packgInfo->DiscountedPrice*$packgInfo->Quantity);
              }
-             $this->total = round($totalPrice);
-             $this->totalDiscount = round($discountedPrice);
-             $this->tax = round($discountedPrice * (config('global.TAX_PERCENT') / 100));
-             $this->grand_total = round($this->tax+$this->totalDiscount);
+             $this->total = custom_round($totalPrice);
+             $this->totalDiscount = custom_round($discountedPrice);
+             $this->tax = custom_round($discountedPrice * (config('global.TAX_PERCENT') / 100));
+             $this->grand_total = custom_round($this->tax+$this->totalDiscount);
              $this->packageInfo = $packageInfoResult;
              //dd($this->packageInfo);
         }
@@ -307,7 +307,7 @@ class PackagesBookings extends Component
             $order_billing_email = $customerjobs->customerInfo['Email'];
         }
         
-        $total = round(($customerjobs->grand_total),2);
+        $total = custom_round(($customerjobs->grand_total));
         $merchant_reference = $customerjobs->package_number;
         $order_billing_phone = str_replace(' ', '', $order_billing_phone);
         $order_billing_phone = "00971".$order_billing_phone;

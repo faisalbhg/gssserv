@@ -260,7 +260,7 @@ class Finance extends Component
         $order_billing_name = $customerjobs->customerInfo['name'];
         $order_billing_phone = $customerjobs->customerInfo['mobile'];
         $order_billing_email = $customerjobs->customerInfo['email']; 
-        $total = round(($customerjobs->grand_total * 100),2);
+        $total = custom_round(($customerjobs->grand_total * 100));
         $merchant_reference = $customerjobs->job_number;
         $order_billing_phone = str_replace(' ', '', $order_billing_phone);
         if($order_billing_phone[0] != 0 and $order_billing_phone[1] != 0)

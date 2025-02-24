@@ -45,7 +45,7 @@
                     </td>
                     
                     <td>
-                      <p class="text-sm font-weight-bold mb-0">AED {{round($jobs->grand_total,2)}}</p>
+                      <p class="text-sm font-weight-bold mb-0">AED {{custom_round($jobs->grand_total)}}</p>
                     </td>
                     <td>
                       <p class="text-sm text-gradient {{config('global.payment_type_text_class')[$jobs->payment_type]}}  font-weight-bold mb-0">{{config('global.payment_type')[$jobs->payment_type]}}</p>

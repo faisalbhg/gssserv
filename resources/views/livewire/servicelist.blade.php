@@ -88,7 +88,7 @@
                                             <p class="text-xs font-weight-bold mb-0">{{$service->customerType}}</p>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">AED {{round($service->unit_price,2)}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">AED {{custom_round($service->unit_price)}}</p>
                                         </td>
                                         <td class="text-center">
                                             <p class="text-xs font-weight-bold mb-0">{{$service->department_name}}</p>

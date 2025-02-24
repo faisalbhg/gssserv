@@ -428,7 +428,7 @@
                                                     </td>
                                                     
                                                     <td class="hidden text-right md:table-cell">
-                                                        <p class="text-xs font-weight-bold mb-0">AED {{ round($item->price,2) }}</p>
+                                                        <p class="text-xs font-weight-bold mb-0">AED {{ custom_round($item->price) }}</p>
                                                     </td>
                                                     <td class="justify-center mt-6 md:justify-end md:flex">
                                                         <div class="h-10 w-28">
@@ -594,7 +594,7 @@
                                           <div class="card-header text-center pt-4 pb-3">
                                             <span class="badge rounded-pill bg-light text-dark">{{$servicesItem['item_name']}}</span>
                                             <h1 class="font-weight-bold mt-2">
-                                              <small>AED</small>{{round($items->sale_price,2)}}
+                                              <small>AED</small>{{custom_round($items->sale_price)}}
                                             </h1>
                                           </div>
                                           <div class="card-body text-lg-left text-center pt-0">
@@ -617,7 +617,7 @@
                                             <div class="card-header text-center pt-4 pb-3">
                                                 <span class=" text-dark">{{$servicesType->service_type_name}}</span>
                                                 <h2 class="font-weight-bold mt-2">
-                                                  <small>AED</small>{{round($servicesType->unit_price,2)}}
+                                                  <small>AED</small>{{custom_round($servicesType->unit_price)}}
                                                 </h2>
                                             </div>
                                           <div class="card-body text-lg-left text-center pt-0">

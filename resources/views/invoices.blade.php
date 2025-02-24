@@ -110,12 +110,12 @@
             <tr>
                 <td class="tdrow">{{$keyno+1}}</td>
                 <td class="tdrow">{{$customerJobServices->service_type_name}}({{$customerJobServices->service_group_name}})</td>
-                <td class="tdrow">{{round($customerJobServices->total_price,2)}}</td>
+                <td class="tdrow">{{custom_round($customerJobServices->total_price)}}</td>
                 <td class="tdrow"></td>
-                <td class="tdrow">{{round($customerJobServices->vat,2)}}</td>
+                <td class="tdrow">{{custom_round($customerJobServices->vat)}}</td>
                 <td class="tdrow">{{$customerJobServices->quantity}}</td>
-                <td class="tdrow">{{round(($customerJobServices->total_price+$customerJobServices->vat),2)}}</td>
-                <td class="tdrow">{{round(($customerJobServices->total_price+$customerJobServices->vat)*$customerJobServices->quantity,2)}}</td>
+                <td class="tdrow">{{custom_round(($customerJobServices->total_price+$customerJobServices->vat))}}</td>
+                <td class="tdrow">{{custom_round(($customerJobServices->total_price+$customerJobServices->vat)*$customerJobServices->quantity)}}</td>
             </tr>
             @endforeach
             <tr style="border-top:1px solid #000;">
@@ -131,7 +131,7 @@
                     <strong>Total Before VAT/<span style="direction: rtl; text-align: right;">المجموغ </span></strong>
                 </td>
                 <td class="tdrow" colspan="2" style="float:right; text-align: right; padding-right: 5px;">
-                    <strong>{{round($jobInvoiceDetails->total_price,2)}}</strong>
+                    <strong>{{custom_round($jobInvoiceDetails->total_price)}}</strong>
                 </td>
             </tr>
             <tr>
@@ -139,7 +139,7 @@
                     <strong>VAT Amount/<span style="direction: rtl; text-align: right;">قيمة الضريبة:</span> </strong>
                 </td>
                 <td class="tdrow" colspan="2" style="float:right; text-align: right; padding-right: 5px;">
-                    <strong>{{round($jobInvoiceDetails->vat,2)}}</strong><br>
+                    <strong>{{custom_round($jobInvoiceDetails->vat)}}</strong><br>
                 </td>
             </tr>
             <tr>
@@ -147,7 +147,7 @@
                     <strong>Net Amount AED/<span style="direction: rtl; text-align: right;">السعر النهايء بالدرهم:</span></strong>
                 </td>
                 <td class="tdrow" colspan="2" style="float:right; text-align: right; padding-right: 5px; font-size: 16px; font-weight:bold;">
-                    <strong>{{round($jobInvoiceDetails->total_price,2)}}</strong>
+                    <strong>{{custom_round($jobInvoiceDetails->total_price)}}</strong>
                 </td>
             </tr>
             <tr style="border-top:1px solid #000; ">

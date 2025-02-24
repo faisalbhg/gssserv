@@ -2039,7 +2039,7 @@ class Jobcard extends Component
                 $showchecklist=true;
             }
             $this->total = $this->total+($items->quantity*$items->price);
-            $this->totalDiscount = $this->totalDiscount+round((($items->discount_perc/100)*($items->unit_price*$items->quantity)),2);
+            $this->totalDiscount = $this->totalDiscount+custom_round((($items->discount_perc/100)*($items->unit_price*$items->quantity)));
         }
         
         if($showchecklist==true)
@@ -2134,7 +2134,7 @@ class Jobcard extends Component
                 $discountGroupCode = $item->customer_group_code;
                 $discountGroupDiscountPercentage = $item->discount_perc;
                 $discountGroupPrice = $item->customer_id;
-                $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*($item->unit_price*$item->quantity)),2);
+                $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*($item->unit_price*$item->quantity)));
             }
             if($item->department_code=='PP/00036'  || $item->department_code=='PP/00037')
             {
@@ -2264,7 +2264,7 @@ class Jobcard extends Component
                 $customerJobServiceData['discount_code']=$cartData->customer_group_code;
                 $customerJobServiceData['discount_title']=$cartData->customer_group_code;
                 $customerJobServiceData['discount_percentage'] = $cartData->discount_perc;
-                $customerJobServiceDiscountAmount = round((($cartData->discount_perc/100)*($cartData->unit_price*$cartData->quantity)),2);
+                $customerJobServiceDiscountAmount = custom_round((($cartData->discount_perc/100)*($cartData->unit_price*$cartData->quantity)));
                 $customerJobServiceData['discount_amount'] = $customerJobServiceDiscountAmount;
                 $customerJobServiceData['discount_start_date']=$cartData->start_date;
                 $customerJobServiceData['discount_end_date']=$cartData->end_date;
@@ -2289,7 +2289,7 @@ class Jobcard extends Component
                 $customerJobServiceData['discount_code']=$this->customerSelectedDiscountGroup['discount_code'];
                 $customerJobServiceData['discount_title']=$this->customerSelectedDiscountGroup['discount_title'];
                 $customerJobServiceData['discount_percentage'] = $cartData->discount_perc;
-                $customerJobServiceData['discount_amount'] = round((($cartData->discount_perc/100)*$cartData->unit_price),2);
+                $customerJobServiceData['discount_amount'] = custom_round((($cartData->discount_perc/100)*$cartData->unit_price),2);
             }*/
             //dd($customerJobServiceData);
             $customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
@@ -2506,7 +2506,7 @@ class Jobcard extends Component
         $order_billing_name = $customerjobs->customerInfo['TenantName'];
         $order_billing_phone = $customerjobs->customerInfo['Mobile'];
         $order_billing_email = $customerjobs->customerInfo['Email']; 
-        $total = round(($customerjobs->grand_total),2);
+        $total = custom_round(($customerjobs->grand_total));
         $merchant_reference = $customerjobs->job_number;
         $order_billing_phone = str_replace(' ', '', $order_billing_phone);
         if($order_billing_phone[0] != 0 and $order_billing_phone[1] != 0)

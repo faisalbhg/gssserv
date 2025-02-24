@@ -75,7 +75,7 @@
                                                 
                                             </div>
                                             <div class="d-flex align-items-center text-danger text-sm font-weight-bold ms-auto">
-                                            <del class="text-secondary me-2">AED {{round($packageDetails['UnitPrice'],2)}}</del>  AED {{round($packageDetails['DiscountedPrice'],2)}}
+                                            <del class="text-secondary me-2">AED {{custom_round($packageDetails['UnitPrice'])}}</del>  AED {{custom_round($packageDetails['DiscountedPrice'])}}
                                             </div>
                                         </div>
                                         <hr class="horizontal dark mt-3 mb-2">
