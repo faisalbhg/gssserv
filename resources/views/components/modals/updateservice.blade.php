@@ -1134,6 +1134,7 @@
                                             @if( ($services->department_name=='General Service' || $services->department_name=='Quick Lube')) 
                                                 @if($services->job_status==1)
                                                 <div class="row">
+                                                    
                                                     @if($services->department_name=='General Service')
                                                     
                                                     <div class="col-md-4 mb-4">
@@ -1684,37 +1685,41 @@
        </div>
     </div>
     <div wire:loading wire:target="checkPaymentStatus">
-      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-        <div class="la-ball-beat">
-            <div></div>
-            <div></div>
-            <div></div>
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
     </div>
     <div wire:loading wire:target="updateQwService">
-      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-        <div class="la-ball-beat">
-            <div></div>
-            <div></div>
-            <div></div>
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
     </div>
     <div wire:loading wire:target="addNewServiceItemsJob">
-      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-        <div class="la-ball-beat">
-            <div></div>
-            <div></div>
-            <div></div>
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
     </div>
 
     <div wire:loading wire:target="clickQlOperation">
-      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-          <div class="la-ball-beat">
-              <div></div>
-              <div></div>
-              <div></div>
-          </div>
-      </div>
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
 
 </div>

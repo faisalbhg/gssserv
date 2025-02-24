@@ -60,6 +60,7 @@ class CustomerJobCardServices extends Model
         'is_blocked',
         'created_at',
         'uppdated_at',
+        
     ];
 
     public function customerJobServiceLogs()

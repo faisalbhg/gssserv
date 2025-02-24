@@ -1080,30 +1080,36 @@ class Operations extends Component
     public function clickQlOperation($in_out,$up_ser,$service)
     {
         $service = CustomerJobCardServices::find($service);
-        
+        //dd($service);
         if($in_out=='start')
         {
-            $serviceUpdate = [$up_ser.'_time_in' => Carbon::now()];
-            $serviceUpdate = [$up_ser => 1];
+            $serviceUpdate[$up_ser.'_time_in'] = Carbon::now();
+            $serviceUpdate[$up_ser]=1;
         }
         else if($in_out=='stop')
         {
-            $serviceUpdate = [$up_ser.'_time_in' => Carbon::now()];
-            $serviceUpdate = [$up_ser => 2];
+            $serviceUpdate[$up_ser.'_time_in'] = Carbon::now();
+            $serviceUpdate[$up_ser] = 2;
         }
-        CustomerJobCardServices::find($service['id'])->update($serviceUpdate);
+        //dd($serviceUpdate);
+        CustomerJobCardServices::where(['id'=>$service->id,'job_number'=>$service->job_number])->update($serviceUpdate);
         
         $serviceJobUpdateLog = [
             'job_number'=>$service['job_number'],
-            'customer_job_service_id'=>$service['id'],
+            'customer_job__card_service_id'=>$service['id'],
             'job_status'=>$service['job_status'],
             'job_departent'=>$service['job_departent'],
             'job_description'=>json_encode($serviceUpdate),
         ];
         CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
 
-        $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service['job_number']])->get();
+        //$this->customerJobUpdate($service['job_number']);
+        //$this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service['job_number']])->get();
         //dd($this->customerjobservices);
+        $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$service['job_number']])->first();
+        $this->jobcardDetails = $job;
+        //dd($this->jobcardDetails);
+        $this->customerjobservices = $job->customerJobServices;
     }
 
     public function addNewServiceItemsJob($job_number){
