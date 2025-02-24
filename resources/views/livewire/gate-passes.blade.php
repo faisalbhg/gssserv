@@ -40,7 +40,7 @@
 
             <div class="row">
                 <div class="col-md-8 me-auto text-left">
-                    <h5>Dubai Car Taxi Contract List On {{\Carbon\Carbon::parse($search_job_date)->format('dS M Y')}}</h5>
+                    <h5>Gate Pass {{ auth()->user('user')['stationName']['CorporateName']}}</h5>
                 </div>
             </div>
 
