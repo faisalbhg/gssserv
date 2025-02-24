@@ -76,6 +76,24 @@
                                     @if($selectedVehicleInfo['vehicle_km'])
                                     <b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
                                     @endif
+                                    @if($show_staff_details)
+                                    <div class="row p-4">
+                                        <div class="col-md-6 col-sm-6">
+                                            <label for="staffIdInput">Staff ID</label>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" wire:model="staff_id"  name="staff_id" id="staffIdInput" style="padding-left:10px !important;" placeholder="Staff ID" />
+                                            </div>
+                                            @error('staff_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <label for="staffNumberInput">Staff Number</label>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" wire:model="staff_number"  name="staff_number" id="staffNumberInput" style="padding-left:10px !important;" placeholder="Staff Number" />
+                                            </div>
+                                            @error('staff_number') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+                                    @endif
                                     <button type="button" class="btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
                                 </div>
                             </div>
