@@ -479,10 +479,10 @@
                                                             @endif
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
-                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{round($item->unit_price,2)}}</button>
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{round($item->unit_price)}}</button>
 
                                                             @if($item->customer_group_code)
-                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)),2) }}</button>
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price))) }}</button>
                                                             @endif
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
@@ -498,9 +498,9 @@
                                                         <div class="d-flex align-items-center text-sm">
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}}
                                                             @if($item->customer_group_code)
-                                                            {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)),2)*$item->quantity }}
+                                                            {{ round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)))*$item->quantity }}
                                                             @else
-                                                            {{round($item->unit_price*$item->quantity,2)}}
+                                                            {{round($item->unit_price*$item->quantity)}}
                                                             @endif</button>
 
                                                         </div>
@@ -510,7 +510,7 @@
                                                     <?php
                                                     $total = $total+$item->unit_price*$item->quantity;
                                                     if($item->discount_perc){
-                                                        $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*$item->unit_price)*$item->quantity,2);
+                                                        $totalDiscount = $totalDiscount+round((($item->discount_perc/100)*$item->unit_price)*$item->quantity);
                                                         //echo $totalDiscount;
                                                     }
                                                     ?>
@@ -532,26 +532,26 @@
                                         <span class="mb-2 text-sm">
                                         Product Price:
                                         </span>
-                                        <span class="text-dark font-weight-bold ms-2">{{config('global.CURRENCY')}} {{round($total,2)}}</span>
+                                        <span class="text-dark font-weight-bold ms-2">{{config('global.CURRENCY')}} {{round($total)}}</span>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <span class="mb-2 text-sm">
                                         Discount:
                                         </span>
-                                        <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalDiscount,2)}}</span>
+                                        <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalDiscount)}}</span>
                                     </div>
                                     <hr class="horizontal dark my-2">
                                     <div class="d-flex justify-content-between mt-2">
                                         <span class="mb-2 text-md text-dark text-bold">
                                         Total:
                                         </span>
-                                        <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalAfterDisc,2)}}</span>
+                                        <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($totalAfterDisc)}}</span>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <span class="text-sm">
                                         Taxes:
                                         </span>
-                                        <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($tax,2)}}</span>
+                                        <span class="text-dark ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{round($tax)}}</span>
                                     </div>
                                     <hr class="horizontal dark my-2">
                                     <div class="d-flex justify-content-between mt-2">
@@ -785,16 +785,16 @@
                                             {{strtolower($qlItemPriceDetails->ItemName)}}<small>({{$qlItemPriceDetails->ItemCode}})</small>
                                         </p>
                                         <h5 class="font-weight-bold mt-2"  @if($qlItemDiscountDetails != null) style="text-decoration: line-through;" @endif>
-                                            <small>AED</small>{{round($qlItemPriceDetails->UnitPrice,2)}}
+                                            <small>AED</small>{{round($qlItemPriceDetails->UnitPrice)}}
                                         </h5>
                                         @if($qlItemDiscountDetails != null)
                                         <h5 class="font-weight-bold mt-2">
-                                            <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($qlItemPriceDetails->UnitPrice-(($qlItemDiscountDetails->DiscountPerc/100)*$qlItemPriceDetails->UnitPrice),2) }}
+                                            <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($qlItemPriceDetails->UnitPrice-(($qlItemDiscountDetails->DiscountPerc/100)*$qlItemPriceDetails->UnitPrice)) }}
                                         </h5>
                                         @endif
                                         <div class="ms-auto">
                                             @if(!empty($qlItemDiscountDetails))
-                                                <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc,2)}}%off</span>
+                                                <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc)}}%off</span>
                                             @endif
                                         </div>
                                     </div>
@@ -916,11 +916,11 @@
                                                     <div class="d-flex border-radius-lg p-0 mt-2">
                                                         <p class="w-100 text-md font-weight-bold text-dark my-auto me-2 float-start">
                                                         <span class="float-start" @if($discountDetails != null) style="text-decoration: line-through;" @endif>
-                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{round($priceDetails->UnitPrice,2)}}
+                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{round($priceDetails->UnitPrice)}}
                                                         </span>
                                                         @if($discountDetails != null)
                                                         <span  class="float-end">
-                                                        <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{ round($priceDetails->UnitPrice-(($discountDetails['DiscountPerc']/100)*$priceDetails->UnitPrice),2) }}
+                                                        <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{ round($priceDetails->UnitPrice-(($discountDetails['DiscountPerc']/100)*$priceDetails->UnitPrice)) }}
                                                         </span>
                                                         @endif
                                                         </p>
@@ -935,7 +935,7 @@
                                                 <div class="col-12">
                                                     <div class="d-flex border-radius-lg p-0 mt-2">
                                                         @if($discountDetails != null)
-                                                        <span class="badge bg-gradient-info">{{round($discountDetails['DiscountPerc'],2)}}%off</span>
+                                                        <span class="badge bg-gradient-info">{{round($discountDetails['DiscountPerc'])}}%off</span>
                                                         @endif
                                                         
                                                         <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
@@ -1085,16 +1085,16 @@
                                         {{strtolower($itemPriceDetails->ItemName)}}<small>({{$itemPriceDetails->ItemCode}})</small>
                                     </p>
                                     <h5 class="font-weight-bold mt-2"  @if($itemDiscountDetails != null) style="text-decoration: line-through;" @endif>
-                                        <small>AED</small>{{round($itemPriceDetails->UnitPrice,2)}}
+                                        <small>AED</small>{{round($itemPriceDetails->UnitPrice)}}
                                     </h5>
                                     @if($itemDiscountDetails != null)
                                     <h5 class="font-weight-bold mt-2">
-                                        <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($itemPriceDetails->UnitPrice-(($itemDiscountDetails->DiscountPerc/100)*$itemPriceDetails->UnitPrice),2) }}
+                                        <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ round($itemPriceDetails->UnitPrice-(($itemDiscountDetails->DiscountPerc/100)*$itemPriceDetails->UnitPrice)) }}
                                     </h5>
                                     @endif
                                     <div class="ms-auto">
                                         @if(!empty($qlItemDiscountDetails))
-                                            <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc,2)}}%off</span>
+                                            <span class="badge bg-gradient-info">{{round($qlItemDiscountDetails->DiscountPerc)}}%off</span>
                                         @endif
                                     </div>
                                 </div>
@@ -1355,11 +1355,11 @@
                                                 <div class="d-flex border-radius-lg p-0 mt-2">
                                                     <p class="w-100 text-md font-weight-bold text-dark my-auto me-2 float-start">
                                                         <span class="float-start" @if($discountDetails != null) style="text-decoration: line-through;" @endif>
-                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{round($priceDetails->UnitPrice,2)}}
+                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{round($priceDetails->UnitPrice)}}
                                                         </span>
                                                         @if($discountDetails != null)
                                                         <span  class="float-end">
-                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{ round($priceDetails->UnitPrice-(($discountDetails['DiscountPerc']/100)*$priceDetails->UnitPrice),2) }}
+                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{ round($priceDetails->UnitPrice-(($discountDetails['DiscountPerc']/100)*$priceDetails->UnitPrice)) }}
                                                         </span>
                                                         @endif
                                                     </p>
@@ -1373,7 +1373,7 @@
                                                         <span class="badge bg-gradient-danger">Package Used</span>
                                                     @else
                                                         @if($discountDetails != null)
-                                                        <span class="badge bg-gradient-info">{{round($discountDetails['DiscountPerc'],2)}}%off</span>
+                                                        <span class="badge bg-gradient-info">{{round($discountDetails['DiscountPerc'])}}%off</span>
                                                         @endif
                                                         <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCartPackage('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
                                                     @endif

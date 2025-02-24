@@ -141,7 +141,7 @@
                                         <button class="btn {!!config('global.payment.status_class')[$job->payment_status]!!}" type="button">
                                             <span class="btn-inner--icon"><i class="fa-solid fa-money-bill-1-wave ms-1 fs-xl" style="font-size: 1.5em;" ></i></span>
                                             {!!config('global.payment.status')[$job->payment_status]!!}
-                                            
+                                                
                                         </button>
                                     </div>
                                     <div class="ms-auto">
