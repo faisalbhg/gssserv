@@ -376,6 +376,11 @@ return [
                 'bg_class'=>'platinum_button',
                 'text_class'=>'text-white',
             ],
+            '10'=>[
+                'title'=>'Advance',
+                'bg_class'=>'platinum_button',
+                'text_class'=>'text-white',
+            ],
         ],
     ],
 

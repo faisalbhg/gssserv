@@ -90,7 +90,6 @@ class CustomerServiceJob extends Component
 
     public function render()
     {
-        
         if($this->new_make)
         {
             $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->where('is_deleted','=',null)->get();
@@ -183,6 +182,8 @@ class CustomerServiceJob extends Component
                 ])
                 ->orderBy('SortIndex','ASC')
                 ->get();
+
+            //dd($this->sectionsLists);
         }
 
 
@@ -492,7 +493,7 @@ class CustomerServiceJob extends Component
 
         if($this->showPackageList)
         {
-            $this->servicePackages = ServicePackage::with(['packageDetails'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code']])->get();
+            $this->servicePackages = ServicePackage::with(['packageDetails','packageTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code']])->get();
             //$this->showPackageAddons=false;
             //dd($this->servicePackages);
         }

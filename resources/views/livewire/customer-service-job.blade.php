@@ -1239,7 +1239,8 @@
                                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
                                         <div class="card h-100" >
                                             <div class="card-header text-center pt-4 pb-3">
-                                                <span class="badge rounded-pill bg-light {{config('global.package.type')[$servicePackage->PackageType]['bg_class']}} {{config('global.package.type')[$servicePackage->PackageType]['text_class']}}">{{config('global.package.type')[$servicePackage->PackageType]['title']}}</span>
+                                                <span class="badge rounded-pill bg-light gold_button text-white">{{config('global.package.type')[$servicePackage->PackageType]['title']}}
+                                                {{$servicePackage->packageTypes['Description']}}</span>
                                                 <h4>{{$servicePackage->PackageName}}</h4>
                                                 @if($servicePackage->Duration)
                                                 <p class="text-sm font-weight-bold text-dark mt-2 mb-0">Duration: {{$servicePackage->Duration}} Months</p>

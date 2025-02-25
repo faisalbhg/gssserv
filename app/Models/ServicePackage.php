@@ -17,4 +17,9 @@ class ServicePackage extends Model
     {
         return $this->hasMany(ServicePackageDetail::class,'Code','Code')->with(['labourItemDetails','inventoryItemDetails']);
     }
+
+    public function packageTypes()
+    {
+        return $this->belongsTo(ServicePackageType::class,'PackageType','TypeId');
+    }
 }
