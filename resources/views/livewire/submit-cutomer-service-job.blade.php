@@ -86,9 +86,9 @@
                                             @error('staff_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                         </div>
                                         <div class="col-md-6 col-sm-6">
-                                            <label for="staffNumberInput">Staff Number</label>
+                                            <label for="staffNumberInput">AT Number</label>
                                             <div class="form-group">
-                                                <input type="text" class="form-control" wire:model="staff_number"  name="staff_number" id="staffNumberInput" style="padding-left:10px !important;" placeholder="Staff Number" />
+                                                <input type="text" class="form-control" wire:model="staff_number"  name="staff_number" id="staffNumberInput" style="padding-left:10px !important;" placeholder="AT Number" />
                                             </div>
                                             @error('staff_number') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                         </div>
