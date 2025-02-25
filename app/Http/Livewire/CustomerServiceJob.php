@@ -788,14 +788,14 @@ class CustomerServiceJob extends Component
         {
             $customerBasketCheck->increment('quantity', 1);
             if($discountPrice!=null){
-                $cartUpdate['price_id']=$discountPrice->PriceID;
-                $cartUpdate['customer_group_id']=$discountPrice->CustomerGroupId;
-                $cartUpdate['customer_group_code']=$discountPrice->CustomerGroupCode;
-                $cartUpdate['min_price']=$discountPrice->MinPrice;
-                $cartUpdate['max_price']=$discountPrice->MaxPrice;
-                $cartUpdate['start_date']=$discountPrice->StartDate;
-                $cartUpdate['end_date']=$discountPrice->EndDate;
-                $cartUpdate['discount_perc']=$discountPrice->DiscountPerc;
+                $cartUpdate['price_id']=$discountPrice['PriceID'];
+                $cartUpdate['customer_group_id']=$discountPrice['CustomerGroupId'];
+                $cartUpdate['customer_group_code']=$discountPrice['CustomerGroupCode'];
+                $cartUpdate['min_price']=$discountPrice['MinPrice'];
+                $cartUpdate['max_price']=$discountPrice['MaxPrice'];
+                $cartUpdate['start_date']=$discountPrice['StartDate'];
+                $cartUpdate['end_date']=$discountPrice['EndDate'];
+                $cartUpdate['discount_perc']=$discountPrice['DiscountPerc'];
                 CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->update($cartUpdate);
             }
             

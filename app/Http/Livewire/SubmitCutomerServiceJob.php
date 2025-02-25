@@ -55,6 +55,19 @@ class SubmitCutomerServiceJob extends Component
 
     public function render()
     {
+        $this->isValidInput = $this->getErrorBag()->count();
+        if($this->isValidInput>0)
+        {
+            if( array_key_exists( 'staff_id',$this->getErrorBag()->messages() ) ){
+                $scrollTo = 'staffIdInput';
+            }else if( array_key_exists( 'staff_number',$this->getErrorBag()->messages() ) ){
+                $scrollTo = 'staffNumberInput';
+            }
+            $this->dispatchBrowserEvent('scrollto', [
+                'scrollToId' => $scrollTo,
+            ]);
+        }
+
         if($this->selectedVehicleInfo->customerInfoMaster['Required_StaffDtls'])
         {
             $this->show_staff_details=true;
