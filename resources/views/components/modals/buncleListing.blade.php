@@ -84,7 +84,56 @@
                                                     <small>{{config('global.CURRENCY')}}</small>{{custom_round($totPriceAfDis)}}
                                                 </h5>
                                                 <div class="text-center">
-                                                    <a href="javascript:;" class="btn btn-icon {{config('global.bundles.type_class')[$bdlerviceList['BundleDiscountType']]}} d-lg-block mt-3 mb-0">Buy Now <i class="fas fa-arrow-right ms-1"></i></a>
+                                                    <?php
+                                                    $button_allowed=false;
+                                                    if($bdlerviceList['BundleDiscountType']==1){
+                                                        $button_allowed=true;
+                                                    }
+                                                    else if($bdlerviceList['BundleDiscountType']==2)
+                                                    {
+                                                        if(isset($appliedDiscount))
+                                                        {
+                                                            if($appliedDiscount['groupType'] !=2 && $appliedDiscount['groupType'] !=6)
+                                                            {
+                                                                if($appliedDiscount['id']!=9 && $appliedDiscount['id']!=41)
+                                                                {
+                                                                    $button_allowed=true;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $button_allowed=false;
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            $button_allowed=false;
+                                                        }
+                                                    }
+                                                    else if($bdlerviceList['BundleDiscountType']==3)
+                                                    {
+                                                        if(isset($appliedDiscount))
+                                                        {
+                                                            if($appliedDiscount['groupType']!=2 && $appliedDiscount['groupType']!=6)
+                                                            {
+                                                                if($appliedDiscount['id']==9 && $appliedDiscount['id']!=41 )
+                                                                {
+                                                                    $button_allowed=true;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $button_allowed=false;
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            $button_allowed=false;
+                                                        }
+                                                    }
+                                                    ?>
+                                                    <a href="javascript:;" class="btn btn-icon {{config('global.bundles.type_class')[$bdlerviceList['BundleDiscountType']]}} d-lg-block mt-3 mb-0 @if(!$button_allowed) opacity-4 @endif">Buy Now <i class="fas fa-arrow-right ms-1"></i></a>
+                                                    
                                                     
                                                 </div>
                                             </div>

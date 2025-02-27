@@ -1031,9 +1031,6 @@
             </div>
         @endif
 
-
-        
-
         @if($showServiceItems)
             <div class="row" id="serviceItemsListDiv">
                 <div class="col-md-4 col-sm-6">
@@ -1335,10 +1332,8 @@
             </div>
         @endif
 
-        
-
         @if($showBundleList)
-        <div class="row mt-4">
+            <div class="row mt-4">
                 <div class="container">
                     <div class="tab-content tab-space">
                         <div class="tab-pane active" id="monthly" role="tabpanel" aria-labelledby="tabs-iconpricing-tab-1">
@@ -1352,42 +1347,8 @@
                                                     <img class="w-100 border-radius-md" src="./assets/img/kit/pro/anastasia.jpg">
                                                 </a>
                                                 <h5 class="mt-3 mb-3 text-danger text-gradient text-uppercase">{{$bundlle->Description}}</h5>
-                                                @if(isset($showBundleDetails[$bundlle->TypeId]['show']))
-                                                <ul class="list-group">
-                                                    @forelse($showBundleDetails[$bundlle->TypeId]['lists'] as $bundlesDetailList)
-                                                    <li class="list-group-item border-0 ps-0 pb-0 border-radius-lg text-start">
-                                                        <div class="d-flex">
-                                                            <div class="d-flex align-items-center">
-                                                                <button class="btn btn-icon-only btn-rounded btn-outline-primary mb-0 me-3 p-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right"></i></button>
-                                                                <div class="d-flex flex-column">
-                                                                    <h6 class="mb-1 text-dark text-sm text-start">{{$bundlesDetails->serviceBundlePrice['ItemName']}}</h6>
-                                                                    <span class="text-xs">{{$bundlesDetails->serviceBundlePrice['ServiceItemCode']}}</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold ms-auto">
-                                                            + $ 4,999
-                                                            </div>
-                                                        </div>
-                                                        <hr class="horizontal dark mt-3 mb-2">
-                                                    </li>
-                                                    @empty
-                                                    <li class="list-group-item border-0 ps-0 pb-0 border-radius-lg">
-                                                        <div class="d-flex">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="d-flex flex-column">
-                                                                    <h6 class="mb-1 text-danger text-sm text-start">Empty..!</h6>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                        </div>
-                                                        <hr class="horizontal dark mt-3 mb-2">
-                                                    </li>
-                                                    @endforelse
-                                                </ul>
-                                                <button type="button" class="btn btn-primary btn-sm"   wire:click="addBundleListDetails('{{$bundlle}}')">Add Bundle</button>
-                                                @else
+                                                
                                                 <button type="button" class="btn btn-warning btn-sm"   wire:click="openBundleListDetails('{{$bundlle}}')">Open</button>
-                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -1408,7 +1369,6 @@
                     </div>
                 </div>
             </div>
-        </div>
         @endif
 
         @if($showPackageServiceSectionsList)
@@ -1520,16 +1480,17 @@
                 </div>
             </div>
         @endif
+        
         @if($showBundleServiceSectionsList)
-        @include('components.modals.buncleListing')
+            @include('components.modals.buncleListing')
         @endif
         
         @if($showDiscountDroup)
-        @include('components.modals.discountGroups')
+            @include('components.modals.discountGroups')
         @endif
 
         @if($showAddMakeModelNew)
-        @include('components.modals.addMakeModelNew')
+            @include('components.modals.addMakeModelNew')
         @endif
 
         <div wire:loading wire:target="addtoCartItem">
