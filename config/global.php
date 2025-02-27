@@ -408,6 +408,29 @@ return [
             '2'=>'bg-gradient-primary',
             '3'=>'bg-gradient-info',
         ],
+    ],
+    'quality_check'=>[
+        'body_wash'=>[
+            "body wash",
+            "shine wash",
+            "express polish",
+            "vip wash",
+            "super wash",
+            "full service",
+        ],
+        'glazing'=>[
+            "glazing",
+            "seat cleaning",
+            "tinting",
+            "paint protection film",
+            "mechanical",
+            "electrical",
+            "rust proofing",
+            "misc sales",
+            "sublet services",
+            "dtc project"
+        ],
+
     ]
 
 ]

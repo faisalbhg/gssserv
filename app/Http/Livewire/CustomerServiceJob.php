@@ -560,6 +560,7 @@ class CustomerServiceJob extends Component
     public function getCartInfo($value='')
     {
         $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
+        //dd($this->cartItems);
         $this->cartItemCount = count($this->cartItems); 
         if($this->cartItemCount>0)
         {

@@ -865,6 +865,7 @@
                          <hr class="mt-0">
                          --><ul class="list-group">
                             @forelse( $jobcardDetails->customerJobServices as $services)
+                            <!-- {{$services->section_name}} -->
                             <li class="list-group-item border-0  p-2 mb-2 border-radius-lg">
                                 <div class="card">
                                     <div class="card-body p-2">

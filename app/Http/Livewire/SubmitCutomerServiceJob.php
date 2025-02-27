@@ -424,6 +424,7 @@ class SubmitCutomerServiceJob extends Component
             $customerJobServiceData['division_code']=$cartData->division_code;
             $customerJobServiceData['department_code']=$cartData->department_code;
             $customerJobServiceData['department_name']=$cartData->department_name;
+            $customerJobServiceData['section_name']=$cartData->section_name;
             $customerJobServiceData['section_code']=$cartData->section_code;
             $customerJobServiceData['station']=auth()->user('user')->stationName['LandlordCode'];
             $customerJobServiceData['extra_note']=$cartData->extra_note;
