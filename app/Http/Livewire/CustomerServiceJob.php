@@ -41,6 +41,9 @@ use App\Models\PackageBookingServices;
 use App\Models\PackageBookingServiceLogs;
 use App\Models\CustomerJobCards;
 use App\Models\CustomerJobCardServices;
+use App\Models\ServiceBundleType;
+use App\Models\ServiceBundle;
+use App\Models\ServiceBundleDiscountedPrice;
 
 
 class CustomerServiceJob extends Component
@@ -70,6 +73,7 @@ class CustomerServiceJob extends Component
     public $confirming;
     public $customizedErrorMessage=[];
     public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
+    public $showBundleList=false, $selectBundleMenu=false, $bundlleLists, $selectedBundles, $showBundleServiceSectionsList, $bundleServiceLists=[];
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -239,11 +243,7 @@ class CustomerServiceJob extends Component
             $this->sectionPackageServiceLists=[];*/
         }
 
-        if($this->showPackageList)
-        {
-            $this->customerBookedPackages = PackageBookings::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
-            /**/
-        }
+        
 
         if($this->showOpenPackageDetails){
 
@@ -491,14 +491,27 @@ class CustomerServiceJob extends Component
             $this->itemQlCategories=[];
         }
 
+        
         if($this->showPackageList)
         {
+            $this->customerBookedPackages = PackageBookings::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
             $this->servicePackages = ServicePackage::with(['packageDetails','packageTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code']])->get();
             //$this->showPackageAddons=false;
             //dd($this->servicePackages);
         }
         else{
+            $this->customerBookedPackages=null;
             $this->servicePackages=null;
+        }
+
+        if($this->showBundleList)
+        {
+            $this->bundlleLists = ServiceBundleType::with(['bundleDiscountedPrice'])->where(['Active'=>1])->get();
+            //dd($this->bundlleLists);
+        }
+        else
+        {
+            $this->bundlleLists=null;
         }
 
 
@@ -628,6 +641,9 @@ class CustomerServiceJob extends Component
 
         $this->showPackageList=false;
         $this->selectPackageMenu=false;
+
+        $this->showBundleList=false;
+        $this->selectBundleMenu=false;
 
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'servceSectionsList',
@@ -976,6 +992,9 @@ class CustomerServiceJob extends Component
         $this->showQlItemsList = false;
         $this->showQlEngineOilItems=false;
         $this->showQlItemsOnly=false;
+
+        $this->showBundleList=false;
+        $this->selectBundleMenu=false;
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'serviceItemsListDiv',
         ]);
@@ -1569,9 +1588,86 @@ class CustomerServiceJob extends Component
         $this->showQlEngineOilItems=false;
         $this->showQlItemsOnly=false;
         $this->showServiceItems = false;
+
+        $this->showBundleList=false;
+        $this->selectBundleMenu=false;
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'packageServiceListDiv',
         ]);
+    }
+
+    public function openBundles(){
+
+        $this->showBundleList=true;
+        $this->selectBundleMenu=true;
+
+        $this->showPackageList=false;
+        $this->selectPackageMenu=false;
+
+        $this->service_group_id = null;
+        $this->service_group_name = null;
+        $this->service_group_code = null;
+        $this->station = null;
+        $this->section_service_search='';
+
+        $this->propertyCode=null;
+        $this->selectedSectionName = null;
+        $this->showSectionsList=false;
+        $this->showServiceSectionsList=false;
+
+        $this->showQlItemSearch = false;
+        $this->showQlItemsList = false;
+        $this->showQlEngineOilItems=false;
+        $this->showQlItemsOnly=false;
+        $this->showServiceItems = false;
+        $this->dispatchBrowserEvent('scrollto', [
+            'scrollToId' => 'bundleServiceListDiv',
+        ]);
+    }
+
+    public function openBundleListDetails($bundleDetails){
+        $this->selectedBundles=json_decode($bundleDetails,true);
+        $this->bundleServiceLists = [];
+        //$this->bundleServiceLists[$this->selectedBundles['TypeId']]['show']=true;
+        //dd($this->selectedBundles);
+        foreach($this->selectedBundles['bundles_details'] as $selectedBundle)
+        {
+            //dd($selectedBundle);
+            $this->bundleServiceLists[$selectedBundle['Code']] = $selectedBundle;
+            foreach(ServiceBundleDiscountedPrice::where(['Code'=>$selectedBundle['Code']])->get() as $sBDPkey => $serviceBundleDiscountedPrice){
+                $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['ServiceItemCode'] = $serviceBundleDiscountedPrice->ServiceItemCode;
+                $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['DiscountPerc'] = $serviceBundleDiscountedPrice->DiscountPerc;
+                $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['CustomerGroupId'] = $serviceBundleDiscountedPrice->CustomerGroupId;
+
+                $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['Type'] = $serviceBundleDiscountedPrice->Type;
+                $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['Division'] = $serviceBundleDiscountedPrice->Division;
+                $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['ItemName'] = $serviceBundleDiscountedPrice->ItemName;
+                $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['Qty'] = $serviceBundleDiscountedPrice->Qty;
+                
+                if($serviceBundleDiscountedPrice->Type=='S')
+                {
+                    $bundleLaborMaster = LaborItemMaster::where([
+                        'DivisionCode'=>auth()->user('user')['station_code'],
+                        'Active'=>1,
+                        'ItemCode'=>$serviceBundleDiscountedPrice->ServiceItemCode,
+                    ])->first();
+                    $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['services'] = $bundleLaborMaster;
+                }
+                else if($serviceBundleDiscountedPrice->Type=='I')
+                {
+                    $bundleItemMaster = InventoryItemMaster::where([
+                        'Active'=>1,
+                        'ItemCode'=>$serviceBundleDiscountedPrice->ServiceItemCode,
+                    ])->first();
+                    
+                    $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['items'] = $bundleItemMaster;
+                    
+                }
+            }
+        }
+        //dd($this->bundleServiceLists);
+        $this->showBundleServiceSectionsList=true;
+        $this->dispatchBrowserEvent('openBundleServicesListModal');
     }
 
     public function validatePackageContinue(){

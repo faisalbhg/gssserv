@@ -667,6 +667,27 @@
                         </div>
                     </div>
 
+                    <div class="col-sm-3 col-md-3 col-lg-2 col-xl-2 my-2">
+                        <div class="card h-100" >
+                            <a wire:click="openBundles()" href="javascript:;">
+                                <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100" style="background-image: url('{{asset("img/bundle-package.jpg")}}');">
+                                    @if($selectBundleMenu)
+                                    <span class="mask bg-gradient-dark opacity-4"></span>
+                                    @else
+                                    <span class="mask bg-gradient-dark opacity-9"></span>
+                                    @endif
+                                    <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
+                                        <h5 class="@if($selectPackageMenu) text-primary @else text-white @endif font-weight-bolder mb-4 pt-2">Bundles</h5>
+                                        <!-- <p class="text-white">Wealth creation is an evolutionarily recent positive-sum game. It is all about who take the opportunity first.</p> -->
+                                        <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                                            <button wire:click="openBundles()" class="btn @if($selectPackageMenu) bg-gradient-primary @else btn-outline-light @endif" type="button" >Select</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
                 @endif
             </div>
             <div wire:loading wire:target="serviceGroupForm">
@@ -688,6 +709,15 @@
                 </div>
             </div>
             <div wire:loading wire:target="openPackages">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <div wire:loading wire:target="openBundles">
                 <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                     <div class="la-ball-beat">
                         <div></div>
@@ -1239,8 +1269,7 @@
                                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
                                         <div class="card h-100" >
                                             <div class="card-header text-center pt-4 pb-3">
-                                                <span class="badge rounded-pill bg-light gold_button text-white">{{config('global.package.type')[$servicePackage->PackageType]['title']}}
-                                                {{$servicePackage->packageTypes['Description']}}</span>
+                                                <span class="badge rounded-pill bg-light gold_button text-white">{{$servicePackage->packageTypes['Description']}}</span>
                                                 <h4>{{$servicePackage->PackageName}}</h4>
                                                 @if($servicePackage->Duration)
                                                 <p class="text-sm font-weight-bold text-dark mt-2 mb-0">Duration: {{$servicePackage->Duration}} Months</p>
@@ -1304,6 +1333,82 @@
                     </div>
                 </div>
             </div>
+        @endif
+
+        
+
+        @if($showBundleList)
+        <div class="row mt-4">
+                <div class="container">
+                    <div class="tab-content tab-space">
+                        <div class="tab-pane active" id="monthly" role="tabpanel" aria-labelledby="tabs-iconpricing-tab-1">
+                            <div class="row mb-4" id="bundleServiceListDiv">
+                                @foreach($bundlleLists as $bundlle)
+                                    @if(count($bundlle->bundlesDetails)>0)
+                                    <div class="col-md-4 col-sm-4 mb-4">
+                                        <div class="card card-profile card-plain cursor-pointer" wire:click="openBundleListDetails('{{$bundlle}}')">
+                                            <div class="card-body text-center bg-white shadow border-radius-lg p-3">
+                                                <a href="javascript:;" class="d-none">
+                                                    <img class="w-100 border-radius-md" src="./assets/img/kit/pro/anastasia.jpg">
+                                                </a>
+                                                <h5 class="mt-3 mb-3 text-danger text-gradient text-uppercase">{{$bundlle->Description}}</h5>
+                                                @if(isset($showBundleDetails[$bundlle->TypeId]['show']))
+                                                <ul class="list-group">
+                                                    @forelse($showBundleDetails[$bundlle->TypeId]['lists'] as $bundlesDetailList)
+                                                    <li class="list-group-item border-0 ps-0 pb-0 border-radius-lg text-start">
+                                                        <div class="d-flex">
+                                                            <div class="d-flex align-items-center">
+                                                                <button class="btn btn-icon-only btn-rounded btn-outline-primary mb-0 me-3 p-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right"></i></button>
+                                                                <div class="d-flex flex-column">
+                                                                    <h6 class="mb-1 text-dark text-sm text-start">{{$bundlesDetails->serviceBundlePrice['ItemName']}}</h6>
+                                                                    <span class="text-xs">{{$bundlesDetails->serviceBundlePrice['ServiceItemCode']}}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold ms-auto">
+                                                            + $ 4,999
+                                                            </div>
+                                                        </div>
+                                                        <hr class="horizontal dark mt-3 mb-2">
+                                                    </li>
+                                                    @empty
+                                                    <li class="list-group-item border-0 ps-0 pb-0 border-radius-lg">
+                                                        <div class="d-flex">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="d-flex flex-column">
+                                                                    <h6 class="mb-1 text-danger text-sm text-start">Empty..!</h6>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                        <hr class="horizontal dark mt-3 mb-2">
+                                                    </li>
+                                                    @endforelse
+                                                </ul>
+                                                <button type="button" class="btn btn-primary btn-sm"   wire:click="addBundleListDetails('{{$bundlle}}')">Add Bundle</button>
+                                                @else
+                                                <button type="button" class="btn btn-warning btn-sm"   wire:click="openBundleListDetails('{{$bundlle}}')">Open</button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                @endforeach
+                                
+                                <div wire:loading wire:target="openBundleListDetails" >
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         @endif
 
         @if($showPackageServiceSectionsList)
@@ -1415,6 +1520,9 @@
                 </div>
             </div>
         @endif
+        @if($showBundleServiceSectionsList)
+        @include('components.modals.buncleListing')
+        @endif
         
         @if($showDiscountDroup)
         @include('components.modals.discountGroups')
@@ -1454,6 +1562,13 @@
     });
     window.addEventListener('closeServicesListModal',event=>{
         $('#servicePriceModal').modal('hide');
+    });
+
+    window.addEventListener('openBundleServicesListModal', event=>{
+        $('#bundlePriceModelList').modal('show');
+    });
+    window.addEventListener('closeBundleServicesListModal', event=>{
+        $('#bundlePriceModelList').modal('hide');
     });
 
     window.addEventListener('openServicesPackageListModal',event=>{

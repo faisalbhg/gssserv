@@ -390,6 +390,24 @@ return [
 
     'carTexiItems'=>[
         'S255','S408'
+    ],
+    'bundles'=>[
+        'type'=>[
+            '1'=>"Normal Customer",
+            '2'=>"Discount Customer",
+            '3'=>"BHG Staff",
+            
+        ],
+        'type_class'=>[
+            '1'=>'bg-gradient-dark',
+            '2'=>'bg-gradient-primary',
+            '3'=>'bg-gradient-info',
+        ],
+        'btn_class'=>[
+            '1'=>'bg-gradient-dark',
+            '2'=>'bg-gradient-primary',
+            '3'=>'bg-gradient-info',
+        ],
     ]
 
 ]

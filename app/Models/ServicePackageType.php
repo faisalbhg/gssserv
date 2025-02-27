@@ -11,6 +11,6 @@ class ServicePackageType extends Model
 
     protected $table = 'ServicePackageType';
 
-    //protected $primaryKey = 'StationID';
+    protected $primaryKey = 'TypeId';
 
 }

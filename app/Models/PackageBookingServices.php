@@ -62,10 +62,7 @@ class PackageBookingServices extends Model
         return $this->belongsTo(LaborItemMaster::class,'item_code','ItemCode');
     }
 
-    public function packageTypes()
-    {
-        return $this->belongsTo(ServicePackageType::class,'package_type','TypeId');
-    }
+    
 
     
 
