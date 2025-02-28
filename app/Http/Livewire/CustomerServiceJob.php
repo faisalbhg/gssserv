@@ -1778,7 +1778,7 @@ class CustomerServiceJob extends Component
         {
             foreach($customerJobCardsQuery->customerJobServices as $customerJobServices)
             {
-                $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$customerJobServices->item_id,'job_number'=>$job_number]);
+                $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$customerJobServices->item_id,'job_number'=>$this->job_number]);
                 if($customerBasketCheck->count()==0)
                 {
                     $cartInsert = [
