@@ -1,0 +1,39 @@
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header text-center pt-4 pb-3">
+                <h5 class="font-weight-bold mt-2">Wash Service</h5>
+            </div>
+            <div class="card-body text-center pt-0">
+                <div class="row">
+                    @if($services->wash_service==null)
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','wash_service','{{$services->id}}')">
+                                <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                <span class="btn-inner--text">Start</span>
+                            </button>
+                        </div>
+                    </div>
+                    @elseif($services->wash_service == 1)
+                    <div class="col-md-12">
+                        <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label>
+                        <div class="form-group">
+                            <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','wash_service','{{$services->id}}')">
+                                <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
+                                <span class="btn-inner--text">Stop</span>
+                            </button>
+                        </div>
+                    </div>
+                    @else
+                    <div class="col-md-12">
+                        <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->wash_service_time_in)->format('dS M Y H:i A') }}</label></p>
+                        <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->wash_service_time_out)->format('dS M Y H:i A') }}</label></p>
+                    </div>
+
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

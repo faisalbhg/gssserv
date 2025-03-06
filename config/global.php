@@ -431,6 +431,23 @@ return [
             "dtc project"
         ],
 
+    ],
+    "check_list"=>[
+        "wash"=>[
+            "Body Wash", "Shine Wash", "Express Polish", "Vip Wash", "Super Wash", "Full Service","Wash & Wax"
+        ],
+        "glazing"=>[
+            "Glazing"
+        ],
+        "interiorCleaning"=>[
+            "Seat Cleaning"
+        ],
+        "tinting"=>[
+            "Tinting"
+        ],
+        "oilChange"=>[
+            "Body Wash","Full Service"
+        ]
     ]
 
 ]

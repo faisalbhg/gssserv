@@ -239,7 +239,7 @@ class Operations extends Component
         CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_status'=>$payment_status]);
     }
 
-    public function updateQwService($services)
+    public function updateJobService($services,$ql=null)
     {
 
 
@@ -252,7 +252,13 @@ class Operations extends Component
             'job_departent'=>$services['job_status']+1,
         ];
         //dd($serviceJobUpdate);
-        CustomerJobCardServices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
+        if($ql){
+            CustomerJobCardServices::where(['job_number'=>$services['job_number'],'section_name'=>'Quick Lube'])->update($serviceJobUpdate);
+        }
+        else
+        {
+            CustomerJobCardServices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
+        }
 
         $serviceJobUpdateLog = [
             'job_number'=>$services['job_number'],
@@ -1077,21 +1083,52 @@ class Operations extends Component
         $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service->job_number])->get();
     }
 
-    public function clickQlOperation($in_out,$up_ser,$service)
+    public function clickQlJobOperation($in_out,$up_ser,$service,$section)
     {
         $service = CustomerJobCardServices::find($service);
-        //dd($service);
         if($in_out=='start')
         {
             $serviceUpdate[$up_ser.'_time_in'] = Carbon::now();
-            $serviceUpdate[$up_ser]=1;
+            //$serviceUpdate[$up_ser]=1;
         }
         else if($in_out=='stop')
         {
-            $serviceUpdate[$up_ser.'_time_in'] = Carbon::now();
-            $serviceUpdate[$up_ser] = 2;
+            $serviceUpdate[$up_ser.'_time_out'] = Carbon::now();
+            //$serviceUpdate[$up_ser] = 2;
         }
-        //dd($serviceUpdate);
+        CustomerJobCardServices::where(['job_number'=>$service->job_number,'section_name'=>$section])->update($serviceUpdate);
+        
+        $serviceJobUpdateLog = [
+            'job_number'=>$service['job_number'],
+            'customer_job__card_service_id'=>$service['id'],
+            'job_status'=>$service['job_status'],
+            'job_departent'=>$service['job_departent'],
+            'job_description'=>json_encode($serviceUpdate),
+        ];
+        CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
+
+        //$this->customerJobUpdate($service['job_number']);
+        //$this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service['job_number']])->get();
+        //dd($this->customerjobservices);
+        $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$service['job_number']])->first();
+        $this->jobcardDetails = $job;
+        //dd($this->jobcardDetails);
+        $this->customerjobservices = $job->customerJobServices;
+    }
+
+    public function clickJobOperation($in_out,$up_ser,$service)
+    {
+        $service = CustomerJobCardServices::find($service);
+        if($in_out=='start')
+        {
+            $serviceUpdate[$up_ser.'_time_in'] = Carbon::now();
+            //$serviceUpdate[$up_ser]=1;
+        }
+        else if($in_out=='stop')
+        {
+            $serviceUpdate[$up_ser.'_time_out'] = Carbon::now();
+            //$serviceUpdate[$up_ser] = 2;
+        }
         CustomerJobCardServices::where(['id'=>$service->id,'job_number'=>$service->job_number])->update($serviceUpdate);
         
         $serviceJobUpdateLog = [
