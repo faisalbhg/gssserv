@@ -86,15 +86,14 @@ return [
             'trust_server_certificate' => true,
         ],
         'mysql_third' => [
-
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL_3'),
-            'host' => env('DB_HOST_3', '127.0.0.1'),
-            'port' => env('DB_PORT_3', '3306'),
-            'database' => env('DB_DATABASE_3', 'forge'),
-            'username' => env('DB_USERNAME_3', 'forge'),
-            'password' => env('DB_PASSWORD_3', ''),
-            'unix_socket' => env('DB_SOCKET_3', ''),
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST_THIRD', '162.215.121.147'),
+            'port' => env('DB_PORT_THIRD', '3306'),
+            'database' => env('DB_DATABASE_THIRD', 'gssadmin_service_app'),
+            'username' => env('DB_USERNAME_THIRD', 'gssadmin_service_app_user'),
+            'password' => env('DB_PASSWORD_THIRD', '&9=oW(q}LEE1'),
+            'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -104,8 +103,6 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
-            'encrypt' => 'yes',
-            'trust_server_certificate' => true,
         ],
 
         'pgsql' => [

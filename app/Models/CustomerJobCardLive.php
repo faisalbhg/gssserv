@@ -10,6 +10,8 @@ class CustomerJobCardLive extends Model
     use HasFactory;
 
     protected $connection = 'mysql_third';
+    protected $table = 'customer_job_cards';
+    
 
     protected $fillable = [
         'job_number',
