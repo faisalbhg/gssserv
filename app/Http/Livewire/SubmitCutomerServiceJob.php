@@ -16,7 +16,6 @@ use DB;
 use App\Models\CustomerServiceCart;
 use App\Models\CustomerVehicle;
 use App\Models\CustomerJobCards;
-use App\Models\CustomerJobCardLive;
 use App\Models\CustomerJobCardServices;
 use App\Models\CustomerJobCardServiceLogs;
 use App\Models\MaterialRequest;
@@ -381,7 +380,7 @@ class SubmitCutomerServiceJob extends Component
         {
             $customerjobData['updated_by']=auth()->user('user')->id;
             CustomerJobCards::where(['job_number'=>$this->job_number])->update($customerjobData);
-            CustomerJobCardLive::where(['job_number'=>$this->job_number])->update($customerjobData);
+            
 
             $customerjobId = $this->jobDetails->id;
         }
@@ -389,13 +388,12 @@ class SubmitCutomerServiceJob extends Component
         {
             $customerjobData['created_by']=auth()->user('user')->id;
             $createdCustomerJob = CustomerJobCards::create($customerjobData);
-            $createdCustomerJobLive = CustomerJobCardLive::create($customerjobData);
             $customerjobId = $createdCustomerJob->id;
-            $customerjobIdLive = $createdCustomerJobLive->id;
+            
             $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
             $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
             CustomerJobCards::where(['id'=>$customerjobId])->update(['job_number'=>$this->job_number]);
-            CustomerJobCardLive::where(['id'=>$customerjobIdLive])->update(['job_number'=>$this->job_number]);
+            
         }
         
         

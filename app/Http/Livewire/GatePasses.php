@@ -17,7 +17,6 @@ use DB;
 use App\Models\CustomerJobCards;
 use App\Models\CustomerJobCardServices;
 use App\Models\CustomerJobCardServiceLogs;
-use App\Models\CustomerJobCardLive;
 
 
 
@@ -101,7 +100,7 @@ class GatePasses extends Component
             'job_departent'=>$this->job_status,
         ];
         CustomerJobCards::where(['job_number'=>$job_number])->update($mianJobUpdate);
-        CustomerJobCardLive::where(['job_number'=>$job_number])->update($mianJobUpdate);
+        
         
         if($this->job_status==4)
         {

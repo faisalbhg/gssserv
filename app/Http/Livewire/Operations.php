@@ -32,7 +32,6 @@ use App\Models\InventoryBrand;
 use App\Models\InventoryItemMaster;
 use App\Models\Landlord;
 use App\Models\TempCustomerServiceCart;
-use App\Models\CustomerJobCardLive;
 
 use Carbon\Carbon;
 use Session;
@@ -238,7 +237,7 @@ class Operations extends Component
     {
         $this->payment_status = $payment_status;
         CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_status'=>$payment_status]);
-        CustomerJobCardLive::where(['job_number'=>$job_number])->update(['payment_status'=>$payment_status]);
+        
     }
 
     public function updateJobService($services,$ql=null)
@@ -302,8 +301,7 @@ class Operations extends Component
         $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$services['job_number']]);
         $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
 
-        $customerJobDetailsHeaderLive = CustomerJobCardLive::where(['job_number'=>$services['job_number']]);
-        $customerJobStatusUpdateLive = $customerJobDetailsHeaderLive->update($mianJobUpdate);
+        
         
 
         $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$services['job_number']])->first();
@@ -543,7 +541,7 @@ class Operations extends Component
         if($paymentResponse['order_response']['status']=='PURCHASED' || $paymentResponse['order_response']['status']=='CAPTURED' )
         {
             CustomerJobCards::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
-            CustomerJobCardLive::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
+            
             session()->flash('paymentLinkStatusSuccess', 'Payment Link is paid..!');
             //$this->payment_status = 1;
         }
@@ -999,8 +997,7 @@ class Operations extends Component
                 'payment_updated_by'=>auth()->user('user')->id,
             ];
         CustomerJobCards::where(['job_number'=>$job_number])->update($customerJobUpdate);
-        CustomerJobCardLive::where(['job_number'=>$job_number])->update($customerJobUpdate);
-
+        
         foreach($cartDetails as $cartData)
         {
             $serviceItemTax = $cartData['price'] * (config('global.TAX_PERCENT') / 100);
