@@ -144,27 +144,7 @@
                                                 
                                         </button>
                                     </div>
-                                    <div class="ms-auto">
-                                        <div class="dropdown">
-                                            <button class="btn btn-link text-secondary ps-0 pe-2" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa fa-ellipsis-v text-lg"></i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end me-sm-n4 me-n3" aria-labelledby="navbarDropdownMenuLink">
-                                                <div class="timeline timeline-one-side" data-timeline-axis-style="dotted">
-                                                    @foreach(config('global.jobs.actions') as $actionKey => $jobActions)
-                                                    <div class="timeline-block mb-3">
-                                                      <span class="timeline-step">
-                                                        <i class="ni ni-bell-55 @if($job->job_status < $actionKey) text-secondary @else {!!config('global.jobs.status_text_class')[$actionKey]!!}  text-gradient @endif"></i>
-                                                      </span>
-                                                      <div class="timeline-content">
-                                                        <span class="badge badge-sm @if($job->job_status < $actionKey) bg-gradient-secondary @else {!!config('global.jobs.status_btn_class')[$actionKey]!!} @endif">{{$jobActions}}</span>
-                                                      </div>
-                                                    </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                                 <hr class="m-0">
                                 <p class="text-sm text-dark mb-0"><i class="fa-solid fa-user text-default mt-3"></i> {{$job->customerInfo['TenantName']}}
@@ -179,16 +159,11 @@
                                 <div class="row">
                                     <div class="col-12">
                                         @if($job->job_status==3)
+
                                             @if($job->payment_type!=4)
-                                            <button type="button" @if($job->payment_status==1) wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class="w-100 btn {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}" @else class="w-100 opacity-2 btn {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}" @endif >Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
-
-                                                
-
-                                            @else
-                                            
-                                                <button type="button"  wire:click="updateQwService('{{$job->job_number}}','4',{{$job->customerInfo['TenantId']}})" class="btn  {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!} cursor-pointer" > Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
-                                            
-
+                                                @if($job->payment_status==1)
+                                                <button type="button"  wire:click="updateQwService('{{$job->job_number}}','4','{{$job->customerInfo['TenantId']}}')" class="w-100 btn {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}"  >Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
+                                                @endif
                                             @endif
                                         @endif
                                         <!-- <small class="text-secondary mb-0">{{ \Carbon\Carbon::parse($job->created_at)->format('d-m-y h:i A') }}</small> -->

@@ -72,7 +72,7 @@ class GatePasses extends Component
 
     public function updateQwService($job_number,$status,$customer_id)
     {
-        ///dd($customer_id);
+        //dd($customer_id);
         $this->job_status = $status;
         $this->job_departent = $status;
         

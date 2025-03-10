@@ -325,7 +325,7 @@ class Operations extends Component
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
             if($mobileNumber!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately. Thank you for choosing GSS! Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$job_number.' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
@@ -1088,26 +1088,23 @@ class Operations extends Component
         $this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service->job_number])->get();
     }
 
-    public function clickQlJobOperation($in_out,$up_ser,$service,$section)
+    public function clickQlJobOperation($in_out,$up_ser,$service)
     {
         $service = CustomerJobCardServices::find($service);
         if($in_out=='start')
         {
             $serviceUpdate[$up_ser.'_time_in'] = Carbon::now();
-            //$serviceUpdate[$up_ser]=1;
         }
         else if($in_out=='stop')
         {
             $serviceUpdate[$up_ser.'_time_out'] = Carbon::now();
-            //$serviceUpdate[$up_ser] = 2;
         }
-        CustomerJobCardServices::where(['job_number'=>$service->job_number,'section_name'=>$section])->update($serviceUpdate);
-        
+        CustomerJobCardServices::where(['job_number'=>$service->job_number,'id'=>$service->id])->update($serviceUpdate);
         $serviceJobUpdateLog = [
-            'job_number'=>$service['job_number'],
-            'customer_job__card_service_id'=>$service['id'],
-            'job_status'=>$service['job_status'],
-            'job_departent'=>$service['job_departent'],
+            'job_number'=>$service->job_number,
+            'customer_job__card_service_id'=>$service->id,
+            'job_status'=>$service->job_status,
+            'job_departent'=>$service->job_departent,
             'job_description'=>json_encode($serviceUpdate),
         ];
         CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
