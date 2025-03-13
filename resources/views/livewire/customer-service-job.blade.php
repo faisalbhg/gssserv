@@ -433,7 +433,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 my-2">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 my-2" id="cartDisplayId">
                     @if($cardShow)
                         <div class="card card-profile card-plain">
                             <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Pricing Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
@@ -1482,7 +1482,7 @@
         @endif
         
         @if($showBundleServiceSectionsList)
-            @include('components.modals.buncleListing')
+            @include('components.modals.bundleListing')
         @endif
         
         @if($showDiscountDroup)

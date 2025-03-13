@@ -91,7 +91,7 @@
                                                     }
                                                     else if($bdlerviceList['BundleDiscountType']==2)
                                                     {
-                                                        if(isset($appliedDiscount))
+                                                        if(!empty($appliedDiscount))
                                                         {
                                                             if($appliedDiscount['groupType'] !=2 && $appliedDiscount['groupType'] !=6)
                                                             {
@@ -112,9 +112,9 @@
                                                     }
                                                     else if($bdlerviceList['BundleDiscountType']==3)
                                                     {
-                                                        if(isset($appliedDiscount))
+                                                        if(!empty($appliedDiscount))
                                                         {
-                                                            if($appliedDiscount['groupType']!=2 && $appliedDiscount['groupType']!=6)
+                                                            if(@$appliedDiscount['groupType']!=2 && @$appliedDiscount['groupType']!=6)
                                                             {
                                                                 if($appliedDiscount['id']==9 && $appliedDiscount['id']!=41 )
                                                                 {
@@ -132,7 +132,13 @@
                                                         }
                                                     }
                                                     ?>
-                                                    <a href="javascript:;" class="btn btn-icon {{config('global.bundles.type_class')[$bdlerviceList['BundleDiscountType']]}} d-lg-block mt-3 mb-0 @if(!$button_allowed) opacity-4 @endif">Buy Now <i class="fas fa-arrow-right ms-1"></i></a>
+                                                    @if($button_allowed)
+                                                    <a class="btn btn-icon {{config('global.bundles.type_class')[$bdlerviceList['BundleDiscountType']]}} d-lg-block mt-3 mb-0"  wire:click="bundleAddtoCart('{{json_encode($bdlerviceList)}}')">Buy Now <i class="fas fa-arrow-right ms-1"></i></a>
+                                                    @endif
+
+                                                    @if(!$button_allowed)
+                                                    <a class="btn btn-icon {{config('global.bundles.type_class')[$bdlerviceList['BundleDiscountType']]}} d-lg-block mt-3 mb-0 opacity-4">Buy Now <i class="fas fa-arrow-right ms-1"></i></a>
+                                                    @endif
                                                     
                                                     
                                                 </div>
@@ -140,12 +146,16 @@
                                         </div>
                                     </div>
                                 @endforeach
-                                    
-
-                              </div>
-
-
-                            
+                            </div>
+                            <div wire:loading wire:target="bundleAddtoCart">
+                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                    <div class="la-ball-beat">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>

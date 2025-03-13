@@ -697,8 +697,6 @@ class CustomerServiceJob extends Component
     }
     public function addtoCart($servicePrice,$discount)
     {
-
-        //dd($customize_price);
         $addtoCartAllowed=false;
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
@@ -1666,9 +1664,38 @@ class CustomerServiceJob extends Component
                 }
             }
         }
+
         //dd($this->bundleServiceLists);
         $this->showBundleServiceSectionsList=true;
         $this->dispatchBrowserEvent('openBundleServicesListModal');
+    }
+
+    public function bundleAddtoCart($bundleListDetails){
+        $bundleListDetails = json_decode($bundleListDetails,true);
+        foreach($bundleListDetails['lists'] as $bundleInfo)
+        {
+            $bundleListDetails['PriceID'] = $bundleListDetails['Id'];
+            $bundleListDetails['CustomerGroupId'] = $bundleListDetails['CustomerGroupId'];
+            $bundleListDetails['CustomerGroupCode'] = $bundleListDetails['CustomerGroupCode'];
+            $bundleListDetails['MinPrice'] = null;
+            $bundleListDetails['MaxPrice'] = null;
+            $bundleListDetails['StartDate'] = null;
+            $bundleListDetails['EndDate'] = null;
+            $bundleListDetails['DiscountPerc'] = $bundleInfo['DiscountPerc'];
+
+            if($bundleInfo['Type']=='S'){
+                $this->addtoCart(json_encode($bundleInfo['services']),json_encode($bundleListDetails));
+            }
+            if($bundleInfo['Type']=='I'){
+                $this->addtoCartItem($bundleInfo['items']['ItemCode'],json_encode($bundleListDetails));
+            }
+        }
+        //$this->showBundleServiceSectionsList=false;
+        $this->dispatchBrowserEvent('closeBundleServicesListModal');
+        $this->dispatchBrowserEvent('scrollto', [
+            'scrollToId' => 'cartDisplayId',
+        ]);
+        session()->flash('success', 'New Bundle added Successfully !');
     }
 
     public function validatePackageContinue(){
