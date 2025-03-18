@@ -86,6 +86,8 @@ class Operations extends Component
     public $customerJobServiceLogs;
     public $jobOrderReference;
 
+    public $wash_bumber_check;
+
 
     
     function mount( Request $request) {

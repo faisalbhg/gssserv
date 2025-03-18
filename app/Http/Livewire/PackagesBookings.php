@@ -162,13 +162,20 @@ class PackagesBookings extends Component
 
             
         }
+        if($this->mobile)
+        {
+            $this->sendOTPSMS();
+        }
+        
+    }
 
+    public function sendOTPSMS(){
         $mobileNumber = isset($this->mobile)?'971'.substr($this->mobile, -9):null;
         $customerName = isset($this->name)?$this->name:null;
         if($mobileNumber!=''){
             //if($mobileNumber=='971566993709'){
                 $otpPack = $customerPackageData['otp_code'];
-                $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
+                $msgtext = urlencode('Dear '.$customerName.', please use the OTP '.$otpPack.' of GSS Package creation valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
                 $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             //}
         }
@@ -205,17 +212,7 @@ class PackagesBookings extends Component
 
     public function resendPackageOtp(){
         $this->package_otp=null;
-        $mobileNumber = isset($this->mobile)?'971'.substr($this->mobile, -9):null;
-        $customerName = isset($this->name)?$this->name:null;
-        $otpPack = fake()->randomNumber(6);
-        PackageBookings::where(['package_number'=>$this->package_number,'customer_id'=>$this->customer_id])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
-        if($mobileNumber!=''){
-            //if($mobileNumber=='971566993709'){
-                $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
-                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-            //}
-        }
-        $this->showOtpVerify=true;
+        $this->sendOTPSMS();
     }
 
     public function completePaymnet($mode)

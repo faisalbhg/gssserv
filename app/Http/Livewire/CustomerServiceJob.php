@@ -222,7 +222,10 @@ class CustomerServiceJob extends Component
                 }
                 else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
                 {
-                    $discountLaborSalesPrices = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->selectedVehicleInfo->customerInfoMaster['TenantCode']]);
+                    $discountLaborSalesPrices = LaborSalesPrices::where([
+                        'ServiceItemId'=>$sectionServiceList->ItemId,
+                        'CustomerGroupCode'=>$this->selectedVehicleInfo->customerInfoMaster['TenantCode']
+                    ]);
                     $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
                     //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
                     $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
@@ -291,7 +294,6 @@ class CustomerServiceJob extends Component
                 foreach($inventoryItemMasterLists as $key => $itemMasterList)
                 {
                     $itemPriceLists[$key]['priceDetails'] = $itemMasterList;
-
                     if(!empty($this->appliedDiscount)){
                         $qlInventorySalesPricesQuery = InventorySalesPrices::where([
                                 'ServiceItemId'=>$itemMasterList->ItemId,
@@ -308,6 +310,17 @@ class CustomerServiceJob extends Component
                         }
                         $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->first();
                         $qlItemPriceLists[$key]['discountDetails'] = $qlInventorySalesPricesQuery;
+                    }
+                    else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
+                    {
+                        $qlInventorySalesPricesQuery = InventorySalesPrices::where([
+                            'ServiceItemId'=>$itemMasterList->ItemId,
+                            'CustomerGroupCode'=>$this->selectedVehicleInfo->customerInfoMaster['TenantCode'],
+                            'DivisionCode'=>auth()->user('user')['station_code']
+                        ]);
+                        $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->where('StartDate', '<=', Carbon::now());
+                        //$qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->where('EndDate', '>=', Carbon::now() );
+                        $itemPriceLists[$key]['discountDetails'] = $qlInventorySalesPricesQuery->first();
                     }
                     else
                     {
@@ -330,7 +343,6 @@ class CustomerServiceJob extends Component
             $this->itemBrandsLists=[];
             $this->showItemsSearchResults=false;
         }
-
         if($this->showQlItemSearch)
         {
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
@@ -353,6 +365,7 @@ class CustomerServiceJob extends Component
                     foreach($quickLubeItemsNormalList as $key => $qlItemsList)
                     {
                         $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
+                        //dd($this->appliedDiscount);
                         if(!empty($this->appliedDiscount)){
                             $qlKMInventorySalesPricesQuery = InventorySalesPrices::where([
                                     'ServiceItemId'=>$qlItemsList->ItemId,
@@ -369,6 +382,17 @@ class CustomerServiceJob extends Component
                             }
                             $qlItemPriceLists[$key]['discountDetails'] =  $qlKMInventorySalesPricesQuery->first();
                             
+                        }
+                        else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
+                        {
+                            $qlKMInventorySalesPricesQuery = InventorySalesPrices::where([
+                                'ServiceItemId'=>$qlItemsList->ItemId,
+                                'CustomerGroupCode'=>$this->selectedVehicleInfo->customerInfoMaster['TenantCode'],
+                                'DivisionCode'=>auth()->user('user')['station_code']
+                            ]);
+                            $qlKMInventorySalesPricesQuery = $qlKMInventorySalesPricesQuery->where('StartDate', '<=', Carbon::now());
+                            //$qlKMInventorySalesPricesQuery = $qlKMInventorySalesPricesQuery->where('EndDate', '>=', Carbon::now() );
+                            $qlItemPriceLists[$key]['discountDetails'] = $qlKMInventorySalesPricesQuery->first();
                         }
                         else
                         {
@@ -420,6 +444,15 @@ class CustomerServiceJob extends Component
                                     $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
                                 }
                                 
+                            }
+                            else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
+                            {
+                                $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
+                                        'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
+                                        'CustomerGroupCode'=>$this->selectedVehicleInfo->customerInfoMaster['TenantCode'],
+                                    ])->where('StartDate', '<=', Carbon::now())
+                                //->where('EndDate', '>=', Carbon::now() )
+                                ->first();
                             }
                             else
                             {
@@ -1665,7 +1698,7 @@ class CustomerServiceJob extends Component
             }
         }
 
-        //dd($this->bundleServiceLists);
+        dd($this->bundleServiceLists);
         $this->showBundleServiceSectionsList=true;
         $this->dispatchBrowserEvent('openBundleServicesListModal');
     }
