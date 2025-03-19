@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Http;
 use LaravelPayfort\Facades\Payfort;
 use Illuminate\Support\Facades\Hash;
 use DB;
+use Livewire\WithPagination;
 
 use App\Models\CustomerJobCards;
 use App\Models\CustomerJobCardServices;
@@ -22,6 +23,8 @@ use App\Models\CustomerJobCardServiceLogs;
 
 class GatePasses extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
     public $filterTab='total', $filter = [0,1,2,3,4], $search_job_number = '', $search_job_date, $search_plate_number, $search_ct_number = '', $search_meter_number = '';
 
     public function render()

@@ -190,4 +190,5 @@
     </div>
 </main>
 @push('custom_script')
+
 @endpush
