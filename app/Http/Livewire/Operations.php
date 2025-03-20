@@ -330,20 +330,20 @@ class Operations extends Component
         $this->jobcardDetails = $job;
         $this->customerjobservices = $job->customerJobServices;
 
-        if($mainSTatus==4)
+        if($mainSTatus==3)
         {
             
 
-            try {
+            /*try {
                 DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$services['customer_id'].'" ');
             } catch (\Exception $e) {
                 //return $e->getMessage();
-            }
+            }*/
 
 
 
-            //$mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
-            $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+            $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
+            //$mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
             if($mobileNumber!=''){
                 //if($mobileNumber=='971566993709'){
