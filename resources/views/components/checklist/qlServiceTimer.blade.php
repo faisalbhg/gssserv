@@ -1,17 +1,11 @@
-<div class="row">
-    <div class="col-md-12 mb-4">
-        <div class="card">
-            <div class="card-header text-center pt-4 pb-3">
-                <h5 class="font-weight-bold mt-2">{{$services->section_name}}</h5>
-            </div>
-            <div class="card-body text-center pt-0">
+
                 <div class="row">
                     @if($services->service_time_in==null && $services->service_time_out==null)
                     <div class="col-md-12">
                         <div class="form-group">
                             <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlJobOperation('start','service','{{$services->id}}','{{$services->section_name}}')">
                                 <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                <span class="btn-inner--text">Start</span>
+                                <span class="btn-inner--text">{{$services->section_name}} Start</span>
                             </button>
                         </div>
                     </div>
@@ -22,7 +16,7 @@
                         <div class="form-group">
                             <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlJobOperation('stop','service','{{$services->id}}','{{$services->section_name}}')">
                                 <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                <span class="btn-inner--text">Stop</span>
+                                <span class="btn-inner--text"> {{$services->section_name}} Stop</span>
                             </button>
                             
                         </div>
@@ -43,7 +37,4 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+            

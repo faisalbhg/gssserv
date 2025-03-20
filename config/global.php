@@ -434,19 +434,387 @@ return [
     ],
     "check_list"=>[
         "wash"=>[
-            "Body Wash", "Shine Wash", "Express Polish", "Vip Wash", "Super Wash", "Full Service","Wash & Wax"
+            "services"=>["Body Wash", "Shine Wash", "Express Polish", "Vip Wash", "Super Wash", "Full Service","Wash & Wax"],
+            "checklist"=>[
+                "types"=>[
+                    "1"=>[
+                        "name"=>"Washing Checklist",
+                        "subtype"=>true,
+                        "subtype_list"=>[
+                            "1"=>[
+                                "subname"=>"Front Side",
+                                "subtypes"=>[
+                                    "1"=>"Bumper",
+                                    "2"=>"Grill",
+                                    "3"=>"Number Plate",
+                                    "4"=>"Head Lamps",
+                                    "5"=>"Fog Lamps",
+                                    "6"=>"Hood"
+                                ],
+                            ],
+                            "2"=>[
+                                "subname"=>"Rear Side",
+                                "subtypes"=>[
+                                    "1"=>"Bumper",
+                                    "2"=>"Muffler",
+                                    "3"=>"Number Plate",
+                                    "4"=>"Trunk",
+                                    "5"=>"Lights",
+                                    "6"=>"Roof Top"
+                                ],
+                            ],
+                            "3"=>[
+                                "subname"=>"Left Side",
+                                "subtypes"=>[
+                                    "1"=>"Wheel",
+                                    "2"=>"Fender",
+                                    "3"=>"Side Mirror",
+                                    "4"=>"Door Glass In & Out",
+                                    "5"=>"Door Handle",
+                                    "6"=>"Side Stepper"
+                                ],
+                            ],
+                            "4"=>[
+                                "subname"=>"Right Side",
+                                "subtypes"=>[
+                                    "1"=>"Wheel",
+                                    "2"=>"Fender",
+                                    "3"=>"Side Mirror",
+                                    "4"=>"Door Glass In & Out",
+                                    "5"=>"Door Handle",
+                                    "6"=>"Side Stepper"
+                                ],
+                            ],
+                            "5"=>[
+                                "subname"=>"Inner Side",
+                                "subtypes"=>[
+                                    "1"=>"Smell",
+                                    "2"=>"Windshield FR & RR",
+                                    "3"=>"Steering Wheel",
+                                    "4"=>"Gear Knob",
+                                    "5"=>"Centre Console",
+                                    "6"=>"Ash Try",
+                                    "7"=>"Dashboard",
+                                    "8"=>"AC Vents FR & RR",
+                                    "9"=>"Interior Trim",
+                                    "10"=>"Floor Mat",
+                                    "11"=>"Rear View Mirror",
+                                    "12"=>"Luggage Comp",
+                                    "13"=>"Roof Top"
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            ],
         ],
         "glazing"=>[
-            "Glazing"
+            "services"=>["Glazing"],
+            "checklist"=>[
+                "types"=>[
+                    "1"=>[
+                        "title"=>"Painted Surface",
+                        "show_inner_section"=>true,
+                        "subtypes"=>[
+                            "1"=>[
+                                "name"=>"Surface Contaminants Removed",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "2"=>[
+                                "name"=>"Metallic Fallout & Acid Rain Spotting Removed",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "3"=>[
+                                "name"=>"Scratches, Swirl Marks & Oxidation Removed",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "4"=>[
+                                "name"=>"Residue Removed",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "5"=>[
+                                "name"=>"Final Finish Evenly Applied",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                        ],
+                        
+                    ],
+                    "2"=>[
+                        "title"=>"Engine Compartment",
+                        "show_inner_section"=>false,
+                        "subtypes"=>[
+                            "1"=>"Contaminants Removed from:",
+                            "2"=>"Engine",
+                            "3"=>"Engine Compartment",
+                            "4"=>"Inner Hood (hood liner not saturated)",
+                            "5"=>"Engine Dressed",
+                        ],
+                    ],
+                    "3"=>[
+                        "title"=>"Wheels, Tires & Wheel Arch",
+                        "show_inner_section"=>false,
+                        "subtypes"=>[
+                            "1"=>"Wheels Cleaned",
+                            "2"=>"Tires Cleaned and Dressed",
+                            "3"=>"Wheel Arch Cleaned and Dressed",
+                        ],
+                    ],
+                    "4"=>[
+                        "title"=>"Critical Details (Cleaned and Dressed)",
+                        "show_inner_section"=>false,
+                        "subtypes"=>[
+                            "1"=>"Grill",
+                            "2"=>"Air Dam",
+                            "3"=>"Bumper",
+                            "4"=>"Logo",
+                            "5"=>"Chrome Parts",
+                            "6"=>"Door / Trunk (Stay Rods, Connecting Rods)",
+                            "7"=>"Fuel Lid",
+                            "8"=>"Exterior Rubber",
+                            "9"=>"Vinyl Trims",
+                            "10"=>"Door Handles",
+                            "11"=>"Exterior Glass & Mirrors",
+                        ],
+                    ]
+                ]
+            ],
         ],
         "interiorCleaning"=>[
-            "Seat Cleaning"
+            "services"=>["Seat Cleaning"],
+            "checklist"=>[
+                "types"=>[
+                    "1"=>[
+                        "title"=>"Plastic, Rubber & Glass Surfaces Cleaned & Dressed",
+                        "show_inner_section"=>true,
+                        "subtypes"=>[
+                            "1"=>[
+                                "name"=>"Dashboard",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Front Right",
+                                ],
+                            ],
+                            "2"=>[
+                                "name"=>"Console",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "3"=>[
+                                "name"=>"Instrumental Panel",
+                                "inner_sections"=>[
+                                    "1"=>"Front left",
+                                ],
+                            ],
+                            "4"=>[
+                                "name"=>"Steering Wheel",
+                                "inner_sections"=>[
+                                    "1"=>"Front left",
+                                ],
+                            ],
+                            "5"=>[
+                                "name"=>"Foot Pedals",
+                                "inner_sections"=>[
+                                    "1"=>"Front left",
+                                ],
+                            ],
+                            "6"=>[
+                                "name"=>"Storage Areas",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "7"=>[
+                                "name"=>"Door Frame & Trims",
+                                "inner_sections"=>[
+                                    "1"=>"Front left",
+                                    "2"=>"Rear Left",
+                                    "3"=>"Rear Right",
+                                    "4"=>"Front Right",
+                                ],
+                            ],
+                            "8"=>[
+                                "name"=>"Weather Strip (Door & Body)",
+                                "inner_sections"=>[
+                                    "1"=>"Front left",
+                                    "2"=>"Rear Left",
+                                    "3"=>"Rear Right",
+                                    "4"=>"Front Right",
+                                ],
+                            ],
+                            "9"=>[
+                                "name"=>"Interior Glass & Mirrors",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                ],
+                            ],
+                            "10"=>[
+                                "name"=>"Rear Window Deck",
+                                "inner_sections"=>[
+                                    "1"=>"Rear Left",
+                                    "2"=>"Rear",
+                                    "3"=>"Rear Right",
+                                ],
+                            ],
+                            "7"=>[
+                                "name"=>"Ash Trays",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                ],
+                            ],
+                        ],
+                        
+                    ],
+                    "2"=>[
+                        "title"=>"Leather & Fabric Seats Cleaned",
+                        "show_inner_section"=>false,
+                        "subtypes"=>[
+                            "1"=>"Driver Seat & Seat Belt",
+                            "2"=>"Passenger Seat & Seat Belts",
+                            "3"=>"2nd Row Seats & Seat Belts",
+                            "4"=>"3rd Row Seats & Seat Belts",
+                        ],
+                    ],
+                    "3"=>[
+                        "title"=>"Carpets",
+                        "show_inner_section"=>false,
+                        "subtypes"=>[
+                            "1"=>"Floor Carpet",
+                            "2"=>"Floor Mats",
+                            "3"=>"Head Liner",
+                            "4"=>"Trunk / Luggage Compartment",
+                        ],
+                    ],
+                    "4"=>[
+                        "title"=>"General Check",
+                        "show_inner_section"=>false,
+                        "subtypes"=>[
+                            "1"=>"Jod Card & Amount Proposed",
+                            "2"=>"Dashboard Alerts",
+                            "3"=>"Radio",
+                            "4"=>"A/C",
+                            "5"=>"Lights",
+                            "6"=>"Window Glass",
+                            "7"=>"Seats",
+                            "8"=>"Steering Controls",
+                            "9"=>"Electronic Switches",
+                            "10"=>"Touch Screen",
+                            "11"=>"Rear View Camera",
+                            "12"=>"Noise / Abnormal Sounds",
+                            "13"=>"Cabin Smell",
+                        ],
+                    ]
+                ]
+            ],
         ],
         "tinting"=>[
-            "Tinting"
+            "services"=>["Tinting"],
         ],
         "oilChange"=>[
-            "Body Wash","Full Service"
+            "services"=>["Quick Lube","Engine flush – efm"],
+            "checklist"=>[
+                "types"=>[
+                    "1"=>[
+                        "title"=>"Interior Cabin Inspection",
+                        "show_inner_section"=>false,
+                        "subtypes"=>[
+                            "1"=>"Turn key on - check for fault codes",
+                            "2"=>"Start Engine - observe operation",
+                            "3"=>"Reset the Service Reminder Alert",
+                            "4"=>"Stick & Update Service Reminder Sticker on B-Piller",
+                        ],
+                        
+                    ],
+                    "2"=>[
+                        "title"=>"Under Hood Inspection",
+                        "show_inner_section"=>false,
+                        "subtypes"=>[
+                            "1"=>"Check Power Steering Fluid Level",
+                            "2"=>"Check Power Steering tank Cap properly fixed",
+                            "3"=>"Check Brake fluid level",
+                            "4"=>"Check Brake fluid tank Cap properly fixed",
+                            "5"=>"Check Engine Oil Level",
+                            "6"=>"Check Radiator Coolant Level",
+                            "7"=>"Check Radiator Cap properly fixed",
+                            "8"=>"Top off windshield washer fluid",
+                            "9"=>"Check windshield Cap properly fixed",
+                        ],
+                    ],
+                    "3"=>[
+                        "title"=>"Under Body Inspection",
+                        "show_inner_section"=>false,
+                        "subtypes"=>[
+                            "1"=>"Check for Oil leaks - Engine, Steering",
+                            "2"=>"Check for Oil Leak - Oil Filtering",
+                            "3"=>"Check Drain Plug fixed properly",
+                            "4"=>"Check Oil Filter fixed properly",
+                        ],
+                    ],
+                ],
+            ],
         ]
     ]
 

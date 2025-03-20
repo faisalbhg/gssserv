@@ -32,6 +32,7 @@ use App\Models\InventoryBrand;
 use App\Models\InventoryItemMaster;
 use App\Models\Landlord;
 use App\Models\TempCustomerServiceCart;
+use App\Models\JobCardChecklists;
 
 use Carbon\Carbon;
 use Session;
@@ -73,6 +74,7 @@ class Operations extends Component
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
 
     public $frontSideBumperCheck, $frontSideGrillCheck, $frontSideNumberPlateCheck, $frontSideHeadLampsCheck, $frontSideFogLampsCheck, $frontSideHoodCheck, $rearSideBumperCheck, $rearSideMufflerCheck, $rearSideNumberPlateCheck, $rearSideTrunkCheck, $rearSideLightsCheck, $rearSideRoofTopCheck, $leftSideWheelCheck, $leftSideFenderCheck, $leftSideSideMirrorCheck, $leftSideDoorGlassInOutCheck, $leftSideDoorHandleCheck, $leftSideSideStepperCheck, $rightSideWheelCheck, $rightSideFenderCheck, $rightSideSideMirrorCheck, $rightSideDoorGlassInOutCheck, $rightSideDoorHandleCheck, $rightSideSideStepperCheck, $innerCabinSmellCheck, $innerCabinWindshieldFRRRCheck, $innerCabinSteeringWheelCheck, $innerCabinGearKnobCheck, $innerCabinCentreConsoleCheck, $innerCabinAshTryCheck, $innerCabinDashboardCheck, $innerCabinACVentsFRRRCheck, $innerCabinInteriorTrimCheck, $innerCabinFloorMatCheck, $innerCabinRearViewMirrorCheck, $innerCabinLuggageCompCheck, $innerCabinRoofTopCheck;
+
     public $jobCustomerInfo,$updateService=false;
     public $jobcardDetails, $showaddServiceItems=false;
     public $showVehicleImageDetails=false;
@@ -87,6 +89,7 @@ class Operations extends Component
     public $jobOrderReference;
 
     public $wash_bumber_check;
+    public $showchecklist=[],$checklist_comments,$checklists;
 
 
     
@@ -109,6 +112,7 @@ class Operations extends Component
 
     public function render()
     {
+
         $this->stationsList = Landlord::all();
         
         $getCountSalesJob = CustomerJobCards::select(
@@ -242,10 +246,14 @@ class Operations extends Component
         
     }
 
+    public function qualityCheck($services,$ql=null)
+    {
+        //dd($services['id']);
+        $this->showchecklist[$services['id']]=true;
+    }
+
     public function updateJobService($services,$ql=null)
     {
-
-
         $jobServiceId = $services['id'];
         $this->job_status = $services['job_status']+1;
         $this->job_departent = $services['job_departent']+1;
@@ -255,6 +263,18 @@ class Operations extends Component
             'job_departent'=>$services['job_status']+1,
         ];
         //dd($serviceJobUpdate);
+
+        if($services['job_status']==1){
+            JobCardChecklists::create([
+                'job_number'=>$services['job_number'],
+                'job_Service_id'=>$jobServiceId,
+                'checklist'=>json_encode($this->checklists),
+                'checklist_notes'=>json_encode($this->checklist_comments),
+                'created_by'=>auth()->user('user')->id
+            ]);
+        }
+        
+
         if($ql){
             CustomerJobCardServices::where(['job_number'=>$services['job_number'],'section_name'=>'Quick Lube'])->update($serviceJobUpdate);
         }
@@ -484,9 +504,14 @@ class Operations extends Component
 
     public function customerJobUpdate($job_number)
     {
+        
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
         $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
+        foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
+        {
+            $this->showchecklist[$jobcardDetailsList->id]=false;
+        }
         $this->jobOrderReference=null;
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0)
         {

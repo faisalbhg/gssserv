@@ -83,6 +83,11 @@ class Dashboard extends Component
             $customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
         }
 
+        if(auth()->user('user')->user_type!=1){
+            $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>auth()->user('user')['station_code']]);
+            $customerjobsQuery = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']]);
+        }
+
         $this->getCountSalesJob = $getCountSalesJobStatus->first();
         $this->customerjobsLists = $customerjobsQuery->get();
         $this->stationsList = Landlord::all();

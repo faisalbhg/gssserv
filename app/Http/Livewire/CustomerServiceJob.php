@@ -1659,6 +1659,7 @@ class CustomerServiceJob extends Component
 
     public function openBundleListDetails($bundleDetails){
         $this->selectedBundles=json_decode($bundleDetails,true);
+        //dd($this->selectedBundles);
         $this->bundleServiceLists = [];
         //$this->bundleServiceLists[$this->selectedBundles['TypeId']]['show']=true;
         //dd($this->selectedBundles);
@@ -1666,6 +1667,7 @@ class CustomerServiceJob extends Component
         {
             //dd($selectedBundle);
             $this->bundleServiceLists[$selectedBundle['Code']] = $selectedBundle;
+            //dd(ServiceBundleDiscountedPrice::where(['Code'=>$selectedBundle['Code']])->get());
             foreach(ServiceBundleDiscountedPrice::where(['Code'=>$selectedBundle['Code']])->get() as $sBDPkey => $serviceBundleDiscountedPrice){
                 $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['ServiceItemCode'] = $serviceBundleDiscountedPrice->ServiceItemCode;
                 $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['DiscountPerc'] = $serviceBundleDiscountedPrice->DiscountPerc;
@@ -1679,7 +1681,7 @@ class CustomerServiceJob extends Component
                 if($serviceBundleDiscountedPrice->Type=='S')
                 {
                     $bundleLaborMaster = LaborItemMaster::where([
-                        'DivisionCode'=>auth()->user('user')['station_code'],
+                        //'DivisionCode'=>auth()->user('user')['station_code'],
                         'Active'=>1,
                         'ItemCode'=>$serviceBundleDiscountedPrice->ServiceItemCode,
                     ])->first();
@@ -1698,7 +1700,7 @@ class CustomerServiceJob extends Component
             }
         }
 
-        dd($this->bundleServiceLists);
+        //dd($this->bundleServiceLists);
         $this->showBundleServiceSectionsList=true;
         $this->dispatchBrowserEvent('openBundleServicesListModal');
     }

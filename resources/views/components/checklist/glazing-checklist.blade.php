@@ -1,39 +1,90 @@
 <div class="row">
-    <div class="col-md-12 mb-4">
-        <div class="card">
-            <div class="card-header text-center pt-4 pb-3">
-                <h5 class="font-weight-bold mt-2">Glazing</h5>
+    
+    @foreach(config('global.check_list.glazing.checklist.types') as $chTypeKey => $types)
+        <h2 class="mb-0 mt-2 text-sm text-left">{{$types['title']}}</h2>
+        @if($types['show_inner_section'])
+            @foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+            <div class="col-md-6 px-1">
+                <h3 class="mb-0 text-sm text-center">{{$subtype_list['name']}}</h3>
+                <hr class="horizontal dark mt-0 mb-1">
+                @foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                    <div class="form-check ps-0">
+                        <div class="card mb-2">
+                            <div class="card-header p-2 pb-0">
+                                <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}">{{$subtypesdetails}}</label>
+                            </div>
+                            <div class="card-body p-2">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}.{{$chSubTypeDtlkey}}" value="G" id="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}G">
+                                            <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}G">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}.{{$chSubTypeDtlkey}}" value="NG" id="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NG">
+                                            <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NG">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}.{{$chSubTypeDtlkey}}" value="NA" id="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NA">
+                                            <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NA">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
-            <div class="card-body text-center pt-0">
-                <div class="row">
-                    @if($services->glazing==null)
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <button class="btn btn-icon btn-3 btn-info" type="button" wire:click="clickQlOperation('start','glazing','{{$services->id}}')">
-                                <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                <span class="btn-inner--text">Start</span>
-                            </button>
-                        </div>
-                    </div>
-                    @elseif($services->glazing == 1)
-                    <div class="col-md-12">
-                        <label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->glazing_time_in)->format('dS M Y H:i A') }}</label>
-                        <div class="form-group">
-                            <button class="btn btn-icon btn-3 btn-primary" type="button" wire:click="clickQlOperation('stop','glazing','{{$services->id}}')">
-                                <span class="btn-inner--icon"><i class="ni ni-button-pause"></i></span>
-                                <span class="btn-inner--text">Stop</span>
-                            </button>
-                            
-                        </div>
-                    </div>
-                    @else
-                    <div class="col-md-12">
-                        <p class="mb-0"><label for="example-time-input" class="form-control-label">Starts at: {{ \Carbon\Carbon::parse($services->glazing_time_in)->format('dS M Y H:i A') }}</label></p>
-                        <p class="mb-0"><label for="example-time-input" class="form-control-label">Ends at: {{ \Carbon\Carbon::parse($services->glazing_time_out)->format('dS M Y H:i A') }}</label></p>
-                    </div>
-                    @endif
+            <div class="col-md-6 px-1 mb-4">
+                <div class="form-group h-100 mb-2" style="display: grid;">
+                    <textarea class="form-control" id="textArea{{$chTypeKey}}{{$chSubTypeKey}}" wire:model="checklist_comments.{{$chSubTypeKey}}" rows="3" placeholder="{{$subtype_list['name']}} Comments"></textarea>
                 </div>
             </div>
-        </div>
-    </div>
+            @endforeach
+        @else
+            @foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                <div class="col-md-6 px-1">
+                    <div class="form-check ps-0">
+                        <div class="card mb-2">
+                            <div class="card-header p-2 pb-0">
+                                <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}">{{$subtype_list}}</label>
+                            </div>
+                            <div class="card-body p-2">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}" value="G" id="check{{$chTypeKey}}{{$chSubTypeKey}}G">
+                                            <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}G">Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}" value="NG" id="check{{$chTypeKey}}{{$chSubTypeKey}}NG">
+                                            <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}NG">Not Good</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}" value="NA" id="check{{$chTypeKey}}{{$chSubTypeKey}}NA">
+                                            <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}NA">Not Applicable</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 px-1 mb-2">
+                    <div class="form-group h-100 mb-2" style="display: grid;">
+                        <textarea class="form-control" id="textArea{{$chTypeKey}}{{$chSubTypeKey}}" wire:model="checklist_comments.{{$chSubTypeKey}}" rows="3" placeholder="{{$subtype_list}} Comments"></textarea>
+                    </div>
+                </div>
+            @endforeach
+
+        @endif
+    @endforeach
 </div>

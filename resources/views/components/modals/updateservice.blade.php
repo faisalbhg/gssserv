@@ -887,7 +887,7 @@
                                                         </div>
                                                         @if($services->job_status)
                                                         <h6 class="my-2 text-sm">
-                                                            Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
+                                                            Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
                                                         </h6>
                                                         @endif
                                                         
@@ -903,10 +903,16 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         @if($services->job_status!=3 && $services->job_status<3)
-
-                                                        <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                            <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                        </a>
+                                                            @if($services->job_status==1)
+                                                                @include('components.checklist.serviceTimer')
+                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services}})">
+                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                                </a>
+                                                            @else
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                            </a>
+                                                            @endif
                                                         @endif
                                                         @if($services->is_removed==1)
                                                         <span class="mt-4 badge badge-md bg-gradient-danger"> <i class="fas fa-trash text-white me-2" aria-hidden="true"></i> Removeed</span>
@@ -924,17 +930,33 @@
                                                 </div>
                                                 <hr class="horizontal dark mt-0 mb-1">
                                                 @if($services->job_status==1)
-                                                    @include('components.checklist.serviceTimer')
-                                                    @if(in_array($services->section_name, config('global.check_list.wash')))
-                                                        @include('components.checklist.wash-checklist')
-                                                    @elseif(in_array($services->section_name, config('global.check_list.glazing')))
-                                                        
-                                                    @elseif(in_array($services->section_name, config('global.check_list.interiorCleaning')))
-                                                        
-                                                    @elseif(in_array($services->section_name, config('global.check_list.oilChange')))
-                                                        
-                                                    @elseif(in_array($services->section_name, config('global.check_list.tinting')))
-                                                        
+                                                    @if($showchecklist[$services->id])
+                                                        @if(in_array($services->section_name, config('global.check_list.wash.services')))
+                                                            @include('components.checklist.wash-checklist')
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                            </a>
+                                                        @elseif(in_array($services->section_name, config('global.check_list.glazing.services')))
+                                                            @include('components.checklist.glazing-checklist')
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                            </a>
+                                                        @elseif(in_array($services->section_name, config('global.check_list.interiorCleaning.services')))
+                                                            @include('components.checklist.interiorCleaning-checklist')
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                            </a>
+                                                        @elseif(in_array($services->section_name, config('global.check_list.oilChange.services')))
+                                                            @include('components.checklist.oilChange-checklist')
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                            </a>
+                                                        @elseif(in_array($services->section_name, config('global.check_list.tinting.services')))
+                                                            @include('components.checklist.tinting-checklist')
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                            </a>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             </div>
@@ -959,10 +981,17 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     @if($services->job_status!=3 && $services->job_status<3)
-
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
-                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                    </a>
+                                                        @if($services->job_status==1)
+                                                            @include('components.checklist.qlServiceTimer')
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                            </a>
+                                                        @else
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                            </a>
+                                                        @endif
+                                                    
                                                     @endif
                                                     @if($services->is_removed==1)
                                                     <span class="mt-4 badge badge-md bg-gradient-danger"> <i class="fas fa-trash text-white me-2" aria-hidden="true"></i> Removeed</span>
@@ -978,8 +1007,16 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            @if($services->job_status==1)
-                                            @include('components.checklist.qlServiceTimer')
+                                        @endif
+                                        <hr class="horizontal dark mt-0 mb-1">
+                                        @if($services->job_status==1)
+                                            @if($showchecklist[$services->id])
+                                                @if(in_array($services->section_name, config('global.check_list.oilChange.services')))
+                                                    @include('components.checklist.oilChange-checklist')
+                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
+                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                    </a>
+                                                @endif
                                             @endif
                                         @endif
                                         
@@ -1030,6 +1067,15 @@
         </div>
     </div>
     <div wire:loading wire:target="updateJobService">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <div wire:loading wire:target="qualityCheck">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
             <div class="la-ball-beat">
                 <div></div>
