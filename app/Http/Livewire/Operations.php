@@ -347,7 +347,7 @@ class Operations extends Component
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
             if($mobileNumber!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$job_number.' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$this->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$job_number.' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
