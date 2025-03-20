@@ -216,8 +216,8 @@ class SubmitCutomerServiceJob extends Component
         $this->job_number;
         
         $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle','stationInfo'])->where(['job_number'=>$this->job_number])->first();
-        $mobileNumber = isset($customerjobs->customerInfo['Mobile'])?'971'.substr($customerjobs->customerInfo['Mobile'], -9):null;
-        //$mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+        //$mobileNumber = isset($customerjobs->customerInfo['Mobile'])?'971'.substr($customerjobs->customerInfo['Mobile'], -9):null;
+        $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
         $customerName = isset($customerjobs->customerInfo['TenantName'])?$customerjobs->customerInfo['TenantName']:null;
         $plate_number = $customerjobs->plate_number;
         //dd($mobileNumber);

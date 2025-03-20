@@ -113,6 +113,8 @@ class GatePasses extends Component
                 //dd($e->getMessage());
                 //return $e->getMessage();
             }
+
+            
         }
     }
 }
