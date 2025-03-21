@@ -112,7 +112,7 @@ class Operations extends Component
 
     public function render()
     {
-
+        //if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
         $this->stationsList = Landlord::all();
         
         $getCountSalesJob = CustomerJobCards::select(
@@ -513,8 +513,7 @@ class Operations extends Component
             $this->showchecklist[$jobcardDetailsList->id]=false;
         }
         $this->jobOrderReference=null;
-        if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0)
-        {
+        if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
             $paymentResponse = json_decode($this->jobcardDetails->payment_response,true);
             $paymentResponseOrderResponse =json_decode(json_decode($paymentResponse['order_response'],true),true);
             $this->jobOrderReference = $paymentResponseOrderResponse['orderReference'];
@@ -564,13 +563,18 @@ class Operations extends Component
         $arrData['station'] = $station;
         $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.synchronize_single_paymenkLink_url'),$arrData);
         $paymentResponse = json_decode($response,true);
-        //dd($paymentResponse['order_response']['orderReference']);
+        $orderResponseAmount = str_replace("د.إ.\u{200F} ","",$paymentResponse['order_response']['amount']);
+        //dd($paymentResponse);
         if($paymentResponse['order_response']['status']=='PURCHASED' || $paymentResponse['order_response']['status']=='CAPTURED' )
         {
             CustomerJobCards::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
-            
             session()->flash('paymentLinkStatusSuccess', 'Payment Link is paid..!');
-            //$this->payment_status = 1;
+            try {
+                DB::select('EXEC [dbo].[Job.CashierAcceptPayment] @jobId = "'.$job_number.'", @paymentmode = "L", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$orderResponseAmount.',@advanceInvoice=NULL ');
+            } catch (\Exception $e) {
+                //dd($e->getMessage());
+                //return $e->getMessage();
+            }
         }
         else
         {

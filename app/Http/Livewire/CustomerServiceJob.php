@@ -1734,6 +1734,9 @@ class CustomerServiceJob extends Component
     }
 
     public function validatePackageContinue(){
+        $validatedData = $this->validate([
+            'package_number' => 'required',
+        ]);
         $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
         if($customerPackageInfo->payment_status==2){
             if($customerPackageInfo->package_status==2){
@@ -1742,10 +1745,10 @@ class CustomerServiceJob extends Component
                 $otpPack = fake()->randomNumber(6);
                 PackageBookings::where(['package_number'=>$this->package_number])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
                 if($mobileNumber!=''){
-                    //if($mobileNumber=='971566993709'){
+                    if($mobileNumber=='971566993709'){
                         $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                    //}
+                    }
                 }
                 $this->showPackageOtpVerify=true;
                 session()->flash('package_success', 'Package is valid, '.$otpPack.' please enter the OTP shared in the registered mobile number..!');
@@ -1764,6 +1767,7 @@ class CustomerServiceJob extends Component
         $validatedData = $this->validate([
             'package_otp' => 'required',
         ]);
+        //dd(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp])->exists());
         if(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp])->exists())
         {
             $this->showOpenPackageDetails=true;
@@ -1820,9 +1824,10 @@ class CustomerServiceJob extends Component
                 $chheckCustomerJobServiceQuery->delete();
             }
         }
-        
-        
-        
+    }
+
+    public function safe($id){
+        $this->confirming = null;
     }
 
 

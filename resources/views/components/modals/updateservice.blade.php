@@ -86,10 +86,12 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
-
+                                                    <button type="button" wire:click="checkPaymentStatus('{{$jobcardDetails->job_number}}','{{$jobOrderReference}}','{{$jobcardDetails->stationInfo['StationID']}}')" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button>
+                                                    
                                                     @if($jobcardDetails->payment_status==0 && $jobcardDetails->payment_type==1)
                                                     
                                                     <div class=" float-start">
+
                                                         @if($jobcardDetails->payment_type==1 && $jobcardDetails->payment_status==0)
                                                         <button type="button" wire:click="resendPaymentLink('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-success px-2">Re send Payment link</button>
                                                         <button type="button" wire:click="checkPaymentStatus('{{$jobcardDetails->job_number}}','{{$jobOrderReference}}','{{$jobcardDetails->stationInfo['StationID']}}')" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button>
@@ -105,8 +107,7 @@
                                                         @endif
                                                         @if ($message = Session::get('paymentLinkStatusError'))
                                                             <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
-                                                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
-                                                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                                                <span class="alert-text"> {{ $message }}</span>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                                                                     <span aria-hidden="true">×</span>
                                                                 </button>

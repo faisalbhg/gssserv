@@ -472,6 +472,15 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                <div wire:loading wire:target="safe">
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </p>
 
                                                             @else
@@ -1154,32 +1163,32 @@
                 <div class="container">
                     <div class="tab-content tab-space">
                         <div class="tab-pane active" id="monthly" role="tabpanel" aria-labelledby="tabs-iconpricing-tab-1">
+                            @if ($message = Session::get('package_success'))
+                            <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
+                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            @endif
+                            @if ($message = Session::get('package_error'))
+                            <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                <span class="alert-text"><strong>Error!</strong> {{ $message }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            @endif
                             <div class="row" id="packageServiceListDiv">
                                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
                                     <div class="card h-100">
-                                        <div class="card-header text-center pt-4 pb-3">
-                                            <span class="badge rounded-pill bg-light text-dark bg-light">Redeem Package</span>
-                                            <h4>Booked Packags</h4>
+                                        <div class="card-header text-left p-2 pb-0">
+                                            <h5>Customer Packags</h5>
                                         </div>
-                                        <div class="card-body text-lg-start text-left pt-0">
-                                            @if ($message = Session::get('package_success'))
-                                            <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
-                                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
-                                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">×</span>
-                                                </button>
-                                            </div>
-                                            @endif
-                                            @if ($message = Session::get('package_error'))
-                                            <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
-                                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
-                                                <span class="alert-text"><strong>Error!</strong> {{ $message }}</span>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">×</span>
-                                                </button>
-                                            </div>
-                                            @endif
+                                        <div class="card-body text-lg-start text-left pt-0 p-2">
+                                            
                                             @if($showPackageOtpVerify)
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 mb-4" >
@@ -1218,31 +1227,31 @@
                                             </div>
                                             @endif
                                             @forelse($customerBookedPackages as $packBookd)
-                                            <?php
-                                            $packageBookedDateTime = new Carbon\Carbon($packBookd->package_date_time);
-                                            $endPackageDateTime = $packageBookedDateTime->addMonth($packBookd->package_duration);
-                                            ?>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="card bg-cover text-center my-2" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                        <div class="card-body z-index-2 py-2 text-center">
-                                                            <span class="badge rounded-pill bg-light {{config('global.package.type')[$packBookd->package_type]['bg_class']}} {{config('global.package.type')[$packBookd->package_type]['text_class']}}">{{config('global.package.type')[$packBookd->package_type]['title']}}</span>
-                                                            <h4 class="text-white">{{$packBookd->package_name}}</h4>
+                                                <?php
+                                                $packageBookedDateTime = new Carbon\Carbon($packBookd->package_date_time);
+                                                $endPackageDateTime = $packageBookedDateTime->addMonth($packBookd->package_duration);
+                                                ?>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="card bg-cover text-center my-2" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                            <div class="card-body z-index-2 py-2 text-center">
+                                                                <span class="badge rounded-pill bg-light {{config('global.package.type')[$packBookd->package_type]['bg_class']}} {{config('global.package.type')[$packBookd->package_type]['text_class']}}">{{config('global.package.type')[$packBookd->package_type]['title']}}</span>
+                                                                <h4 class="text-white">{{$packBookd->package_name}}</h4>
+                                                                @if(\Carbon\Carbon::now()->diffInDays($endPackageDateTime, false)>=0)
+                                                                <button  wire:click="openPackageDetails({{$packBookd}})" class="btn bg-gradient-primary mb-2 btn-sm">Redeem</button>
+                                                                @else
+                                                                <button class="btn bg-gradient-dark mb-2 btn-sm opacity-7">Expired</button>
+                                                                @endif
+                                                            </div>
                                                             @if(\Carbon\Carbon::now()->diffInDays($endPackageDateTime, false)>=0)
-                                                            <button  wire:click="openPackageDetails({{$packBookd}})" class="btn bg-gradient-primary mb-2 btn-sm">Open</button>
+                                                            <div class="mask bg-gradient-info border-radius-lg"></div>
                                                             @else
-                                                            <button class="btn bg-gradient-dark mb-2 btn-sm opacity-7">Expired</button>
+                                                            <div class="mask bg-gradient-danger border-radius-lg"></div>
                                                             @endif
-                                                        </div>
-                                                        @if(\Carbon\Carbon::now()->diffInDays($endPackageDateTime, false)>=0)
-                                                        <div class="mask bg-gradient-info border-radius-lg"></div>
-                                                        @else
-                                                        <div class="mask bg-gradient-danger border-radius-lg"></div>
-                                                        @endif
 
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             @empty
                                                 <span class="text-danger">empty..!</span>
                                             @endforelse
@@ -1255,8 +1264,69 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group d-none">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header text-left p-2 pb-0">
+                                            <h5>Redeem Other Packages</h5>
+                                        </div>
+                                        <div class="card-body text-lg-start text-left pt-0 p-2">
+                                            
+                                            @if($showPackageOtpVerify)
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12 mb-4" >
+                                                    <div class="card p-2 mb-4">
+                                                        
+                                                        <div class="card-body text-lg-left text-center pt-0">
+                                                            <label for="packageOTPVerify">Package OTP Verify</label>
+                                                            <div class="form-group">
+                                                                <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model="package_otp">
+                                                                <button class="btn btn-outline-success mb-0" type="button" wire:click="verifyPackageOtp">Verify</button>
+                                                                <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendPackageOtp">Resend</button>
+                                                                <div wire:loading wire:target="verifyPackageOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div wire:loading wire:target="resendOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @error('package_otp') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                                            @if($package_otp_message)<span class="mb-4 text-danger">{{ $package_otp_message }}</span>@endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
+                                            
+                                            <div class="form-group p-2">
                                                 <input class="form-control" type="text" wire:model="package_number" id="redeemPackageNumber" placeholder="Redeem Package Number..!">
+
+                                                @error('package_number') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                                <button  wire:click="validatePackageContinue()" class="btn bg-gradient-primary m-2 btn-sm">Redeem</button>
+                                            </div>
+                                            <div wire:loading wire:target="validatePackageContinue" >
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             
                                         </div>

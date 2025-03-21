@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        \App\Console\Commands\PaymentCron::class,
     ];
 
     /**
@@ -30,6 +30,8 @@ class Kernel extends ConsoleKernel
         if (env('IS_DEMO')) {
             $schedule->command('migrate:fresh --seed')->cron($scheduledInterval);
         }
+
+        $schedule->command('payment:cron')->everyMinute();
     }
 
     /**

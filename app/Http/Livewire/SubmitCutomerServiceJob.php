@@ -726,7 +726,6 @@ class SubmitCutomerServiceJob extends Component
         }else{
             $order_billing_email = $customerjobs->customerInfo['Email'];
         }
-        
         $total = custom_round(($customerjobs->grand_total));
         $merchant_reference = $customerjobs->job_number;
         $order_billing_phone = str_replace(' ', '', $order_billing_phone);
