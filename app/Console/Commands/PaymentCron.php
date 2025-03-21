@@ -42,7 +42,7 @@ class PaymentCron extends Command
         I am getting users and create new users if not exist....
         ----------------------------------------------------------------------------------------*/
         
-        $customerJobs = CustomerJobCards::with(['stationInfo'])->where(['payment_status'=>0,'payment_type'=>1])->where('payment_link','!=',Null)->get();
+        $customerJobs = CustomerJobCards::with(['stationInfo'])->where(['payment_status'=>0,'payment_type'=>1])->where('payment_link','!=',Null)->where('payment_response','!=',null)->get();
         if (!empty($customerJobs)) {
             foreach ($customerJobs as $key => $jobs) {
                 $arrData['job_number'] = $jobs->job_number;
