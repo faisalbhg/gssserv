@@ -112,6 +112,7 @@ class Operations extends Component
 
     public function render()
     {
+        //dd(CustomerJobCards::with(['stationInfo'])->where(['payment_status'=>0,'payment_type'=>1])->where('payment_link','!=',Null)->where('payment_response','!=',null)->get());
         //if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
         $this->stationsList = Landlord::all();
         

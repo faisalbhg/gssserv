@@ -57,7 +57,6 @@ class PaymentCron extends Command
                 if($paymentResponse['order_response']['status']=='PURCHASED' || $paymentResponse['order_response']['status']=='CAPTURED' )
                 {
                     CustomerJobCards::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
-                    session()->flash('paymentLinkStatusSuccess', 'Payment Link is paid..!');
                     try {
                         DB::select('EXEC [dbo].[Job.CashierAcceptPayment] @jobId = "'.$arrData['job_number'].'", @paymentmode = "L", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$orderResponseAmount.',@advanceInvoice=NULL ');
                     } catch (\Exception $e) {

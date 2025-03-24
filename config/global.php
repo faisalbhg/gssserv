@@ -55,7 +55,7 @@ return [
             '6'=>'Advanced',
         ],
         'status_class'=>[
-            '0'=>'bg-gradient-primary',
+            '0'=>'bg-gradient-danger',
             '1'=>'bg-gradient-success',
             '2'=>'bg-gradient-danger',
             '3'=>'bg-gradient-danger',
