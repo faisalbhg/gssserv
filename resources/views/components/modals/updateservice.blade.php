@@ -291,7 +291,7 @@
                 </div>
                 @if($showVehicleImageDetails)
                 <div class="row">
-                    <div class="col-12 col-md-6 col-xl-4 my-4">
+                    <div class="col-12 col-md-12 col-xl-4 my-4">
                         <div class="card h-100">
                             <div class="card-header pb-0 p-3">
                                 
@@ -931,8 +931,15 @@
                                                 </div>
                                                 <hr class="horizontal dark mt-0 mb-1">
                                                 @if($services->job_status==1)
+                                                
                                                     @if($showchecklist[$services->id])
-                                                        @if(in_array($services->section_name, config('global.check_list.wash.services')))
+
+                                                        @if($services->item_code=="S255")
+                                                            @include('components.checklist.interiorCleaning-checklist')
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                            </a>
+                                                        @elseif(in_array($services->section_name, config('global.check_list.wash.services')))
                                                             @include('components.checklist.wash-checklist')
                                                             <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
                                                                 <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
