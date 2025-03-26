@@ -107,12 +107,27 @@ class GatePasses extends Component
         
         if($this->job_status==4)
         {
-            try {
+            /*try {
                 DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$customer_id.'" ');
             } catch (\Exception $e) {
                 //dd($e->getMessage());
                 //return $e->getMessage();
+            }*/
+
+            /*$getJobDetails = CustomerJobCards::where(['job_number'=>$services['job_number']])->first();
+            if(auth()->user('user')->stationName['StationID']==4){
+                $mobileNumber = isset($getJobDetails->customer_mobile)?'971'.substr($getJobDetails->customer_mobile, -9):null;
             }
+            else
+            {
+                $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+            }
+            
+            $customerName = isset($getJobDetails->customer_name)?$getJobDetails->customer_name:null;
+            if($mobileNumber!=''){
+                $msgtext = urlencode('Dear '.$customerName.', your vehicle is out successfully!.we value your openion!, https://gsstations.ae/qr/'.$this->job_number.' for the feedback. Thank you for choosing GSS! . For assistance, call 800477823.');
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+            }*/
 
             
         }

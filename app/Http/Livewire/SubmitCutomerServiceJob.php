@@ -216,33 +216,34 @@ class SubmitCutomerServiceJob extends Component
         $this->job_number;
         
         $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle','stationInfo'])->where(['job_number'=>$this->job_number])->first();
-        //$mobileNumber = isset($customerjobs->customerInfo['Mobile'])?'971'.substr($customerjobs->customerInfo['Mobile'], -9):null;
-        $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+        if(auth()->user('user')->stationName['StationID']==4)
+        {
+            $mobileNumber = isset($customerjobs->customerInfo['Mobile'])?'971'.substr($customerjobs->customerInfo['Mobile'], -9):null;
+        }
+        else
+        {
+            $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+        }
         $customerName = isset($customerjobs->customerInfo['TenantName'])?$customerjobs->customerInfo['TenantName']:null;
         $plate_number = $customerjobs->plate_number;
-        //dd($mobileNumber);
-        //$mobileNumber = substr($customerjobs->mobile, -9);
         $paymentmode = null;
         if($mode=='link')
         {
             $paymentmode = "O";
             $paymentLink = $this->sendPaymentLink($customerjobs);
-            //dd($paymentLink);
             $paymentResponse = json_decode((string) $paymentLink->getBody()->getContents(), true);
-            //dd($paymentResponse);
             $merchant_reference = $paymentResponse['merchant_reference'];
-            //dd($merchant_reference);
             if(array_key_exists('payment_redirect_link', $paymentResponse))
             {
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$this->job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
                 if($customerjobs->customerInfo['Mobile']!=''){
                     //if($mobileNumber=='971566993709'){
-                        $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$this->job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. To avoid waiting at the cashier, you can pay online using this link: '.$paymentResponse['payment_redirect_link'].'.  Alternatively, you can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle service status, For assistance, call 800477823.');
+                        $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. To avoid waiting at the cashier, you can pay online using this link or you can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.', For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                     //}
                 }
 
-                $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send','job_create_status'=>1]);
+                $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_link_order_ref'=>$paymentResponse['payment_link_order_ref'],'payment_request'=>'link_send','job_create_status'=>1]);
 
                 CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
 
@@ -267,7 +268,7 @@ class SubmitCutomerServiceJob extends Component
             $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>2,'payment_request'=>'card payment','job_create_status'=>1]);
             if($customerjobs->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$this->job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle service status, For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle status, For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
@@ -289,7 +290,7 @@ class SubmitCutomerServiceJob extends Component
 
             if($customerjobs->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$this->job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle service status, For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle status, For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
@@ -309,7 +310,7 @@ class SubmitCutomerServiceJob extends Component
 
             if($customerjobs->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' Job No. '.$this->job_number.' at '.auth()->user('user')->stationName['CorporateName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle service status, For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle service status, For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
@@ -333,9 +334,6 @@ class SubmitCutomerServiceJob extends Component
         {
             CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
         }
-
-        
-
 
     }
 

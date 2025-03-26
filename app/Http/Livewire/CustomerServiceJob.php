@@ -44,6 +44,7 @@ use App\Models\CustomerJobCardServices;
 use App\Models\ServiceBundleType;
 use App\Models\ServiceBundle;
 use App\Models\ServiceBundleDiscountedPrice;
+use App\Models\Landlord;
 
 
 class CustomerServiceJob extends Component
@@ -94,7 +95,6 @@ class CustomerServiceJob extends Component
 
     public function render()
     {
-        
         if($this->new_make)
         {
             $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->where('is_deleted','=',null)->get();

@@ -42,13 +42,11 @@ class PaymentCron extends Command
         I am getting users and create new users if not exist....
         ----------------------------------------------------------------------------------------*/
         
-        $customerJobs = CustomerJobCards::with(['stationInfo'])->where(['payment_status'=>0,'payment_type'=>1])->where('payment_link','!=',Null)->where('payment_response','!=',null)->get();
+        $customerJobs = CustomerJobCards::with(['stationInfo'])->where(['payment_status'=>0,'payment_type'=>1])->where('payment_link_order_ref','!=',Null)->get();
         if (!empty($customerJobs)) {
             foreach ($customerJobs as $key => $jobs) {
                 $arrData['job_number'] = $jobs->job_number;
-                $paymentResponse = json_decode($jobs->payment_response,true);
-                $paymentResponseOrderResponse =json_decode(json_decode($paymentResponse['order_response'],true),true);
-                $arrData['order_number'] = $paymentResponseOrderResponse['orderReference'];
+                $arrData['order_number'] = $jobs->payment_link_order_ref;
                 $arrData['station'] = $jobs->stationInfo['StationID'];
                 $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.synchronize_single_paymenkLink_url'),$arrData);
                 $paymentResponse = json_decode($response,true);
@@ -57,6 +55,14 @@ class PaymentCron extends Command
                 if($paymentResponse['order_response']['status']=='PURCHASED' || $paymentResponse['order_response']['status']=='CAPTURED' )
                 {
                     CustomerJobCards::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
+                    if($arrData['station']==4){
+                        $mobileNumber = isset($jobs->customer_mobile)?'971'.substr($jobs->customer_mobile, -9):null;
+                        $customerName = isset($jobs->customer_name)?$jobs->customer_name:null;
+                        if($mobileNumber!=''){
+                            $msgtext = urlencode('Dear '.$customerName.', your payment AED'.$jobs->grand_total.' for service on vehicle '.$jobs->plate_number.' service at '.$jobs->stationInfo['ShortName'].' has been received. Receipt No:'.$jobs->job_number.', click here to access your gate pass for vehicle exit https://gsstations.ae/qr/'.$jobs->job_number.'. Thank you for your trust in GSS!');
+                            $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                        }
+                    }
                     try {
                         DB::select('EXEC [dbo].[Job.CashierAcceptPayment] @jobId = "'.$arrData['job_number'].'", @paymentmode = "L", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$orderResponseAmount.',@advanceInvoice=NULL ');
                     } catch (\Exception $e) {

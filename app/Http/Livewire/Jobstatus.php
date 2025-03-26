@@ -84,5 +84,22 @@ class Jobstatus extends Component
             'updated_by'=>auth()->user('user')->id,
         ];
         CustomerJobCards::where(['job_number'=>$services['job_number']])->update($mianJobUpdate);
+        /*$getJobDetails = CustomerJobCards::where(['job_number'=>$services['job_number']])->first();
+
+        if(auth()->user('user')->stationName['StationID']==4){
+            $mobileNumber = isset($getJobDetails->customer_mobile)?'971'.substr($getJobDetails->customer_mobile, -9):null;
+        }
+        else
+        {
+            $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+        }
+        
+        $customerName = isset($getJobDetails->customer_name)?$getJobDetails->customer_name:null;
+        if($mobileNumber!=''){
+            //if($mobileNumber=='971566993709'){
+                $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$getJobDetails->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$this->job_number.' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+            //}
+        }*/
     }
 }

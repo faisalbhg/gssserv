@@ -6,6 +6,13 @@
                 <div class="card mb-4 p-4">
                     <div class="card-body px-0 pt-0 pb-2 ">
                         <button class="w-100 btn {{config('global.payment.status_class')[$jobDetails->payment_status]}} text-uppercase text-lg">Payment: {{config('global.payment.status')[$jobDetails->payment_status]}}</button>
+                        @if($jobDetails->job_status==3)
+                            @if($jobDetails->payment_type!=4)
+                                @if($jobDetails->payment_status==1)
+                                <button type="button"  wire:click="updateQwService({{$jobDetails}})" class="w-100 btn {!!config('global.jobs.status_btn_class')[$jobDetails->job_status+1]!!}"  >Mark as {{config('global.jobs.status')[$jobDetails->job_status+1]}}</button>
+                                @endif    
+                            @endif
+                        @endif
                     </div>
                 </div>
             </div>
@@ -15,7 +22,6 @@
                 <div class="card-body z-index-2 py-9">
                 <h2 class="text-white">{{$selectedVehicleInfo['plate_number_final']}}</h2>
                 <p class="text-uppercase text-sm font-weight-bold mb-2 text-white">{{isset($selectedVehicleInfo->makeInfo)?$selectedVehicleInfo->makeInfo['vehicle_name']:''}}, {{isset($selectedVehicleInfo->modelInfo['vehicle_model_name'])?$selectedVehicleInfo->modelInfo['vehicle_model_name']:''}}</p>
-                <p class="text-white">
                 @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
                     @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
                     <p class="text-white mb-0">{{$selectedVehicleInfo['customerInfoMaster']['TenantName']}}</p>
@@ -33,9 +39,8 @@
                 <p class="text-white mb-1"><b>Chaisis:</b> {{$selectedVehicleInfo['chassis_number']}}</p>
                 @endif
                 @if($selectedVehicleInfo['vehicle_km'])
-                <b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
+                <p class="text-white mb-1"><b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
                 @endif
-                </p>
                 
                 </div>
                 <div class="mask {!!config('global.payment.status_class')[$jobDetails->payment_status]!!} border-radius-lg"></div>

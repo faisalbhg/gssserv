@@ -112,47 +112,7 @@ class Operations extends Component
 
     public function render()
     {
-        /*dd(CustomerJobCards::where('job_status','!=',4)->where('job_date_time', '<=', Carbon::yesterday())->get());
-        foreach(CustomerJobCards::where('job_status','!=',4)->where('job_date_time', '<=', Carbon::yesterday())->get() as $job_status)
-        {
-            
-            $customer_id = $job_status->customer_id;
-            CustomerJobCards::where(['job_number'=>$job_status->job_number])->update(['job_status'=>4]);
-            try {
-                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$job_status->job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$customer_id.'" ');
-            } catch (\Exception $e) {
-                //dd($e->getMessage());
-                //return $e->getMessage();
-            }
-        }
-        dd();*/
-        /*foreach(CustomerJobCards::where(['payment_status'=>0])->where('job_date_time', '<=', Carbon::yesterday())->get() as $payment_status)
-        {
-            dd($payment_status);
-            
-            switch ($payment_status->payment_type) {
-                case '1':
-                    $paymentmode="L";
-                    break;
 
-                case '2':
-                    $paymentmode="O";
-                    break;
-                
-                case '3':
-                    $paymentmode="C";
-                    break;
-            }
-            CustomerJobCards::where(['job_number'=>$payment_status->job_number])->update(['payment_status'=>1]);
-            try {
-                DB::select('EXEC [dbo].[Job.CashierAcceptPayment] @jobId = "'.$payment_status->job_number.'", @paymentmode = "'.$paymentmode.'", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$payment_status->grand_total.',@advanceInvoice=NULL ');
-            } catch (\Exception $e) {
-                //dd($e->getMessage());
-                //return $e->getMessage();
-            }
-        }*/
-        //dd(CustomerJobCards::with(['stationInfo'])->where(['payment_status'=>0,'payment_type'=>1])->where('payment_link','!=',Null)->where('payment_response','!=',null)->get());
-        //if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
         $this->stationsList = Landlord::all();
         
         $getCountSalesJob = CustomerJobCards::select(
@@ -373,6 +333,13 @@ class Operations extends Component
         if($mainSTatus==3)
         {
             
+            try {
+                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$job->customer_id.'" ');
+            } catch (\Exception $e) {
+                //dd($e->getMessage());
+                //return $e->getMessage();
+            }
+
 
             /*try {
                 DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$services['customer_id'].'" ');
@@ -381,9 +348,14 @@ class Operations extends Component
             }*/
 
 
-
-            //$mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
-            $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+            if(auth()->user('user')->stationName['StationID']==4){
+                $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
+            }
+            else
+            {
+                $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+            }
+            
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
             if($mobileNumber!=''){
                 //if($mobileNumber=='971566993709'){
@@ -552,9 +524,10 @@ class Operations extends Component
         {
             $this->showchecklist[$jobcardDetailsList->id]=false;
         }
-        $this->jobOrderReference=null;
+        
+        
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
-            $this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID']);
+            //$this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID']);
         }
         
         //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
