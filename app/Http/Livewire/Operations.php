@@ -592,7 +592,7 @@ class Operations extends Component
             if($mobileNumber!=null){
                 //dd($mobileNumber);  
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', your payment of AED'.$orderResponseAmount.' for service on vehicle '.$jobs_plate_number.' service at '.$jobs->stationInfo['ShortName'].' has been received. Receipt No:'.$paymentResponse['order_response']['orderReference'].', click here to access your gate pass for vehicle exit https://gsstations.ae/qr/'.$paymentResponse['order_response']['orderReference'].'. Thank you for your trust in GSS');
+                    $msgtext = urlencode('Dear '.$customerName.', your payment of AED'.$orderResponseAmount.' for service on vehicle '.$jobs_plate_number.' at '.$jobs->stationInfo['ShortName'].' has been received. Receipt No:'.$paymentResponse['order_response']['orderReference'].', click here to access your gate pass for vehicle exit https://gsstations.ae/qr/'.$paymentResponse['order_response']['orderReference'].'. Thank you for your trust in GSS');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
