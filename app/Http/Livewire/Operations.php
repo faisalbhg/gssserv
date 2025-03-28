@@ -568,12 +568,20 @@ class Operations extends Component
     }
     
 
-    public function checkPaymentStatus($job_number, $order_ref, $station)
+    public function checkPaymentStatus($job_number, $order_ref, $station, $jobs_plate_number)
     {
         //,$order_ref,$station
         $arrData['job_number'] = $job_number;
         $arrData['order_number'] = $order_ref;
         $arrData['station'] = $station;
+
+        $mobileNumber=null;
+        if($arrData['station']==4)
+        {
+            $mobileNumber = isset($jobs->customer_mobile)?'971'.substr($jobs->customer_mobile, -9):null;
+        }
+        $customerName = isset($jobs->customer_name)?$jobs->customer_name:null;
+
         $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.synchronize_single_paymenkLink_url'),$arrData);
         $paymentResponse = json_decode($response,true);
         $orderResponseAmount = str_replace("د.إ.\u{200F} ","",$paymentResponse['order_response']['amount']);
@@ -581,6 +589,13 @@ class Operations extends Component
         if($paymentResponse['order_response']['status']=='PURCHASED' || $paymentResponse['order_response']['status']=='CAPTURED' )
         {
             CustomerJobCards::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
+            if($mobileNumber!=null){
+                //dd($mobileNumber);  
+                //if($mobileNumber=='971566993709'){
+                    $msgtext = urlencode('Dear '.$customerName.', your payment of AED'.$orderResponseAmount.' for service on vehicle '.$jobs_plate_number.' service at '.$jobs->stationInfo['ShortName'].' has been received. Receipt No:'.$paymentResponse['order_response']['orderReference'].', click here to access your gate pass for vehicle exit https://gsstations.ae/qr/'.$paymentResponse['order_response']['orderReference'].'. Thank you for your trust in GSS');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                //}
+            }
             session()->flash('paymentLinkStatusSuccess', 'Payment Link is paid..!');
             try {
                 DB::select('EXEC [dbo].[Job.CashierAcceptPayment] @jobId = "'.$job_number.'", @paymentmode = "L", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$orderResponseAmount.',@advanceInvoice=NULL ');
