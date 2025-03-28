@@ -112,9 +112,11 @@ class Operations extends Component
 
     public function render()
     {
+        /*CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056'])->where('payment_link_order_ref','!=',Null)->update(['payment_status'=>0]);*/
+        //CustomerJobCardServices::where(['job_number'=>'JOB-GQS-00002056'])->update(['job_status'=>0,'job_departent'=>0]);
         /*CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056'])->where('payment_link_order_ref','!=',Null)->update(['payment_status'=>0]);
+        dd(CustomerJobCards::with(['stationInfo','customerJobServices'])->where(['job_number'=>'JOB-GQS-00002056'])->get());
         dd(CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056','payment_status'=>0,'payment_type'=>1])->where('payment_link_order_ref','!=',Null)->get());*/
-        //dd(CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056','payment_status'=>0,'payment_type'=>1])->where('payment_link_order_ref','!=',Null)->get());
         
         $this->stationsList = Landlord::all();
         
@@ -362,7 +364,7 @@ class Operations extends Component
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
             if($mobileNumber!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$this->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$this->job_number.' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$this->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$services['job_number'].' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
