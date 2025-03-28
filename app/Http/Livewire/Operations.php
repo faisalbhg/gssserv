@@ -112,7 +112,10 @@ class Operations extends Component
 
     public function render()
     {
-
+        /*CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056'])->where('payment_link_order_ref','!=',Null)->update(['payment_status'=>0]);
+        dd(CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056','payment_status'=>0,'payment_type'=>1])->where('payment_link_order_ref','!=',Null)->get());*/
+        //dd(CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056','payment_status'=>0,'payment_type'=>1])->where('payment_link_order_ref','!=',Null)->get());
+        
         $this->stationsList = Landlord::all();
         
         $getCountSalesJob = CustomerJobCards::select(

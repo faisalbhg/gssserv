@@ -255,7 +255,7 @@
   @if($showaddServiceItems)
   @include('components.modals.addServiceItems')
   @endif
-  @include('components.modals.showQwChecklistModel');
+  @include('components.modals.showQwChecklistModel')
     </div>
 </main>
 @push('custom_script')

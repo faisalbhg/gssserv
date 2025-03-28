@@ -83,6 +83,10 @@ class CustomerJobCards extends Model
     {
         return $this->hasMany(CustomerJobCardServices::class,'job_id','id');
     }
+    public function customerJobServiceLogs()
+    {
+        return $this->hasMany(CustomerJobCardServiceLogs::class,'job_number','job_number');
+    }
 
     public function tempServiceCart()
     {
