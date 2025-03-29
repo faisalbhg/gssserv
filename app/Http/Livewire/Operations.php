@@ -65,7 +65,7 @@ class Operations extends Component
     public $cartItems = [], $cartItemCount=0, $quantity,$extra_note,$cartItemQty;
     public $cardShow=false;
 
-    public $selected_vehicle_id, $customer_type,$service_group_id,$station,$service_search;
+    public $selected_vehicle_id, $customer_type,$service_group_id,$station,$service_search, $search_paymentStatus;
     public $service_group_name, $service_group_code;
 
     public $customer_id, $vehicle_id, $sCtmrVhlcustomer_vehicle_id, $sCtmrVhlvehicle_image, $sCtmrVhlvehicleName, $sCtmrVhlmake_model, $sCtmrVhlplate_number, $sCtmrVhlchassis_number, $sCtmrVhlvehicle_km, $sCtmrVhlname, $sCtmrVhlcustomerType, $sCtmrVhlemail, $sCtmrVhlmobile, $customer_vehicle_id, $vehicleName, $make_model;
@@ -90,6 +90,7 @@ class Operations extends Component
 
     public $wash_bumber_check;
     public $showchecklist=[],$checklist_comments,$checklists;
+    public $selectAll = false;
 
 
     
@@ -112,12 +113,7 @@ class Operations extends Component
 
     public function render()
     {
-        /*CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056'])->where('payment_link_order_ref','!=',Null)->update(['payment_status'=>0]);*/
-        //CustomerJobCardServices::where(['job_number'=>'JOB-GQS-00002056'])->update(['job_status'=>0,'job_departent'=>0]);
-        /*CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056'])->where('payment_link_order_ref','!=',Null)->update(['payment_status'=>0]);
-        dd(CustomerJobCards::with(['stationInfo','customerJobServices'])->where(['job_number'=>'JOB-GQS-00002056'])->get());
-        dd(CustomerJobCards::with(['stationInfo'])->where(['job_number'=>'JOB-GQS-00002056','payment_status'=>0,'payment_type'=>1])->where('payment_link_order_ref','!=',Null)->get());*/
-        
+
         $this->stationsList = Landlord::all();
         
         $getCountSalesJob = CustomerJobCards::select(
@@ -157,16 +153,19 @@ class Operations extends Component
             $customerjobs = $customerjobs->where('payment_type', '=',$this->search_payment);
         }
         if($this->search_station){
-            //dd($this->search_station);
             $customerjobs = $customerjobs->where(['station'=>$this->search_station]);
             $getCountSalesJob = $getCountSalesJob->where(['station'=>$this->search_station]);
         }
         if($this->search_jobType){
-            //dd($this->search_station);
             $customerjobs = $customerjobs->with(['customerJobServices'])->where(function ($query) {
                 $query->whereRelation('customerJobServices', 'department_name', '=', $this->search_jobType);
             });
         }
+        if($this->search_paymentStatus){
+            $customerjobs = $customerjobs->where(['payment_status'=>$this->search_paymentStatus]);
+            $getCountSalesJob = $getCountSalesJob->where(['payment_status'=>$this->search_paymentStatus]);
+        }
+        
         
         
         
@@ -256,6 +255,157 @@ class Operations extends Component
         //dd($services['id']);
         $this->showchecklist[$services['id']]=true;
     }
+
+    public function checklistToggleSelectAll($services)
+    {
+        $services = json_decode($services);
+        if($services->item_code=="S255"){
+            foreach(config('global.check_list.interiorCleaning.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['interior'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]='G';
+                        }
+
+                    }
+
+                }
+                else{
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['interior'][$chTypeKey][$chSubTypeKey]='G';
+                    }
+
+                }
+
+            }
+        }
+        elseif(in_array($services->section_name, config('global.check_list.wash.services'))){
+            foreach(config('global.check_list.wash.checklist.types') as $chTypeKey => $types){
+                if($types['subtype']){
+                    foreach($types['subtype_list'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['subtypes'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['wash'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]='G';
+                        }
+
+                    }
+                }
+                else
+                {
+                    //
+                }
+            }
+            
+        }
+        elseif(in_array($services->section_name, config('global.check_list.glazing.services'))){
+            foreach(config('global.check_list.glazing.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['glazing'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]="G";
+                        }
+                    }
+                }
+                else
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['glazing'][$chTypeKey][$chSubTypeKey]="G";
+                    }
+                }
+            }
+        }
+        elseif(in_array($services->section_name, config('global.check_list.interiorCleaning.services'))){
+            foreach(config('global.check_list.interiorCleaning.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['interior'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]='G';
+                        }
+
+                    }
+
+                }
+                else{
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['interior'][$chTypeKey][$chSubTypeKey]='G';
+                    }
+
+                }
+
+            }
+        }
+        elseif(in_array($services->section_name, config('global.check_list.oilChange.services'))){
+            foreach(config('global.check_list.oilChange.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['oilchange'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]="G";
+                        }
+                    }
+
+                }else
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['oilchange'][$chTypeKey][$chSubTypeKey]="G";
+                    }
+
+                }
+            }
+        }
+        elseif(in_array($services->section_name, config('global.check_list.tinting.services'))){
+            foreach(config('global.check_list.tinting.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['tinting'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]="G";
+                        }
+                    }
+                }
+                else
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['tinting'][$chTypeKey][$chSubTypeKey]="G";
+                    }
+                }
+            }
+        }
+
+        /*$this->selectAll = !$this->selectAll;
+        if ($this->selectAll) {
+            $this->group1 = 'option1'; // Set default values for each group
+            $this->group2 = 'option1';
+        } else {
+            $this->group1 = null;
+            $this->group2 = null;
+        }*/
+    }
+
 
     public function updateJobService($services,$ql=null)
     {
@@ -532,7 +682,7 @@ class Operations extends Component
         
         
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
-            //$this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID']);
+            $this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID']);
         }
         
         //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
@@ -564,6 +714,7 @@ class Operations extends Component
             $this->ubi_comments = $this->checkListDetails['ubi_comments'];
             //dd($this->checkListDetails);
         }
+
         
         $this->dispatchBrowserEvent('showServiceUpdate');
         $this->dispatchBrowserEvent('hideQwChecklistModel');

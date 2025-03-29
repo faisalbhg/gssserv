@@ -772,6 +772,207 @@ return [
         ],
         "tinting"=>[
             "services"=>["Tinting"],
+            "checklist"=>[
+                "types"=>[
+                    "1"=>[
+                        "title"=>"Glass Surface",
+                        "show_inner_section"=>true,
+                        "subtypes"=>[
+                            "1"=>[
+                                "name"=>"Tinting Film Applied",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "2"=>[
+                                "name"=>"Bubbles, Dust & Damage",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "3"=>[
+                                "name"=>"Edges and Corners Cut Properly",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "4"=>[
+                                "name"=>"Final Finish Evenly Applied & Clean",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                        ],
+                        
+                    ],
+                    "2"=>[
+                        "title"=>"Critical Details (Cleaned and Dressed)",
+                        "show_inner_section"=>true,
+                        "subtypes"=>[
+                            "1"=>[
+                                "name"=>"Grill",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                ],
+                            ],
+                            "2"=>[
+                                "name"=>"Air Dam",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                ],
+                            ],
+                            "3"=>[
+                                "name"=>"Bumper",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                ],
+                            ],
+                            "4"=>[
+                                "name"=>"Logo",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Rear",
+                                ],
+                            ],
+                            "5"=>[
+                                "name"=>"Chrome Parts",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "6"=>[
+                                "name"=>"Door / Trunk Stay Rods",
+                                "inner_sections"=>[
+                                    "1"=>"Front left",
+                                    "2"=>"Rear Left",
+                                    "3"=>"Rear",
+                                    "4"=>"Rear Right",
+                                    "5"=>"Front Right",
+                                ],
+                            ],
+                            "7"=>[
+                                "name"=>"Fuel Lid",
+                                "inner_sections"=>[
+                                    "1"=>"Rear",
+                                ],
+                            ],
+                            "8"=>[
+                                "name"=>"Exterior Rubbers",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "9"=>[
+                                "name"=>"Vinyl Trims",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                            "10"=>[
+                                "name"=>"Door Handles",
+                                "inner_sections"=>[
+                                    "1"=>"Front left",
+                                    "2"=>"Rear Left",
+                                    "3"=>"Rear",
+                                    "4"=>"Rear Right",
+                                    "5"=>"Front Right",
+                                    "6"=>"Top / Roof",
+                                ],
+                            ],
+                            "11"=>[
+                                "name"=>"Exterior Glass",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Front left",
+                                    "3"=>"Rear Left",
+                                    "4"=>"Rear",
+                                    "5"=>"Rear Right",
+                                    "6"=>"Front Right",
+                                    "7"=>"Top / Roof",
+                                ],
+                            ],
+                        ],
+                    ],
+                    "3"=>[
+                        "title"=>"Wheels, Tires & Wheel Arch",
+                        "show_inner_section"=>true,
+                        "subtypes"=>[
+                            "1"=>[
+                                "name"=>"Wheels Cleaned",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Rear Left",
+                                    "3"=>"Spare Wheel",
+                                    "4"=>"Rear Right",
+                                    "5"=>"Front Right",
+                                ],
+                            ],
+                            "2"=>[
+                                "name"=>"Tires Cleaned and Dressed",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Rear Left",
+                                    "3"=>"Spare Wheel",
+                                    "4"=>"Rear Right",
+                                    "5"=>"Front Right",
+                                ],
+                            ],
+                            "3"=>[
+                                "name"=>"Wheel Arch Cleaned and Dressed",
+                                "inner_sections"=>[
+                                    "1"=>"Front",
+                                    "2"=>"Rear Left",
+                                    "3"=>"Spare Wheel",
+                                    "4"=>"Rear Right",
+                                    "5"=>"Front Right",
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            ],
         ],
         "oilChange"=>[
             "services"=>["Quick Lube","Engine flush – efm"],

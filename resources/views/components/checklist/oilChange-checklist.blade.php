@@ -17,19 +17,19 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-check mb-0">
-                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}.{{$chSubTypeDtlkey}}" value="G" id="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}G">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.oilchange.{{$chTypeKey}}.{{$chSubTypeKey}}.{{$chSubTypeDtlkey}}" value="G" id="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}G">
                                             <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}G">Good</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check mb-0">
-                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}.{{$chSubTypeDtlkey}}" value="NG" id="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NG">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.oilchange.{{$chTypeKey}}.{{$chSubTypeKey}}.{{$chSubTypeDtlkey}}" value="NG" id="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NG">
                                             <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NG">Not Good</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check mb-0">
-                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}.{{$chSubTypeDtlkey}}" value="NA" id="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NA">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.oilchange.{{$chTypeKey}}.{{$chSubTypeKey}}.{{$chSubTypeDtlkey}}" value="NA" id="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NA">
                                             <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}{{$chSubTypeDtlkey}}NA">Not Applicable</label>
                                         </div>
                                     </div>
@@ -57,19 +57,19 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-check mb-0">
-                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}" value="G" id="check{{$chTypeKey}}{{$chSubTypeKey}}G">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.oilchange.{{$chTypeKey}}.{{$chSubTypeKey}}" value="G" id="check{{$chTypeKey}}{{$chSubTypeKey}}G">
                                             <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}G">Good</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check mb-0">
-                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}" value="NG" id="check{{$chTypeKey}}{{$chSubTypeKey}}NG">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.oilchange.{{$chTypeKey}}.{{$chSubTypeKey}}" value="NG" id="check{{$chTypeKey}}{{$chSubTypeKey}}NG">
                                             <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}NG">Not Good</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check mb-0">
-                                            <input class="form-check-input" type="radio" wire:model="checklists.wash.{{$chTypeKey}}.{{$chSubTypeKey}}" value="NA" id="check{{$chTypeKey}}{{$chSubTypeKey}}NA">
+                                            <input class="form-check-input" type="radio" wire:model="checklists.oilchange.{{$chTypeKey}}.{{$chSubTypeKey}}" value="NA" id="check{{$chTypeKey}}{{$chSubTypeKey}}NA">
                                             <label class="custom-control-label" for="check{{$chTypeKey}}{{$chSubTypeKey}}NA">Not Applicable</label>
                                         </div>
                                     </div>

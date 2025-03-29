@@ -930,9 +930,13 @@
                                                 </div>
                                                 <hr class="horizontal dark mt-0 mb-1">
                                                 @if($services->job_status==1)
-                                                
+                                                    
                                                     @if($showchecklist[$services->id])
-
+                                                        <button type="button" class="btn btn-icon btn-3 btn-outline-primary" wire:click="checklistToggleSelectAll('{{$services}}')">
+                                                            <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                            check all good
+                                                        </button>
+                                                        
                                                         @if($services->item_code=="S255")
                                                             @include('components.checklist.interiorCleaning-checklist')
                                                             <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
@@ -1063,6 +1067,16 @@
                 
             </div>
        </div>
+    </div>
+    
+    <div wire:loading wire:target="checklistToggleSelectAll">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
     </div>
     <div wire:loading wire:target="checkPaymentStatus">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >

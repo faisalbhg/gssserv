@@ -62,6 +62,26 @@
         </div>
       </div>
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label for="selectPaymentStatus">Payment Status</label>
+        <div class="form-group">
+          <select class="form-control" id="selectPaymentStatus" wire:model="search_paymentStatus">
+            <option value="">-Select-</option>
+            @foreach(config('global.payment.status') as $pSKey => $paymentStatus)
+            <option value="{{$pSKey}}">{{$paymentStatus}}</option>
+            @endforeach
+          </select>
+          <div wire:loading wire:target="search_jobType">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
         <label for="selectJobType">Job Type</label>
         <div class="form-group">
           <select class="form-control" id="selectJobType" wire:model="search_jobType">
