@@ -89,6 +89,11 @@ class CustomerJobCardServices extends Model
         
     ];
 
+    public function jobInfo()
+    {
+        return $this->belongsTo(CustomerJobCards::class, 'job_number', 'job_number');
+    }
+
     public function customerJobServiceLogs()
     {
         return $this->hasMany(CustomerJobCardServiceLogs::class,'customer_job__card_service_id','id');

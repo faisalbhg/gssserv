@@ -207,6 +207,7 @@ class CustomerServiceJob extends Component
             foreach($sectionServiceLists as $key => $sectionServiceList)
             {
                 $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
+                $sectionServicePriceLists[$key]['discountDetails']=null;
                 if(!empty($this->appliedDiscount)){
                     $discountLaborSalesPrices = LaborSalesPrices::where(['ServiceItemId'=>$sectionServiceList->ItemId,'CustomerGroupCode'=>$this->appliedDiscount['code']]);
                     $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
@@ -231,16 +232,41 @@ class CustomerServiceJob extends Component
                     //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
                     $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
                 }
-                /*else if($sectionServiceList->ItemCode = 'S322')
+                else if($sectionServiceList->ItemCode == 'S322')
                 {
-                    //
-                }*/
+                    $checkServiceItemAvailableQuery = CustomerJobCardServices::with(['jobInfo'])->where(function ($query) {
+                        $query->whereRelation('jobInfo', 'customer_id', '=', $this->customer_id);
+                        $query->whereRelation('jobInfo', 'payment_status', '=', 1);
+                    });
+                    $checkServiceItemAvailableQueryCheck = $checkServiceItemAvailableQuery
+                        ->whereIn('item_code', ['S267','S403'])
+                        ->count();
+                    if($checkServiceItemAvailableQueryCheck>0){
+                        $checkServiceItemAvailableQueryCount = CustomerJobCardServices::with(['jobInfo'])->where(function ($query) {
+                            $query->whereRelation('jobInfo', 'customer_id', '=', $this->customer_id);
+                            
+                            //$query->whereRelation('jobInfo', 'customer_id', '=', $this->vehicle_id,'customer_id'=>$this->customer_id);
+                        })->where('item_code', 'S322')->sum('quantity');
+                        //$checkServiceItemAvailableQueryCount = $checkServiceItemAvailableQuery->where('item_code', 'S322')->sum('quantity');
+                        //dd($checkServiceItemAvailableQueryCheck*10);
+                        if($checkServiceItemAvailableQueryCount<($checkServiceItemAvailableQueryCheck*10)){
+                            $discountLaborSalesPrices = LaborSalesPrices::where([
+                                'ServiceItemId'=>$sectionServiceList->ItemId,
+                                'CustomerGroupCode'=>'CERAMIC_WASH',
+                            ]);
+                            $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
+                            //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
+                            $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
+                        }
+                    }
+                }
                 else
                 {
                     $sectionServicePriceLists[$key]['discountDetails']=null;
                 }
             }
             $this->sectionServiceLists = $sectionServicePriceLists;
+            //dd($this->sectionServiceLists);
         }
         else
         {
