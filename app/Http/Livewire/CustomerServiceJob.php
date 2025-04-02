@@ -246,7 +246,7 @@ class CustomerServiceJob extends Component
                             $query->whereRelation('jobInfo', 'customer_id', '=', $this->customer_id);
                             $query->whereRelation('jobInfo', 'payment_status', '=', 1);
                             //$query->whereRelation('jobInfo', 'customer_id', '=', $this->vehicle_id,'customer_id'=>$this->customer_id);
-                        })->where('item_code', 'S322')->sum('quantity');
+                        })->where('job_status','=',4)->where('item_code', 'S322')->sum('quantity');
                         //$checkServiceItemAvailableQueryCount = $checkServiceItemAvailableQuery->where('item_code', 'S322')->sum('quantity');
                         //dd($checkServiceItemAvailableQueryCheck*10);
                         if($checkServiceItemAvailableQueryCount<($checkServiceItemAvailableQueryCheck*10)){
