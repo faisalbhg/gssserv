@@ -31,7 +31,7 @@ use App\Models\LaborItemMaster;
 class CarsTaxi extends Component
 {
     use WithFileUploads;
-    public $customer_id=259, $vehicle_id, $mobile, $name, $ct_number, $meter_id, $plate_number_image, $plate_code, $plate_number, $vehicle_type, $make, $model, $checklistLabel, $fuel, $scratchesFound, $scratchesNotFound, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature,$roof_images, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $photo, $car_roof_images;
+    public $customer_id=259, $vehicle_id, $mobile, $name, $ct_number, $meter_id, $plate_number_image, $plate_code, $plate_number, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $checklistLabel, $fuel, $scratchesFound, $scratchesNotFound, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature,$roof_images, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $photo, $car_roof_images;
     public $plateEmiratesCodes=[], $vehicleTypesList=[], $listVehiclesMake=[], $vehiclesModelList=[], $checklistLabels=[], $carTaxiServiceInfo;
     public $isValidInput;
     public $grand_total, $total, $tax, $job_number;
@@ -224,7 +224,11 @@ class CarsTaxi extends Component
         $customerVehicleData['plate_number']=$this->plate_number;
         $completePlateNumber = 'Dubai '.$this->plate_code.' '.$this->plate_number;
         $customerVehicleData['plate_number_final']=$completePlateNumber;
-        //$customerVehicleData['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
+        if($this->chaisis_image){
+            $customerVehicleData['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
+        }
+        $customerVehicleData['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
+        $customerVehicleData['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
         //$customerVehicleData['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
         $customerVehicleData['is_active']=1;
         $customerVehicleData['created_by']=auth()->user('user')->id;

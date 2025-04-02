@@ -345,6 +345,35 @@
                          @error('model') <span class="text-danger">{{ $message }}</span> @enderror
                     </div>
                 </div>
+                <div class="col-md-4 col-sm-4">
+                    <label for="chaisisImageFile">Chaisis Picture</label>
+                    <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
+                        <!-- <div class="row">
+                            <div class="col-md-12">
+                                <button class="btn btn-icon btn-2 btn-primary float-start" id="chaisisImage" type="button">
+                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                </button>
+                            </div>
+                        </div> -->
+                        <!-- File Input -->
+                        <input type="file" id="chaisisImageFile" wire:model="chaisis_image" accept="image/*" capture style="display: block;" />
+                        <!-- Progress Bar -->
+                        <div x-show="isUploading">
+                            <progress max="100" x-bind:value="progress"></progress>
+                        </div>
+                    </div>
+                    @if ($chaisis_image)
+                        <img class="img-fluid border-radius-lg w-30" src="{{ $chaisis_image->temporaryUrl() }}">
+                        <!-- <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button> -->
+                    @endif
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="form-group">
+                        <label for="chaisisNumberInput">Chaisis Number</label>
+                        <input type="text" class="form-control" id="chaisisNumberInput" wire:model="chassis_number" name="chassis_number" placeholder="Chassis Number">
+                    </div>
+                    @error('chassis_number') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
             </div>
 
             <div class="row mt-3">
