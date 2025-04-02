@@ -244,7 +244,7 @@ class CustomerServiceJob extends Component
                     if($checkServiceItemAvailableQueryCheck>0){
                         $checkServiceItemAvailableQueryCount = CustomerJobCardServices::with(['jobInfo'])->where(function ($query) {
                             $query->whereRelation('jobInfo', 'customer_id', '=', $this->customer_id);
-                            
+                            $query->whereRelation('jobInfo', 'payment_status', '=', 1);
                             //$query->whereRelation('jobInfo', 'customer_id', '=', $this->vehicle_id,'customer_id'=>$this->customer_id);
                         })->where('item_code', 'S322')->sum('quantity');
                         //$checkServiceItemAvailableQueryCount = $checkServiceItemAvailableQuery->where('item_code', 'S322')->sum('quantity');
