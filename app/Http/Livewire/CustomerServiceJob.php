@@ -231,6 +231,10 @@ class CustomerServiceJob extends Component
                     //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
                     $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
                 }
+                /*else if($sectionServiceList->ItemCode = 'S322')
+                {
+                    //
+                }*/
                 else
                 {
                     $sectionServicePriceLists[$key]['discountDetails']=null;
@@ -815,6 +819,17 @@ class CustomerServiceJob extends Component
             }
             $this->serviceAddedMessgae[$servicePrice['ItemCode']]=true;
         }
+        if($servicePrice['ItemCode']=='S267' || $servicePrice['ItemCode']=='S403')
+        {
+            $discount = InventorySalesPrices::where([
+                                        'ServiceItemCode'=>'I04433',
+                                        'CustomerGroupCode'=>'MICRO_FIB',
+                                        //'DivisionCode'=>auth()->user('user')['station_code'],
+                                    ])
+                                //->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )
+                            ->first();
+            $this->addtoCartItem('I04433', json_encode($discount));
+        }
         
         //$this->dispatchBrowserEvent('closeServicesListModal');
 
@@ -831,8 +846,8 @@ class CustomerServiceJob extends Component
     public function addtoCartItem($ItemCode,$discount)
     {
         $items = InventoryItemMaster::where(['ItemCode'=>$ItemCode])->first();
-
-        $discountPrice = json_decode($discount,true);
+        $discountPrice = json_decode($discount,true);    
+        
         $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId]);
         if($customerBasketCheck->count())
         {
