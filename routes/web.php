@@ -154,7 +154,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('mechanical',Mechanical::class)->name('mechanical');
 
-    Route::get('cars-taxi', CarsTaxi::class)->name('cars-taxi');
+    Route::get('kabil-llc', CarsTaxi::class)->name('kabil-llc');
 });
 
 Route::get('qr/{name}', [QrCodeController::class, 'qrcode']);

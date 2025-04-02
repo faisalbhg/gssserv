@@ -85,6 +85,7 @@
                                             </div>
                                             @error('staff_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                         </div>
+                                        @if($selectedVehicleInfo['customerInfoMaster']['TenantId'] == '6630')
                                         <div class="col-md-6 col-sm-6">
                                             <label for="staffNumberInput">AT Number</label>
                                             <div class="form-group">
@@ -92,6 +93,7 @@
                                             </div>
                                             @error('staff_number') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                         </div>
+                                        @endif
                                     </div>
                                     @endif
                                     <button type="button" class="btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
@@ -154,7 +156,10 @@
                                                 @endforeach
                                                 <?php
                                                 $totalAfterDisc = $total - $totalDiscount;
-                                                $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+                                                if($selectedVehicleInfo['customerInfoMaster']['VatApplicable']==1){
+                                                    $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+                                                }
+                                                //$tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
                                                 $grand_total = $totalAfterDisc+$tax;
                                                 ?>
                                             </ul>

@@ -526,7 +526,14 @@
                                                 @endforeach
                                                 <?php
                                                 $totalAfterDisc = $total - $totalDiscount;
-                                                $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+
+                                                if($selectedVehicleInfo['customerInfoMaster']['VatApplicable']==1){
+                                                    $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+                                                }
+                                                else
+                                                {
+                                                    $tax = 0;
+                                                }
                                                 $grand_total = $totalAfterDisc+$tax;
                                                 ?>
                                             </ul>

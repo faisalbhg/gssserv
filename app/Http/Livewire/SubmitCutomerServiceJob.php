@@ -132,15 +132,16 @@ class SubmitCutomerServiceJob extends Component
     }
 
     public function getCustomerCart(){
-        $customerServiceCartQuery = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id]);
+        $customerServiceCartQuery = CustomerServiceCart::with(['customerInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id]);
         if($this->job_number)
         {
             $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>$this->job_number]);
         }
         $this->cartItemCount = $customerServiceCartQuery->count();
+        $this->cartItemCustomer = $customerServiceCartQuery->first();
         if($this->cartItemCount>0){
             $this->cartItems = $customerServiceCartQuery->get();
-            
+            //dd($this->cartItems);
             $total=0;
             $totalDiscount=0;
             $serviceIncludeArray=[];
@@ -165,7 +166,13 @@ class SubmitCutomerServiceJob extends Component
             }
             $this->total = $total;
             $this->totalAfterDisc = $this->total - $totalDiscount;
-            $this->tax = $this->totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+            if($this->cartItemCustomer['customerInfo']['VatApplicable']==1){
+                $this->tax = $this->totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+            }
+            else
+            {
+                $this->tax = 0;
+            }
             $this->grand_total = $this->totalAfterDisc+$this->tax;
         }
         else
@@ -199,10 +206,19 @@ class SubmitCutomerServiceJob extends Component
     {
         if($this->selectedVehicleInfo->customerInfoMaster['Required_StaffDtls'])
         {
-            $validatedData = $this->validate([
-                'staff_id' => 'required',
-                'staff_number' => 'required'
-            ]);
+            if($this->selectedVehicleInfo['customerInfoMaster']['TenantId']=='6630'){
+                $validatedData = $this->validate([
+                    'staff_id' => 'required',
+                    'staff_number' => 'required'
+                ]);
+            }
+            else
+            {
+                $validatedData = $this->validate([
+                    'staff_id' => 'required',
+                    //'staff_number' => 'required'
+                ]);
+            }
         }
         
 
@@ -462,7 +478,14 @@ class SubmitCutomerServiceJob extends Component
             
             $total = $cartData->unit_price*$cartData->quantity;
             $totalAfterDisc = $total - $customerJobServiceDiscountAmount;
-            $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+            if($cartData->customerInfo['VatApplicable']==1){
+                $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+            }
+            else
+            {
+                $tax = 0;
+            }
+
             $grand_total = $totalAfterDisc+$tax;
 
             $customerJobServiceData['total_price']=$cartData->unit_price;
