@@ -146,7 +146,7 @@
                             <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ custom_round($totalDiscount) }}</span></p>
                             @endif
                             <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ custom_round($tax) }}</span></p>
-                            <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ custom_round(($grand_total)) }}</span></p>
+                            <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ round(($grand_total)) }}</span></p>
                             
                             
                         </div>

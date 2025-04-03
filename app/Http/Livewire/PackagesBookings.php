@@ -61,7 +61,7 @@ class PackagesBookings extends Component
              $this->total = custom_round($totalPrice);
              $this->totalDiscount = custom_round($discountedPrice);
              $this->tax = custom_round($discountedPrice * (config('global.TAX_PERCENT') / 100));
-             $this->grand_total = custom_round($this->tax+$this->totalDiscount);
+             $this->grand_total = round($this->tax+$this->totalDiscount);
              $this->packageInfo = $packageInfoResult;
              //dd($this->packageInfo);
         }
@@ -164,17 +164,17 @@ class PackagesBookings extends Component
         }
         if($this->mobile)
         {
-            $this->sendOTPSMS();
+            $this->sendOTPSMS($customerPackageData['otp_code']);
         }
         
     }
 
-    public function sendOTPSMS(){
+    public function sendOTPSMS($otpPack){
         $mobileNumber = isset($this->mobile)?'971'.substr($this->mobile, -9):null;
         $customerName = isset($this->name)?$this->name:null;
         if($mobileNumber!=''){
             //if($mobileNumber=='971566993709'){
-                $otpPack = $customerPackageData['otp_code'];
+                //$otpPack = $customerPackageData['otp_code'];
                 $msgtext = urlencode('Dear '.$customerName.', please use the OTP '.$otpPack.' of GSS Package creation valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
                 $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             //}
@@ -211,8 +211,10 @@ class PackagesBookings extends Component
     }
 
     public function resendPackageOtp(){
+        $otpPack = fake()->randomNumber(6);
+        PackageBookings::where(['package_number'=>$this->package_number])->update(['otp_code'=>fake()->randomNumber(6)]);
         $this->package_otp=null;
-        $this->sendOTPSMS();
+        $this->sendOTPSMS($otpPack);
     }
 
     public function completePaymnet($mode)
