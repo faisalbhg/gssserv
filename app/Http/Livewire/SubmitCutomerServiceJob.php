@@ -138,7 +138,7 @@ class SubmitCutomerServiceJob extends Component
             $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>$this->job_number]);
         }
         $this->cartItemCount = $customerServiceCartQuery->count();
-        $this->cartItemCustomer = $customerServiceCartQuery->first();
+        //$this->cartItemCustomer = $customerServiceCartQuery->first();
         if($this->cartItemCount>0){
             $this->cartItems = $customerServiceCartQuery->get();
             //dd($this->cartItems);
@@ -166,7 +166,7 @@ class SubmitCutomerServiceJob extends Component
             }
             $this->total = $total;
             $this->totalAfterDisc = $this->total - $totalDiscount;
-            if($this->cartItemCustomer['customerInfo']['VatApplicable']==1){
+            if($this->cartItems[0]->customerInfo['VatApplicable']==1){
                 $this->tax = $this->totalAfterDisc * (config('global.TAX_PERCENT') / 100);
             }
             else

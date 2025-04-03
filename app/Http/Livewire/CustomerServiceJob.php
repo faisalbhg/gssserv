@@ -559,7 +559,9 @@ class CustomerServiceJob extends Component
         if($this->showPackageList)
         {
             $this->customerBookedPackages = PackageBookings::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
-            $this->servicePackages = ServicePackage::with(['packageDetails','packageTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code']])->get();
+            $this->servicePackages = ServicePackage::with(['packageDetails','packageTypes','packageSubTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code']])->get();
+            //dd($this->servicePackages);
+
             //$this->showPackageAddons=false;
             //dd($this->servicePackages);
         }
@@ -854,6 +856,7 @@ class CustomerServiceJob extends Component
                                     ])
                                 //->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() )
                             ->first();
+            $this->ql_item_qty['4420']=2;
             $this->addtoCartItem('I04433', json_encode($discount));
         }
         

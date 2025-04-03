@@ -1343,7 +1343,7 @@
                                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
                                         <div class="card h-100" >
                                             <div class="card-header text-center pt-4 pb-3">
-                                                <span class="badge rounded-pill bg-light gold_button text-white">{{$servicePackage->packageTypes['Description']}}</span>
+                                                <span class="badge rounded-pill bg-light gold_button text-white">{{$servicePackage->packageSubTypes['Description']}}</span>
                                                 <h4>{{$servicePackage->PackageName}}</h4>
                                                 @if($servicePackage->Duration)
                                                 <p class="text-sm font-weight-bold text-dark mt-2 mb-0">Duration: {{$servicePackage->Duration}} Months</p>

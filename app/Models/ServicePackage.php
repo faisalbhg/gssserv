@@ -22,4 +22,11 @@ class ServicePackage extends Model
     {
         return $this->belongsTo(ServicePackageType::class,'PackageType','TypeId');
     }
+
+    public function packageSubTypes()
+    {
+        return $this->belongsTo(PackageSubTypes::class,'PackageType','SubTypeId');
+    }
+
+    
 }
