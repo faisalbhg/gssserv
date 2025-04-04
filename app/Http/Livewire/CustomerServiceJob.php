@@ -955,8 +955,9 @@ class CustomerServiceJob extends Component
                     $cartInsert['end_date']=$discountAddOn['EndDate'];
                     $cartInsert['discount_perc']=$discountAddOn['DiscountPerc'];
                 }
+                CustomerServiceCart::insert($cartInsert);
             }
-            CustomerServiceCart::insert($cartInsert);
+            
         }
         $this->serviceAddedMessgae[$items->ItemCode]=true;
 
