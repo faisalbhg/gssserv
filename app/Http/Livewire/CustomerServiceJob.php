@@ -874,13 +874,27 @@ class CustomerServiceJob extends Component
 
     public function addtoCartItem($ItemCode,$discount)
     {
+
         $items = InventoryItemMaster::where(['ItemCode'=>$ItemCode])->first();
         $discountPrice = json_decode($discount,true);    
-        
+        //dd($discountPrice);
         $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId]);
+        //dd(CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->get());
         if($customerBasketCheck->count())
         {
-            $customerBasketCheck->increment('quantity', 1);
+            if($items->ItemCode=='I09137')
+            {
+                if(!CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->where('customer_group_id','!=',90)->increment('quantity', 4)){
+                    CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->where('customer_group_id','=',null)->increment('quantity', 4);    
+                }
+                
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->where('customer_group_id','=',90)->increment('quantity', 1);
+            }
+            else
+            {
+                $customerBasketCheck->increment('quantity', 1);
+            }
+            
             if($discountPrice!=null){
                 $cartUpdate['price_id']=$discountPrice['PriceID'];
                 $cartUpdate['customer_group_id']=$discountPrice['CustomerGroupId'];
@@ -1286,7 +1300,8 @@ class CustomerServiceJob extends Component
     }
 
     public function applyEngineOilDiscount(){
-
+        //dd($this->cartItems);
+        //dd(config('global.engine_oil_discount_voucher')['items']);
         foreach($this->cartItems as $items)
         {
             if($items->cart_item_type==1){
@@ -1305,7 +1320,14 @@ class CustomerServiceJob extends Component
             {
                 if(in_array($items->item_code,config('global.engine_oil_discount_voucher')['items']))
                 {
-                    $discountSalePrice= $this->engineOilDiscountPercentage;
+                    if($items->customer_group_code != 'MOBIL4+1'){
+                        $discountSalePrice= $this->engineOilDiscountPercentage;
+                    }
+                    else
+                    {
+                        $discountSalePrice= null;
+                    }
+                    
                 }
                 else
                 {
