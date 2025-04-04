@@ -936,6 +936,16 @@ class CustomerServiceJob extends Component
             CustomerServiceCart::insert($cartInsert);
         }
         $this->serviceAddedMessgae[$items->ItemCode]=true;
+        if($items->ItemCode=='I00280')
+        {
+            $discountAddOn = InventorySalesPrices::where([
+                'ServiceItemCode'=>'I09137',
+                'CustomerGroupCode'=>'MOBIL4+1',
+            ])->first();
+            //dd($discountAddOn);
+            $this->addtoCartItem('I09137',json_encode($discountAddOn));
+        }
+
         //dd($this->sectionServiceLists);
         /*$this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
