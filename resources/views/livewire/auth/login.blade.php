@@ -14,12 +14,14 @@
                             
                         </div>
                         <div class="card-body">
-                            <form wire:submit.prevent="login" action="#" method="POST" role="form text-left">
+                            <form wire:submit.prevent="login" action="#" method="POST" role="form text-left" autocomplete="off">
                                 <div class="mb-3">
                                     <label for="email">{{ __('Email') }}</label>
                                     <div class="@error('email')border border-danger rounded-3 @enderror">
-                                        <input wire:model.defer="email" id="email" type="email" class="form-control"
-                                            placeholder="Email" aria-label="Email" aria-describedby="email-addon">
+                                        <div wire:ignore>
+                                        <input wire:model.defer="email" id="email" type="text" class="form-control"
+                                            placeholder="Email" aria-label="Email" aria-describedby="email-addon" autocomplete="false">
+                                        </div>
                                     </div>
                                     @error('email') <div class="text-danger">{{ $message }}</div> @enderror
                                 </div>
@@ -28,7 +30,7 @@
                                     <div class="@error('password')border border-danger rounded-3 @enderror">
                                         <input wire:model.defer="password" id="password" type="password" class="form-control"
                                             placeholder="Password" aria-label="Password"
-                                            aria-describedby="password-addon">
+                                            aria-describedby="password-addon" autocomplete="new-password">
                                     </div>
                                     @error('password') <div class="text-danger">{{ $message }}</div> @enderror
                                 </div>
@@ -61,3 +63,11 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('input[type="email"]').forEach(function(input) {
+            input.setAttribute('autocomplete', 'off');
+        });
+    });
+</script>
