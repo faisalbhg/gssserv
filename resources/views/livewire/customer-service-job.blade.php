@@ -461,6 +461,7 @@
 
                                                             @if($confirming===$item->id)
                                                             <p>
+
                                                                 <label class="p-0 text-success bg-red-600 cursor-pointer float-start" wire:click.prevent="kill({{ $item->id }},{{ $item->item_id }})"><i class="fa fa-trash"></i> Yes</label>
                                                                 <label class="p-0 text-info bg-red-600 cursor-pointer float-end" wire:click.prevent="safe({{ $item->id }})"><i class="fa fa-trash"></i> No</label>
                                                                 <div wire:loading wire:target="kill">
@@ -484,7 +485,9 @@
                                                             </p>
 
                                                             @else
-                                                                <label class="p-0 text-danger bg-red-600 cursor-pointer" wire:click.prevent="confirmDelete({{ $item->id }})"><i class="fa fa-trash"></i> Remove</label>
+                                                                
+                                                                    <label class="p-0 text-danger bg-red-600 cursor-pointer" wire:click.prevent="confirmDelete({{ $item->id }})"><i class="fa fa-trash"></i> Remove</label>
+                                                                
                                                             @endif
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
@@ -495,6 +498,7 @@
                                                             @endif
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
+                                                            @if($item->item_code!='I09137')
                                                             @if($item->quantity>1)<span class="px-2 cursor-pointer" wire:click="cartSetDownQty({{ $item->id }})">
                                                                 <i class="fa-solid fa-square-minus fa-xl"></i>
                                                             </span>
@@ -503,6 +507,9 @@
                                                             <span class="px-2 cursor-pointer" wire:click="cartSetUpQty({{ $item->id }})">
                                                                 <i class="fa-solid fa-square-plus fa-xl"></i>
                                                             </span>
+                                                            @else
+                                                            {{$item->quantity}}
+                                                            @endif
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}}
@@ -845,7 +852,9 @@
                                         </div>
                                     </div>
                                     <div class="card-body text-lg-left text-center p-2">
-                                        <input type="number" class="form-control w-30 float-start" placeholder="Qty" wire:model.defer="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" style="padding-left:5px !important;" />
+                                        @if($qlItemPriceDetails->ItemCode!='I09137')
+                                        <input type="number" class="form-control w-30 float-start" placeholder="Qty" wire:model.defer="ql_item_qty.{{$qlItemPriceDetails->ItemCode}}" style="padding-left:5px !important;" />
+                                        @endif
                                         <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$qlItemPriceDetails->ItemCode}}','{{$qlItemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
                                         </a>
                                     </div>

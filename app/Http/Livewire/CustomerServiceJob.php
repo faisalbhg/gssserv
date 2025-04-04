@@ -919,6 +919,10 @@ class CustomerServiceJob extends Component
                 'created_by'=>auth()->user('user')['id'],
                 'created_at'=>Carbon::now(),
             ];
+            if($items->ItemCode=='I09137')
+            {
+                $cartInsert['quantity']=4;
+            }
             if($discountPrice!=null){
                 $cartInsert['price_id']=$discountPrice['PriceID'];
                 $cartInsert['customer_group_id']=$discountPrice['CustomerGroupId'];
@@ -934,17 +938,55 @@ class CustomerServiceJob extends Component
                 $cartInsert['job_number']=$this->job_number;
             }
             CustomerServiceCart::insert($cartInsert);
+            if($items->ItemCode=='I09137')
+            {
+                $cartInsert['quantity']=1;
+                $discountAddOn = InventorySalesPrices::where([
+                    'ServiceItemCode'=>'I09137',
+                    'CustomerGroupCode'=>'MOBIL4+1',
+                ])->first();
+                if($discountAddOn!=null){
+                    $cartInsert['price_id']=$discountAddOn['PriceID'];
+                    $cartInsert['customer_group_id']=$discountAddOn['CustomerGroupId'];
+                    $cartInsert['customer_group_code']=$discountAddOn['CustomerGroupCode'];
+                    $cartInsert['min_price']=$discountAddOn['MinPrice'];
+                    $cartInsert['max_price']=$discountAddOn['MaxPrice'];
+                    $cartInsert['start_date']=$discountAddOn['StartDate'];
+                    $cartInsert['end_date']=$discountAddOn['EndDate'];
+                    $cartInsert['discount_perc']=$discountAddOn['DiscountPerc'];
+                }
+            }
+            CustomerServiceCart::insert($cartInsert);
         }
         $this->serviceAddedMessgae[$items->ItemCode]=true;
-        if($items->ItemCode=='I00280')
+
+        /*if(CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137'])->sum('quantity')==5)
         {
             $discountAddOn = InventorySalesPrices::where([
                 'ServiceItemCode'=>'I09137',
                 'CustomerGroupCode'=>'MOBIL4+1',
             ])->first();
-            //dd($discountAddOn);
+            if($discountAddOn!=null){
+                $cartUpdate['price_id']=$discountAddOn['PriceID'];
+                $cartUpdate['customer_group_id']=$discountAddOn['CustomerGroupId'];
+                $cartUpdate['customer_group_code']=$discountAddOn['CustomerGroupCode'];
+                $cartUpdate['min_price']=$discountAddOn['MinPrice'];
+                $cartUpdate['max_price']=$discountAddOn['MaxPrice'];
+                $cartUpdate['start_date']=$discountAddOn['StartDate'];
+                $cartUpdate['end_date']=$discountAddOn['EndDate'];
+                $cartUpdate['discount_perc']=$discountAddOn['DiscountPerc'];
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137'])->update($cartUpdate);
+            }
+        }*/
+        /*if($items->ItemCode=='I09137')
+        {
+            if($this->ql_item_qty[$items->ItemId]
+            $discountAddOn = InventorySalesPrices::where([
+                'ServiceItemCode'=>'I09137',
+                'CustomerGroupCode'=>'MOBIL4+1',
+            ])->first();
             $this->addtoCartItem('I09137',json_encode($discountAddOn));
-        }
+        }*/
 
         //dd($this->sectionServiceLists);
         /*$this->dispatchBrowserEvent('swal:modal', [
