@@ -91,6 +91,7 @@ class Operations extends Component
     public $wash_bumber_check;
     public $showchecklist=[],$checklist_comments,$checklists;
     public $selectAll = false;
+    public $vImageR1Cl1, $vImageR2Cl1, $vImageFCl1, $vImageBCl1, $vImageL1Cl1, $vImageL2Cl1, $customerSignatureCl1,$roof_imagesCl1, $dash_image1Cl1, $dash_image2Cl1, $passenger_seat_imageCl1, $driver_seat_imageCl1, $back_seat1Cl1, $back_seat2Cl1, $back_seat3Cl1, $back_seat4Cl1, $photoCl1, $car_roof_imagesCl1;
 
 
     
@@ -264,7 +265,9 @@ class Operations extends Component
 
     public function checklistToggleSelectAll($services)
     {
-        $services = json_decode($services);
+        //dd($item_code.'-'.$section_name);
+        $services = json_decode($services,true);
+        //dd($services);
         if($services->item_code=="S255"){
             foreach(config('global.check_list.interiorCleaning.checklist.types') as $chTypeKey => $types)
             {
@@ -289,6 +292,8 @@ class Operations extends Component
                 }
 
             }
+            $this->checklists['vehicleImages'];
+
         }
         elseif(in_array($services->section_name, config('global.check_list.wash.services'))){
             foreach(config('global.check_list.wash.checklist.types') as $chTypeKey => $types){
@@ -424,7 +429,7 @@ class Operations extends Component
             'job_departent'=>$services['job_status']+1,
         ];
         //dd($serviceJobUpdate);
-
+        dd($this->checklists);
         if($services['job_status']==1){
             JobCardChecklists::create([
                 'job_number'=>$services['job_number'],

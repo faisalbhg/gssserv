@@ -651,6 +651,7 @@ class CustomerServiceJob extends Component
     {
         $this->propertyCode=$section['PropertyCode'];
         $this->selectedSectionName = $section['PropertyName'];
+        //dd($this->selectedSectionName);
         $this->showServiceSectionsList=true;
         $this->showServiceItems = false;
         $this->dispatchBrowserEvent('openServicesListModal');

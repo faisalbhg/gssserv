@@ -27,6 +27,7 @@ use App\Models\WorkOrderJob;
 use App\Models\JobcardChecklistEntries;
 use App\Models\TenantMasterCustomers;
 use App\Models\LaborItemMaster;
+use App\Models\JobCardChecklists;
 
 class CarsTaxi extends Component
 {
@@ -37,7 +38,7 @@ class CarsTaxi extends Component
     public $grand_total, $total, $tax, $job_number;
     public $showlistCarTaxiToday=true, $searchDate;
     public $carTaxiJobs, $getCountCarTaxiJob;
-    public $showUpdateModel = false, $filterTab='total', $filter = [0,1,2,3,4], $search_ct_number = '', $search_meter_number = '', $search_job_date, $search_plate_number, $selected_item_id, $all_car_taxi_Service=[], $selectedCarTaxiService, $selectedCarTaxiEntry=false;
+    public $showUpdateModel = false, $filterTab='total', $filter = [0,1,2,3,4], $search_ct_number = '', $search_meter_number = '', $search_job_date, $search_plate_number, $selected_item_id, $all_car_taxi_Service=[], $selectedCarTaxiService, $selectedSectionName, $selectedCarTaxiEntry=false;
     public $jobCustomerInfo,$updateService=false;
     public $jobcardDetails, $showaddServiceItems=false;
     public $showVehicleImageDetails=false;
@@ -190,7 +191,18 @@ class CarsTaxi extends Component
 
     public function addNewCarTaxi($service)
     {
+
+        //Seat Cleaning
         $this->selectedCarTaxiService = $service;
+        if($service['ItemCode']=='S255')
+        {
+            $this->selectedSectionName = 'Seat Cleaning';
+        }
+        if($service['ItemCode']=='S408')
+        {
+            $this->selectedSectionName = 'Seat Cleaning';
+        }
+        
         $this->selectedCarTaxiEntry=true;
         $this->showlistCarTaxiToday=false;
     }
@@ -199,6 +211,159 @@ class CarsTaxi extends Component
     {
         $this->dispatchBrowserEvent('showSignature');
 
+    }
+
+    public function checklistToggleSelectAll($services)
+    {
+        $services = json_decode($services,true);
+        //dd($services);
+        if($services['item_code']=="S255"){
+            foreach(config('global.check_list.interiorCleaning.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['interior'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]='G';
+                        }
+
+                    }
+
+                }
+                else{
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['interior'][$chTypeKey][$chSubTypeKey]='G';
+                    }
+
+                }
+
+            }
+            //$this->checklists['vehicleImages'];
+
+        }
+        elseif(in_array($services['section_name'], config('global.check_list.wash.services'))){
+            foreach(config('global.check_list.wash.checklist.types') as $chTypeKey => $types){
+                if($types['subtype']){
+                    foreach($types['subtype_list'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['subtypes'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['wash'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]='G';
+                        }
+
+                    }
+                }
+                else
+                {
+                    //
+                }
+            }
+            
+        }
+        elseif(in_array($services['section_name'], config('global.check_list.glazing.services'))){
+            foreach(config('global.check_list.glazing.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['glazing'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]="G";
+                        }
+                    }
+                }
+                else
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['glazing'][$chTypeKey][$chSubTypeKey]="G";
+                    }
+                }
+            }
+        }
+        elseif(in_array($services['section_name'], config('global.check_list.interiorCleaning.services'))){
+            foreach(config('global.check_list.interiorCleaning.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['interior'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]='G';
+                        }
+
+                    }
+
+                }
+                else{
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['interior'][$chTypeKey][$chSubTypeKey]='G';
+                    }
+
+                }
+
+            }
+        }
+        elseif(in_array($services['section_name'], config('global.check_list.oilChange.services'))){
+            foreach(config('global.check_list.oilChange.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['oilchange'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]="G";
+                        }
+                    }
+
+                }else
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['oilchange'][$chTypeKey][$chSubTypeKey]="G";
+                    }
+
+                }
+            }
+        }
+        elseif(in_array($services['s'], config('global.check_list.tinting.services'))){
+            foreach(config('global.check_list.tinting.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['tinting'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]="G";
+                        }
+                    }
+                }
+                else
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['tinting'][$chTypeKey][$chSubTypeKey]="G";
+                    }
+                }
+            }
+        }
+
+        /*$this->selectAll = !$this->selectAll;
+        if ($this->selectAll) {
+            $this->group1 = 'option1'; // Set default values for each group
+            $this->group2 = 'option1';
+        } else {
+            $this->group1 = null;
+            $this->group2 = null;
+        }*/
     }
 
     public function createTaxiJob()
@@ -292,6 +457,7 @@ class CarsTaxi extends Component
             'department_code'=>$this->selectedCarTaxiService['DepartmentCode'],
             'department_name'=>'General Service',
             'section_code'=>$this->selectedCarTaxiService['SectionCode'],
+            'section_name'=>$this->selectedSectionName,
             'station'=>auth()->user('user')->stationName['LandlordCode'],
             'service_item_type'=>1,
             'total_price'=>$this->total,
@@ -418,6 +584,122 @@ class CarsTaxi extends Component
             'job_departent'=>$this->job_status,
         ];
         CustomerJobCards::where(['job_number'=>$job_number])->update($mianJobUpdate);
+        
+        
+    }
+
+    public function updateJobService($services,$ql=null)
+    {
+        $jobServiceId = $services['id'];
+        $this->job_status = $services['job_status']+1;
+        $this->job_departent = $services['job_departent']+1;
+        
+        $serviceJobUpdate = [
+            'job_status'=>$services['job_status']+1,
+            'job_departent'=>$services['job_status']+1,
+        ];
+        //dd($serviceJobUpdate);
+        //dd($this->checklists);
+        if($services['job_status']==1){
+            JobCardChecklists::create([
+                'job_number'=>$services['job_number'],
+                'job_Service_id'=>$jobServiceId,
+                'checklist'=>json_encode($this->checklists),
+                'checklist_notes'=>json_encode($this->checklist_comments),
+                'created_by'=>auth()->user('user')->id
+            ]);
+        }
+        
+
+        if($ql){
+            CustomerJobCardServices::where(['job_number'=>$services['job_number'],'section_name'=>'Quick Lube'])->update($serviceJobUpdate);
+        }
+        else
+        {
+            CustomerJobCardServices::where(['id'=>$jobServiceId])->update($serviceJobUpdate);
+        }
+
+        $serviceJobUpdateLog = [
+            'job_number'=>$services['job_number'],
+            'customer_job__card_service_id'=>$jobServiceId,
+            'job_status'=>$services['job_status']+1,
+            'job_departent'=>$services['job_departent']+1,
+            'job_description'=>json_encode($this),
+            'created_by'=>auth()->user('user')->id,
+        ];
+        CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
+
+        $getCountSalesJobStatus = CustomerJobCardServices::select(
+            array(
+                \DB::raw('count(case when job_status = 0 then job_status end) new'),
+                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
+                \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
+                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
+                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+            )
+        )->where(['job_number'=>$services['job_number']])->first();
+        //dd($getCountSalesJobStatus);
+        if($getCountSalesJobStatus->working_progress>0){
+            $mainSTatus=1;
+        }
+        else if($getCountSalesJobStatus->qualitycheck>0){
+            $mainSTatus=2;
+        }
+        else if($getCountSalesJobStatus->ready_to_deliver>0){
+            $mainSTatus=3;
+        }
+        else if($getCountSalesJobStatus->delivered>0){
+            $mainSTatus=4;
+        }
+        $mianJobUpdate = [
+            'job_status'=>$mainSTatus,
+            'job_departent'=>$mainSTatus,
+        ];
+        
+        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$services['job_number']]);
+        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
+
+        
+        
+
+        $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$services['job_number']])->first();
+        $this->jobcardDetails = $job;
+        $this->customerjobservices = $job->customerJobServices;
+
+        if($mainSTatus==3)
+        {
+            
+            try {
+                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$job->customer_id.'" ');
+            } catch (\Exception $e) {
+                //dd($e->getMessage());
+                //return $e->getMessage();
+            }
+
+
+            /*try {
+                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$services['customer_id'].'" ');
+            } catch (\Exception $e) {
+                //return $e->getMessage();
+            }*/
+
+
+            if(auth()->user('user')->stationName['StationID']==4){
+                $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
+            }
+            else
+            {
+                $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+            }
+            
+            $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
+            if($mobileNumber!=''){
+                //if($mobileNumber=='971566993709'){
+                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$this->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$services['job_number'].' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
+                    //$response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                //}
+            }
+        }
         
         
     }

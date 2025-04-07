@@ -934,7 +934,7 @@
                                                     @if($showchecklist[$services->id])
                                                         <button type="button" class="btn btn-icon btn-3 btn-outline-primary" wire:click="checklistToggleSelectAll('{{$services}}')">
                                                             <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                            check all good
+                                                            Mark as all good
                                                         </button>
                                                         
                                                         @if($services->item_code=="S255")
