@@ -525,7 +525,7 @@ class Operations extends Component
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
             if($mobileNumber!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$this->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$services['job_number'].' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$this->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['ShortName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$services['job_number'].' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
@@ -693,7 +693,8 @@ class Operations extends Component
         
         
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
-            $this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID']);
+            //dd($this->jobcardDetails->plate_number);
+            $this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID'], $this->jobcardDetails->plate_number);
         }
         
         //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
@@ -734,6 +735,7 @@ class Operations extends Component
 
     public function checkPaymentStatus($job_number, $order_ref, $station, $jobs_plate_number)
     {
+        //dd($job_number.'-'.$order_ref.'-'.$station.'-'.$jobs_plate_number);
         //,$order_ref,$station
         $arrData['job_number'] = $job_number;
         $arrData['order_number'] = $order_ref;
