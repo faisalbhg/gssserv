@@ -254,7 +254,7 @@ class SubmitCutomerServiceJob extends Component
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$this->job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
                 if($customerjobs->customerInfo['Mobile']!=''){
                     //if($mobileNumber=='971566993709'){
-                        $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. To avoid waiting at the cashier, you can pay online using this link or you can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.', For assistance, call 800477823.');
+                        $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/'.$this->job_number.' Alternatively, you can pay at the cashier via card or cash. For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                     //}
                 }

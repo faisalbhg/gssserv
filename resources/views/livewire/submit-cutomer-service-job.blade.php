@@ -686,12 +686,54 @@
                             <div class="row">
 
                                 <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file1" wire:model="vImageR1" accept="image/*" capture style="display:none"/>
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="file1" wire:model="vImageR1" accept="image/*" capture style="display: none;" />
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
                                     <img class="w-75 float-end" id="upfile1" src="@if($vImageR1) {{$vImageR1->temporaryUrl()}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer"  />
                                     @error('vImageR1') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file2" wire:model="vImageR2" accept="image/*" capture style="display:none"/>
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="file2" wire:model="vImageR2" accept="image/*" capture style="display:none"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
                                     <img class="w-75 float-start" id="upfile2" src="@if ($vImageR2) {{ $vImageR2->temporaryUrl() }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer"  />
                                     @error('vImageR2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
@@ -699,12 +741,54 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file3" wire:model="vImageF" accept="image/*" capture style="display:none"/>
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="file3" wire:model="vImageF" accept="image/*" capture style="display:none"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
                                     <img class="w-75 float-end" id="upfile3" src="@if ($vImageF) {{ $vImageF->temporaryUrl() }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('vImageF') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file4" wire:model="vImageB" accept="image/*" capture style="display:none"/>
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="file4" wire:model="vImageB" accept="image/*" capture style="display:none"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
                                     <img class="w-75 float-start" id="upfile4" src="@if ($vImageB) {{ $vImageB->temporaryUrl() }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('vImageB') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
@@ -712,12 +796,54 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file5" wire:model="vImageL1" accept="image/*" capture style="display:none"/>
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="file5" wire:model="vImageL1" accept="image/*" capture style="display:none"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
                                     <img class="w-75 float-end" id="upfile5" src="@if ($vImageL1) {{ $vImageL1->temporaryUrl() }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer"  />
                                     @error('vImageL1') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
-                                    <input type="file" id="file6" wire:model="vImageL2" accept="image/*" capture style="display:none"/>
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="file6" wire:model="vImageL2" accept="image/*" capture style="display:none"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
                                     <img class="w-75 float-start" id="upfile6" src="@if ($vImageL2) {{ $vImageL2->temporaryUrl() }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer"   />
                                     @error('vImageL2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
