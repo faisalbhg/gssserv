@@ -429,7 +429,7 @@ class Operations extends Component
             'job_departent'=>$services['job_status']+1,
         ];
         //dd($serviceJobUpdate);
-        dd($this->checklists);
+        //dd($this->checklists);
         if($services['job_status']==1){
             JobCardChecklists::create([
                 'job_number'=>$services['job_number'],
@@ -527,6 +527,7 @@ class Operations extends Component
                 //if($mobileNumber=='971566993709'){
                     $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$this->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['ShortName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$services['job_number'].' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                    //dd($response);
                 //}
             }
         }
@@ -693,8 +694,7 @@ class Operations extends Component
         
         
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
-            //dd($this->jobcardDetails->plate_number);
-            $this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID'], $this->jobcardDetails->plate_number);
+            //$this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID'], $this->jobcardDetails->plate_number);
         }
         
         //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
