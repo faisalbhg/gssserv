@@ -95,6 +95,7 @@ class CustomerServiceJob extends Component
 
     public function render()
     {
+        //dd(Development::where(['DevelopmentCode'=>'PP/00022'])->get());
         if($this->new_make)
         {
             $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->where('is_deleted','=',null)->get();
@@ -194,7 +195,7 @@ class CustomerServiceJob extends Component
 
         if($this->showServiceSectionsList)
         {
-            $sectionServiceLists = LaborItemMaster::where([
+            $sectionServiceLists = LaborItemMaster::with(['departmentName','sectionName'])->where([
                 'SectionCode'=>$this->propertyCode,
                 'DivisionCode'=>auth()->user('user')['station_code'],
                 'Active'=>1,
@@ -767,6 +768,7 @@ class CustomerServiceJob extends Component
         $addtoCartAllowed=false;
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
+        //dd();
         if($servicePrice['CustomizePrice']==1)
         {
             if(($this->customise_service_item_price[$servicePrice['ItemId']] >= $servicePrice['MinPrice']) && ($this->customise_service_item_price[$servicePrice['ItemId']] <= $servicePrice['MaxPrice'])){
@@ -822,7 +824,7 @@ class CustomerServiceJob extends Component
                     'department_code'=>$servicePrice['DepartmentCode'],
                     'section_name'=>$this->selectedSectionName,
                     'department_name'=>$this->service_group_name,
-                    'section_code'=>$servicePrice['SectionCode'],
+                    'section_code'=>$servicePrice['section_name']['PropertyName'],
                     'unit_price'=>$servicePrice['UnitPrice'],
                     'quantity'=>1,
                     'created_by'=>auth()->user('user')['id'],
@@ -843,7 +845,7 @@ class CustomerServiceJob extends Component
                 {
                     $cartInsert['job_number']=$this->job_number;
                 }
-                
+                //dd($cartInsert);
                 CustomerServiceCart::insert($cartInsert);
             }
             $this->serviceAddedMessgae[$servicePrice['ItemCode']]=true;
@@ -1801,11 +1803,12 @@ class CustomerServiceJob extends Component
                 
                 if($serviceBundleDiscountedPrice->Type=='S')
                 {
-                    $bundleLaborMaster = LaborItemMaster::where([
+                    $bundleLaborMaster = LaborItemMaster::with(['departmentName','sectionName'])->where([
                         //'DivisionCode'=>auth()->user('user')['station_code'],
                         'Active'=>1,
                         'ItemCode'=>$serviceBundleDiscountedPrice->ServiceItemCode,
                     ])->first();
+                    //dd($bundleLaborMaster);
                     $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['services'] = $bundleLaborMaster;
                 }
                 else if($serviceBundleDiscountedPrice->Type=='I')
@@ -1828,6 +1831,7 @@ class CustomerServiceJob extends Component
 
     public function bundleAddtoCart($bundleListDetails){
         $bundleListDetails = json_decode($bundleListDetails,true);
+        //dd($bundleListDetails);
         foreach($bundleListDetails['lists'] as $bundleInfo)
         {
             $bundleListDetails['PriceID'] = $bundleListDetails['Id'];

@@ -29,4 +29,14 @@ class LaborItemMaster extends Model
     public function discountServicePriceList(){
         return $this->hasMany(LaborSalesPrices::class,'ServiceItemId','ItemId');
     }
+
+    public function departmentName(){
+        return $this->belongsTo(Development::class,'DevelopmentCode','DepartmentCode');
+    }
+
+    public function sectionName(){
+        return $this->belongsTo(Sections::class,'SectionCode','PropertyCode');
+    }
+
+
 }
