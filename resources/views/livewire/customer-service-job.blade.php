@@ -34,7 +34,7 @@
                                         <label for="mobilenumberInput">Mobile Number </label>
                                         <div class="input-group mb-0">
                                             <span class="input-group-text px-0">+971</span>
-                                            <input  type="number" class="form-control @error('mobile') btn-outline-danger @enderror" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-MobileSearch" wire:model="mobile"  name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="10" id="mobilenumberInput" style="padding-left:10px !important;">
+                                            <input  type="number" class="form-control @error('mobile') btn-outline-danger @enderror" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-MobileSearch" wire:model="mobile"  name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="10" id="mobilenumberInput" >
                                         </div>
                                         @error('mobile') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                     </div>
