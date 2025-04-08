@@ -255,6 +255,7 @@ class SubmitCutomerServiceJob extends Component
                 if($customerjobs->customerInfo['Mobile']!=''){
                     //if($mobileNumber=='971566993709'){
                         $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/'.$this->job_number.' Alternatively, you can pay at the cashier via card or cash. For assistance, call 800477823.');
+                        dd(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                     //}
                 }

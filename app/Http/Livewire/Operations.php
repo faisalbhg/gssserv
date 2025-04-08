@@ -1425,5 +1425,8 @@ class Operations extends Component
         return redirect()->to('customer-service-job/'.$this->jobcardDetails->customer_id.'/'.$this->jobcardDetails->vehicle_id.'/'.$job_number);
 
     }
+    public function markScrach($img){
+        //
+    }
 
 }
