@@ -823,7 +823,7 @@ class CustomerServiceJob extends Component
                     'division_code'=>$servicePrice['DivisionCode'],
                     'department_code'=>$servicePrice['DepartmentCode'],
                     'section_name'=>$this->selectedSectionName,
-                    'department_name'=>$this->service_group_name,
+                    'department_name'=>$servicePrice['department_name']['DevelopmentName'],
                     'section_code'=>$servicePrice['section_name']['PropertyName'],
                     'unit_price'=>$servicePrice['UnitPrice'],
                     'quantity'=>1,
@@ -845,7 +845,7 @@ class CustomerServiceJob extends Component
                 {
                     $cartInsert['job_number']=$this->job_number;
                 }
-                //dd($cartInsert);
+                
                 CustomerServiceCart::insert($cartInsert);
             }
             $this->serviceAddedMessgae[$servicePrice['ItemCode']]=true;

@@ -31,7 +31,7 @@ class LaborItemMaster extends Model
     }
 
     public function departmentName(){
-        return $this->belongsTo(Development::class,'DevelopmentCode','DepartmentCode');
+        return $this->belongsTo(Development::class,'DepartmentCode','DevelopmentCode');
     }
 
     public function sectionName(){
