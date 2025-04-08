@@ -268,7 +268,7 @@ class Operations extends Component
         //dd($item_code.'-'.$section_name);
         $services = json_decode($services,true);
         //dd($services);
-        if($services->item_code=="S255"){
+        if($services['item_code']=="S255"){
             foreach(config('global.check_list.interiorCleaning.checklist.types') as $chTypeKey => $types)
             {
                 if($types['show_inner_section'])
@@ -295,7 +295,7 @@ class Operations extends Component
             $this->checklists['vehicleImages'];
 
         }
-        elseif(in_array($services->section_name, config('global.check_list.wash.services'))){
+        elseif(in_array($services['section_name'], config('global.check_list.wash.services'))){
             foreach(config('global.check_list.wash.checklist.types') as $chTypeKey => $types){
                 if($types['subtype']){
                     foreach($types['subtype_list'] as $chSubTypeKey => $subtype_list)
@@ -314,7 +314,7 @@ class Operations extends Component
             }
             
         }
-        elseif(in_array($services->section_name, config('global.check_list.glazing.services'))){
+        elseif(in_array($services['section_name'], config('global.check_list.glazing.services'))){
             foreach(config('global.check_list.glazing.checklist.types') as $chTypeKey => $types)
             {
                 if($types['show_inner_section'])
@@ -336,7 +336,7 @@ class Operations extends Component
                 }
             }
         }
-        elseif(in_array($services->section_name, config('global.check_list.interiorCleaning.services'))){
+        elseif(in_array($services['section_name'], config('global.check_list.interiorCleaning.services'))){
             foreach(config('global.check_list.interiorCleaning.checklist.types') as $chTypeKey => $types)
             {
                 if($types['show_inner_section'])
@@ -361,7 +361,7 @@ class Operations extends Component
 
             }
         }
-        elseif(in_array($services->section_name, config('global.check_list.oilChange.services'))){
+        elseif(in_array($services['section_name'], config('global.check_list.oilChange.services'))){
             foreach(config('global.check_list.oilChange.checklist.types') as $chTypeKey => $types)
             {
                 if($types['show_inner_section'])
@@ -384,7 +384,7 @@ class Operations extends Component
                 }
             }
         }
-        elseif(in_array($services->section_name, config('global.check_list.tinting.services'))){
+        elseif(in_array($services['section_name'], config('global.check_list.tinting.services'))){
             foreach(config('global.check_list.tinting.checklist.types') as $chTypeKey => $types)
             {
                 if($types['show_inner_section'])
