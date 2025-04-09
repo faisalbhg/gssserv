@@ -1196,7 +1196,6 @@
                             @endif
                             @if ($message = Session::get('package_error'))
                             <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
-                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
                                 <span class="alert-text"><strong>Error!</strong> {{ $message }}</span>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">×</span>
@@ -1260,7 +1259,7 @@
                                                                 <span class="badge rounded-pill bg-light {{config('global.package.type')[$packBookd->package_type]['bg_class']}} {{config('global.package.type')[$packBookd->package_type]['text_class']}}">{{config('global.package.type')[$packBookd->package_type]['title']}}</span>
                                                                 <h4 class="text-white">{{$packBookd->package_name}}</h4>
                                                                 @if(\Carbon\Carbon::now()->diffInDays($endPackageDateTime, false)>=0)
-                                                                <button  wire:click="openPackageDetails({{$packBookd}})" class="btn bg-gradient-primary mb-2 btn-sm">Redeem</button>
+                                                                    <button  wire:click="redeemPackageDetails({{$packBookd}})" class="btn bg-gradient-primary mb-2 btn-sm">Redeem</button>
                                                                 @else
                                                                 <button class="btn bg-gradient-dark mb-2 btn-sm opacity-7">Expired</button>
                                                                 @endif
@@ -1299,7 +1298,7 @@
                                             
                                             @if($showPackageOtpVerify)
                                             <div class="row">
-                                                <div class="col-md-12 col-sm-12 mb-4" >
+                                                <div class="col-md-12 col-sm-12 mb-0" >
                                                     <div class="card p-2 mb-4">
                                                         
                                                         <div class="card-body text-lg-left text-center pt-0">
@@ -1335,7 +1334,7 @@
                                             </div>
                                             @endif
                                             
-                                            <div class="form-group p-2">
+                                            <div class="form-group p-2 text-center">
                                                 <input class="form-control" type="text" wire:model="package_number" id="redeemPackageNumber" placeholder="Redeem Package Number..!">
 
                                                 @error('package_number') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
@@ -1504,7 +1503,8 @@
                                     <div class="bg-gray-100 shadow my-3 p-2">
                                         <div class="row">
                                             <div class="col-12">
-                                                <p class="text-sm text-center font-weight-bold text-dark">{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</p>
+                                                <p class="text-sm text-center font-weight-bold text-dark mb-0">{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</p>
+                                                <p class="text-sm text-center">Balance: {{$package_quantity - $package_quantity_used}}</p>
                                                 <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea > -->
                                             </div>
                                         </div>

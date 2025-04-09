@@ -49,6 +49,7 @@ class PackagesBookings extends Component
         if($this->package_id)
         {
              $packageInfoResult = ServicePackage::with(['packageDetails'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code'],'Id'=>$this->package_id])->first();
+             //dd($packageInfoResult);
              
              $totalPrice=0;
              $unitPrice=0;
@@ -183,6 +184,8 @@ class PackagesBookings extends Component
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'packageOTPVerifyRow',
         ]);
+
+        session()->flash('package_success', 'Package is valid, '.$otpPack.' please enter the OTP shared in the registered mobile number..!');
     }
 
     public function verifyPackageOtp(){

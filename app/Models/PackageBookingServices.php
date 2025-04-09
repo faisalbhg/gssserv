@@ -59,7 +59,7 @@ class PackageBookingServices extends Model
 
     public function labourItemDetails()
     {
-        return $this->belongsTo(LaborItemMaster::class,'item_code','ItemCode');
+        return $this->belongsTo(LaborItemMaster::class,'item_id','ItemId')->with(['departmentName','sectionName']);
     }
 
     

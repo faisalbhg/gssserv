@@ -13,7 +13,7 @@ class ServicePackageDetail extends Model
 
     public function labourItemDetails()
     {
-        return $this->belongsTo(LaborItemMaster::class,'ItemCode','ItemCode');
+        return $this->belongsTo(LaborItemMaster::class,'ItemId','ItemId');
     }
 
     public function inventoryItemDetails()

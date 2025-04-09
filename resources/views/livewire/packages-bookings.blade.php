@@ -160,6 +160,24 @@
                     </div>
                 </div>
                 @if($showOtpVerify)
+                @if ($message = Session::get('package_success'))
+                <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
+                    <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                @endif
+                @if ($message = Session::get('package_error'))
+                <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                    <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-text"><strong>Error!</strong> {{ $message }}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                @endif
                 <div class="col-md-12 col-sm-12 mb-4" id="packageOTPVerifyRow">
                     <div class="card p-2 mb-4">
                         

@@ -68,7 +68,7 @@ class CustomerServiceJob extends Component
     public $mobile, $name, $email, $customer_code, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
     public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
     public $servicePackages, $showPackageAddons=false;
-    public $package_number, $package_code, $showPackageOtpVerify=false, $package_otp, $package_otp_message, $customerBookedPackages=[], $showOpenPackageDetails=false, $sectionPackageServiceLists=[];
+    public $package_number, $package_code, $showPackageOtpVerify=false, $package_otp, $package_otp_message, $customerBookedPackages=[], $openPackageDetailsVerify,$showOpenPackageDetails=false, $sectionPackageServiceLists=[];
     public $customize_price=-1, $customise_service_item_price;
     public $showTempCart=false,$jobDetails, $tempCartItems, $tempCartItemCount;
     public $confirming;
@@ -305,9 +305,11 @@ class CustomerServiceJob extends Component
 
             $packageBookingServicesQuery = PackageBookingServices::with(['labourItemDetails'])->where([
                 'package_number'=>$this->package_number,
+                //'division_code'=>auth()->user('user')['station_code']
                 //'package_status'=>2
             ])->get();
             $sectionServicePriceLists = [];
+            //dd($packageBookingServicesQuery);
             foreach($packageBookingServicesQuery as $key => $packageServices)
             {
                 $sectionServicePriceLists[$key]['package_quantity'] = $packageServices->quantity;
@@ -318,6 +320,7 @@ class CustomerServiceJob extends Component
                 
             }
             $this->sectionPackageServiceLists=$sectionServicePriceLists;
+            //dd($this->sectionPackageServiceLists);
             //dd($this->sectionServiceLists);
         }
 
@@ -585,7 +588,18 @@ class CustomerServiceJob extends Component
         
         if($this->showPackageList)
         {
-            $this->customerBookedPackages = PackageBookings::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
+            //dd(auth()->user('user')['station_code']);
+            $this->customerBookedPackages = PackageBookings::with(['customerPackageServices'])->where([
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->vehicle_id,
+                'station'=>auth()->user('user')['station_code'
+            ]])
+            ->orderBy('id','DESC')->get();
+            //dd($this->customerBookedPackages);
+            /*foreach($this->customerBookedPackages as $customerBookedPackages){
+                $this->openPackageDetailsVerify[$customerBookedPackages['package_number']]=false;
+            }*/
+            //dd($this->openPackageDetailsVerify);
             $this->servicePackages = ServicePackage::with(['packageDetails','packageTypes','packageSubTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code']])->get();
             //dd($this->servicePackages);
 
@@ -616,21 +630,41 @@ class CustomerServiceJob extends Component
     }
 
     public function openPackageDetails($packBookd){
-        //dd($packBookd);
-        $this->package_number= $packBookd['package_number'];
-        $this->package_code= $packBookd['package_code'];
-        $mobileNumber = isset($packBookd['customer_mobile'])?'971'.substr($packBookd['customer_mobile'], -9):null;
-        $customerName = isset($packBookd['customer_name'])?$packBookd['customer_name']:null;
-        $otpPack = fake()->randomNumber(6);
-        PackageBookings::where(['package_number'=>$packBookd['package_number']])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
-        if($mobileNumber!=''){
-            //if($mobileNumber=='971566993709'){
-                $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
-                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-            //}
+        dd($packBookd);
+    }
+
+    public function redeemPackageDetails($packBookd){
+        $packageFinished=false;
+        foreach($packBookd['customer_package_services'] as $customer_package_services){
+            if($customer_package_services['quantity'] == $customer_package_services['package_service_use_count']){
+                $packageFinished=true;
+            }
+            else
+            {
+                $packageFinished=false;
+            }
         }
-        $this->showPackageOtpVerify=true;
-        session()->flash('package_success', 'Package is valid, '.$otpPack.' please enter the OTP shared in the registered mobile number..!');
+        if($packageFinished==false)
+        {
+            $this->package_number= $packBookd['package_number'];
+            $this->package_code= $packBookd['package_code'];
+            $mobileNumber = isset($packBookd['customer_mobile'])?'971'.substr($packBookd['customer_mobile'], -9):null;
+            $customerName = isset($packBookd['customer_name'])?$packBookd['customer_name']:null;
+            $otpPack = fake()->randomNumber(6);
+            PackageBookings::where(['package_number'=>$packBookd['package_number']])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
+            if($mobileNumber!=''){
+                //if($mobileNumber=='971566993709'){
+                    $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                //}
+            }
+            $this->showPackageOtpVerify=true;
+            session()->flash('package_success', 'Package is valid, '.$otpPack.' please enter the OTP shared in the registered mobile number..!');
+        }
+        else
+        {
+            session()->flash('package_error', 'Package is completely used..!');
+        }
 
 
         /*$this->showOpenPackageDetails=true;
@@ -850,9 +884,9 @@ class CustomerServiceJob extends Component
                     'description'=>$servicePrice['Description'],
                     'division_code'=>$servicePrice['DivisionCode'],
                     'department_code'=>$servicePrice['DepartmentCode'],
-                    'section_name'=>$this->selectedSectionName,
+                    'section_name'=>$servicePrice['section_name']['PropertyName'],
                     'department_name'=>$servicePrice['department_name']['DevelopmentName'],
-                    'section_code'=>$servicePrice['section_name']['PropertyName'],
+                    'section_code'=>$servicePrice['SectionCode'],
                     'unit_price'=>$servicePrice['UnitPrice'],
                     'quantity'=>1,
                     'created_by'=>auth()->user('user')['id'],
@@ -1048,7 +1082,7 @@ class CustomerServiceJob extends Component
     {
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
-        //dd($discountPrice);
+        //dd($servicePrice);
         $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']]);
         if($customerBasketCheck->count())
         {
@@ -1087,8 +1121,8 @@ class CustomerServiceJob extends Component
                 'department_name'=>$this->service_group_name,
                 'section_code'=>$servicePrice['SectionCode'],
                 'is_package'=>1,
-                'package_code'=>$this->package_number,
-                'package_number'=>$this->package_code,
+                'package_code'=>$this->package_code,
+                'package_number'=>$this->package_number,
                 'unit_price'=>$servicePrice['UnitPrice'],
                 'quantity'=>1,
                 'created_by'=>auth()->user('user')['id'],
@@ -1923,6 +1957,7 @@ class CustomerServiceJob extends Component
         //dd(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp])->exists());
         if(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp])->exists())
         {
+            $this->openPackageDetailsVerify[$this->package_number]=true;
             $this->showOpenPackageDetails=true;
             $this->showPackageServiceSectionsList=true;
             $this->showPackageOtpVerify=false;
@@ -1932,6 +1967,7 @@ class CustomerServiceJob extends Component
         }
         else
         {
+            $this->openPackageDetailsVerify[$this->package_number]=false;
             $this->showPackageOtpVerify=true;
             $this->otpVerified=false;
             $this->otp_message='OTP is not matching..!';
@@ -1939,6 +1975,7 @@ class CustomerServiceJob extends Component
                 'scrollToId' => 'packageOTPVerifyRow',
             ]);
         }
+        //dd($this->openPackageDetailsVerify);
     }
 
     public function resendPackageOtp(){
