@@ -556,9 +556,7 @@ class SubmitCutomerServiceJob extends Component
                     'item_id'=>$cartData->item_id,
                     'item_code'=>$cartData->item_code,
                     'package_number'=>$cartData->package_number,
-                ])->update([
-                    'package_service_use_count'=>$cartData->quantity
-                ]);
+                ])->increment('package_service_use_count', $cartData->quantity);
                 //dd($cartData);
                 //dd(PackageBookingServices::where(['package_number'=>$cartData->package_number])->get());
                 /*dd(PackageBookingServices::where([
