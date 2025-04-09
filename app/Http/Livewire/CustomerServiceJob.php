@@ -583,7 +583,7 @@ class CustomerServiceJob extends Component
 
 
         //$this->openServiceGroup();
-        $this->getCartInfo();
+        
         $this->dispatchBrowserEvent('selectSearchEvent');
         $this->emit('chosenUpdated');
         return view('livewire.customer-service-job');
@@ -674,6 +674,8 @@ class CustomerServiceJob extends Component
         $this->mobile = $customers->customerInfoMaster['Mobile'];
         $this->name = $customers->customerInfoMaster['TenantName'];
         $this->email = $customers->customerInfoMaster['Email'];
+
+        $this->getCartInfo();
     }
 
     public function serviceGroupForm($service){

@@ -38,7 +38,6 @@
                     </div>
                 </div>
 
-                @if($jobcardDetails->is_contract==1)
                 <h5 class="font-weight-bold mt-2">Interior Vehicle Images</h5>
                 <div class="row m-4">
                     <div class="col-md-6 col-sm-6">
@@ -97,7 +96,8 @@
                         @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
                     </div>
                 </div>
-                @endif
+
+                
             </div>
         </div>
     </div>

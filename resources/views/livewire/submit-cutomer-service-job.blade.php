@@ -683,6 +683,7 @@
                             <h5 class="font-weight-bold mt-2">Vehicle Images</h5>
                         </div>
                         <div class="card-body text-left pt-0">
+                            <h5 class="font-weight-bold mt-2">Exterior Vehicle Images</h5>
                             <div class="row">
 
                                 <div class="col-md-6 col-sm-6">
@@ -846,6 +847,254 @@
                                     </div>
                                     <img class="w-75 float-start" id="upfile6" src="@if ($vImageL2) {{ $vImageL2->temporaryUrl() }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer"   />
                                     @error('vImageL2') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                            </div>
+                            <h5 class="font-weight-bold mt-2">Interior Vehicle Images</h5>
+                            <div class="row m-4">
+                                <div class="col-md-6 col-sm-6">
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="dashImage1File" wire:model="dash_image1" accept="image/*" capture style="display:block"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
+                                    
+                                    <img class="img-fluid img-thumbnail shadow" id="dashImage1" src="@if ($dash_image1) {{ $dash_image1->temporaryUrl() }} @else {{asset('img/dashImage1.jpg')}} @endif" style="cursor:pointer"  />
+                                    @error('dash_image1') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                                <div class="col-md-6 col-sm-6">
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="dashImage2File" wire:model="dash_image2" accept="image/*" capture style="display:block"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
+                                    <img class="img-fluid img-thumbnail shadow" id="dashImage2" src="@if ($dash_image2) {{ $dash_image2->temporaryUrl() }} @else {{asset('img/dashImage2.jpg')}} @endif" style="cursor:pointer"  />
+                                    @error('dash_image2') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                                <hr>
+                            </div>
+                            <div class="row m-4">
+                                <div class="col-md-6 col-sm-6">
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="passengerSeatImageFile" wire:model="passenger_seat_image" accept="image/*" capture style="display:block"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
+                                    <img class="img-fluid img-thumbnail shadow" id="passengerSeatImage" src="@if ($passenger_seat_image) {{ $passenger_seat_image->temporaryUrl() }} @else {{asset('img/passangerSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                    @error('passenger_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                                <div class="col-md-6 col-sm-6">
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="driverSeatImageFile" wire:model="driver_seat_image" accept="image/*" capture style="display:block"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
+                                    <img class="img-fluid img-thumbnail shadow" id="driverSeatImage" src="@if ($driver_seat_image) {{ $driver_seat_image->temporaryUrl() }} @else {{asset('img/driverSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                    @error('driver_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                                <hr>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="backSeat1ImageFile" wire:model="back_seat1" accept="image/*" capture style="display:block"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="@if ($back_seat1) {{ $back_seat1->temporaryUrl() }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                    @error('back_seat1') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                                <div class="col-md-6 col-sm-6">
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="backSeat2ImageFile" wire:model="back_seat2" accept="image/*" capture style="display:block"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat2Image" src="@if ($back_seat2) {{ $back_seat2->temporaryUrl() }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
+                                    @error('back_seat2') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="backSeat3ImageFile" wire:model="back_seat3" accept="image/*" capture style="display:block"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat3Image" src="@if ($back_seat3) {{ $back_seat3->temporaryUrl() }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                    @error('back_seat3') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                                <div class="col-md-6 col-sm-6">
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="backSeat4ImageFile1" wire:model="back_seat4" accept="image/*" capture style="display:block"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat4Image1" src="@if ($back_seat4) {{ $back_seat4->temporaryUrl() }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
+                                    @error('back_seat4') <span class="text-danger">Missing Image..!</span> @enderror
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div 
+                                    x-data="{ isUploading: false, progress: 0 }" 
+                                    x-on:livewire-upload-start="isUploading = true" 
+                                    x-on:livewire-upload-finish="isUploading = false" 
+                                    x-on:livewire-upload-error="isUploading = false" 
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress" 
+                                    >
+                                        <!-- <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                                    <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                        <!-- File Input -->
+                                        <input type="file" id="backSeat3ImageFile1" wire:model="roof_images" accept="image/*" capture style="display:block"/>
+                                        <!-- Progress Bar -->
+                                        <div x-show="isUploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
+                                    </div>
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat3Image1" src="@if ($roof_images) {{ $roof_images->temporaryUrl() }} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
+                                    @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                             </div>
                         </div>

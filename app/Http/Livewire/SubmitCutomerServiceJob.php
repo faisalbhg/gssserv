@@ -31,7 +31,7 @@ class SubmitCutomerServiceJob extends Component
     use WithFileUploads;
     public $customer_id, $vehicle_id, $mobile, $name, $email, $selectedVehicleInfo;
     public $selectedCustomerVehicle=true, $showCheckout=true, $successPage=false, $showCheckList=false, $showQLCheckList=false, $showFuelScratchCheckList=false, $showCustomerSignature=false, $discountApply=false;
-    public $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
+    public $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $roof_images, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
     public $staff_id,$staff_number,$show_staff_details=false;
 
@@ -595,6 +595,15 @@ class SubmitCutomerServiceJob extends Component
                 'vImageB'=>isset($this->vImageB)?$this->vImageB->store('car_image', 'public'):null,
                 'vImageL1'=>isset($this->vImageL1)?$this->vImageL1->store('car_image', 'public'):null,
                 'vImageL2'=>isset($this->vImageL2)?$this->vImageL2->store('car_image', 'public'):null,
+                'dash_image1'=>isset($this->dash_image1)?$this->dash_image1->store('car_image', 'public'):null,
+                'dash_image2'=>isset($this->dash_image2)?$this->dash_image2->store('car_image', 'public'):null,
+                'passenger_seat_image'=>isset($this->passenger_seat_image)?$this->passenger_seat_image->store('car_image', 'public'):null,
+                'driver_seat_image'=>isset($this->driver_seat_image)?$this->driver_seat_image->store('car_image', 'public'):null,
+                'back_seat1'=>isset($this->back_seat1)?$this->back_seat1->store('car_image', 'public'):null,
+                'back_seat2'=>isset($this->back_seat2)?$this->back_seat2->store('car_image', 'public'):null,
+                'back_seat3'=>isset($this->back_seat3)?$this->back_seat3->store('car_image', 'public'):null,
+                'back_seat4'=>isset($this->back_seat4)?$this->back_seat4->store('car_image', 'public'):null,
+                'roof_images'=>isset($this->roof_images)?$this->roof_images->store('car_image', 'public'):null,
             ];
             
 

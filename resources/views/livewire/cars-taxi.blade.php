@@ -519,8 +519,8 @@
                                             @error('back_seat1') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                         <div class="col-md-6 col-sm-6">
-                                            <input type="file" id="backSeat1ImageFile" wire:model="back_seat1" accept="image/*" capture style="display:block"/>
-                                            <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="{{asset('img/backSeat2.jpg')}}" style="cursor:pointer"   />
+                                            <input type="file" id="backSeat2ImageFile" wire:model="back_seat2" accept="image/*" capture style="display:block"/>
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat2Image" src="{{asset('img/backSeat2.jpg')}}" style="cursor:pointer"   />
                                             @error('back_seat2') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                     </div>
