@@ -1109,9 +1109,9 @@
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6">
-                    <div class="form-group">
-                        <label for="seachByItemSubmit"></label>
-                        <button class=" mt-2 btn bg-gradient-info" wire:click="searchServiceItems">Search</button>
+                    <div class="form-group mt-4">
+                        <label for="seachByItemSubmit mt-2"></label>
+                        <button class="mt-2 btn bg-gradient-info" wire:click="searchServiceItems">Search</button>
                     </div>
                 </div>
                 <div wire:loading wire:target="searchServiceItems">

@@ -215,6 +215,21 @@ class CustomerServiceJob extends Component
                     if($this->appliedDiscount['groupType']==1)
                     {
                         $discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '=', null );
+                        /*$discountLaborSalesPrices = $discountLaborSalesPrices->when('EndDate','=',null, function ($query) {
+                                // Apply 'active' status if $someCondition is true
+                                return $query->where('EndDate', '=', null);
+                            }, function ($query) {
+                                // Apply 'inactive' status if $someCondition is false
+                                return $query->where('EndDate', '<', Carbon::today());
+                            });*/
+                        /*$discountLaborSalesPrices = $discountLaborSalesPrices->when(true, function ($query) {
+                            return $query->whereNotNull('EndDate')
+                            ->where('EndDate', '<', Carbon::today());
+                        })->when(true, function ($query) {
+                            return $query->whereNull('EndDate')
+                            ->where('EndDate', '=', null);
+                        });*/
+
                     }
                     else if($this->appliedDiscount['groupType']==2)
                     {
@@ -322,10 +337,12 @@ class CustomerServiceJob extends Component
                     $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->item_search_name}%");
                 }
                 $inventoryItemMasterLists=$inventoryItemMasterLists->get();
+                //dd($inventoryItemMasterLists);
                 $itemPriceLists = [];
                 foreach($inventoryItemMasterLists as $key => $itemMasterList)
                 {
                     $itemPriceLists[$key]['priceDetails'] = $itemMasterList;
+                    //dd($this->appliedDiscount);
                     if(!empty($this->appliedDiscount)){
                         $qlInventorySalesPricesQuery = InventorySalesPrices::where([
                                 'ServiceItemId'=>$itemMasterList->ItemId,
@@ -334,6 +351,7 @@ class CustomerServiceJob extends Component
                             ]);
                         if($this->appliedDiscount['groupType']==1)
                         {
+                            $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->where('EndDate', '=', null );
                             //$qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery;
 
                         }else if($this->appliedDiscount['groupType']==2)
@@ -341,7 +359,8 @@ class CustomerServiceJob extends Component
                             $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() );
                         }
                         $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->first();
-                        $qlItemPriceLists[$key]['discountDetails'] = $qlInventorySalesPricesQuery;
+                        //dd($qlInventorySalesPricesQuery);
+                        $itemPriceLists[$key]['discountDetails'] = $qlInventorySalesPricesQuery;
                     }
                     else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
                     {
@@ -360,6 +379,7 @@ class CustomerServiceJob extends Component
                     }
                 }
                 $this->serviceItemsList = $itemPriceLists;
+                //dd($this->serviceItemsList);
 
             }
             else
@@ -1151,10 +1171,10 @@ class CustomerServiceJob extends Component
 
     public function searchServiceItems(){
         
-        $validatedData = $this->validate([
-            'item_search_category' => 'required',
+        /*$validatedData = $this->validate([
+            //'item_search_category' => 'required',
             //'item_search_subcategory' => 'required',
-        ]);
+        ]);*/
         $this->showItemsSearchResults=true;
     }
 
