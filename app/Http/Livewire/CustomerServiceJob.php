@@ -215,6 +215,12 @@ class CustomerServiceJob extends Component
                     if($this->appliedDiscount['groupType']==1)
                     {
                         $discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '=', null );
+
+                        /*$discountLaborSalesPrices = $discountLaborSalesPrices->where(function($q) {
+                            $q->where('EndDate', '=', null)->where('EndDate', '=', null);
+                        })->orWhere(function($q) {
+                            $q->where('EndDate', '!=', null)->where('EndDate', '<', Carbon::today());
+                        });*/
                         /*$discountLaborSalesPrices = $discountLaborSalesPrices->when('EndDate','=',null, function ($query) {
                                 // Apply 'active' status if $someCondition is true
                                 return $query->where('EndDate', '=', null);
@@ -603,7 +609,7 @@ class CustomerServiceJob extends Component
 
 
         //$this->openServiceGroup();
-        
+        $this->getCartInfo();
         $this->dispatchBrowserEvent('selectSearchEvent');
         $this->emit('chosenUpdated');
         return view('livewire.customer-service-job');
@@ -695,7 +701,7 @@ class CustomerServiceJob extends Component
         $this->name = $customers->customerInfoMaster['TenantName'];
         $this->email = $customers->customerInfoMaster['Email'];
 
-        $this->getCartInfo();
+        
     }
 
     public function serviceGroupForm($service){
@@ -1107,7 +1113,7 @@ class CustomerServiceJob extends Component
             CustomerServiceCart::insert($cartInsert);
         }
         $this->serviceAddedMessgae[$servicePrice['ItemCode']]=true;
-        //$this->dispatchBrowserEvent('closeServicesListModal');
+        $this->dispatchBrowserEvent('closeServicesPackageListModal');
 
         //dd($this->sectionServiceLists);
         /*$this->dispatchBrowserEvent('swal:modal', [

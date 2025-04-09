@@ -445,6 +445,7 @@
                                             <ul class="list-group">
                                                 <?php $total = 0;$totalDiscount=0; ?>
                                                 @foreach ($cartItems as $item)
+
                                                     <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
                                                         
                                                         <div class="d-flex flex-column">
@@ -499,16 +500,21 @@
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
                                                             @if($item->item_code!='I09137')
-                                                            @if($item->quantity>1)<span class="px-2 cursor-pointer" wire:click="cartSetDownQty({{ $item->id }})">
-                                                                <i class="fa-solid fa-square-minus fa-xl"></i>
-                                                            </span>
-                                                            @endif
-                                                            {{$item->quantity}}
-                                                            <span class="px-2 cursor-pointer" wire:click="cartSetUpQty({{ $item->id }})">
-                                                                <i class="fa-solid fa-square-plus fa-xl"></i>
-                                                            </span>
+                                                                @if($item->cart_item_type!=3)
+                                                                    @if($item->quantity>1)
+                                                                        <span class="px-2 cursor-pointer" wire:click="cartSetDownQty({{ $item->id }})">
+                                                                            <i class="fa-solid fa-square-minus fa-xl"></i>
+                                                                        </span>
+                                                                    @endif
+                                                                    {{$item->quantity}}
+                                                                    <span class="px-2 cursor-pointer" wire:click="cartSetUpQty({{ $item->id }})">
+                                                                        <i class="fa-solid fa-square-plus fa-xl"></i>
+                                                                    </span>
+                                                                @else
+                                                                    {{$item->quantity}}
+                                                                @endif    
                                                             @else
-                                                            {{$item->quantity}}
+                                                                {{$item->quantity}}
                                                             @endif
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
@@ -1206,7 +1212,7 @@
                                         <div class="card-body text-lg-start text-left pt-0 p-2">
                                             
                                             @if($showPackageOtpVerify)
-                                            <div class="row">
+                                            <div class="row d-none">
                                                 <div class="col-md-12 col-sm-12 mb-4" >
                                                     <div class="card p-2 mb-4">
                                                         
@@ -1287,7 +1293,7 @@
                                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
                                     <div class="card h-100">
                                         <div class="card-header text-left p-2 pb-0">
-                                            <h5>Redeem Other Packages</h5>
+                                            <h5>Redeem Packages</h5>
                                         </div>
                                         <div class="card-body text-lg-start text-left pt-0 p-2">
                                             
@@ -1547,6 +1553,16 @@
                                 @endif
                                 @empty
                                 @endforelse
+                                
+                                <div wire:loading wire:target="addtoCartPackage">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div wire:loading wire:target="addtoCart">
                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                         <div class="la-ball-beat">
