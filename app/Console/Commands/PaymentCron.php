@@ -115,7 +115,7 @@ class PaymentCron extends Command
                     }
 
                     try {
-                        DB::select('EXEC [dbo].[AcceptPayment_ServicePackage] @jobId = "'.$arrData['job_number'].'", @paymentmode = "L", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$orderResponseAmount.',@advanceInvoice=NULL ');
+                        DB::select('EXEC [dbo].[AcceptPayment_ServicePackage] @packagenumber = "'.$arrData['job_number'].'", @paymentmode = "L", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$orderResponseAmount.' ');
                     } catch (\Exception $e) {
                         //dd($e->getMessage());
                         //return $e->getMessage();

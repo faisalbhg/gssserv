@@ -659,7 +659,7 @@ class CustomerServiceJob extends Component
                 //}
             }
             $this->showPackageOtpVerify=true;
-            session()->flash('package_success', 'Package is valid, '.$otpPack.' please enter the OTP shared in the registered mobile number..!');
+            session()->flash('package_success', 'Package is valid, please enter the OTP shared in the registered mobile number..!');
         }
         else
         {
@@ -1117,8 +1117,10 @@ class CustomerServiceJob extends Component
                 'description'=>$servicePrice['Description'],
                 'division_code'=>$servicePrice['DivisionCode'],
                 'department_code'=>$servicePrice['DepartmentCode'],
-                'section_name'=>$this->selectedSectionName,
-                'department_name'=>$this->service_group_name,
+                /*'section_name'=>$this->selectedSectionName,
+                'department_name'=>$this->service_group_name,*/
+                'section_name'=>$servicePrice['section_name']['PropertyName'],
+                    'department_name'=>$servicePrice['department_name']['DevelopmentName'],
                 'section_code'=>$servicePrice['SectionCode'],
                 'is_package'=>1,
                 'package_code'=>$this->package_code,

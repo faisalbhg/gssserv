@@ -846,9 +846,10 @@
                          <hr class="mt-0">
                          --><ul class="list-group">
                             <?php $qlServiceUpdate=false; ?>
+
                             @forelse( $jobcardDetails->customerJobServices as $services)
                                 <li class="list-group-item border-0  p-2 mb-2 border-radius-lg">
-                                    @if($services->service_item_type==1)
+                                    @if($services->service_item_type==1 || $services->service_item_type==3)
                                         <div class="card">
                                             <div class="card-body p-2">
                                                 <div class="row">
@@ -917,7 +918,6 @@
                                                             <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
                                                             Mark as all good
                                                         </button>
-                                                        
                                                         @if($services->item_code=="S255")
                                                             @include('components.checklist.interiorCleaning-checklist')
                                                             <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
