@@ -109,7 +109,7 @@ class PaymentCron extends Command
                     if($mobileNumber!=null){
                         //dd($mobileNumber);  
                         //if($mobileNumber=='971566993709'){
-                            $msgtext = urlencode('Dear '.$customerName.', your payment of AED'.$orderResponseAmount.' for package at '.$package->stationInfo['ShortName'].' has been received. Receipt No:'.$package->package_number.', click here to access your invoice https://gsstations.ae/qr/package/'.$package->job_number.'. Thank you for your trust in GSS');
+                            $msgtext = urlencode('Dear '.$customerName.', your payment of AED'.$orderResponseAmount.' for package at '.$package->stationInfo['ShortName'].' has been received. Receipt No:'.$package->package_number.', click here to access your invoice https://gsstations.ae/qr/package/'.$package->package_number.'. Thank you for your trust in GSS');
                             $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                         //}
                     }
