@@ -138,11 +138,19 @@
                                         <h6 class="text-primary mb-0 mt-0 ">{{$job->plate_number}}</h6>
                                         <h6 class="mb-0 mt-0">#{{$job->job_number}}</h6>
                                         <h6 class="mb-0 text-sm mt-0">{{$job->makeInfo['vehicle_name']}} - <small>{{$job->modelInfo['vehicle_model_name']}} </small></h6>
+                                        @if($job->payment_type==4 && $job->payment_status==0)
+                                            <button class="btn bg-gradient-success" type="button">
+                                                <span class="btn-inner--icon"><i class="fa-solid fa-money-bill-1-wave ms-1 fs-xl" style="font-size: 1.5em;" ></i></span>
+                                                CREDIT
+                                                    
+                                            </button>
+                                        @else
                                         <button class="btn {!!config('global.payment.status_class')[$job->payment_status]!!}" type="button">
                                             <span class="btn-inner--icon"><i class="fa-solid fa-money-bill-1-wave ms-1 fs-xl" style="font-size: 1.5em;" ></i></span>
                                             {!!config('global.payment.status')[$job->payment_status]!!}
                                                 
                                         </button>
+                                        @endif
                                     </div>
                                     
                                 </div>
@@ -161,8 +169,10 @@
                                         @if($job->job_status==3)
 
                                             @if($job->payment_type!=4)
-                                                @if($job->payment_status==1)
-                                                <button type="button"  wire:click="updateQwService('{{$job->job_number}}','4','{{$job->customerInfo['TenantId']}}')" class="w-100 btn {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}"  >Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
+                                                @if($job->payment_type==4 && $job->payment_status==0)
+                                                    <button type="button"  wire:click="updateQwService('{{$job->job_number}}','4','{{$job->customerInfo['TenantId']}}')" class="w-100 btn {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}"  >Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
+                                                @elseif($job->payment_status==1)
+                                                    <button type="button"  wire:click="updateQwService('{{$job->job_number}}','4','{{$job->customerInfo['TenantId']}}')" class="w-100 btn {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}"  >Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
                                                 @endif
                                             @endif
                                         @endif
