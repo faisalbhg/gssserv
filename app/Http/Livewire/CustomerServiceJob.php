@@ -592,8 +592,9 @@ class CustomerServiceJob extends Component
             $this->customerBookedPackages = PackageBookings::with(['customerPackageServices'])->where([
                 'customer_id'=>$this->customer_id,
                 'vehicle_id'=>$this->vehicle_id,
-                'station'=>auth()->user('user')['station_code'
-            ]])
+                'station'=>auth()->user('user')['station_code'],
+                'payment_status'=>1
+            ])
             ->orderBy('id','DESC')->get();
             //dd($this->customerBookedPackages);
             /*foreach($this->customerBookedPackages as $customerBookedPackages){
