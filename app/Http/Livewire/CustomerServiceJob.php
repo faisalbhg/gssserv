@@ -1649,7 +1649,7 @@ class CustomerServiceJob extends Component
             if($this->vehicle_image)
             {
                 $customerVehicleUpdate['vehicle_image']=$this->vehicle_image->store('vehicle', 'public');
-                /$customerVehicleUpdate['vehicle_image_base64']=base64_encode(file_get_contents($this->vehicle_image->getRealPath()));
+                //$customerVehicleUpdate['vehicle_image_base64']=base64_encode(file_get_contents($this->vehicle_image->getRealPath()));
             }
 
             if($this->plate_number_image)
