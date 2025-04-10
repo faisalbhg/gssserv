@@ -1649,16 +1649,19 @@ class CustomerServiceJob extends Component
             if($this->vehicle_image)
             {
                 $customerVehicleUpdate['vehicle_image']=$this->vehicle_image->store('vehicle', 'public');
+                /$customerVehicleUpdate['vehicle_image_base64']=base64_encode(file_get_contents($this->vehicle_image->getRealPath()));
             }
 
             if($this->plate_number_image)
             {
                 $customerVehicleUpdate['plate_number_image'] = $this->plate_number_image->store('plate_number', 'public');
+                //$customerVehicleUpdate['plate_number_image_base64'] = base64_encode(file_get_contents($this->plate_number_image->getRealPath()));
             }
 
             if($this->chaisis_image)
             {
                 $customerVehicleUpdate['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
+                //$customerVehicleUpdate['chaisis_image_base64']=base64_encode(file_get_contents($this->chaisis_image->getRealPath()));
             }
 
             if($this->customer_id)

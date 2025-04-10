@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('package_bookings', function (Blueprint $table) {
-            $table->string('customer_signature')->nullable()->after('customer_trn');
+        Schema::table('customer_vehicles', function (Blueprint $table) {
+            $table->text('vehicle_image_base64')->nullable()->after('plate_number_image_base64');
+            $table->text('chaisis_image_base64')->nullable()->after('vehicle_image_base64');
+
         });
     }
 
@@ -25,7 +27,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('package_bookings', function (Blueprint $table) {
+        Schema::table('customer_vehicles', function (Blueprint $table) {
             //
         });
     }

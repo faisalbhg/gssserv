@@ -3,7 +3,7 @@
 @endpush
 <main class="main-content position-relative  border-radius-lg h-100">
     <div class="container-fluid py-2">
-    
+        
         @if ($message = Session::get('success'))
         <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
             <span class="alert-icon"><i class="ni ni-like-2"></i></span>
@@ -305,6 +305,7 @@
                                 <div class="position-relative">
                                     <div class="blur-shadow-image">
                                         <img class="w-100 rounded-3 shadow-lg" src="{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}">
+                                        <!-- <img class="w-100 rounded-3 shadow-lg" src="data:image/png;base64,{{$selectedVehicleInfo['vehicle_image_base64']}}"> -->
                                     </div>
 
                                 </div>
