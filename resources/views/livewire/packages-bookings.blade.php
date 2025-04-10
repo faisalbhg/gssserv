@@ -195,29 +195,61 @@
                 </div>
                 @endif
                 @if($otpVerified)
-                <div class="col-md-12 col-sm-12 mb-4" id="packagePaymentRow">
-                    <div class="card p-2 mb-4">
-                        
-                        <div class="card-body text-lg-left text-center pt-0">
-                            <div class="d-flex justify-content-center p-2">
-                                @if($mobile)
-                                <div class="form-check">
-                                    <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
+                    <div class="row mt-3">
+                        <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 mb-4">
+                            <div class="card">
+                                <div class="card-header text-left pt-4 pb-3">
+                                    <h5 class="font-weight-bold mt-2">Signature</h5>
                                 </div>
-                                @endif
-                            
-                                <div class="form-check">
-                                    <a wire:click="completePaymnet('card')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
-                                </div>
-                            
-                                <div class="form-check">
-                                    <a wire:click="completePaymnet('cash')" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Cash Payment<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
+                                <div class="card-body text-left pt-0">
+                                    <button type="button" class="btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
+                                    <div wire:loading wire:target="clickShowSignature">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if($customerSignature)
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <img class="w-100" src="{{$customerSignature}}" />
+                                        </div>
+                                    </div>
+                                    
+                                    @endif
                                 </div>
                                 
                             </div>
                         </div>
                     </div>
-                </div>
+                    @if($customerSignature)
+                        <div class="col-md-12 col-sm-12 mb-4" id="packagePaymentRow">
+                            <div class="card p-2 mb-4">
+                                
+                                <div class="card-body text-lg-left text-center pt-0">
+                                    <div class="d-flex justify-content-center p-2">
+                                        @if($mobile)
+                                        <div class="form-check">
+                                            <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
+                                        </div>
+                                        @endif
+                                    
+                                        <div class="form-check">
+                                            <a wire:click="completePaymnet('card')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
+                                        </div>
+                                    
+                                        <div class="form-check">
+                                            <a wire:click="completePaymnet('cash')" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Cash Payment<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @endif
             </div>
 

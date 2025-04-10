@@ -185,7 +185,7 @@ class PackagesBookings extends Component
             'scrollToId' => 'packageOTPVerifyRow',
         ]);
 
-        session()->flash('package_success', 'Package is valid, '.$otpPack.' please enter the OTP shared in the registered mobile number..!');
+        session()->flash('package_success', 'Package is valid, please enter the OTP shared in the registered mobile number..!');
     }
 
     public function verifyPackageOtp(){
@@ -213,6 +213,31 @@ class PackagesBookings extends Component
         }
     }
 
+    public function clickShowSignature()
+    {
+        if($this->selectedVehicleInfo->customerInfoMaster['Required_StaffDtls'])
+        {
+            if($this->selectedVehicleInfo['customerInfoMaster']['TenantId']=='6630'){
+                $validatedData = $this->validate([
+                    'staff_id' => 'required',
+                    'staff_number' => 'required'
+                ]);
+            }
+            else
+            {
+                $validatedData = $this->validate([
+                    'staff_id' => 'required',
+                    //'staff_number' => 'required'
+                ]);
+            }
+        }
+        
+
+        $this->showCustomerSignature=true;
+        $this->dispatchBrowserEvent('showSignature');
+
+    }
+
     public function resendPackageOtp(){
         $otpPack = fake()->randomNumber(6);
         PackageBookings::where(['package_number'=>$this->package_number])->update(['otp_code'=>fake()->randomNumber(6)]);
@@ -222,6 +247,7 @@ class PackagesBookings extends Component
 
     public function completePaymnet($mode)
     {
+        PackageBookings::where(['package_number'=>$this->package_number])->update(['customer_signature'=>$this->customerSignature]);
         $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
         if(auth()->user('user')->stationName['StationID']==4)
         {

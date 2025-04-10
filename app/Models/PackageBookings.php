@@ -26,6 +26,7 @@ class PackageBookings extends Model
         'customer_mobile',
         'customer_email',
         'customer_trn',
+        'customer_signature',
         'vehicle_id',
         'vehicle_type',
         'make',
