@@ -96,7 +96,7 @@
                                         @endif
                                     </div>
                                     @endif
-                                    <button type="button" class="btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
+                                    <button type="button" class="d-none btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
                                 </div>
                             </div>
                         </div>
@@ -1169,22 +1169,28 @@
                             </div>
                             <div class="card-footer text-lg-left text-center pt-0">
                                 <div class="d-flex justify-content-center p-2">
-                                    @if($mobile)
-                                    <div class="form-check">
-                                        <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
-                                    </div>
+                                    @if($grand_total>0)
+                                        @if($mobile)
+                                        <div class="form-check">
+                                            <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
+                                        </div>
+                                        @endif
+                                    
+                                        <div class="form-check">
+                                            <a wire:click="completePaymnet('card')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
+                                        </div>
+                                    
+                                        <div class="form-check">
+                                            <a wire:click="completePaymnet('cash')" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Cash Payment<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
+                                        </div>
+                                        <div class="form-check">
+                                            <a wire:click="payLater('paylater')" class="btn btn-icon bg-gradient-secondary d-lg-block mt-3 mb-0">Pay Later<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
+                                        </div>
+                                    @else
+                                        <div class="form-check">
+                                            <a wire:click="completePaymnet('empty')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Complete<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
+                                        </div>
                                     @endif
-                                
-                                    <div class="form-check">
-                                        <a wire:click="completePaymnet('card')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
-                                    </div>
-                                
-                                    <div class="form-check">
-                                        <a wire:click="completePaymnet('cash')" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Cash Payment<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
-                                    </div>
-                                    <div class="form-check">
-                                        <a wire:click="payLater('paylater')" class="btn btn-icon bg-gradient-secondary d-lg-block mt-3 mb-0">Pay Later<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
-                                    </div>
 
                                     
                                 </div>

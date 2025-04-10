@@ -1087,7 +1087,7 @@ class CustomerServiceJob extends Component
         $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']]);
         if($customerBasketCheck->count())
         {
-            $customerBasketCheck->increment('quantity', 1);
+            //$customerBasketCheck->increment('quantity', 1);
             if($discountPrice!=null){
                 $cartUpdate['price_id']=$discountPrice['id'];
                 $cartUpdate['customer_group_id']=$discountPrice['package_id'];

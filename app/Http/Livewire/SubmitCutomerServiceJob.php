@@ -327,7 +327,7 @@ class SubmitCutomerServiceJob extends Component
 
             if($customerjobs->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle service status, For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle status, For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
@@ -661,6 +661,7 @@ class SubmitCutomerServiceJob extends Component
                 try {
                     DB::select('EXEC [ServicePackage.Redeem.FinancialEntries] @jobnumber = "'.$this->job_number.'", @packagenumber = "'.$package_number.'", @doneby = "'.auth()->user('user')->id.'" ');
                 } catch (\Exception $e) {
+                    //dd($e->getMessage());
                     //return $e->getMessage();
                 }
 
