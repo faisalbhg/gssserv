@@ -43,6 +43,7 @@ class PackageBookings extends Model
         'payment_request',
         'payment_response',
         'payment_link',
+        'payment_link_order_ref',
         'package_status',
         'created_by',
         'updated_by',

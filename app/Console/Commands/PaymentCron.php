@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
 use App\Models\CustomerJobCards;
+use App\Models\PackageBookings;
 
 use Carbon\Carbon;
 use Session;
@@ -74,6 +75,47 @@ class PaymentCron extends Command
 
                     try {
                         DB::select('EXEC [dbo].[Job.CashierAcceptPayment] @jobId = "'.$arrData['job_number'].'", @paymentmode = "L", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$orderResponseAmount.',@advanceInvoice=NULL ');
+                    } catch (\Exception $e) {
+                        //dd($e->getMessage());
+                        //return $e->getMessage();
+                    }
+                }
+            }
+        }
+
+
+        $customerPackageBookings = PackageBookings::with(['stationInfo'])->where(['payment_status'=>0,'payment_type'=>1])->where('payment_link_order_ref','!=',Null)->get();
+        if (!empty($customerPackageBookings)) {
+            foreach ($customerPackageBookings as $key => $package) {
+                $arrData['job_number'] = $package->package_number;
+                $arrData['order_number'] = $package->payment_link_order_ref;
+                $arrData['station'] = $package->stationInfo['StationID'];
+
+                $mobileNumber=null;
+                if($arrData['station']==4)
+                {
+                    $mobileNumber = isset($package->customer_mobile)?'971'.substr($package->customer_mobile, -9):null;
+                }
+                $customerName = isset($package->customer_name)?$package->customer_name:null;
+
+                $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.synchronize_single_paymenkLink_url'),$arrData);
+                $paymentResponse = json_decode($response,true);
+                $orderResponseAmount = str_replace("د.إ.\u{200F} ","",$paymentResponse['order_response']['amount']);
+                //dd($paymentResponse);
+                if($paymentResponse['order_response']['status']=='PURCHASED' || $paymentResponse['order_response']['status']=='CAPTURED' )
+                {
+                    PackageBookings::where(['package_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
+
+                    if($mobileNumber!=null){
+                        //dd($mobileNumber);  
+                        //if($mobileNumber=='971566993709'){
+                            $msgtext = urlencode('Dear '.$customerName.', your payment of AED'.$orderResponseAmount.' for package at '.$package->stationInfo['ShortName'].' has been received. Receipt No:'.$package->package_number.', click here to access your invoice https://gsstations.ae/qr/package/'.$package->job_number.'. Thank you for your trust in GSS');
+                            $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                        //}
+                    }
+
+                    try {
+                        DB::select('EXEC [dbo].[AcceptPayment_ServicePackage] @jobId = "'.$arrData['job_number'].'", @paymentmode = "L", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$orderResponseAmount.',@advanceInvoice=NULL ');
                     } catch (\Exception $e) {
                         //dd($e->getMessage());
                         //return $e->getMessage();

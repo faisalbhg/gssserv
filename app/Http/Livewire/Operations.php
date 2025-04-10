@@ -33,6 +33,7 @@ use App\Models\InventoryItemMaster;
 use App\Models\Landlord;
 use App\Models\TempCustomerServiceCart;
 use App\Models\JobCardChecklists;
+use App\Models\PackageBookings;
 
 use Carbon\Carbon;
 use Session;
@@ -114,6 +115,7 @@ class Operations extends Component
 
     public function render()
     {
+        
         //$customerJobCards = CustomerJobCards::with(['stationInfo'])
         //->where(['payment_status'=>0,'payment_type'=>1])
         //->where(['job_number'=>'JOB-GQS-00002705'])

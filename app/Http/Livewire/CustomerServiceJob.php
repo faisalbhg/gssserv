@@ -654,7 +654,7 @@ class CustomerServiceJob extends Component
             PackageBookings::where(['package_number'=>$packBookd['package_number']])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
             if($mobileNumber!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', to confirm your GSS Service Contract creation, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', to redeem your GSS Service package, please use the OTP '.$otpPack.'. This OTP is valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }

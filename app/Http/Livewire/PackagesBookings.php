@@ -223,8 +223,17 @@ class PackagesBookings extends Component
     public function completePaymnet($mode)
     {
         $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
-        $mobileNumber = isset($this->mobile)?'971'.substr($this->mobile, -9):null;
-        $customerName = isset($this->name)?$this->name:null;
+        if(auth()->user('user')->stationName['StationID']==4)
+        {
+            $mobileNumber = isset($customerPackageInfo->customerInfo['Mobile'])?'971'.substr($customerPackageInfo->customerInfo['Mobile'], -9):null;
+        }
+        else
+        {
+            $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+        }
+        //$mobileNumber = isset($this->mobile)?'971'.substr($this->mobile, -9):null;
+        $customerName = isset($customerPackageInfo->customerInfo['TenantName'])?$customerPackageInfo->customerInfo['TenantName']:null;
+        //$customerName = isset($this->name)?$this->name:null;
         $paymentmode = null;
         if($mode=='link')
         {
@@ -236,13 +245,15 @@ class PackagesBookings extends Component
             {
                 if($customerPackageInfo->customerInfo['Mobile']!=''){
                     //if($mobileNumber=='971566993709'){
-                        $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link:'.$paymentResponse['payment_redirect_link'].'. For assistance, call 800477823.');
+                        $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link:'.$paymentResponse['payment_redirect_link'].'. For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
 
                     //}
                 }
 
-                PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send']);
+                PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_link_order_ref'=>$paymentResponse['payment_link_order_ref'],'payment_request'=>'link_send',]);
+
+                //PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send']);
 
                 $this->successPage=true;
                 $this->otpVerified =false;
@@ -263,7 +274,7 @@ class PackagesBookings extends Component
             PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>2,'payment_request'=>'card payment']);
             if($customerPackageInfo->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle for package, Refer Package No. #'.$this->package_number.'. Please complete the payment to use the package. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. Please complete the payment to use the package. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
@@ -279,7 +290,7 @@ class PackagesBookings extends Component
             PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>3,'payment_request'=>'cash payment']);
             if($customerPackageInfo->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we have received your vehicle for package, Refer Package No. #'.$this->package_number.'. Please complete the payment to use the package. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. Please complete the payment to use the package. For assistance, call 800477823.');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
