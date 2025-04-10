@@ -444,6 +444,7 @@ class Operations extends Component
         
 
         if($ql){
+            
             CustomerJobCardServices::where(['job_number'=>$services['job_number'],'section_name'=>'Quick Lube'])->update($serviceJobUpdate);
         }
         else

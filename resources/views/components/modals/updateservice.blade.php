@@ -979,7 +979,7 @@
                                                                 <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                             </a>
                                                         @else
-                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
                                                                 <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                             </a>
                                                         @endif
@@ -1010,6 +1010,7 @@
                                                     </a>
                                                 @endif
                                             @endif
+                                        
                                         @endif
                                         
                                         <div class="row">
