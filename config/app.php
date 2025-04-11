@@ -60,9 +60,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost/gss/'),
+    'url' => env('APP_URL', 'http://172.23.25.95/gss/'),
 
-    'asset_url' => env('ASSET_URL', "http://localhost/gss/assets/"),
+    'asset_url' => env('ASSET_URL', "http://172.23.25.95/gss/assets/"),
 
     /*
     |--------------------------------------------------------------------------

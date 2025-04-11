@@ -98,4 +98,16 @@ class CustomerJobCardServices extends Model
     {
         return $this->hasMany(CustomerJobCardServiceLogs::class,'customer_job__card_service_id','id');
     }
+
+    public function departmentName(){
+        return $this->belongsTo(Development::class,'department_code','DevelopmentCode');
+    }
+
+    public function sectionName(){
+        return $this->belongsTo(Sections::class,'section_code','PropertyCode');
+    }
+
+    public function laborItemMaster(){
+        return $this->belongsTo(LaborItemMaster::class,'item_code','ItemCode')->with(['departmentName','sectionName']);
+    }
 }
