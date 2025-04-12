@@ -545,7 +545,7 @@ class SubmitCutomerServiceJob extends Component
                             'sessionId'=>$this->job_number,
                             'ItemCode'=>$cartData->item_code,
                             'ItemName'=>$cartData->item_name,
-                            'QuantityRequested'=>$cartData->quantity*1,
+                            'QuantityRequested'=>$cartData->quantity*4,
                             'Activity2Code'=>auth()->user('user')->station_code
                         ]);
                         $fourPLuOneRequested=true;
