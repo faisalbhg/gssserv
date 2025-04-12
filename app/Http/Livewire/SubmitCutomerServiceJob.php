@@ -570,7 +570,38 @@ class SubmitCutomerServiceJob extends Component
                 $package_number=$cartData->package_number;
 
             }
-            
+
+            //Ceramic Wash Discount Count
+            if(in_array($cartData->item_code,config('global.ceramic.service'))){
+                CustomerVehicle::where([
+                    'id'=>$this->vehicle_id,
+                    'customer_id'=>$this->customer_id
+                ])->increment('ceramic_wash_discount_count',10);
+            }else if($cartData->item_code == config('global.ceramic.discount_in') && $cartData->ceramic_wash_discount_count != null){
+                $getCustomerCeramicDiscountQuery = CustomerVehicle::where([
+                    'id'=>$this->vehicle_id,
+                    'customer_id'=>$this->customer_id
+                ])->first();
+                if($getCustomerCeramicDiscountQuery->ceramic_wash_discount_count>0)
+                {
+                    CustomerVehicle::where([
+                        'id'=>$this->vehicle_id,
+                        'customer_id'=>$this->customer_id
+                    ])->decrement('ceramic_wash_discount_count',$cartData->quantity);    
+                }
+                else
+                {
+                    CustomerVehicle::where([
+                        'id'=>$this->vehicle_id,
+                        'customer_id'=>$this->customer_id
+                    ])->update(['ceramic_wash_discount_count'=>$cartData->ceramic_wash_discount_count]);
+                }
+                /*
+                CustomerVehicle::where([
+                    'id'=>$this->vehicle_id,
+                    'customer_id'=>$this->customer_id
+                ])->decrement('ceramic_wash_discount_count',$cartData->quantity);*/
+            }
 
         }
 

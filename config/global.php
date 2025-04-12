@@ -1017,6 +1017,13 @@ return [
                 ],
             ],
         ]
+    ],
+    'ceramic'=>[
+        'service' =>[
+            'S267',
+            'S403'
+        ],
+        'discount_in'=>'S322'
     ]
 
 ]

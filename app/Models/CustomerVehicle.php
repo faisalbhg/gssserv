@@ -29,6 +29,7 @@ class CustomerVehicle extends Model
         'plate_number_image_64',
         'chaisis_image',
         'chaisis_image_base64',
+        'ceramic_wash_discount_count',
         'is_active',
         'created_by',
         'updated_by',

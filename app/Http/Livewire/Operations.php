@@ -115,6 +115,47 @@ class Operations extends Component
 
     public function render()
     {
+        /*dd(CustomerVehicle::where('ceramic_wash_discount_count','>',0)->get());
+        $ceramicJobNumber = [];
+        foreach(CustomerJobCardServices::with(['jobInfo'])->whereIn('item_code',  config('global.ceramic.service'))->get() as $ceramicJob){
+            if(!in_array($ceramicJob->job_number,$ceramicJobNumber)){
+                CustomerVehicle::where([
+                    'id'=>$ceramicJob->jobInfo['vehicle_id'],
+                    'customer_id'=>$ceramicJob->jobInfo['customer_id']
+                ])->update(['ceramic_wash_discount_count'=>10*$ceramicJob->quantity]);
+                array_push($ceramicJobNumber, $ceramicJob->job_number);
+            }
+        }*/
+        /*$getCountSalesJobStatus = CustomerJobCardServices::select(
+            array(
+                \DB::raw('count(case when job_status = 0 then job_status end) new'),
+                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
+                \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
+                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
+                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+            )
+        )->where(['job_number'=>'JOB-GAJ-00004703'])->first();
+        //dd($getCountSalesJobStatus);
+        if($getCountSalesJobStatus->working_progress>0){
+            $mainSTatus=1;
+        }
+        else if($getCountSalesJobStatus->qualitycheck>0){
+            $mainSTatus=2;
+        }
+        else if($getCountSalesJobStatus->ready_to_deliver>0){
+            $mainSTatus=3;
+        }
+        else if($getCountSalesJobStatus->delivered>0){
+            $mainSTatus=4;
+        }
+        $mianJobUpdate = [
+            'job_status'=>$mainSTatus,
+            'job_departent'=>$mainSTatus,
+        ];
+        
+        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>'JOB-GAJ-00004703']);
+        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);*/
+
         $this->stationsList = Landlord::all();
         
         $getCountSalesJob = CustomerJobCards::select(

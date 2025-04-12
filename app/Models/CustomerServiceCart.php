@@ -43,6 +43,7 @@ class CustomerServiceCart extends Model
         'unit_price',
         'quantity',
         'save_type',
+        'ceramic_wash_discount_count',
         'created_by',
         'updated_by',
         'created_at',

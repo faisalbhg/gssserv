@@ -55,7 +55,7 @@ class CustomerServiceJob extends Component
     public $showVehicleAvailable, $selectedVehicleInfo, $selected_vehicle_id, $customer_id;
     public $servicesGroupList, $service_group_id, $service_group_name, $service_group_code, $station, $section_service_search, $propertyCode, $selectedSectionName;
     public $selectServiceItems, $sectionsLists;
-    public $serviceAddedMessgae=[],$cartItems = [], $cardShow=false, $ql_item_qty;
+    public $serviceAddedMessgae=[],$cartItems = [], $cardShow=false, $ql_item_qty, $ceramic_dicount;
     public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $serviceItemsList=[];
     public $quickLubeItemsList = [], $qlBrandsLists=[], $ql_search_brand, $ql_km_range, $ql_search_category, $itemQlCategories=[], $quickLubeItemSearch;
     public $customerGroupLists;
@@ -255,31 +255,17 @@ class CustomerServiceJob extends Component
                 }
                 else if($sectionServiceList->ItemCode == 'S322')
                 {
-                    $checkServiceItemAvailableQuery = CustomerJobCardServices::with(['jobInfo'])->where(function ($query) {
-                        $query->whereRelation('jobInfo', 'customer_id', '=', $this->customer_id);
-                        $query->whereRelation('jobInfo', 'payment_status', '=', 1);
-                    });
-                    $checkServiceItemAvailableQueryCheck = $checkServiceItemAvailableQuery
-                        ->whereIn('item_code', ['S267','S403'])
-                        ->count();
-                    if($checkServiceItemAvailableQueryCheck>0){
-                        $checkServiceItemAvailableQueryCount = CustomerJobCardServices::with(['jobInfo'])->where(function ($query) {
-                            $query->whereRelation('jobInfo', 'customer_id', '=', $this->customer_id);
-                            $query->whereRelation('jobInfo', 'payment_status', '=', 1);
-                            //$query->whereRelation('jobInfo', 'customer_id', '=', $this->vehicle_id,'customer_id'=>$this->customer_id);
-                        })->where('job_status','=',4)->where('item_code', 'S322')->sum('quantity');
-                        //$checkServiceItemAvailableQueryCount = $checkServiceItemAvailableQuery->where('item_code', 'S322')->sum('quantity');
-                        //dd($checkServiceItemAvailableQueryCheck*10);
-                        if($checkServiceItemAvailableQueryCount<($checkServiceItemAvailableQueryCheck*10)){
-                            $discountLaborSalesPrices = LaborSalesPrices::where([
+                    if($this->selectedVehicleInfo->ceramic_wash_discount_count > 0)
+                    {
+                        $discountLaborSalesPrices = LaborSalesPrices::where([
                                 'ServiceItemId'=>$sectionServiceList->ItemId,
                                 'CustomerGroupCode'=>'CERAMIC_WASH',
                             ]);
-                            $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
-                            //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
-                            $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
-                        }
+                        $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
+                        //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
+                        $sectionServicePriceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
                     }
+                    
                 }
                 else
                 {
@@ -827,6 +813,7 @@ class CustomerServiceJob extends Component
     }
     public function addtoCart($servicePrice,$discount)
     {
+
         $addtoCartAllowed=false;
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
@@ -907,7 +894,41 @@ class CustomerServiceJob extends Component
                 {
                     $cartInsert['job_number']=$this->job_number;
                 }
-                
+                if($servicePrice['ItemCode'] == config('global.ceramic.discount_in'))
+                {
+                    $discountPriceCW=null;
+                    if($this->selectedVehicleInfo->ceramic_wash_discount_count>0){
+                        $cartInsert['ceramic_wash_discount_count'] = 1;
+                        $discountLaborSalesPricesCW = LaborSalesPrices::where([
+                            'ServiceItemId'=>$servicePrice['ItemId'],
+                            'CustomerGroupCode'=>'CERAMIC_WASH',
+                        ]);
+                        $discountLaborSalesPricesCW = $discountLaborSalesPricesCW->where('StartDate', '<=', Carbon::now());
+                        $discountPriceCW = $discountLaborSalesPricesCW->first();
+                    }
+                    else if(isset($this->ceramic_dicount[$servicePrice['ItemId']])){
+                        $cartInsert['ceramic_wash_discount_count'] = $this->ceramic_dicount[$servicePrice['ItemId']];
+                        $discountLaborSalesPricesCW = LaborSalesPrices::where([
+                            'ServiceItemId'=>$servicePrice['ItemId'],
+                            'CustomerGroupCode'=>'CERAMIC_WASH',
+                        ]);
+                        $discountLaborSalesPricesCW = $discountLaborSalesPricesCW->where('StartDate', '<=', Carbon::now());
+                        $discountPriceCW = $discountLaborSalesPricesCW->first();
+                    }
+
+                    if($discountPriceCW!=null){
+                        $cartInsert['price_id']=$discountPriceCW->PriceID;
+                        $cartInsert['customer_group_id']=$discountPriceCW->CustomerGroupId;
+                        $cartInsert['customer_group_code']=$discountPriceCW->CustomerGroupCode;
+                        $cartInsert['min_price']=$discountPriceCW->MinPrice;
+                        $cartInsert['max_price']=$discountPriceCW->MaxPrice;
+                        $cartInsert['start_date']=$discountPriceCW->StartDate;
+                        $cartInsert['end_date']=$discountPriceCW->EndDate;
+                        $cartInsert['discount_perc']=$discountPriceCW->DiscountPerc;
+                    }
+
+                }
+                //dd($cartInsert);
                 CustomerServiceCart::insert($cartInsert);
             }
             $this->serviceAddedMessgae[$servicePrice['ItemCode']]=true;

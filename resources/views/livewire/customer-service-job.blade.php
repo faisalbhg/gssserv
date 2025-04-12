@@ -963,6 +963,7 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <p class="text-sm text-center font-weight-bold text-dark">{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</p>
+                                                    
                                                     <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea > -->
                                                 </div>
                                             </div>
@@ -999,7 +1000,11 @@
                                                         @if($discountDetails != null)
                                                         <span class="badge bg-gradient-info">{{custom_round($discountDetails['DiscountPerc'])}}%off</span>
                                                         @endif
-                                                        
+                                                        @if($priceDetails->ItemCode==  config('global.ceramic.discount_in') && $selectedVehicleInfo->ceramic_wash_discount_count < 1)
+                                                        <input type="number" style="padding-left: 5px !important;" class="form-control w-50" placeholder="{{$priceDetails->ItemName}} Discount Count..!" wire:model="ceramic_dicount.{{$priceDetails->ItemId}}">
+                                                        @elseif($priceDetails->ItemCode==  config('global.ceramic.discount_in'))
+                                                        Balance: {{$selectedVehicleInfo->ceramic_wash_discount_count}}
+                                                        @endif
                                                         <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
                                                         
                                                         
