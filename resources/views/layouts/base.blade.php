@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="robots" content="noindex, nofollow" />
     <meta name="autocomplete" content="off">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Metas -->
     @if(env('IS_DEMO'))
         <x-demo-metas></x-demo-metas>
