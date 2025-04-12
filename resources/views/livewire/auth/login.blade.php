@@ -15,12 +15,14 @@
                         </div>
                         <div class="card-body">
                             <form wire:submit.prevent="login" action="#" method="POST" role="form text-left" autocomplete="off">
+                                <input type="text" name="fakeusernameremembered" style="display:none">
+<input type="password" name="fakepasswordremembered" style="display:none">
                                 <div class="mb-3">
                                     <label for="email">{{ __('Email') }}</label>
                                     <div class="@error('email') border border-danger rounded-3 @enderror">
                                         <div wire:ignore>
                                         <input wire:model.defer="email" id="email" type="email" class="form-control"
-                                            placeholder="Email" aria-label="Email" aria-describedby="email-addon" autocomplete="new-email" aria-autocomplete="new-email" >
+                                            placeholder="Email" aria-label="Email" aria-describedby="email-addon" autocomplete="off" >
                                         </div>
                                     </div>
                                     @error('email') <div class="text-danger">{{ $message }}</div> @enderror
@@ -30,7 +32,7 @@
                                     <div class="@error('password') border border-danger rounded-3 @enderror">
                                         <input wire:model.defer="password" id="password" type="password" class="form-control"
                                             placeholder="Password" aria-label="Password"
-                                            aria-describedby="password-addon" autocomplete="new-password" aria-autocomplete="new-password">
+                                            aria-describedby="password-addon" autocomplete="new-password">
                                     </div>
                                     @error('password') <div class="text-danger">{{ $message }}</div> @enderror
                                 </div>
