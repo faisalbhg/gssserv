@@ -425,6 +425,7 @@ class SubmitCutomerServiceJob extends Component
         $is_package=false;
         $package_code=null;
         $package_number=null;
+        $fourPLuOneRequested=false;
         foreach($this->cartItems as $cartData)
         {
             $customerJobServiceData = [
@@ -538,15 +539,30 @@ class SubmitCutomerServiceJob extends Component
                 $unitCodeMR = $cartData->section_code;
                 
                 
-
+                if($cartData->item_code=='I09137'){
+                    if($cartData->customer_group_code=='MOBIL4+1' && $fourPLuOneRequested == false){
+                        $meterialRequestItems = MaterialRequest::create([
+                            'sessionId'=>$this->job_number,
+                            'ItemCode'=>$cartData->item_code,
+                            'ItemName'=>$cartData->item_name,
+                            'QuantityRequested'=>$cartData->quantity*1,
+                            'Activity2Code'=>auth()->user('user')->station_code
+                        ]);
+                        $fourPLuOneRequested=true;
+                    }
+                }
+                else
+                {
+                    $meterialRequestItems = MaterialRequest::create([
+                        'sessionId'=>$this->job_number,
+                        'ItemCode'=>$cartData->item_code,
+                        'ItemName'=>$cartData->item_name,
+                        'QuantityRequested'=>$cartData->quantity,
+                        'Activity2Code'=>auth()->user('user')->station_code
+                    ]);
+                }
                 //$meterialRequestItems= '';
-                $meterialRequestItems = MaterialRequest::create([
-                    'sessionId'=>$this->job_number,
-                    'ItemCode'=>$cartData->item_code,
-                    'ItemName'=>$cartData->item_name,
-                    'QuantityRequested'=>$cartData->quantity,
-                    'Activity2Code'=>auth()->user('user')->station_code
-                ]);
+                
             }
 
 
