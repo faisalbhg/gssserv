@@ -1024,8 +1024,90 @@ return [
             'S403'
         ],
         'discount_in'=>'S322'
-    ]
+    ],
+    'payment_station'=>[
+        //Grand Service Station - Ajman
+        '1'=>[
+            'live'=>[
+                'mid'=>'200200009162',
+                'outletRef'=>'afc359fa-6758-4450-80d3-555d0459f3bb',
+                'apikey'=>'NzFjZmEyMTktZGQwZC00MDgyLTkzODMtMTViOGM1M2JkN2FhOjU1ZDFiMjdiLTZjM2MtNGMwZi1iNjViLTliOTU1Zjg1YjdkNg==',
+            ],
+            'test'=>[
+                'mid'=>'200200009162',
+                'outletRef'=>'63261c57-deae-4546-8880-ddfb145e137d',
+                'apikey'=>'NmEwMGNhN2MtZGIxMi00YzE1LTk1MzMtYWFkMmYzZDVmYzVhOjEzOGI4ZThiLTQxNmQtNGRmMC1hYzEwLTZmYTI2NGNhODEzYg==',
+            ],
+        ],
+        //Grand Service Station - BurDubai
+        '2'=>[
+            'live'=>[
+                'mid'=>'200200009163',
+                'outletRef'=>'f70d8def-dee0-43aa-8ae3-448a308ad57c',
+                'apikey'=>'YWI2Y2Y0MDAtZGI4NS00YmJhLWJkMGEtNzA0NmU0NGJlNjZjOmY2ZWFiZGNlLTY5YzktNDJjYy1iNmUxLTVjNDQyMzRhMTkyYw== ',
+            ],
+            'test'=>[
+                'mid'=>'200200009163',
+                'outletRef'=>'3927ed3e-e89a-4db2-a286-48fccf25a9b1',
+                'apikey'=>'YzQxMzY0OTMtZWFiYy00ZGE4LWE0YmUtODJkMTBmOWFmMjc0OmQzODIxNmRiLTE1ZTQtNDI2Yy04YWJhLTdjOWZiNDU2NTliOA==',
+            ],
+        ],
+        //Grand Service Station - Wheel to Wheel
+        '3'=>[
+            'live'=>[
+                'mid'=>'200200009160',
+                'outletRef'=>'5b43fb44-aed3-407c-ad37-780c69128933',
+                'apikey'=>'MzBkY2Y1NGItNDMxZC00NzI0LTkxZWItYzVmMThkOTg5NjcxOjhjZmU4YjA0LTFiZjMtNDMzMC04ZjUyLWQyZjYzZDkzNTUzZA==',
+            ],
+            'test'=>[
+                'mid'=>'200200009160',
+                'outletRef'=>'3edeffb4-d3cb-4b3e-a943-ff56b0730c32',
+                'apikey'=>'OGY3ODYyOWEtMmVkYi00YzZmLThhMmUtM2ViNmZkMGM1MzA3OmY0ZmE5MDg2LTJiNDItNGNjNC05ZjcyLWI0MTc4Y2E4MDY2YQ==',
+            ],
+        ],
+        
+        //Grand Service Station - Quasis
+        '4'=>[
+            'live'=>[
+                'mid'=>'200200009164',
+                'outletRef'=>'6f017915-e9c3-482d-9a5e-aa885f1d3a18',
+                'apikey'=>'YTI1M2U3ZmQtZGMxZC00MWZiLThmYzMtNzFiYTI4NzAyN2ViOmM4NTIzOTMwLWNkMGMtNGM3ZC04YzFlLWIxM2Q3MzFkMjEwYw==',
+            ],
+            'test'=>[
+                'mid'=>'',
+                'outletRef'=>'e2d3eed2-915f-4975-bd18-14cf4b452e70',
+                'apikey'=>'YWYzODg4NGYtOWQ5MS00ZWM3LWEyM2ItOGY2MWQ5NDgzOGQxOmUzZmI1NmNlLTVmMGYtNDAwYS1iMmRmLWU0Mzg2NjkwN2I0Mw==',
+            ],
+        ],
 
+        //Grand Service Station - Warqa
+        '5'=>[
+            'live'=>[
+                'mid'=>'200200009161',
+                'outletRef'=>'0cde13d2-e2ac-45c0-9f41-59ca3fe4ce84',
+                'apikey'=>'ZDAzNTQyNTgtYThlMi00YzU3LWEzZTAtZjJkN2YzYmIwZDNhOjFkYmFkZmU2LTQ4NGQtNGE2NC1iMWM3LTVmZmM2MjhkYjJhMg==',
+            ],
+            'test'=>[
+                'mid'=>'200200009161',
+                'outletRef'=>'b7f4400b-82ed-4b21-936b-54cadd946efb',
+                'apikey'=>'MTVjZDlkNzItNzFjMy00NzI2LWI0M2UtNDA5OGE3YmEzM2FiOmQxZDY0NGFhLTEwYWEtNDY0Zi05ZmZhLTk5MTUzMGIyMDM0ZA==',
+            ],
+        ],
+        
+        //The Car Care World
+        '6'=>[
+            'live'=>[
+                'mid'=>'200200011993',
+                'outletRef'=>'9bc39e27-cb08-48bc-877b-ad06d519e44f',
+                'apikey'=>'YjQzZTA1NDEtNmJkYi00YTM3LWE2ZTAtNmMyN2U0MDhiNTZiOjA2ZmRhMzUwLWY0YWItNDEzZS05ZWViLTBiMTUyZmEyMWFjOA==',
+            ],
+            'test'=>[
+                'mid'=>'200200011993',
+                'outletRef'=>'82006f8c-2c94-47de-9a8a-820710085ad4',
+                'apikey'=>'MzBjYWVmMGMtYmYwZS00ODg2LTlmNjQtNjQxZGE4NDk0MzhlOjU5NmFiZGM1LTI2MGUtNDRjMS1hMTE2LTUyOWY2ODAxMTYyZg==',
+            ],
+        ]
+    ]
 ]
   
 ?>

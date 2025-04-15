@@ -16,7 +16,7 @@
                         <div class="card-body">
                             <form wire:submit.prevent="login" action="#" method="POST" role="form text-left" autocomplete="off">
                                 <input type="text" name="fakeusernameremembered" style="display:none">
-<input type="password" name="fakepasswordremembered" style="display:none">
+                                <input type="password" name="fakepasswordremembered" style="display:none">
                                 <div class="mb-3">
                                     <label for="email">{{ __('Email') }}</label>
                                     <div class="@error('email') border border-danger rounded-3 @enderror">
