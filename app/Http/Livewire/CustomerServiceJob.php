@@ -95,7 +95,7 @@ class CustomerServiceJob extends Component
 
     public function render()
     {
-        dd(CustomerJobCards::limit(1)->get());
+        //dd(CustomerJobCards::limit(1)->get());
         if($this->new_make)
         {
             $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->where('is_deleted','=',null)->get();
