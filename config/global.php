@@ -382,6 +382,51 @@ return [
                 'text_class'=>'text-white',
             ],
         ],
+        'status'=>[
+            '0'=>'Pending',
+            '1'=>'Active',
+            '2'=>'Active',
+        ],
+        'type_class'=>[
+            '0'=>'bg-gradient-danger',
+            '1'=>'bg-gradient-success',
+            '2'=>'bg-gradient-success',
+        ],
+        'text_class'=>[
+            '0'=>'text-dark',
+            '1'=>"text-danger",
+            '2'=>"text-success",
+        ],
+        'status_class'=>[
+            '0'=>'bg-gradient-danger',
+            '1'=>'bg-gradient-danger',
+            '2'=>'bg-gradient-success',
+        ],
+        'status_icon_class'=>[
+            '0'=>'btn-outline-danger',
+            '1'=>'btn-outline-success',
+            '2'=>'btn-outline-success',
+        ],
+        'status_btn_class' => [
+            '0'=>'bg-gradient-danger',
+            '1'=>'bg-gradient-success',
+            '2'=>'bg-gradient-success',
+        ],
+
+        'status_perc' => [
+            '0'=>'25%',
+            '1'=>'100%',
+            '2'=>'75%',
+            '3'=>'100%',
+            '4'=>'100%',
+        ],
+        'status_perc_class' => [
+            '0'=>'bg-gradient-danger',
+            '1'=>'bg-gradient-success',
+            '2'=>'bg-gradient-primary',
+            '3'=>'bg-gradient-success',
+            '4'=>'bg-gradient-success',
+        ],
     ],
 
     'ql_all_item_search_category'=>[

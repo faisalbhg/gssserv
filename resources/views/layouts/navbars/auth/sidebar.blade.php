@@ -55,6 +55,17 @@
                     <span class="nav-link-text ms-1">Jobs</span>
                 </a>
             </li>
+            <li class="nav-item pb-2 {{!in_array((auth()->user('user')->user_type),config('global.user_type_access')['operation']) ? 'd-none': ''}}">
+                <a class="nav-link {{ in_array(request()->route()->getName(),['packages']) ? 'active' : ' ' }}"
+                    href="{{ route('packages') }}">
+                    <div
+                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i style="font-size: 1rem;" class="fa-solid fa-layer-group fa-lg ps-2 pe-2 text-center
+                        {{ in_array(request()->route()->getName(),['packages']) ? 'text-white' : 'text-dark' }}"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Packages</span>
+                </a>
+            </li>
 
             <li class="nav-item pb-2 {{!in_array((auth()->user('user')->user_type),config('global.user_type_access')['security']) ? 'd-none': ''}}">
                 <a class="nav-link {{ in_array(request()->route()->getName(),['gatepass']) ? 'active' : ' ' }}"

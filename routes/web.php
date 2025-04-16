@@ -49,6 +49,7 @@ use App\Http\Livewire\UpdateJobCardSubmit;
 use App\Http\Livewire\GatePasses;
 use App\Http\Livewire\PackagesBookings;
 use App\Http\Livewire\MaterialRequisition;
+use App\Http\Livewire\Packages;
 
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
@@ -96,6 +97,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/customer-job-update/{job_number}',Operations::class)->name('customer-jobs-update');
     Route::get('/jobs', Operations::class)->name('customer-jobs');
     Route::get('/jobs-filter/{filter}', Operations::class)->name('customer-job-filter');
+
+    //Packages
+    Route::get('/packages', Packages::class)->name('packages');
+
+
 
     Route::get('/job-accounts/{job_number}',Finance::class)->name('customer-jobs-report-details');
     Route::get('/jobs-report', Finance::class)->name('customer-jobs-reports');

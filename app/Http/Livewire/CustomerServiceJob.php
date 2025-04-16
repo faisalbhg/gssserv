@@ -95,6 +95,7 @@ class CustomerServiceJob extends Component
 
     public function render()
     {
+        //dd(Vehicletypes::get());
         //dd(CustomerJobCards::limit(1)->get());
         if($this->new_make)
         {
@@ -292,7 +293,7 @@ class CustomerServiceJob extends Component
             $packageBookingServicesQuery = PackageBookingServices::with(['labourItemDetails'])->where([
                 'package_number'=>$this->package_number,
                 //'division_code'=>auth()->user('user')['station_code']
-                //'package_status'=>2
+                //'payment_status'=>2
             ])->get();
             $sectionServicePriceLists = [];
             //dd($packageBookingServicesQuery);
