@@ -34,6 +34,7 @@ class SubmitCutomerServiceJob extends Component
     public $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $roof_images, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
     public $staff_id,$staff_number,$show_staff_details=false;
+    public $job_date_time;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -362,9 +363,10 @@ class SubmitCutomerServiceJob extends Component
             $job_update = true;
             MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
         }
+        $this->job_date_time =  Carbon::parse($this->job_date_time)->format('Y-m-d H:i:s');
         $customerjobData = [
             
-            'job_date_time'=>Carbon::now(),
+            'job_date_time'=>isset($this->job_date_time)?$this->job_date_time:Carbon::now(),
             'customer_id'=>$this->customer_id,
             'customer_name'=>$this->name,
             'customer_email'=>$this->email,

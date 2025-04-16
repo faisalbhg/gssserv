@@ -96,6 +96,15 @@
                                         @endif
                                     </div>
                                     @endif
+                                    <div class="row p-4">
+                                        <div class="col-md-6 col-sm-6">
+                                            <label for="inputJobDateTime">Job Date</label>
+                                            <div class="form-group">
+                                                <input type="datetime-local" class="form-control" wire:model="job_date_time"  name="job_date_time" id="inputJobDateTime" style="padding-left:10px !important;" placeholder="Job Date Time" />
+                                            </div>
+                                            @error('staff_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
                                     <button type="button" class="d-none btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
                                 </div>
                             </div>

@@ -1224,7 +1224,7 @@
                                                         <div class="card-body text-lg-left text-center pt-0">
                                                             <label for="packageOTPVerify">Package OTP Verify</label>
                                                             <div class="form-group">
-                                                                <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model="package_otp">
+                                                                <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model.defer="package_otp">
                                                                 <button class="btn btn-outline-success mb-0" type="button" wire:click="verifyPackageOtp">Verify</button>
                                                                 <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendPackageOtp">Resend</button>
                                                                 <div wire:loading wire:target="verifyPackageOtp" >
