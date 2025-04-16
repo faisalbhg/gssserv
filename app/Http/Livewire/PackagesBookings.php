@@ -270,7 +270,7 @@ class PackagesBookings extends Component
             {
                 if($customerPackageInfo->customerInfo['Mobile']!=''){
                     //if($mobileNumber=='971566993709'){
-                        $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ar/qr/package/'.$this->package_number.'. For assistance, call 800477823.');
+                        $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/package/'.$this->package_number.'. For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
 
                     //}
@@ -299,7 +299,7 @@ class PackagesBookings extends Component
             PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>2,'payment_request'=>'card payment']);
             if($customerPackageInfo->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ar/qr/package/'.$this->package_number.'. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/package/'.$this->package_number.'. For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
@@ -315,7 +315,7 @@ class PackagesBookings extends Component
             PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>3,'payment_request'=>'cash payment']);
             if($customerPackageInfo->customerInfo['Mobile']!=''){
                 //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ar/qr/package/'.$this->package_number.'. For assistance, call 800477823.');
+                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/package/'.$this->package_number.'. For assistance, call 800477823.');
                         $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 //}
             }
