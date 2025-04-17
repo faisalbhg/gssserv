@@ -490,18 +490,7 @@
                                                                     <label class="p-0 text-danger bg-red-600 cursor-pointer" wire:click.prevent="confirmDelete({{ $item->id }})"><i class="fa fa-trash"></i> Remove</label>
                                                                 
                                                             @endif
-                                                            <!-- @if($priceDetails->ItemCode=='S403')
-                                                                <div class="row" >
-                                                                    
-                                                                        <div class="form-group">
-                                                                            <a href="javascript:;" class="btn bg-gradient-dark mb-0 ms-auto btn-sm mb-2"  wire:click="manualDiscount('{{$priceDetails}}')">APply Manual Discount</a>
-                                                                            @if(isset($showManulDiscount[$priceDetails->ItemCode]))
-                                                                            <input type="number" style="padding-left: 5px !important;" class="form-control w-20" placeholder="%" wire:model="manualDiscountInput.{{$priceDetails->ItemId}}">
-                                                                            <a href="javascript:;" class="btn bg-gradient-info mb-0 ms-auto btn-sm my-2"  wire:click="addApplyManualDiscount()">Send Otp</a> 
-                                                                            @endif
-                                                                        </div>
-                                                                </div>
-                                                            @endif -->
+                                                            
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{custom_round($item->unit_price)}}</button>
