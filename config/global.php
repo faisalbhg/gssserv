@@ -1152,7 +1152,9 @@ return [
                 'apikey'=>'MzBjYWVmMGMtYmYwZS00ODg2LTlmNjQtNjQxZGE4NDk0MzhlOjU5NmFiZGM1LTI2MGUtNDRjMS1hMTE2LTUyOWY2ODAxMTYyZg==',
             ],
         ]
-    ]
+    ],
+    'extra_description_applied'=>['S380','S381','S382'],
+    'extra_notes_applied'=>['S364'],
 ]
   
 ?>

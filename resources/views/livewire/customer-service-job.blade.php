@@ -463,7 +463,6 @@
 
                                                             @if($confirming===$item->id)
                                                             <p>
-
                                                                 <label class="p-0 text-success bg-red-600 cursor-pointer float-start" wire:click.prevent="kill({{ $item->id }},{{ $item->item_id }})"><i class="fa fa-trash"></i> Yes</label>
                                                                 <label class="p-0 text-info bg-red-600 cursor-pointer float-end" wire:click.prevent="safe({{ $item->id }})"><i class="fa fa-trash"></i> No</label>
                                                                 <div wire:loading wire:target="kill">
@@ -491,6 +490,18 @@
                                                                     <label class="p-0 text-danger bg-red-600 cursor-pointer" wire:click.prevent="confirmDelete({{ $item->id }})"><i class="fa fa-trash"></i> Remove</label>
                                                                 
                                                             @endif
+                                                            <!-- @if($priceDetails->ItemCode=='S403')
+                                                                <div class="row" >
+                                                                    
+                                                                        <div class="form-group">
+                                                                            <a href="javascript:;" class="btn bg-gradient-dark mb-0 ms-auto btn-sm mb-2"  wire:click="manualDiscount('{{$priceDetails}}')">APply Manual Discount</a>
+                                                                            @if(isset($showManulDiscount[$priceDetails->ItemCode]))
+                                                                            <input type="number" style="padding-left: 5px !important;" class="form-control w-20" placeholder="%" wire:model="manualDiscountInput.{{$priceDetails->ItemId}}">
+                                                                            <a href="javascript:;" class="btn bg-gradient-info mb-0 ms-auto btn-sm my-2"  wire:click="addApplyManualDiscount()">Send Otp</a> 
+                                                                            @endif
+                                                                        </div>
+                                                                </div>
+                                                            @endif -->
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{custom_round($item->unit_price)}}</button>
@@ -960,11 +971,18 @@
                                     <div class="col-md-6 col-sm-6">
                                         
                                         <div class="bg-gray-100 shadow my-3 p-2">
-                                            <div class="row">
+                                            <div class="row mb-1">
                                                 <div class="col-12">
                                                     <p class="text-sm text-center font-weight-bold text-dark">{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</p>
                                                     
-                                                    <!-- <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea > -->
+                                                    @if(in_array($priceDetails->ItemCode,config('global.extra_description_applied')))
+                                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Descriptions..!" wire:model="extra_description.{{$priceDetails->ItemId}}"></textarea >
+                                                    @error('extra_description.'.$priceDetails->ItemId) <span class="text-danger">Descriptions Required..!</span> @enderror
+                                                    @endif
+
+                                                    @if(in_array($priceDetails->ItemCode,config('global.extra_notes_applied')))
+                                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea >
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -972,8 +990,8 @@
                                                 
                                                 <div class="col-12">
                                                     <input type="number" class="form-control w-50 float-start" placeholder="Price {{$priceDetails->MinPrice}} - {{$priceDetails->MaxPrice}}" wire:model="customise_service_item_price.{{$priceDetails->ItemId}}" style="padding-left:5px !important;" >
-                                                    
                                                 </div>
+                                                @error('customise_service_item_price.'.$priceDetails->ItemId) <span class="text-danger">Price Required..!</span> @enderror
                                                 @else
                                                 <div class="col-12">
                                                     <div class="d-flex border-radius-lg p-0 mt-2">
@@ -1005,12 +1023,14 @@
                                                         @elseif($priceDetails->ItemCode==  config('global.ceramic.discount_in'))
                                                         Balance: {{$selectedVehicleInfo->ceramic_wash_discount_count}}
                                                         @endif
+                                                        
                                                         <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
                                                         
                                                         
                                                     </div>
                                                 </div>
                                             </div>
+
 
                                             
                                             

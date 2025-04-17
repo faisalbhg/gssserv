@@ -55,7 +55,7 @@ class CustomerServiceJob extends Component
     public $showVehicleAvailable, $selectedVehicleInfo, $selected_vehicle_id, $customer_id;
     public $servicesGroupList, $service_group_id, $service_group_name, $service_group_code, $station, $section_service_search, $propertyCode, $selectedSectionName;
     public $selectServiceItems, $sectionsLists;
-    public $serviceAddedMessgae=[],$cartItems = [], $cardShow=false, $ql_item_qty, $ceramic_dicount;
+    public $serviceAddedMessgae=[],$cartItems = [], $cardShow=false, $ql_item_qty, $ceramic_dicount, $showManulDiscount=[],$manualDiscountInput;
     public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $serviceItemsList=[];
     public $quickLubeItemsList = [], $qlBrandsLists=[], $ql_search_brand, $ql_km_range, $ql_search_category, $itemQlCategories=[], $quickLubeItemSearch;
     public $customerGroupLists;
@@ -69,7 +69,7 @@ class CustomerServiceJob extends Component
     public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
     public $servicePackages, $showPackageAddons=false;
     public $package_number, $package_code, $showPackageOtpVerify=false, $package_otp, $package_otp_message, $customerBookedPackages=[], $openPackageDetailsVerify,$showOpenPackageDetails=false, $sectionPackageServiceLists=[];
-    public $customize_price=-1, $customise_service_item_price;
+    public $customize_price=-1, $customise_service_item_price, $extra_note,$extra_description;
     public $showTempCart=false,$jobDetails, $tempCartItems, $tempCartItemCount;
     public $confirming;
     public $customizedErrorMessage=[];
@@ -95,16 +95,12 @@ class CustomerServiceJob extends Component
 
     public function render()
     {
-        //dd(Vehicletypes::get());
-        //dd(CustomerJobCards::limit(1)->get());
         if($this->new_make)
         {
             $this->makeSearchResult = VehicleMakes::where('vehicle_name','like',"%{$this->new_make}%")->where('is_deleted','=',null)->get();
-            //dd($this->makeSearchResult);
             if($this->showAddNewModel && $this->new_model)
             {
                 $this->modelSearchResult = VehicleModels::where('vehicle_make_name','=',$this->new_make)->where('vehicle_model_name','like',"%{$this->new_model}%")->get();
-                //dd($this->modelSearchResult);
 
             }
         }
@@ -112,7 +108,7 @@ class CustomerServiceJob extends Component
         {
             $this->showAddNewModel=false;
         }
-        //dd($this->propertyCode);
+        
         if($this->editCUstomerInformation || $this->addNewVehicleInformation)
         {
             $this->stateList = StateList::where(['CountryCode'=>$this->plate_country])->get();
@@ -158,7 +154,6 @@ class CustomerServiceJob extends Component
                 $this->plateEmiratesCodes = PlateCode::where(['plateEmiratesId'=>$this->plateStateCode,'is_active'=>1])->get();
                 
                 
-                //dd($this->plateEmiratesCodes);
             }
 
             $this->vehicleTypesList = Vehicletypes::orderBy('type_name','ASC')->get();
@@ -190,7 +185,6 @@ class CustomerServiceJob extends Component
                 ->orderBy('SortIndex','ASC')
                 ->get();
 
-            //dd($this->sectionsLists);
         }
 
 
@@ -275,7 +269,6 @@ class CustomerServiceJob extends Component
                 }
             }
             $this->sectionServiceLists = $sectionServicePriceLists;
-            //dd($this->sectionServiceLists);
         }
         else
         {
@@ -296,7 +289,6 @@ class CustomerServiceJob extends Component
                 //'payment_status'=>2
             ])->get();
             $sectionServicePriceLists = [];
-            //dd($packageBookingServicesQuery);
             foreach($packageBookingServicesQuery as $key => $packageServices)
             {
                 $sectionServicePriceLists[$key]['package_quantity'] = $packageServices->quantity;
@@ -307,8 +299,6 @@ class CustomerServiceJob extends Component
                 
             }
             $this->sectionPackageServiceLists=$sectionServicePriceLists;
-            //dd($this->sectionPackageServiceLists);
-            //dd($this->sectionServiceLists);
         }
 
         if($this->showServiceItems){
@@ -333,12 +323,10 @@ class CustomerServiceJob extends Component
                     $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->item_search_name}%");
                 }
                 $inventoryItemMasterLists=$inventoryItemMasterLists->get();
-                //dd($inventoryItemMasterLists);
                 $itemPriceLists = [];
                 foreach($inventoryItemMasterLists as $key => $itemMasterList)
                 {
                     $itemPriceLists[$key]['priceDetails'] = $itemMasterList;
-                    //dd($this->appliedDiscount);
                     if(!empty($this->appliedDiscount)){
                         $qlInventorySalesPricesQuery = InventorySalesPrices::where([
                                 'ServiceItemId'=>$itemMasterList->ItemId,
@@ -355,7 +343,6 @@ class CustomerServiceJob extends Component
                             $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->where('StartDate', '<=', Carbon::now())->where('EndDate', '>=', Carbon::now() );
                         }
                         $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->first();
-                        //dd($qlInventorySalesPricesQuery);
                         $itemPriceLists[$key]['discountDetails'] = $qlInventorySalesPricesQuery;
                     }
                     else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
@@ -375,7 +362,6 @@ class CustomerServiceJob extends Component
                     }
                 }
                 $this->serviceItemsList = $itemPriceLists;
-                //dd($this->serviceItemsList);
 
             }
             else
@@ -413,7 +399,6 @@ class CustomerServiceJob extends Component
                     foreach($quickLubeItemsNormalList as $key => $qlItemsList)
                     {
                         $qlItemPriceLists[$key]['priceDetails'] = $qlItemsList;
-                        //dd($this->appliedDiscount);
                         if(!empty($this->appliedDiscount)){
                             $qlKMInventorySalesPricesQuery = InventorySalesPrices::where([
                                     'ServiceItemId'=>$qlItemsList->ItemId,
@@ -447,7 +432,6 @@ class CustomerServiceJob extends Component
                             $qlItemPriceLists[$key]['discountDetails']=null;
                         }
                         
-                        //dd($sectionServicePriceLists[$key]);
                     }
                     $this->quickLubeItemsList = $qlItemPriceLists;
 
@@ -575,7 +559,6 @@ class CustomerServiceJob extends Component
         
         if($this->showPackageList)
         {
-            //dd(auth()->user('user')['station_code']);
             $this->customerBookedPackages = PackageBookings::with(['customerPackageServices'])->where([
                 'customer_id'=>$this->customer_id,
                 'vehicle_id'=>$this->vehicle_id,
@@ -583,16 +566,12 @@ class CustomerServiceJob extends Component
                 'payment_status'=>1
             ])
             ->orderBy('id','DESC')->get();
-            //dd($this->customerBookedPackages);
             /*foreach($this->customerBookedPackages as $customerBookedPackages){
                 $this->openPackageDetailsVerify[$customerBookedPackages['package_number']]=false;
             }*/
-            //dd($this->openPackageDetailsVerify);
             $this->servicePackages = ServicePackage::with(['packageDetails','packageTypes','packageSubTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code']])->get();
-            //dd($this->servicePackages);
 
             //$this->showPackageAddons=false;
-            //dd($this->servicePackages);
         }
         else{
             $this->customerBookedPackages=null;
@@ -602,7 +581,6 @@ class CustomerServiceJob extends Component
         if($this->showBundleList)
         {
             $this->bundlleLists = ServiceBundleType::with(['bundleDiscountedPrice'])->where(['Active'=>1])->get();
-            //dd($this->bundlleLists);
         }
         else
         {
@@ -618,7 +596,7 @@ class CustomerServiceJob extends Component
     }
 
     public function openPackageDetails($packBookd){
-        dd($packBookd);
+        //
     }
 
     public function redeemPackageDetails($packBookd){
@@ -666,7 +644,6 @@ class CustomerServiceJob extends Component
         if($existingJobs->exists())
         {
             $existingJobs = $existingJobs->first();
-            //dd($existingJobs);
             
             return redirect()->to('update_jobcard/'.$existingJobs->job_number);
         }
@@ -675,7 +652,6 @@ class CustomerServiceJob extends Component
     public function getCartInfo($value='')
     {
         $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
-        //dd($this->cartItems);
         $this->cartItemCount = count($this->cartItems); 
         if($this->cartItemCount>0)
         {
@@ -690,6 +666,7 @@ class CustomerServiceJob extends Component
     }
 
     public function openServiceGroup(){
+        
         $this->showServiceGroup=true;
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'servceGroup',
@@ -700,7 +677,6 @@ class CustomerServiceJob extends Component
     {
         $this->propertyCode=$section['PropertyCode'];
         $this->selectedSectionName = $section['PropertyName'];
-        //dd($this->selectedSectionName);
         $this->showServiceSectionsList=true;
         $this->showServiceItems = false;
         $this->dispatchBrowserEvent('openServicesListModal');
@@ -717,7 +693,6 @@ class CustomerServiceJob extends Component
         
         $this->showVehicleAvailable = false;
         $this->selectedVehicleInfo=$customers;
-        //dd($this->selectedVehicleInfo);
 
         $this->mobile = $customers->customerInfoMaster['Mobile'];
         $this->name = $customers->customerInfoMaster['TenantName'];
@@ -727,6 +702,7 @@ class CustomerServiceJob extends Component
     }
 
     public function serviceGroupForm($service){
+        $this->showManulDiscount['S408']=false;
         $this->service_group_id = $service['id'];
         $this->service_group_name = $service['department_name'];
         $this->service_group_code = $service['department_code'];
@@ -741,7 +717,6 @@ class CustomerServiceJob extends Component
                     'Operation'=>true,
                     'PropertyName'=>'Quick Lube',
                 ])->first();
-                //dd($qlSectionsLists);
             $this->propertyCode=$qlSectionsLists->PropertyCode;
             $this->selectedSectionName = $qlSectionsLists->PropertyName;
         }
@@ -811,17 +786,25 @@ class CustomerServiceJob extends Component
         $validatedData = $this->validate([
             'customise_service_item_price' => 'required',
         ]);
-        //dd($this->customise_service_item_price);
     }
     public function addtoCart($servicePrice,$discount)
     {
-
+        
         $addtoCartAllowed=false;
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
-        //dd();
+        if(in_array($servicePrice['ItemCode'],config('global.extra_description_applied')))
+        {
+           $validatedData = $this->validate([
+                'extra_description.'.$servicePrice['ItemId'] => 'required',
+            ]); 
+        }
         if($servicePrice['CustomizePrice']==1)
         {
+            $validatedData = $this->validate([
+                'customise_service_item_price.'.$servicePrice['ItemId'] => 'required',
+            ]);
+
             if(($this->customise_service_item_price[$servicePrice['ItemId']] >= $servicePrice['MinPrice']) && ($this->customise_service_item_price[$servicePrice['ItemId']] <= $servicePrice['MaxPrice'])){
                 $servicePrice['UnitPrice'] = $this->customise_service_item_price[$servicePrice['ItemId']];
                 $this->customizedErrorMessage[$servicePrice['ItemId']] = false;
@@ -869,7 +852,7 @@ class CustomerServiceJob extends Component
                     'sub_category_id'=>$servicePrice['SubCategoryId'],
                     'brand_id'=>$servicePrice['BrandId'],
                     'bar_code'=>$servicePrice['BarCode'],
-                    'item_name'=>$servicePrice['ItemName'],
+                    'item_name'=>isset($this->extra_description[$servicePrice['ItemId']])?$this->extra_description[$servicePrice['ItemId']]:$servicePrice['ItemName'],
                     'description'=>$servicePrice['Description'],
                     'division_code'=>$servicePrice['DivisionCode'],
                     'department_code'=>$servicePrice['DepartmentCode'],
@@ -881,6 +864,10 @@ class CustomerServiceJob extends Component
                     'created_by'=>auth()->user('user')['id'],
                     'created_at'=>Carbon::now(),
                 ];
+                if($this->extra_note!=null){
+                   $cartInsert['extra_note']=isset($this->extra_note[$servicePrice['ItemId']])?$this->extra_note[$servicePrice['ItemId']]:null; 
+                }
+
                 
                 if($discountPrice!=null){
                     $cartInsert['price_id']=$discountPrice['PriceID'];
@@ -950,7 +937,6 @@ class CustomerServiceJob extends Component
         
         //$this->dispatchBrowserEvent('closeServicesListModal');
 
-        //dd($this->sectionServiceLists);
         /*$this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
             'message' => 'Added to Cart Successfully',
@@ -965,9 +951,7 @@ class CustomerServiceJob extends Component
 
         $items = InventoryItemMaster::where(['ItemCode'=>$ItemCode])->first();
         $discountPrice = json_decode($discount,true);    
-        //dd($discountPrice);
         $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId]);
-        //dd(CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->get());
         if($customerBasketCheck->count())
         {
             if($items->ItemCode=='I09137')
@@ -1091,7 +1075,6 @@ class CustomerServiceJob extends Component
             $this->addtoCartItem('I09137',json_encode($discountAddOn));
         }*/
 
-        //dd($this->sectionServiceLists);
         /*$this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
             'message' => 'Added to Cart Successfully',
@@ -1105,7 +1088,6 @@ class CustomerServiceJob extends Component
     {
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
-        //dd($servicePrice);
         $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']]);
         if($customerBasketCheck->count())
         {
@@ -1174,7 +1156,6 @@ class CustomerServiceJob extends Component
         $this->serviceAddedMessgae[$servicePrice['ItemCode']]=true;
         $this->dispatchBrowserEvent('closeServicesPackageListModal');
 
-        //dd($this->sectionServiceLists);
         /*$this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
             'message' => 'Added to Cart Successfully',
@@ -1375,7 +1356,6 @@ class CustomerServiceJob extends Component
     }
 
     public function savedCustomerDiscountGroup($savedCustDiscount){
-        //dd($savedCustDiscount);
         $getSavedCustDiscount = LaborCustomerGroup::find($savedCustDiscount['discount_id']);
         $this->selectedDiscount = [
             'unitId'=>$getSavedCustDiscount->UnitId,
@@ -1390,8 +1370,6 @@ class CustomerServiceJob extends Component
     }
 
     public function applyEngineOilDiscount(){
-        //dd($this->cartItems);
-        //dd(config('global.engine_oil_discount_voucher')['items']);
         foreach($this->cartItems as $items)
         {
             if($items->cart_item_type==1){
@@ -1510,7 +1488,6 @@ class CustomerServiceJob extends Component
 
         $this->selectedDiscount=null;
         $this->appliedDiscount = null;
-        //dd($this->cartItems);
         /*foreach($this->cartItems as $items)
         {
             $cartUpdate['price_id']=null;
@@ -1587,7 +1564,6 @@ class CustomerServiceJob extends Component
                     ];
                     CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$items->id])->update($cartUpdate);
                 }
-                //dd($discountCartServiceItemPrices);
             }
         }
     }
@@ -1704,7 +1680,6 @@ class CustomerServiceJob extends Component
             $customerVehicleUpdate['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
             $customerVehicleUpdate['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
             $customerVehicleUpdate['created_by']=auth()->user('user')['id'];
-            //dd($customerVehicleUpdate);
             CustomerVehicle::where(['id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->update($customerVehicleUpdate);
         }
         $this->selectedCustomerVehicle=true;
@@ -1872,15 +1847,11 @@ class CustomerServiceJob extends Component
 
     public function openBundleListDetails($bundleDetails){
         $this->selectedBundles=json_decode($bundleDetails,true);
-        //dd($this->selectedBundles);
         $this->bundleServiceLists = [];
         //$this->bundleServiceLists[$this->selectedBundles['TypeId']]['show']=true;
-        //dd($this->selectedBundles);
         foreach($this->selectedBundles['bundles_details'] as $selectedBundle)
         {
-            //dd($selectedBundle);
             $this->bundleServiceLists[$selectedBundle['Code']] = $selectedBundle;
-            //dd(ServiceBundleDiscountedPrice::where(['Code'=>$selectedBundle['Code']])->get());
             foreach(ServiceBundleDiscountedPrice::where(['Code'=>$selectedBundle['Code']])->get() as $sBDPkey => $serviceBundleDiscountedPrice){
                 $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['ServiceItemCode'] = $serviceBundleDiscountedPrice->ServiceItemCode;
                 $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['DiscountPerc'] = $serviceBundleDiscountedPrice->DiscountPerc;
@@ -1898,7 +1869,6 @@ class CustomerServiceJob extends Component
                         'Active'=>1,
                         'ItemCode'=>$serviceBundleDiscountedPrice->ServiceItemCode,
                     ])->first();
-                    //dd($bundleLaborMaster);
                     $this->bundleServiceLists[$selectedBundle['Code']]['lists'][$sBDPkey]['services'] = $bundleLaborMaster;
                 }
                 else if($serviceBundleDiscountedPrice->Type=='I')
@@ -1914,14 +1884,12 @@ class CustomerServiceJob extends Component
             }
         }
 
-        //dd($this->bundleServiceLists);
         $this->showBundleServiceSectionsList=true;
         $this->dispatchBrowserEvent('openBundleServicesListModal');
     }
 
     public function bundleAddtoCart($bundleListDetails){
         $bundleListDetails = json_decode($bundleListDetails,true);
-        //dd($bundleListDetails);
         foreach($bundleListDetails['lists'] as $bundleInfo)
         {
             $bundleListDetails['PriceID'] = $bundleListDetails['Id'];
@@ -1982,7 +1950,6 @@ class CustomerServiceJob extends Component
         $validatedData = $this->validate([
             'package_otp' => 'required',
         ]);
-        //dd(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp])->exists());
         if(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp])->exists())
         {
             $this->openPackageDetailsVerify[$this->package_number]=true;
@@ -2003,7 +1970,6 @@ class CustomerServiceJob extends Component
                 'scrollToId' => 'packageOTPVerifyRow',
             ]);
         }
-        //dd($this->openPackageDetailsVerify);
     }
 
     public function resendPackageOtp(){
@@ -2033,8 +1999,6 @@ class CustomerServiceJob extends Component
 
     public function kill($id,$item_id)
     {
-        //dd($item_id);
-        //dd($id);
         CustomerServiceCart::where(['id'=>$id])->delete();
         if($this->job_number){
             $chheckCustomerJobServiceQuery = CustomerJobCardServices::where(['job_number'=>$this->job_number,'item_id'=>$item_id]);
@@ -2148,5 +2112,10 @@ class CustomerServiceJob extends Component
             'vehicle_model_name'=>$this->new_model,
         ]);
         $this->dispatchBrowserEvent('closeAddMakeModel');
+    }
+
+    public function manualDiscount($priceDetails){
+        $priceDetails = json_decode($priceDetails,true);
+        $this->showManulDiscount[$priceDetails['ItemCode']]=true;
     }
 }
