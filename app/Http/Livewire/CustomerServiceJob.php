@@ -75,6 +75,7 @@ class CustomerServiceJob extends Component
     public $customizedErrorMessage=[];
     public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
     public $showBundleList=false, $selectBundleMenu=false, $bundlleLists, $selectedBundles, $showBundleServiceSectionsList, $bundleServiceLists=[];
+    public $selectAdvanceCouponMenu=false, $showAdvanceCouponList=false, $advance_coupon_number;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -737,7 +738,9 @@ class CustomerServiceJob extends Component
         $this->selectPackageMenu=false;
 
         $this->showBundleList=false;
+        $this->showAdvanceCouponList=false;
         $this->selectBundleMenu=false;
+        $this->selectAdvanceCouponMenu=false;
 
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'servceSectionsList',
@@ -789,7 +792,7 @@ class CustomerServiceJob extends Component
     }
     public function addtoCart($servicePrice,$discount)
     {
-        
+        $update=true;
         $addtoCartAllowed=false;
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
@@ -797,7 +800,8 @@ class CustomerServiceJob extends Component
         {
            $validatedData = $this->validate([
                 'extra_description.'.$servicePrice['ItemId'] => 'required',
-            ]); 
+            ]);
+            $update=false; 
         }
         if($servicePrice['CustomizePrice']==1)
         {
@@ -823,7 +827,7 @@ class CustomerServiceJob extends Component
         if($addtoCartAllowed==true){
 
             $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']]);
-            if($customerBasketCheck->count())
+            if($customerBasketCheck->count() && $update==true)
             {
                 $customerBasketCheck->increment('quantity', 1);
                 if($discountPrice!=null){
@@ -1210,6 +1214,8 @@ class CustomerServiceJob extends Component
 
         $this->showBundleList=false;
         $this->selectBundleMenu=false;
+        $this->selectAdvanceCouponMenu=false;
+        $this->showAdvanceCouponList=false;
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'serviceItemsListDiv',
         ]);
@@ -1811,6 +1817,8 @@ class CustomerServiceJob extends Component
 
         $this->showBundleList=false;
         $this->selectBundleMenu=false;
+        $this->selectAdvanceCouponMenu=false;
+        $this->showAdvanceCouponList=false;
         $this->dispatchBrowserEvent('scrollto', [
             'scrollToId' => 'packageServiceListDiv',
         ]);
@@ -1823,6 +1831,8 @@ class CustomerServiceJob extends Component
 
         $this->showPackageList=false;
         $this->selectPackageMenu=false;
+        $this->selectAdvanceCouponMenu=false;
+        $this->showAdvanceCouponList=false;
 
         $this->service_group_id = null;
         $this->service_group_name = null;
@@ -2117,5 +2127,43 @@ class CustomerServiceJob extends Component
     public function manualDiscount($priceDetails){
         $priceDetails = json_decode($priceDetails,true);
         $this->showManulDiscount[$priceDetails['ItemCode']]=true;
+    }
+
+
+    /*
+    *AdvanceCoupons
+    */
+    public function openAdvanceCoupons(){
+
+        $this->selectAdvanceCouponMenu=true;
+        $this->showAdvanceCouponList=true;
+        
+        
+
+        $this->showPackageList=false;
+        $this->selectPackageMenu=false;
+        $this->showBundleList=false;
+        $this->selectBundleMenu=false;
+        
+
+        $this->service_group_id = null;
+        $this->service_group_name = null;
+        $this->service_group_code = null;
+        $this->station = null;
+        $this->section_service_search='';
+
+        $this->propertyCode=null;
+        $this->selectedSectionName = null;
+        $this->showSectionsList=false;
+        $this->showServiceSectionsList=false;
+
+        $this->showQlItemSearch = false;
+        $this->showQlItemsList = false;
+        $this->showQlEngineOilItems=false;
+        $this->showQlItemsOnly=false;
+        $this->showServiceItems = false;
+        $this->dispatchBrowserEvent('scrollto', [
+            'scrollToId' => 'bundleServiceListDiv',
+        ]);
     }
 }

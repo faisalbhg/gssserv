@@ -490,7 +490,7 @@
                                                                     <label class="p-0 text-danger bg-red-600 cursor-pointer" wire:click.prevent="confirmDelete({{ $item->id }})"><i class="fa fa-trash"></i> Remove</label>
                                                                 
                                                             @endif
-                                                            
+
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{custom_round($item->unit_price)}}</button>
@@ -654,7 +654,7 @@
                             </div>
                         </div>
                     @endforeach
-                    
+                    <!--Items-->
                     <div class="col-sm-3 col-md-3 col-lg-2 col-xl-2 my-2">
                         <div class="card h-100" >
                             <a wire:click="openServiceItems()" href="javascript:;">
@@ -665,10 +665,10 @@
                                     <span class="mask bg-gradient-dark opacity-7"></span>
                                     @endif
                                     <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
-                                        <h5 class="@if($selectServiceItems) text-primary @else text-white @endif font-weight-bolder mb-4 pt-2">Items</h5>
+                                        <h5 class="@if($showServiceItems) text-primary @else text-white @endif font-weight-bolder mb-4 pt-2">Items</h5>
                                         <!-- <p class="text-white">Wealth creation is an evolutionarily recent positive-sum game. It is all about who take the opportunity first.</p> -->
                                         <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
-                                            <button wire:click="openServiceItems()" class="btn @if($selectServiceItems) bg-gradient-primary @else btn-outline-light @endif" type="button" >Select</button>
+                                            <button wire:click="openServiceItems()" class="btn @if($showServiceItems) bg-gradient-primary @else btn-outline-light @endif" type="button" >Select</button>
                                         </a>
                                     </div>
                                 </div>
@@ -676,6 +676,7 @@
                         </div>
                     </div>
 
+                    <!--Packages-->
                     <div class="col-sm-3 col-md-3 col-lg-2 col-xl-2 my-2">
                         <div class="card h-100" >
                             <a wire:click="openPackages()" href="javascript:;">
@@ -697,6 +698,7 @@
                         </div>
                     </div>
 
+                    <!--Bundles-->
                     <div class="col-sm-3 col-md-3 col-lg-2 col-xl-2 my-2">
                         <div class="card h-100" >
                             <a wire:click="openBundles()" href="javascript:;">
@@ -707,10 +709,32 @@
                                     <span class="mask bg-gradient-dark opacity-9"></span>
                                     @endif
                                     <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
-                                        <h5 class="@if($selectPackageMenu) text-primary @else text-white @endif font-weight-bolder mb-4 pt-2">Bundles</h5>
+                                        <h5 class="@if($selectBundleMenu) text-primary @else text-white @endif font-weight-bolder mb-4 pt-2">Bundles</h5>
                                         <!-- <p class="text-white">Wealth creation is an evolutionarily recent positive-sum game. It is all about who take the opportunity first.</p> -->
                                         <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
-                                            <button wire:click="openBundles()" class="btn @if($selectPackageMenu) bg-gradient-primary @else btn-outline-light @endif" type="button" >Select</button>
+                                            <button wire:click="openBundles()" class="btn @if($selectBundleMenu) bg-gradient-primary @else btn-outline-light @endif" type="button" >Select</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!--Advance Coupons-->
+                    <div class="col-sm-3 col-md-3 col-lg-2 col-xl-2 my-2">
+                        <div class="card h-100" >
+                            <a wire:click="openAdvanceCoupons()" href="javascript:;">
+                                <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100" style="background-image: url('{{asset("img/advance-coupon-service.jpg")}}');">
+                                    @if($selectAdvanceCouponMenu)
+                                    <span class="mask bg-gradient-dark opacity-4"></span>
+                                    @else
+                                    <span class="mask bg-gradient-dark opacity-9"></span>
+                                    @endif
+                                    <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
+                                        <h5 class="@if($selectAdvanceCouponMenu) text-primary @else text-white @endif font-weight-bolder mb-4 pt-2">Advance Coupons</h5>
+                                        <!-- <p class="text-white">Wealth creation is an evolutionarily recent positive-sum game. It is all about who take the opportunity first.</p> -->
+                                        <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                                            <button wire:click="openAdvanceCoupons()" class="btn @if($selectAdvanceCouponMenu) bg-gradient-primary @else btn-outline-light @endif" type="button" >Select</button>
                                         </a>
                                     </div>
                                 </div>
@@ -756,6 +780,16 @@
                     </div>
                 </div>
             </div>
+            <div wire:loading wire:target="openAdvanceCoupons">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            
             @if($showQlItemSearch)
                 <div class="row">
                     <div class="col-md-4 col-sm-4">
@@ -1467,6 +1501,100 @@
                                             <div></div>
                                             <div></div>
                                             <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if($showAdvanceCouponList)
+            <div class="row mt-4">
+                <div class="container">
+                    <div class="tab-content tab-space">
+                        <div class="tab-pane active" id="advance_coupon_monthly" role="tabpanel" aria-labelledby="tabs-iconpricing-tab-1">
+                            @if ($message = Session::get('advance_coupon_success'))
+                            <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
+                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            @endif
+                            @if ($message = Session::get('advance_coupon_error'))
+                            <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                <span class="alert-text"><strong>Error!</strong> {{ $message }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            @endif
+                            <div class="row" id="packageServiceListDiv">
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header text-left p-2 pb-0">
+                                            <h5>Redeem Advance Coupon</h5>
+                                        </div>
+                                        <div class="card-body text-lg-start text-left pt-0 p-2">
+                                            
+                                            @if($showAdvanceCouponOtpVerify)
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12 mb-0" >
+                                                    <div class="card p-2 mb-4">
+                                                        
+                                                        <div class="card-body text-lg-left text-center pt-0">
+                                                            <label for="packageOTPVerify">Package OTP Verify</label>
+                                                            <div class="form-group">
+                                                                <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model="package_otp">
+                                                                <button class="btn btn-outline-success mb-0" type="button" wire:click="verifyPackageOtp">Verify</button>
+                                                                <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendPackageOtp">Resend</button>
+                                                                <div wire:loading wire:target="verifyPackageOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div wire:loading wire:target="resendOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @error('package_otp') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                                            @if($package_otp_message)<span class="mb-4 text-danger">{{ $package_otp_message }}</span>@endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
+                                            
+                                            <div class="form-group p-2 text-center">
+                                                <input class="form-control" type="text" wire:model="advance_coupon_number" id="redeemAdvanceCouponNumber" placeholder="Redeem Advance Coupon..!">
+
+                                                @error('package_number') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                                <button  wire:click="validateAdvanceCouponContinue()" class="btn bg-gradient-primary m-2 btn-sm">Redeem</button>
+                                            </div>
+                                            <div wire:loading wire:target="validateAdvanceCouponContinue" >
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
