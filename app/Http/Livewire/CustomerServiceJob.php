@@ -2076,7 +2076,45 @@ class CustomerServiceJob extends Component
                 }
                 else
                 {
-                    $customerBasketCheck->increment('quantity', 1);
+                    if($customerJobServices->item_code=='I09137')
+                    {
+                        $cartInsert = [
+                            'customer_id'=>$this->customer_id,
+                            'vehicle_id'=>$this->vehicle_id,
+                            'item_id'=>$customerJobServices->item_id,
+                            'item_code'=>$customerJobServices->item_code,
+                            'cart_item_type'=>$customerJobServices->service_item_type,
+                            'company_code'=>$customerJobServices->company_code,
+                            'category_id'=>$customerJobServices->category_id,
+                            'sub_category_id'=>$customerJobServices->sub_category_id,
+                            'brand_id'=>$customerJobServices->brand_id,
+                            'bar_code'=>$customerJobServices->bar_code,
+                            'item_name'=>$customerJobServices->item_name,
+                            'description'=>$customerJobServices->description,
+                            'division_code'=>$customerJobServices->division_code,
+                            'department_code'=>$customerJobServices->department_code,
+                            'department_name'=>$customerJobServices->department_name,
+                            'section_code'=>$customerJobServices->section_code,
+                            'unit_price'=>$customerJobServices->total_price,
+                            'quantity'=>$customerJobServices->quantity,
+                            'created_by'=>auth()->user('user')->id,
+                            'created_at'=>Carbon::now(),
+                            'job_number'=>$customerJobServices->job_number,
+                        ];
+                        $cartInsert['price_id']=$customerJobServices->discount_id;
+                        $cartInsert['customer_group_id']=$customerJobServices->discount_id;
+                        $cartInsert['customer_group_code']=$customerJobServices->discount_code;
+                        $cartInsert['min_price']=$customerJobServices->discount_amount;
+                        $cartInsert['max_price']=$customerJobServices->discount_amount;
+                        $cartInsert['start_date']=$customerJobServices->discount_start_date;
+                        $cartInsert['end_date']=$customerJobServices->discount_end_date;
+                        $cartInsert['discount_perc']=$customerJobServices->discount_percentage;
+
+                        CustomerServiceCart::insert($cartInsert);
+                    }else
+                    {
+                        $customerBasketCheck->increment('quantity', 1);
+                    }
                 }
             }
 
