@@ -548,10 +548,9 @@ class CarsTaxi extends Component
             //dd($e->getMessage());
             //return $e->getMessage();
         }
-
+        return redirect()->to('kabil-llc');
 
         $this->showlistCarTaxiToday=true;
-        
     }
 
     public function updateCarTaxiHomeService($job_number,$status)
