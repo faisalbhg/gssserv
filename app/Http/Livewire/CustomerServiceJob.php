@@ -69,7 +69,7 @@ class CustomerServiceJob extends Component
     public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
     public $servicePackages, $showPackageAddons=false;
     public $package_number, $package_code, $showPackageOtpVerify=false, $package_otp, $package_otp_message, $customerBookedPackages=[], $openPackageDetailsVerify,$showOpenPackageDetails=false, $sectionPackageServiceLists=[];
-    public $customize_price=-1, $customise_service_item_price, $extra_note,$extra_description;
+    public $customize_price=-1, $customise_service_item_price, $extra_note,$extra_description, $mechanical_discount;
     public $showTempCart=false,$jobDetails, $tempCartItems, $tempCartItemCount;
     public $confirming;
     public $customizedErrorMessage=[];
@@ -567,10 +567,12 @@ class CustomerServiceJob extends Component
                 'payment_status'=>1
             ])
             ->orderBy('id','DESC')->get();
+            //dd($this->customerBookedPackages);
             /*foreach($this->customerBookedPackages as $customerBookedPackages){
                 $this->openPackageDetailsVerify[$customerBookedPackages['package_number']]=false;
             }*/
             $this->servicePackages = ServicePackage::with(['packageDetails','packageTypes','packageSubTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code']])->get();
+            //dd($this->servicePackages);
 
             //$this->showPackageAddons=false;
         }
@@ -872,6 +874,31 @@ class CustomerServiceJob extends Component
                    $cartInsert['extra_note']=isset($this->extra_note[$servicePrice['ItemId']])?$this->extra_note[$servicePrice['ItemId']]:null; 
                 }
 
+                if(isset($this->mechanical_discount[$servicePrice['ItemId']]))
+                {
+                    $cartInsert['price_id']=null;
+                    $cartInsert['customer_group_id']=157;
+                    $cartInsert['customer_group_code']='MANUAL_DISCOUNT';
+                    $cartInsert['min_price']=null;
+                    $cartInsert['max_price']=null;
+                    $cartInsert['start_date']=Carbon::now();
+                    $cartInsert['end_date']=Carbon::now();
+
+                    $totalMechServItem = $servicePrice['UnitPrice']; // Original price
+                    $discAmountMechSrvItm = $servicePrice['UnitPrice']-$this->mechanical_discount[$servicePrice['ItemId']]; // Discounted price
+
+                    if ($totalMechServItem > 0) {
+                        $discountPercentage = (($totalMechServItem - $discAmountMechSrvItm) / $totalMechServItem) * 100;
+                        $discountPercentage = round($discountPercentage, 2); // Round to 2 decimal places
+                    } else {
+                        $discountPercentage = 0;
+                    }
+                    $cartInsert['discount_perc']=$discountPercentage;
+                    $discountPrice==null;
+                    //dd($cartInsert);
+                    
+                }
+
                 
                 if($discountPrice!=null){
                     $cartInsert['price_id']=$discountPrice['PriceID'];
@@ -883,6 +910,7 @@ class CustomerServiceJob extends Component
                     $cartInsert['end_date']=$discountPrice['EndDate'];
                     $cartInsert['discount_perc']=$discountPrice['DiscountPerc'];
                 }
+
                 if($this->job_number)
                 {
                     $cartInsert['job_number']=$this->job_number;

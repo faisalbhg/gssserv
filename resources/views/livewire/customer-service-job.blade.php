@@ -1001,6 +1001,9 @@
                                                     @if(in_array($priceDetails->ItemCode,config('global.extra_description_applied')))
                                                     <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Descriptions..!" wire:model="extra_description.{{$priceDetails->ItemId}}"></textarea >
                                                     @error('extra_description.'.$priceDetails->ItemId) <span class="text-danger">Descriptions Required..!</span> @enderror
+
+                                                    <input type="number" style="padding-left: 5px !important;display:none;" class="w-50 mt-2 form-control" placeholder="Discount Amount..!" wire:model="mechanical_discount.{{$priceDetails->ItemId}}" />
+
                                                     @endif
 
                                                     @if(in_array($priceDetails->ItemCode,config('global.extra_notes_applied')))
@@ -1353,7 +1356,7 @@
                                                         <div class="card-body text-lg-left text-center pt-0">
                                                             <label for="packageOTPVerify">Package OTP Verify</label>
                                                             <div class="form-group">
-                                                                <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model="package_otp">
+                                                                <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model.defer="package_otp">
                                                                 <button class="btn btn-outline-success mb-0" type="button" wire:click="verifyPackageOtp">Verify</button>
                                                                 <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendPackageOtp">Resend</button>
                                                                 <div wire:loading wire:target="verifyPackageOtp" >
