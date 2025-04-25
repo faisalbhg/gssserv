@@ -95,6 +95,7 @@ return [
             '2'=>'Quality Check',
             '3'=>'Ready For Delivery',
             '4'=>'Delivered',
+            '5'=>'Cancelled',
         ],
         'status' => [
             '0'=>'Created',
@@ -102,6 +103,7 @@ return [
             '2'=>'Quality Check',
             '3'=>'Ready For Delivery',
             '4'=>'Delivered',
+            '5'=>'Cancelled',
         ],
         'status_icon' => [
             '0'=>'fa-solid fa-hourglass-start',
@@ -109,6 +111,7 @@ return [
             '2'=>'fa-solid fa-recycle',
             '3'=>'fas fa-check',
             '4'=>'fa-solid fa-flag-checkered',
+            '5'=>'fa-solid fa-trash',
         ],
         'status_text_class' => [
             '0'=>'text-dark',
@@ -116,6 +119,7 @@ return [
             '2'=>'text-warning',
             '3'=>'text-info',
             '4'=>'text-success',
+            '5'=>'text-danger',
         ],
         'status_btn_class' => [
             '0'=>'bg-gradient-dark',
@@ -123,6 +127,7 @@ return [
             '2'=>'bg-gradient-warning',
             '3'=>'bg-gradient-info',
             '4'=>'bg-gradient-success',
+            '5'=>'bg-gradient-danger',
         ],
         'status_perc' => [
             '0'=>'25%',
@@ -130,6 +135,7 @@ return [
             '2'=>'75%',
             '3'=>'90%',
             '4'=>'100%',
+            '5'=>'0%',
         ],
         'status_perc_class' => [
             '0'=>'bg-gradient-dark',
@@ -137,6 +143,7 @@ return [
             '2'=>'bg-gradient-warning',
             '3'=>'bg-gradient-info',
             '4'=>'bg-gradient-success',
+            '5'=>'bg-gradient-danger',
         ],
         'job_status_bg' => [
             '0'=>'bg-gradient-dark',
@@ -144,6 +151,7 @@ return [
             '2'=>'bg-gradient-warning',
             '3'=>'bg-gradient-info',
             '4'=>'bg-gradient-success',
+            '5'=>'bg-gradient-danger',
         ],
         'job_type' => [
             "1"=>"Quick Wash",
@@ -182,6 +190,7 @@ return [
         '2'=>'75%',
         '3'=>'100%',
         '4'=>'100%',
+        '5'=>'0%',
     ],
     'status_perc_class' => [
         '0'=>'bg-gradient-default',
@@ -189,6 +198,7 @@ return [
         '2'=>'bg-gradient-primary',
         '3'=>'bg-gradient-success',
         '4'=>'bg-gradient-success',
+        '5'=>'bg-gradient-danger',
     ],
 
     'item_status'=>[
@@ -213,7 +223,8 @@ return [
         '1'=>'text-primary',
         '2'=>'text-info',
         '3'=>'text-success',
-        '4'=>'text-success'
+        '4'=>'text-success',
+        '5'=>'text-danger'
     ],
     
     'qr_status_color' => [
@@ -222,6 +233,7 @@ return [
         '2'=>'linear-gradient(45deg, #f44336, #e91e63, #ff5722,#e91e63, #ff5722, #f44336, #e91e63,#ff5722, #ff9800)',
         '3'=>'linear-gradient(45deg, #009688, #4caf50, #cddc39,#0eb114, #009688, #009688, #4caf50, #cddc39,#0eb114, #009688)',
         '4'=>'linear-gradient(45deg, #009688, #4caf50, #cddc39,#0eb114, #009688, #009688, #4caf50, #cddc39,#0eb114, #009688)',
+        '5'=>'linear-gradient(45deg, #f44336, #e91e63, #ff5722,#e91e63, #ff5722, #f44336, #e91e63,#ff5722, #ff9800)',
     ],
     'fuel' => [
         '1'=>'Quarter',

@@ -16,6 +16,10 @@ class MaterialRequest extends Model
 
     protected $fillable = [
         'sessionId',
+        'Status',
+        'ApprovalStatus',
+        'Cancelled',
+        'CancelledBy',
         'ItemCode',
         'ItemName',
         'QuantityRequested',

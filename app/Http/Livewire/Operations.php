@@ -34,6 +34,7 @@ use App\Models\Landlord;
 use App\Models\TempCustomerServiceCart;
 use App\Models\JobCardChecklists;
 use App\Models\PackageBookings;
+use App\Models\MaterialRequest;
 
 use Carbon\Carbon;
 use Session;
@@ -49,7 +50,7 @@ class Operations extends Component
     public $search_job_number = '', $search_job_date;
     public $customerDetails = false;
     public $job_number, $job_date_time, $vehicle_image, $make, $model, $plate_number, $chassis_number, $vehicle_km, $name, $email, $mobile, $customerType, $payment_status=0, $payment_type=0, $job_status=0, $job_departent, $total_price, $vat, $grand_total, $tax;
-    public $filter = [0,1,2,3,4];
+    public $filter = [0,1,2,3,4,5];
 
     public $customerjobservices =array();
     public $customerjoblogs = array();
@@ -93,6 +94,7 @@ class Operations extends Component
     public $showchecklist=[],$checklist_comments,$checklists;
     public $selectAll = false;
     public $vImageR1Cl1, $vImageR2Cl1, $vImageFCl1, $vImageBCl1, $vImageL1Cl1, $vImageL2Cl1, $customerSignatureCl1,$roof_imagesCl1, $dash_image1Cl1, $dash_image2Cl1, $passenger_seat_imageCl1, $driver_seat_imageCl1, $back_seat1Cl1, $back_seat2Cl1, $back_seat3Cl1, $back_seat4Cl1, $photoCl1, $car_roof_imagesCl1;
+    public $canceljobReasonButton=false,$cancelError,$cancelationReason;
 
 
     
@@ -296,6 +298,70 @@ class Operations extends Component
     {
         //dd($services['id']);
         $this->showchecklist[$services['id']]=true;
+    }
+
+    public function cancelJob($job_number)
+    {
+        if($this->jobcardDetails->meterialRequestResponse)
+        {
+            $response = DB::select('EXEC [dbo].[CheckMaterialIssued] @materialrequisioncode = "'.$this->jobcardDetails->meterialRequestResponse.'" ');
+            if(!empty($response)){
+                $this->cancelError='Materials already issued, please contact store to return the items and proceed cancellation..!';
+                $this->canceljobReasonButton=false;
+            }
+            else
+            {
+                $this->canceljobReasonButton=true;
+            }
+        }
+        else
+        {
+            $this->canceljobReasonButton=true;
+        }
+        
+        /*CustomerJobCards::where(['job_number'=>$job_number])->update(['job_status'=>5]);
+        if($customerJobDetails->meterialRequestResponse)
+        {
+            try {
+                DB::select('EXEC [dbo].[CheckMaterialIssued] @materialrequisioncode = "'.$customerJobDetails->meterialRequestResponse.'" ');
+            } catch (\Exception $e) {
+                //dd($e->getMessage());
+                //return $e->getMessage();
+            }
+        }*/
+        
+    }
+
+    public function confirmCancelJob($job_number){
+        $validatedData = $this->validate([
+            'cancelationReason' => 'required',
+        ]);
+        CustomerJobCards::where(['job_number'=>$job_number])->update([
+            'job_status'=>5,
+            'cancellation_reson'=>$this->cancelationReason,
+            'cancelled_by'=>auth()->user('user')->id,
+            'cancelled_date_time'=>Carbon::now()
+        ]);
+        //dd($this->jobcardDetails->meterialRequestResponse);
+        if($this->jobcardDetails->meterialRequestResponse)
+        {
+            $response = DB::select('EXEC [dbo].[CheckMaterialIssued] @materialrequisioncode = "'.$this->jobcardDetails->meterialRequestResponse.'" ');
+            if(!empty($response)){
+                $this->cancelError='Materials already issued, please contact store to return the items and proceed cancellation..!';
+                $this->canceljobReasonButton=false;
+            }
+            else
+            {
+                MaterialRequest::where(['sessionId'=>$this->job_number])->update([
+                    'Status'=>'C',
+                    'ApprovalStatus'=>'C',
+                    'Cancelled'=>Carbon::now(),
+                    'CancelledBy'=>auth()->user('user')->id
+                ]);
+            }
+            
+        }
+        $this->customerJobUpdate($job_number);
     }
 
     public function checklistToggleSelectAll($services)
@@ -719,7 +785,8 @@ class Operations extends Component
 
     public function customerJobUpdate($job_number)
     {
-        
+        $this->cancelError=null;
+        $this->canceljobReasonButton=false;
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
         $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();

@@ -513,6 +513,14 @@ class SubmitCutomerServiceJob extends Component
                     'item_id'=>$cartData->item_id,
                     'item_code'=>$cartData->item_code,
                 ]);
+
+                if($cartData->discount_perc){
+                    $customerJobServiceQuery->where([
+                        'discount_id'=>$cartData->customer_group_id,
+                        'discount_code'=>$cartData->customer_group_code
+                    ]);
+                }
+
                 if($customerJobServiceQuery->exists()){
                     $customerJobServiceQuery->update($customerJobServiceData);
                     $customerJobServiceId = $customerJobServiceQuery->first();    
@@ -772,36 +780,39 @@ class SubmitCutomerServiceJob extends Component
         }
         else
         {
-            try {
-                $meterialRequestResponse = DB::select('EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = ?, @documentCode = ?, @documentDate = ?, @SessionId = ?, @sourceType = ?, @sourceCode = ?, @locationId = ?, @referenceNo = ?, @LandlordCode = ?, @propertyCode = ?, @UnitCode = ?, @IsApprove = ?, @doneby = ?, @documentCode_out = ? ', [
-                        auth()->user('user')->stationName['PortfolioCode'],
-                        $this->jobDetails->meterialRequestResponse,
-                        $this->jobDetails->job_date_time,
-                        $this->job_number,
-                        "J",
-                        $this->job_number,
-                        "0",
-                        $this->job_number,
-                        auth()->user('user')->station_code,
-                        $propertyCodeMR,
-                        $unitCodeMR,
-                         "1",
-                         "admin",
-                         null
-                    ]);
+            if($passmetrialRequest==true )
+            {
+                try {
+                    $meterialRequestResponseNew = DB::select('EXEC [Inventory].[MaterialRequisition.Update.Operation] @companyCode = ?, @documentCode = ?, @documentDate = ?, @SessionId = ?, @sourceType = ?, @sourceCode = ?, @locationId = ?, @referenceNo = ?, @LandlordCode = ?, @propertyCode = ?, @UnitCode = ?, @IsApprove = ?, @doneby = ?, @documentCode_out = ? ', [
+                            auth()->user('user')->stationName['PortfolioCode'],
+                            $this->jobDetails->meterialRequestResponse,
+                            $this->jobDetails->job_date_time,
+                            $this->job_number,
+                            "J",
+                            $this->job_number,
+                            "0",
+                            $this->job_number,
+                            auth()->user('user')->station_code,
+                            $propertyCodeMR,
+                            $unitCodeMR,
+                             "1",
+                             "admin",
+                             null
+                        ]);
 
-                $meterialRequestResponse = json_encode($meterialRequestResponse[0],true);
-                $meterialRequestResponse = json_decode($meterialRequestResponse,true);
-                CustomerJobCards::where(['job_number'=>$this->job_number])->update(['meterialRequestResponse'=>$meterialRequestResponse['refCode']]);
+                    $meterialRequestResponseNew = json_encode($meterialRequestResponseNew[0],true);
+                    $meterialRequestResponseNew = json_decode($meterialRequestResponseNew,true);
+                    CustomerJobCards::where(['job_number'=>$this->job_number])->update(['meterialRequestResponse'=>$meterialRequestResponseNew['refCode']]);
 
-                /*'division_code'=>"LL/00004",
-                'department_code'=>"PP/00037",
-                'section_code'=>"U-000225",*/
+                    /*'division_code'=>"LL/00004",
+                    'department_code'=>"PP/00037",
+                    'section_code'=>"U-000225",*/
 
 
-            } catch (\Exception $e) {
-                //dd($e->getMessage());
-                //return $e->getMessage();
+                } catch (\Exception $e) {
+                    //dd($e->getMessage());
+                    //return $e->getMessage();
+                }
             }
         }
         

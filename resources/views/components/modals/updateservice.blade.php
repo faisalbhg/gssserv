@@ -20,7 +20,18 @@
                     </div>
                     <div class="d-flex">
                     @if($jobcardDetails->payment_status==0)
-                      <button wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" type="button" class="btn bg-gradient-primary btn-sm mb-0 float-end cursor-pointer">Add New Service/Items</button>
+                        @if($jobcardDetails->job_status==1)
+                            
+                            @if($canceljobReasonButton)
+                            <textarea wire:model="cancelationReason" class="form-control" placeholder="Cancelation Reason..!"></textarea>
+                            @error('cancelationReason') <span class="text-danger">{{ $message }}</span> @enderror
+                            <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
+                            @else
+                            <button type="button" wire:click="cancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-danger px-2 mx-2 d-none">Cancel Job</button>
+                            @if($cancelError)<br><span class="text-danger">{{$cancelError}}</span>@endif
+                            @endif
+                        @endif
+                        <button type="button" wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-primary px-2">Add New Service/Items</button>
                     @endif
                         
                       <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
@@ -52,6 +63,7 @@
                                     <p class="text-white">{{$jobcardDetails->plate_number}}</p>
                                     <p class="mb-0 text-white">Chassis Number: {{$jobcardDetails->chassis_number}}</p>
                                     <p class="text-white">K.M Reading: {{$jobcardDetails->vehicle_km}}</p>
+                                    
                                     <ul class="list-group">
                                         <!-- Job Status -->
                                         <li class="list-group-item border-0 p-0 pb-0 mb-0 bg-transparent border-radius-lg">
@@ -1168,6 +1180,15 @@
         </div>
     </div>
     <div wire:loading wire:target="addNewServiceItemsJob">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <div wire:loading wire:target="cancelJob">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
             <div class="la-ball-beat">
                 <div></div>
