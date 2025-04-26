@@ -575,6 +575,17 @@ class VehicleSearchSave extends Component
         $customerVehicleData['is_active']=1;
         $customerVehicleData['created_by']=auth()->user('user')->id;
 
+
+        /*if (is_file($this->vehicle_image)) {
+            $filename = uniqid() . '.' . $this->vehicle_image->getClientOriginalExtension();
+            $this->vehicle_image->storeAs('public/uploads', $filename);
+
+            // Optional: Save path to DB or emit event
+            session()->flash('message', 'Image uploaded successfully!');
+        } else {
+            session()->flash('error', 'Invalid file.');
+        }*/
+
         if($this->vehicle_image){
 
             $customerVehicleData['vehicle_image'] = $this->vehicle_image->store('vehicle', 'public');
