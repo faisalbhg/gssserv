@@ -246,7 +246,7 @@ class PackagesBookings extends Component
 
     public function completePaymnet($mode)
     {
-        PackageBookings::where(['package_number'=>$this->package_number])->update(['customer_signature'=>$this->customerSignature]);
+        PackageBookings::where(['package_number'=>$this->package_number])->update(['customer_signature'=>$this->customerSignature,'package_status'=>1]);
         $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
         if(auth()->user('user')->stationName['StationID']==4)
         {

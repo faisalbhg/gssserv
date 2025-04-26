@@ -287,7 +287,7 @@ class CustomerServiceJob extends Component
             $packageBookingServicesQuery = PackageBookingServices::with(['labourItemDetails'])->where([
                 'package_number'=>$this->package_number,
                 //'division_code'=>auth()->user('user')['station_code']
-                //'payment_status'=>2
+                'payment_status'=>1
             ])->get();
             $sectionServicePriceLists = [];
             foreach($packageBookingServicesQuery as $key => $packageServices)

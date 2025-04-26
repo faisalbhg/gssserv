@@ -82,10 +82,10 @@ class Packages extends Component
             $customerPackage = $customerPackage->where(['station'=>auth()->user('user')['station_code']]);
             $getCountSalesPackage = $getCountSalesPackage->where(['station'=>auth()->user('user')['station_code']]); 
         }
-        $customerPackage = $customerPackage->orderBy('id','DESC')->where(['payment_status'=>1])->paginate(10);
+        $customerPackage = $customerPackage->where(['package_status'=>1])->orderBy('id','DESC')->paginate(10);
         
         
-        $getCountSalesPackage = $getCountSalesPackage->where(['payment_status'=>1])->first();
+        $getCountSalesPackage = $getCountSalesPackage->where(['package_status'=>1])->first();
         //dd($getCountSalesPackage->total);
         
         $data['getCountSalesPackages'] = $getCountSalesPackage;
