@@ -294,10 +294,9 @@ class Operations extends Component
         
     }
 
-    public function qualityCheck($services,$ql=null)
+    public function qualityCheck($servicesId,$ql=null)
     {
-        //dd($services['id']);
-        $this->showchecklist[$services['id']]=true;
+        $this->showchecklist[$servicesId]=true;
     }
 
     public function cancelJob($job_number)

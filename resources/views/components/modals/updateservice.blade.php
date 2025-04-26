@@ -899,7 +899,7 @@
                                                         @if($services->job_status!=3 && $services->job_status<3)
                                                             @if($services->job_status==1)
                                                                 @include('components.checklist.serviceTimer')
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services}})">
+                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
                                                                     <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                                 </a>
                                                             @else
@@ -971,6 +971,7 @@
                                             </div>
                                         </div>
                                     @elseif($services->service_item_type==2 && $services->section_name == 'Quick Lube')
+
                                         @if($qlServiceUpdate==false)
                                             <?php $qlServiceUpdate=true; ?>
                                             <div class="row">
@@ -992,7 +993,11 @@
                                                     @if($services->job_status!=3 && $services->job_status<3)
                                                         @if($services->job_status==1)
                                                             @include('components.checklist.qlServiceTimer')
-                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services}})">
+
+                                                            @if($services->department_code)
+
+                                                            @endif
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
                                                                 <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                             </a>
                                                         @else
@@ -1072,9 +1077,16 @@
                                                     @if($services->job_status!=3 && $services->job_status<3)
                                                         @if($services->job_status==1)
                                                             @include('components.checklist.qlServiceTimer')
-                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services}})">
+                                                            @if($services->department_name=='Quick Lube')
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}},'ql')">
                                                                 <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                             </a>
+                                                            @else
+                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
+                                                                <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                            </a>
+                                                            @endif
+                                                            
                                                         @else
                                                             <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
                                                                 <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
@@ -1101,6 +1113,11 @@
                                         @if($services->job_status==1)
                                             @if($showchecklist[$services->id])
                                                 @if(in_array($services->section_name, config('global.check_list.oilChange.services')))
+                                                    @include('components.checklist.oilChange-checklist')
+                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                    </a>
+                                                @elseif(in_array($services->department_name, config('global.check_list.oilChange.services')))
                                                     @include('components.checklist.oilChange-checklist')
                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
                                                         <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
