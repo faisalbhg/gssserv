@@ -1025,7 +1025,9 @@
                                         <hr class="horizontal dark mt-0 mb-1">
                                         @if($services->job_status==1)
                                             @if($showchecklist[$services->id])
+                                                
                                                 @if(in_array($services->section_name, config('global.check_list.oilChange.services')))
+
                                                     @include('components.checklist.oilChange-checklist')
                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
                                                         <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
@@ -1076,6 +1078,7 @@
                                                 <div class="col-md-4">
                                                     @if($services->job_status!=3 && $services->job_status<3)
                                                         @if($services->job_status==1)
+
                                                             @include('components.checklist.qlServiceTimer')
                                                             @if($services->department_name=='Quick Lube')
                                                             <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}},'ql')">
@@ -1111,6 +1114,7 @@
                                         @endif
                                         <hr class="horizontal dark mt-0 mb-1">
                                         @if($services->job_status==1)
+                                            
                                             @if($showchecklist[$services->id])
                                                 @if(in_array($services->section_name, config('global.check_list.oilChange.services')))
                                                     @include('components.checklist.oilChange-checklist')

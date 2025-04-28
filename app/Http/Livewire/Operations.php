@@ -506,6 +506,30 @@ class Operations extends Component
                 }
             }
         }
+        elseif(in_array($services['department_name'], config('global.check_list.oilChange.services')))
+        {
+            foreach(config('global.check_list.oilChange.checklist.types') as $chTypeKey => $types)
+            {
+                if($types['show_inner_section'])
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        foreach($subtype_list['inner_sections'] as $chSubTypeDtlkey => $subtypesdetails)
+                        {
+                            $this->checklists['oilchange'][$chTypeKey][$chSubTypeKey][$chSubTypeDtlkey]="G";
+                        }
+                    }
+
+                }else
+                {
+                    foreach($types['subtypes'] as $chSubTypeKey => $subtype_list)
+                    {
+                        $this->checklists['oilchange'][$chTypeKey][$chSubTypeKey]="G";
+                    }
+
+                }
+            }
+        }
 
         /*$this->selectAll = !$this->selectAll;
         if ($this->selectAll) {
