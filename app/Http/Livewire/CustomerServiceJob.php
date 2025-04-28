@@ -1515,6 +1515,8 @@ class CustomerServiceJob extends Component
         $cartUpdate['start_date']=null;
         $cartUpdate['end_date']=null;
         $cartUpdate['discount_perc']=null;
+        //$this->getCartInfo();
+
         CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$serviceId])->update($cartUpdate);
     }
 

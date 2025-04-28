@@ -403,11 +403,23 @@ class SubmitCutomerServiceJob extends Component
         }
         else
         {
+
             $customerjobData['created_by']=auth()->user('user')->id;
-            $createdCustomerJob = CustomerJobCards::create($customerjobData);
+            $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count()+1);
+            $customerjobData['job_number']=$this->job_number;
+            
+            try {
+                $createdCustomerJob = CustomerJobCards::create($customerjobData);
+            } catch (\Exception $e) {
+                $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count()+1);
+                $customerjobData['job_number']=$this->job_number;
+                $createdCustomerJob = CustomerJobCards::create($customerjobData); 
+                //return $e->getMessage();
+            }
+
             $customerjobId = $createdCustomerJob->id;
             
-            $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
+            /*$stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
             if($stationJobNumber==1)
             {
                 $stationJobNumber=0;
@@ -424,7 +436,7 @@ class SubmitCutomerServiceJob extends Component
                 $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
                 CustomerJobCards::where(['id'=>$customerjobId])->update(['job_number'=>$this->job_number]);    
                 //return $e->getMessage();
-            }
+            }*/
         }
         
         
@@ -481,6 +493,17 @@ class SubmitCutomerServiceJob extends Component
                 $customerJobServiceData['discount_end_date']=$cartData->end_date;
                 $totalDiscountInJob = $totalDiscountInJob+$customerJobServiceDiscountAmount;
             }
+            else{
+                $customerJobServiceData['discount_id']=null;
+                $customerJobServiceData['discount_unit_id']=null;
+                $customerJobServiceData['discount_code']=null;
+                $customerJobServiceData['discount_title']=null;
+                $customerJobServiceData['discount_percentage'] = null;
+                $customerJobServiceData['discount_amount'] = null;
+                $customerJobServiceData['discount_start_date']=null;
+                $customerJobServiceData['discount_end_date']=null;
+            }
+            
             if($cartData->cart_item_type==3){
                 $customerJobServiceData['is_package']=1;
                 $customerJobServiceData['package_number']=$cartData->package_number;
