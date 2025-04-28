@@ -39,9 +39,11 @@ class VehicleSearchSave extends Component
     public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
     public $otherCountryPlateCode;
     public $pendingCustomersCart;
+    public $plateStateCodeLetter;
 
     public function render()
     {
+        
         $pendingCustomersCartQuery = CustomerServiceCart::with(['customerInfo','vehicleInfo']);
         $pendingCustomersCartQuery = $pendingCustomersCartQuery->where(['created_by'=>auth()->user('user')['id']]);
         $this->pendingCustomersCart =  $pendingCustomersCartQuery->get();
@@ -79,35 +81,43 @@ class VehicleSearchSave extends Component
                 switch ($this->plate_state) {
                     case 'Abu Dhabi':
                         $this->plateStateCode = 1;
+                        $this->plateStateCodeLetter = 'AD';
                         $this->plate_category = '242';
                         break;
                     case 'Dubai':
                         $this->plateStateCode = 2;
+                        $this->plateStateCodeLetter = 'DXB';
                         $this->plate_category = '1';
                         break;
                     case 'Sharjah':
                         $this->plateStateCode = 3;
+                        $this->plateStateCodeLetter = 'SHJ';
                         $this->plate_category = '103';
                         break;
                     case 'Ajman':
                         $this->plateStateCode = 4;
+                        $this->plateStateCodeLetter = 'AJ';
                         $this->plate_category = '122';
                         break;
                     case 'Umm Al-Qaiwain':
                         $this->plateStateCode = 5;
+                        $this->plateStateCodeLetter = 'UAQ';
                         $this->plate_category = '134';
                         break;
                     case 'Ras Al-Khaimah':
                         $this->plateStateCode = 6;
+                        $this->plateStateCodeLetter = 'RAK';
                         $this->plate_category = '147';
                         break;
                     case 'Fujairah':
                         $this->plateStateCode = 7;
+                        $this->plateStateCodeLetter = 'FJ';
                         $this->plate_category = '169';
                         break;
                     
                     default:
                         $this->plateStateCode = 2;
+                        $this->plateStateCodeLetter = 'DXB';
                         $this->plate_category = '1';
                         break;
                 }
@@ -569,6 +579,7 @@ class VehicleSearchSave extends Component
             $plateNumberCode = Country::where(['CountryCode'=>$this->plate_country])->first();
             $completePlateNumber = $plateNumberCode->NumberPlate.' '.$this->plate_code.' '.$this->plate_number;
         }
+        
         $customerVehicleData['plate_number_final']=$completePlateNumber;
         $customerVehicleData['chassis_number']=isset($this->chassis_number)?$this->chassis_number:'';
         $customerVehicleData['vehicle_km']=isset($this->vehicle_km)?$this->vehicle_km:'';
@@ -655,7 +666,7 @@ class VehicleSearchSave extends Component
         $customerVehicleData['plate_category']=$this->plate_category;
         $customerVehicleData['plate_code']=$this->plate_code;
         $customerVehicleData['plate_number']=$this->plate_number;
-        $completePlateNumber = $this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
+        $completePlateNumber = $this->plateStateCodeLetter.' '.$this->plate_code.' '.$this->plate_number;
         if($this->plate_country!='AE')
         {
             $plateNumberCode = Country::where(['CountryCode'=>$this->plate_country])->first();
