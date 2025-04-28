@@ -286,8 +286,8 @@ class CustomerServiceJob extends Component
 
             $packageBookingServicesQuery = PackageBookingServices::with(['labourItemDetails'])->where([
                 'package_number'=>$this->package_number,
-                //'division_code'=>auth()->user('user')['station_code']
-                'payment_status'=>1
+                'division_code'=>auth()->user('user')['station_code']
+                //'payment_status'=>1
             ])->get();
             $sectionServicePriceLists = [];
             foreach($packageBookingServicesQuery as $key => $packageServices)
@@ -564,7 +564,7 @@ class CustomerServiceJob extends Component
                 'customer_id'=>$this->customer_id,
                 'vehicle_id'=>$this->vehicle_id,
                 'station'=>auth()->user('user')['station_code'],
-                'payment_status'=>1
+                //'payment_status'=>1
             ])
             ->orderBy('id','DESC')->get();
             //dd($this->customerBookedPackages);
