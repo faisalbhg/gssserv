@@ -247,9 +247,12 @@ class SubmitCutomerServiceJob extends Component
         if($mode=='link')
         {
             $paymentmode = "O";
+            //dd($customerjobs);
             $paymentLink = $this->sendPaymentLink($customerjobs);
             $paymentResponse = json_decode((string) $paymentLink->getBody()->getContents(), true);
+            //dd($paymentResponse);
             $merchant_reference = $paymentResponse['merchant_reference'];
+
             if(array_key_exists('payment_redirect_link', $paymentResponse))
             {
                 //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$this->job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
@@ -405,28 +408,90 @@ class SubmitCutomerServiceJob extends Component
         {
 
             $customerjobData['created_by']=auth()->user('user')->id;
-            //$this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count()+1);
-            //$customerjobData['job_number']=$this->job_number;
-            $createdCustomerJob = CustomerJobCards::create($customerjobData);
+            //Get Job Number
+            $jobStartChar = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-';
+            /*
+            $jobNumDb = '[dbo].[customer_job_cards]';
+            $jobNumTable = 'job_number';
+            $jobNumZeros = 8;
+            $jobNumOut = null;
+            $jobNumber = DB::select('EXEC [Document].[Code.Series.Generate] @type = ?, @table = ?, @code_column = ?, @no_of_zeros = ?, @code = ?', [
+                $jobStartChar,
+                $jobNumDb,
+                $jobNumTable,
+                $jobNumZeros,
+                $jobNumOut,
+            ]);
+
+            $jobNumberResult = (array)$jobNumber[0];
+            dd($jobNumberResult);
+
+            $jobNumber = DB::select(" exec [Document].[Code.Series.Generate] '".$jobStartChar."','[dbo].[customer_job_cards]','job_number','8', @document_code output ");
+            dd($jobNumber);*/
+
             
-            /*try {
-                $createdCustomerJob = CustomerJobCards::create($customerjobData);
+            
+            $lastJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->where('job_number','!=',null)->orderBy('id','DESC')->first();
+            $lastJobNumber = $lastJobNumber->job_number;
+            $NewJobNumber = explode($jobStartChar,$lastJobNumber);
+            $this->job_number = $jobStartChar.sprintf('%08d', $NewJobNumber[1]+1);
+            $customerjobData['job_number']=$this->job_number;
+            //$createdCustomerJob = CustomerJobCards::create($customerjobData);
+            
+            try {
+                if(!CustomerJobCards::where(['job_number'=>$this->job_number])->exists()){
+                    $createdCustomerJob = CustomerJobCards::create($customerjobData);    
+                }
+                else
+                {
+                    $lastJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->where('job_number','!=',null)->orderBy('id','DESC')->first();
+                    $lastJobNumber = $lastJobNumber->job_number;
+                    $NewJobNumber = explode($jobStartChar,$lastJobNumber);
+                    $this->job_number = $jobStartChar.sprintf('%08d', $NewJobNumber[1]+1);
+                    $customerjobData['job_number']=$this->job_number;
+                    $createdCustomerJob = CustomerJobCards::create($customerjobData);
+                }
+                
             } catch (\Exception $e) {
-                $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count()+1);
+                $lastJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->where('job_number','!=',null)->orderBy('id','DESC')->first();
+                $lastJobNumber = $lastJobNumber->job_number;
+                $NewJobNumber = explode($jobStartChar,$lastJobNumber);
+                $this->job_number = $jobStartChar.sprintf('%08d', $NewJobNumber[1]+1);
                 $customerjobData['job_number']=$this->job_number;
                 $createdCustomerJob = CustomerJobCards::create($customerjobData); 
                 //return $e->getMessage();
-            }*/
+            }
 
             $customerjobId = $createdCustomerJob->id;
-            
-            $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
+            /*$stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
             if($stationJobNumber==1)
             {
                 $stationJobNumber=0;
             }
-            $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
-            try {
+            $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);*/
+
+            /*DB::transaction(function () use ($request) {
+                // Lock the table or matching rows to prevent others from inserting
+                $existing = CustomerJobCards::where('job_number', $this->job_number)
+                                  ->lockForUpdate()
+                                  ->first();
+
+                if ($existing) {
+                    $customerjobId = $createdCustomerJob->id;
+                    $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
+                    if($stationJobNumber==1)
+                    {
+                        $stationJobNumber=0;
+                    }
+                    $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
+                }
+
+                // Safe to insert
+                CustomerJobCards::where(['id'=>$customerjobId])->update(['job_number'=>$this->job_number]); 
+            });*/
+
+
+            /*try {
                 CustomerJobCards::where(['id'=>$customerjobId])->update(['job_number'=>$this->job_number]);    
             } catch (\Exception $e) {
                 $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
@@ -437,7 +502,7 @@ class SubmitCutomerServiceJob extends Component
                 $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
                 CustomerJobCards::where(['id'=>$customerjobId])->update(['job_number'=>$this->job_number]);    
                 //return $e->getMessage();
-            }
+            }*/
         }
         
         
