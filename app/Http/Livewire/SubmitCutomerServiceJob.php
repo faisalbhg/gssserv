@@ -426,7 +426,7 @@ class SubmitCutomerServiceJob extends Component
             }
             $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
 
-            try {
+            /*try {
                 $exists = CustomerJobCards::where(['job_number'=>$this->job_number])->exists();
 
                 if (!$exists) {
@@ -440,10 +440,10 @@ class SubmitCutomerServiceJob extends Component
                 }
                 $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
                 CustomerJobCards::where(['id'=>$customerjobId])->update(['job_number'=>$this->job_number]);
-            }
+            }*/
 
 
-            /*try {
+            try {
                 CustomerJobCards::where(['id'=>$customerjobId])->update(['job_number'=>$this->job_number]);    
             } catch (\Exception $e) {
                 $stationJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->count();
@@ -454,7 +454,7 @@ class SubmitCutomerServiceJob extends Component
                 $this->job_number = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-'.sprintf('%08d', $stationJobNumber+1);
                 CustomerJobCards::where(['id'=>$customerjobId])->update(['job_number'=>$this->job_number]);    
                 //return $e->getMessage();
-            }*/
+            }
         }
         
         
