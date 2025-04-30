@@ -229,7 +229,6 @@ class SubmitCutomerServiceJob extends Component
     }
 
     public function completePaymnet($mode){
-        //stationName
         $this->createJob();
         $this->job_number;
         
@@ -245,38 +244,108 @@ class SubmitCutomerServiceJob extends Component
         $customerName = isset($customerjobs->customerInfo['TenantName'])?$customerjobs->customerInfo['TenantName']:null;
         $plate_number = $customerjobs->plate_number;
         $paymentmode = null;
-        //dd($mobileNumber);
-        if($mobileNumber!=null && config('global.sms_station')[auth()->user('user')->station_id]['status']==1){
-            $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/'.$this->job_number.' Alternatively, you can pay at the cashier via card or cash. For assistance, call 800477823.');
-            //dd(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-            $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-        }
-
-        $createJobUpdate['job_create_status']=1;
+        
         if($mode=='link')
         {
             $paymentmode = "O";
-            $createJobUpdate['payment_type']=1;
+            $paymentLink = $this->sendPaymentLink($customerjobs);
+            $paymentResponse = json_decode((string) $paymentLink->getBody()->getContents(), true);
+            $merchant_reference = $paymentResponse['merchant_reference'];
+
+            if(array_key_exists('payment_redirect_link', $paymentResponse))
+            {
+                //dd(SMS_URL."?user=".SMS_PROFILE_ID."&pwd=".SMS_PASSWORD."&senderid=".SMS_SENDER_ID."&CountryCode=971&mobileno=".$mobileNumber."&msgtext=".urlencode('Job Id #'.$this->job_number.' is processing, Please click complete payment '.$paymentResponse['payment_redirect_link']));
+                if($customerjobs->customerInfo['Mobile']!=''){
+                    //if($mobileNumber=='971566993709'){
+                        $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/'.$this->job_number.' Alternatively, you can pay at the cashier via card or cash. For assistance, call 800477823.');
+                        //dd(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                        $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                    //}
+                }
+
+                $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_link_order_ref'=>$paymentResponse['payment_link_order_ref'],'payment_request'=>'link_send','job_create_status'=>1]);
+
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
+
+                $this->successPage=true;
+                $this->showCheckout =false;
+                $this->cardShow=false;
+                $this->showServiceGroup=false;
+                $this->showPayLaterCheckout=false;
+                $this->selectedCustomerVehicle=false;
+                
+            }
+            else
+            {
+                session()->flash('error', $paymentResponse['response_message']);
+
+            }
+            
         }
         else if($mode=='card')
         {
             $paymentmode = "O";
-            $createJobUpdate['payment_type']=2;
+            $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>2,'payment_request'=>'card payment','job_create_status'=>1]);
+            if($customerjobs->customerInfo['Mobile']!=''){
+                //if($mobileNumber=='971566993709'){
+                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle status, For assistance, call 800477823.');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                //}
+            }
+
+            
+
+            $this->successPage=true;
+            $this->showCheckout =false;
+            $this->cardShow=false;
+            $this->showServiceGroup=false;
+            $this->showPayLaterCheckout=false;
+            $this->selectedCustomerVehicle=false;
+            
         }
         else if($mode=='cash')
         {
             $paymentmode = "C";
-            $createJobUpdate['payment_type']=3;
+            $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>3,'payment_request'=>'cash payment','job_create_status'=>1]);
+
+            if($customerjobs->customerInfo['Mobile']!=''){
+                //if($mobileNumber=='971566993709'){
+                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. You can pay at the cashier via card or cash. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle status, For assistance, call 800477823.');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                //}
+            }
+
+            
+
+            $this->successPage=true;
+            $this->showCheckout =false;
+            $this->cardShow=false;
+            $this->showServiceGroup=false;
+            $this->showPayLaterCheckout=false;
+            $this->selectedCustomerVehicle=false;
         }
         else if($mode=='empty')
         {
-            $createJobUpdate['payment_type']=6;
-            $createJobUpdate['payment_status']=1;
-            $createJobUpdate['payment_request']='package';
+            $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update(['payment_type'=>6,'payment_status'=>1,'payment_request'=>'package','job_create_status'=>1]);
+
+            if($customerjobs->customerInfo['Mobile']!=''){
+                //if($mobileNumber=='971566993709'){
+                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. Our team will update you shortly. https://gsstations.ae/qr/'.$this->job_number.' get your vehicle status, For assistance, call 800477823.');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                //}
+            }
+            
+
+            
+
+            $this->successPage=true;
+            $this->showCheckout =false;
+            $this->cardShow=false;
+            $this->showServiceGroup=false;
+            $this->showPayLaterCheckout=false;
+            $this->selectedCustomerVehicle=false;
         }
-        $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update($createJobUpdate);
-        
-        //Cart empty..!
+
         $customerServiceCartQuery = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'job_number'=>$this->job_number]);
         if($customerServiceCartQuery->exists()){
             $customerServiceCartQuery = $customerServiceCartQuery->delete();
@@ -285,13 +354,6 @@ class SubmitCutomerServiceJob extends Component
         {
             CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
         }
-
-        $this->successPage=true;
-        $this->showCheckout =false;
-        $this->cardShow=false;
-        $this->showServiceGroup=false;
-        $this->showPayLaterCheckout=false;
-        $this->selectedCustomerVehicle=false;
 
     }
 

@@ -300,6 +300,23 @@ return [
             "senderid"=>"GSS SERVICE",
         ]
     ],
+    'sms_station'=>[
+        '1'=>[
+            'status'=>0,
+        ],
+        '2'=>[
+            'status'=>0,
+        ],
+        '3'=>[
+            'status'=>0,
+        ],
+        '4'=>[
+            'status'=>1,
+        ],
+        '5'=>[
+            'status'=>0,
+        ],
+    ],
 
     'country'=>[
         [
