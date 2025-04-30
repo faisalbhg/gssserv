@@ -43,6 +43,7 @@ class VehicleSearchSave extends Component
 
     public function render()
     {
+        
         /*$pendingCustomersCartQuery = CustomerServiceCart::with(['customerInfo','vehicleInfo']);
         $pendingCustomersCartQuery = $pendingCustomersCartQuery->where(['created_by'=>auth()->user('user')['id']]);
         $this->pendingCustomersCart =  $pendingCustomersCartQuery->get();*/
