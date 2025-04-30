@@ -684,7 +684,7 @@
                                     @if($selectPackageMenu)
                                     <span class="mask bg-gradient-dark opacity-4"></span>
                                     @else
-                                    <span class="mask bg-gradient-dark opacity-9"></span>
+                                    <span class="mask bg-gradient-dark opacity-7"></span>
                                     @endif
                                     <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
                                         <h5 class="@if($selectPackageMenu) text-primary @else text-white @endif font-weight-bolder mb-4 pt-2">Packages</h5>
@@ -706,7 +706,7 @@
                                     @if($selectBundleMenu)
                                     <span class="mask bg-gradient-dark opacity-4"></span>
                                     @else
-                                    <span class="mask bg-gradient-dark opacity-9"></span>
+                                    <span class="mask bg-gradient-dark opacity-7"></span>
                                     @endif
                                     <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
                                         <h5 class="@if($selectBundleMenu) text-primary @else text-white @endif font-weight-bolder mb-4 pt-2">Bundles</h5>
@@ -728,7 +728,7 @@
                                     @if($selectAdvanceCouponMenu)
                                     <span class="mask bg-gradient-dark opacity-4"></span>
                                     @else
-                                    <span class="mask bg-gradient-dark opacity-9"></span>
+                                    <span class="mask bg-gradient-dark opacity-7"></span>
                                     @endif
                                     <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
                                         <h5 class="@if($selectAdvanceCouponMenu) text-primary @else text-white @endif font-weight-bolder mb-4 pt-2">Advance Coupons</h5>

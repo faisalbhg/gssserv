@@ -433,8 +433,8 @@ class SubmitCutomerServiceJob extends Component
             
             $lastJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->where('job_number','!=',null)->orderBy('id','DESC')->first();
             $lastJobNumber = $lastJobNumber->job_number;
-            $NewJobNumber = explode($jobStartChar,$lastJobNumber);
-            $this->job_number = $jobStartChar.sprintf('%08d', $NewJobNumber[1]+1);
+            $NewJobNumber = explode('-',$lastJobNumber);
+            $this->job_number = $jobStartChar.sprintf('%08d', $NewJobNumber[count($NewJobNumber)-1]+1);
             $customerjobData['job_number']=$this->job_number;
             //$createdCustomerJob = CustomerJobCards::create($customerjobData);
             

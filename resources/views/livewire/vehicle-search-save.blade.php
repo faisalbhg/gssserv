@@ -26,13 +26,12 @@
 }
 #model_1 .nav-tabs {
     text-align: center;
-    border: 4px solid transparent;
+    border-bottom: 3px solid #ccc;
     display: -ms-flexbox;
     display: -webkit-flex;
     display: -moz-flex;
     display: -ms-flex;
     display: flex;
-    border: 0; 
 }
 #model_1 .nav .nav-item {
     text-align: center;
@@ -100,12 +99,12 @@
         @endif
         <section id="model_1" class="mb-4">      
             <div class="tabs-container">
-                <ul class="nav nav-tabs container mx-0 shadow pe-0" id="myTab" role="tablist">
+                <ul class="nav nav-tabs container mx-0  pe-0" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link @if($showWalkingCustomerPanel) active @endif text-uppercase font-weight-bolder" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" wire:click="customerPanelTab('1')"><i class="fa fa-user"></i>Walking Customer</a>
+                        <a class="nav-link @if($showWalkingCustomerPanel) active shadow @endif text-uppercase font-weight-bolder" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" wire:click="customerPanelTab('1')"><i class="fa fa-user"></i>Walking Customer</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @if($showContractCustomerPanel) active @endif text-uppercase font-weight-bolder" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false" wire:click="customerPanelTab('2')"><i class="fa fa-home"></i>Contract / Credit Customer</a>
+                        <a class="nav-link @if($showContractCustomerPanel) active shadow @endif text-uppercase font-weight-bolder" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false" wire:click="customerPanelTab('2')"><i class="fa fa-home"></i>Contract / Credit Customer</a>
                     </li>
                     
                 </ul>
@@ -220,7 +219,7 @@
                     @if($searchByMobileNumber)
                         <div class="row">
                             @if($showByMobileNumber)
-                                <div class="col-md-6 col-sm-6">
+                                <div class="col-md-6 col-sm-4">
                                     <label for="mobilenumberInput">Mobile Number </label>
                                     <div class="input-group mb-3"  >
                                         <input  type="number" class="form-control @error('mobile') btn-outline-danger @enderror" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-MobileSearch" wire:model="mobile"  name="mobile" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="10" id="mobilenumberInput" style="padding-left:10px !important;">
@@ -252,7 +251,22 @@
                                         
                                     </div>
                                 </div>
-                                
+                                <div class="col-md-4 col-sm-6 d-none">
+                                    <div class="form-group openName mt-4 mb-0">
+                                        <label class="mt-2"></label>
+                                        <button type="button" wire:click="saveCustomerOnly()" class="btn btn-primary btn-sm mt-2">Save Customer Only</button>
+                                        <div wire:loading wire:target="saveCustomerOnly">
+                                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                <div class="la-ball-beat">
+                                                    <div></div>
+                                                    <div></div>
+                                                    <div></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             @endif
                         </div>
                     @endif
@@ -616,42 +630,7 @@
             </div>
         @endif
 
-        @if(count($pendingCustomersCart)>0)
-        <div class="row mt-2">
-            <div class="col-lg-6 col-7">
-                <h6>{{count($pendingCustomersCart)}} - Pending Job Creation</h6>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <?php $arrayCustomersPendingJobs = []; ?>
-            @forelse($pendingCustomersCart as $pendingvehicle)
-                    @if(!in_array($pendingvehicle->vehicle_id, $arrayCustomersPendingJobs))
-                        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 my-4">
-                            <a href="javascript:;" wire:click="selectPendingVehicle({{$pendingvehicle->customer_id}},{{$pendingvehicle->vehicle_id}})" class="">
-                                <div class="card card-background move-on-hover">
-                                    <div class="full-background" style="background-image: url('{{url("public/storage/".$pendingvehicle->vehicleInfo["vehicle_image"])}}')"></div>
-                                    <div class="card-body pt-5">
-                                        <h4 class="text-white mb-0 pb-0">
-                                            @if($pendingvehicle->customerInfo['TenantName'])
-                                                {{$pendingvehicle->customerInfo['TenantName']}}
-                                            @else
-                                            Guest
-                                            @endif
-                                        </h4>
-                                        <p class="mt-0 pt-0"><small>{{$pendingvehicle->customerInfo['Email']}}, {{$pendingvehicle->customerInfo['Mobile']}}</small></p>
-                                        <p class="mb-0">{{$pendingvehicle->vehicleInfo['makeInfo']['vehicle_name']}}, {{$pendingvehicle->vehicleInfo['modelInfo']['vehicle_model_name']}}</p>
-                                        <p>{{$pendingvehicle->vehicleInfo['plate_number_final']}}</p>
-                                        <span class="text-xs">{{ \Carbon\Carbon::parse($pendingvehicle->created_at)->diffForHumans() }} </span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <?php array_push($arrayCustomersPendingJobs, $pendingvehicle->vehicle_id);?>
-                    @endif
-                @empty
-                @endforelse
-        </div>
-        @endif
+        
     </div>
     <div wire:loading wire:target="saveByPlateNumber">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
