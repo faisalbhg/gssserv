@@ -75,7 +75,7 @@ class CustomerServiceJob extends Component
     public $customizedErrorMessage=[];
     public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
     public $showBundleList=false, $selectBundleMenu=false, $bundlleLists, $selectedBundles, $showBundleServiceSectionsList, $bundleServiceLists=[];
-    public $selectAdvanceCouponMenu=false, $showAdvanceCouponList=false, $advance_coupon_number;
+    public $selectAdvanceCouponMenu=false, $showAdvanceCouponList=false, $showAdvanceCouponOtpVerify=false, $advance_coupon_number;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
