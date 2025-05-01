@@ -50,6 +50,7 @@ use App\Http\Livewire\GatePasses;
 use App\Http\Livewire\PackagesBookings;
 use App\Http\Livewire\MaterialRequisition;
 use App\Http\Livewire\Packages;
+use App\Http\Livewire\CustomerServiceItems;
 
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
@@ -87,6 +88,12 @@ Route::middleware('auth')->group(function () {
     //UpdateCustomerJobs
     Route::get('customer-service-job/{customer_id}/{vehicle_id}/{job_number}',CustomerServiceJob::class)->name('customer-service-job');
     Route::get('submit-job-update/{customer_id}/{vehicle_id}/{job_number}', SubmitCutomerServiceJob::class)->name('submit-job-update');
+
+    Route::get('customer-service-items/{customer_id}/{vehicle_id}', CustomerServiceItems::class)->name('customer-service-items');
+    Route::get('customer-service-items/{customer_id}/{vehicle_id}/{job_number}', CustomerServiceItems::class)->name('customer-service-items');
+
+    ;
+
 
     //PackagesBookings
     Route::get('submit-package/{customer_id}/{vehicle_id}/{package_id}', PackagesBookings::class)->name('submit-package');

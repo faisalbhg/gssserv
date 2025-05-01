@@ -1,0 +1,275 @@
+<?php
+
+namespace App\Http\Livewire;
+
+use Livewire\Component;
+
+use Illuminate\Http\Request;
+use Livewire\WithFileUploads;
+use Livewire\WithPagination;
+use Carbon\Carbon;
+use Session;
+use Illuminate\Support\Facades\Http;
+use LaravelPayfort\Facades\Payfort;
+use Illuminate\Support\Facades\Hash;
+use DB;
+use Spatie\Image\Image;
+
+use App\Models\CustomerVehicle;
+use App\Models\ItemCategories;
+use App\Models\InventorySubCategory;
+use App\Models\InventoryBrand;
+use App\Models\InventoryItemMaster;
+use App\Models\InventorySalesPrices;
+use App\Models\CustomerServiceCart;
+use App\Models\Development;
+use App\Models\Sections;
+
+class CustomerServiceItems extends Component
+{
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+    public $customer_id, $vehicle_id, $job_number, $selected_section, $department_code, $department_name, $section_code, $section_name;
+    public $selectedCustomerVehicle=false, $showForms=false, $cardShow=false, $showItemsSearchResults=false;
+    public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $item_search_code;
+    public $serviceAddedMessgae=[],$cartItems = [], $cartItemCount, $ql_item_qty, $ceramic_dicount, $showManulDiscount=[],$manualDiscountInput;
+
+    public function render()
+    {
+        $this->itemCategories = ItemCategories::where(['Active'=>1])->get();
+        if($this->item_search_category){
+            $this->itemSubCategories = InventorySubCategory::where(['CategoryId'=>$this->item_search_category])->get();
+        }
+        $this->itemBrandsLists = InventoryBrand::where(['Active'=>1])->get();
+        $data=[];
+        if($this->showItemsSearchResults)
+        {
+            $inventoryItemMasterLists = InventoryItemMaster::where('Active','=',1)->where('UnitPrice','!=',0);
+            if($this->item_search_category){
+                $inventoryItemMasterLists = $inventoryItemMasterLists->where(['CategoryId'=>$this->item_search_category]);
+            }
+            if($this->item_search_subcategory){
+                $inventoryItemMasterLists = $inventoryItemMasterLists->where(['SubCategoryId'=>$this->item_search_subcategory]);
+            }
+            if($this->item_search_brand){
+                $inventoryItemMasterLists = $inventoryItemMasterLists->where(['BrandId'=>$this->item_search_brand]);
+            }
+            if($this->item_search_name){
+                $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->item_search_name}%");
+            }
+            if($this->item_search_code){
+                $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemCode','like',"%{$this->item_search_code}%");
+            }
+            $data['inventoryItemMasterLists']=$inventoryItemMasterLists->paginate(20);
+        }
+        $this->getCartInfo();
+        return view('livewire.customer-service-items',$data);
+    }
+
+    function mount( Request $request) {
+        $this->customer_id = $request->customer_id;
+        $this->vehicle_id = $request->vehicle_id;
+        $this->job_number = $request->job_number;
+        if($this->vehicle_id && $this->customer_id)
+        {
+            $this->selectVehicle();
+            //$this->checkExistingJobs();
+        }
+        if($this->job_number)
+        {
+            $this->customerJobDetails();
+        }
+
+    }
+
+    public function selectVehicle(){
+        $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->first();
+        
+        
+        $this->selectedCustomerVehicle=true;
+
+        $this->showServiceGroup = true;
+        
+        $this->showVehicleAvailable = false;
+        $this->selectedVehicleInfo=$customers;
+
+        $this->mobile = $customers->customerInfoMaster['Mobile'];
+        $this->name = $customers->customerInfoMaster['TenantName'];
+        $this->email = $customers->customerInfoMaster['Email'];        
+    }
+
+    public function getCartInfo($value='')
+    {
+        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
+        $this->cartItemCount = count($this->cartItems); 
+        if($this->cartItemCount>0)
+        {
+            $this->cardShow=true;
+        }
+        else
+        {
+            $this->cardShow=false;
+        }
+
+
+    }
+
+    public function editCustomer(){
+        return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
+    }
+
+    public function selectSection($section){
+        switch ($section) {
+            case '1':
+                $departmentName = 'Quick Lube';
+                // code...
+                break;
+            case '2':
+                $departmentName = 'Mechanical';
+                // code...
+                break;
+            
+            default:
+                // code...
+                break;
+        }
+        $departmentDetails = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')
+            ->where([
+                'DevelopmentName'=>$departmentName,
+                'LandlordCode'=>auth()->user('user')['station_code']
+            ])->first();
+        $this->department_code=$departmentDetails->department_code;
+        $this->department_name=$departmentDetails->department_name;
+
+        $sectionsDetails = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')
+            ->where([
+                'DevelopmentCode'=>$this->department_code,
+                'Operation'=>true,
+                'PropertyName'=>$this->department_name,
+            ])->first();
+        $this->section_code=$sectionsDetails->PropertyCode;
+        $this->section_name=$sectionsDetails->PropertyName;
+        $this->selected_section=$this->section_name;
+    }
+
+    public function searchServiceItems(){
+        $validatedData = $this->validate([
+            'selected_section' => 'required',
+        ]);
+        /*$validatedData = $this->validate([
+            //'item_search_category' => 'required',
+            //'item_search_subcategory' => 'required',
+        ]);*/
+        $this->showItemsSearchResults=true;
+    }
+
+
+    public function addtoCartItem($itemDetails)
+    {
+        //dd($itemDetails);
+        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$itemDetails['ItemId']]);
+        if($customerBasketCheck->exists())
+        {
+            if($items->ItemCode=='I09137')
+            {
+                if(!CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->where('customer_group_id','!=',90)->increment('quantity', 4)){
+                    CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->where('customer_group_id','=',null)->increment('quantity', 4);    
+                }
+                
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->where('customer_group_id','=',90)->increment('quantity', 1);
+            }
+            else
+            {
+                $customerBasketCheck->increment('quantity', 1);
+            }
+            
+            if($discountPrice!=null){
+                $cartUpdate['price_id']=$itemDetails['PriceID'];
+                $cartUpdate['customer_group_id']=$itemDetails['CustomerGroupId'];
+                $cartUpdate['customer_group_code']=$itemDetails['CustomerGroupCode'];
+                $cartUpdate['min_price']=$itemDetails['MinPrice'];
+                $cartUpdate['max_price']=$itemDetails['MaxPrice'];
+                $cartUpdate['start_date']=$itemDetails['StartDate'];
+                $cartUpdate['end_date']=$itemDetails['EndDate'];
+                $cartUpdate['discount_perc']=$itemDetails['DiscountPerc'];
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId])->update($cartUpdate);
+            }
+        }
+        else
+        {
+            $cartInsert = [
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->vehicle_id,
+                'item_id'=>$itemDetails['ItemId'],
+                'item_code'=>$itemDetails['ItemCode'],
+                'company_code'=>$itemDetails['CompanyCode'],
+                'category_id'=>$itemDetails['CategoryId'],
+                'sub_category_id'=>$itemDetails['SubCategoryId'],
+                'brand_id'=>$itemDetails['BrandId'],
+                'bar_code'=>$itemDetails['BarCode'],
+                'item_name'=>$itemDetails['ItemName'],
+                'cart_item_type'=>2,
+                'description'=>$itemDetails['Description'],
+                'division_code'=>auth()->user('user')['station_code'],
+                'department_code'=>$this->department_code,
+                'department_name'=>$this->department_name,
+                'section_code'=>$this->section_code,
+                'section_name'=>$this->section_name,
+                'unit_price'=>$itemDetails['UnitPrice'],
+                'quantity'=>isset($this->ql_item_qty[$itemDetails['ItemId']])?$this->ql_item_qty[$itemDetails['ItemId']]:1,
+                'created_by'=>auth()->user('user')['id'],
+                'created_at'=>Carbon::now(),
+            ];
+            if($itemDetails['ItemCode']=='I09137')
+            {
+                $cartInsert['quantity']=4;
+            }
+            
+            if($this->job_number)
+            {
+                $cartInsert['job_number']=$this->job_number;
+            }
+
+            $this->insertItemToCart($cartInsert);
+            if($itemDetails['ItemCode']=='I09137')
+            {
+                $cartInsert1 = $this->applyDiscountOnItem('I09137','MOBIL4+1');
+                $cartInsert = array_merge($cartInsert1,$cartInsert);
+                $cartInsert['quantity']=1;
+                $this->insertItemToCart($cartInsert);
+            }
+        }
+        $this->serviceAddedMessgae[$items->ItemCode]=true;
+        /*$this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'success',
+            'message' => 'Added to Cart Successfully',
+            'text' => 'service added..!',
+            'cartitemcount'=>\Cart::getTotalQuantity()
+        ]);*/
+        session()->flash('cartsuccess', 'Service is Added to Cart Successfully !');
+    }
+
+    public function insertItemToCart($insertItemsData){
+        CustomerServiceCart::insert($insertItemsData);
+    }
+
+    public function applyDiscountOnItem($itemCode,$discountCode){
+        $discountAddOn = InventorySalesPrices::where([
+            'ServiceItemCode'=>$itemCode,
+            'CustomerGroupCode'=>$discountCode,
+        ])->first();
+        $itemsDiscount=[];
+        if($discountAddOn!=null){
+            $itemsDiscount['price_id']=$discountAddOn['PriceID'];
+            $itemsDiscount['customer_group_id']=$discountAddOn['CustomerGroupId'];
+            $itemsDiscount['customer_group_code']=$discountAddOn['CustomerGroupCode'];
+            $itemsDiscount['min_price']=$discountAddOn['MinPrice'];
+            $itemsDiscount['max_price']=$discountAddOn['MaxPrice'];
+            $itemsDiscount['start_date']=$discountAddOn['StartDate'];
+            $itemsDiscount['end_date']=$discountAddOn['EndDate'];
+            $itemsDiscount['discount_perc']=$discountAddOn['DiscountPerc'];
+        }
+
+        return $itemsDiscount;
+    }
+}

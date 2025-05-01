@@ -173,12 +173,9 @@ class PackagesBookings extends Component
     public function sendOTPSMS($otpPack){
         $mobileNumber = isset($this->mobile)?'971'.substr($this->mobile, -9):null;
         $customerName = isset($this->name)?$this->name:null;
-        if($mobileNumber!=''){
-            //if($mobileNumber=='971566993709'){
-                //$otpPack = $customerPackageData['otp_code'];
-                $msgtext = urlencode('Dear '.$customerName.', please use the OTP '.$otpPack.' of GSS Package creation valid for 10 minutes. Do not share it with anyone. For assistance, call 800477823.');
-                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-            //}
+        if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+            $msgtext = urlencode('Dear Customer, your GSS Service Contract OTP is '.$otpPack.'. It’s valid for 10 mins. Don’t share it. For help, call 800477823.');
+            $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
         }
         $this->showOtpVerify=true;
         $this->dispatchBrowserEvent('scrollto', [
@@ -248,83 +245,38 @@ class PackagesBookings extends Component
     {
         PackageBookings::where(['package_number'=>$this->package_number])->update(['customer_signature'=>$this->customerSignature,'package_status'=>1]);
         $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
-        if(auth()->user('user')->stationName['StationID']==4)
-        {
-            $mobileNumber = isset($customerPackageInfo->customerInfo['Mobile'])?'971'.substr($customerPackageInfo->customerInfo['Mobile'], -9):null;
+
+        $mobileNumber = isset($customerPackageInfo->customer_mobile)?'971'.substr($customerPackageInfo->customer_mobile, -9):null;
+        $customerName = isset($customerPackageInfo->customer_name)?$customerPackageInfo->customer_name:null;
+        if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+            $msgtext = urlencode('Dear Customer, '.$customerPackageInfo->plate_number.' Package received at '.auth()->user('user')->stationName['ShortName'].'. Track or pay online: https://gsstations.ae/qr/package/'.$this->package_number.'. For help, call 800477823');
+            $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
         }
-        else
-        {
-            $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
-        }
-        //$mobileNumber = isset($this->mobile)?'971'.substr($this->mobile, -9):null;
-        $customerName = isset($customerPackageInfo->customerInfo['TenantName'])?$customerPackageInfo->customerInfo['TenantName']:null;
-        //$customerName = isset($this->name)?$this->name:null;
         $paymentmode = null;
         if($mode=='link')
         {
             $paymentmode = "O";
-            $paymentLink = $this->sendPaymentLink($customerPackageInfo);
-            $paymentResponse = json_decode((string) $paymentLink->getBody()->getContents(), true);
-            $merchant_reference = $paymentResponse['merchant_reference'];
-            if(array_key_exists('payment_redirect_link', $paymentResponse))
-            {
-                if($customerPackageInfo->customerInfo['Mobile']!=''){
-                    //if($mobileNumber=='971566993709'){
-                        $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/package/'.$this->package_number.'. For assistance, call 800477823.');
-                        $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-
-                    //}
-                }
-
-                PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_link_order_ref'=>$paymentResponse['payment_link_order_ref'],'payment_request'=>'link_send',]);
-
-                //PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>1,'payment_link'=>$paymentResponse['payment_redirect_link'],'payment_response'=>json_encode($paymentResponse),'payment_request'=>'link_send']);
-
-                $this->successPage=true;
-                $this->otpVerified =false;
-                $this->selectedCustomerVehicle=false;
-                $this->showCheckout=false;
-                
-            }
-            else
-            {
-                session()->flash('error', $paymentResponse['response_message']);
-
-            }
-            
+            PackageBookings::where(['package_number'=>$this->package_number])->update([
+                'payment_type'=>1,
+                'payment_request'=>'link_send'
+            ]);
         }
         else if($mode=='card')
         {
             $paymentmode = "O";
             PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>2,'payment_request'=>'card payment']);
-            if($customerPackageInfo->customerInfo['Mobile']!=''){
-                //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/package/'.$this->package_number.'. For assistance, call 800477823.');
-                        $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                //}
-            }
-            $this->successPage=true;
-            $this->otpVerified =false;
-            $this->selectedCustomerVehicle=false;
-            $this->showCheckout=false;
-            
         }
         else if($mode=='cash')
         {
             $paymentmode = "C";
             PackageBookings::where(['package_number'=>$this->package_number])->update(['payment_type'=>3,'payment_request'=>'cash payment']);
-            if($customerPackageInfo->customerInfo['Mobile']!=''){
-                //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', we received your vehicle for package, Refer Package No. #'.$this->package_number.'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/package/'.$this->package_number.'. For assistance, call 800477823.');
-                        $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                //}
-            }
-
-            $this->successPage=true;
-            $this->otpVerified =false;
-            $this->selectedCustomerVehicle=false;
-            $this->showCheckout=false;
         }
+
+        $this->successPage=true;
+        $this->otpVerified =false;
+        $this->selectedCustomerVehicle=false;
+        $this->showCheckout=false;
+
         try {
         DB::select('EXEC [dbo].[ServicePackage.Purchase.FinancialEntries] @packagenumber = "'.$this->package_number.'", @doneby = "admin" ');
         } catch (\Exception $e) {

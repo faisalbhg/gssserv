@@ -31,7 +31,7 @@ class SubmitCutomerServiceJob extends Component
     use WithFileUploads;
     public $customer_id, $vehicle_id, $mobile, $name, $email, $selectedVehicleInfo;
     public $selectedCustomerVehicle=true, $showCheckout=true, $successPage=false, $showCheckList=false, $showQLCheckList=false, $showFuelScratchCheckList=false, $showCustomerSignature=false, $discountApply=false;
-    public $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $roof_images, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
+    public $serviceAddedMessgae=[], $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $roof_images, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
     public $staff_id,$staff_number,$show_staff_details=false;
     public $job_date_time;
@@ -234,20 +234,12 @@ class SubmitCutomerServiceJob extends Component
         $this->job_number;
         
         $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle','stationInfo'])->where(['job_number'=>$this->job_number])->first();
-        if(auth()->user('user')->stationName['StationID']==4)
-        {
-            $mobileNumber = isset($customerjobs->customerInfo['Mobile'])?'971'.substr($customerjobs->customerInfo['Mobile'], -9):null;
-        }
-        else
-        {
-            $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
-        }
+        $mobileNumber = isset($customerjobs->customerInfo['Mobile'])?'971'.substr($customerjobs->customerInfo['Mobile'], -9):null;
         $customerName = isset($customerjobs->customerInfo['TenantName'])?$customerjobs->customerInfo['TenantName']:null;
         $plate_number = $customerjobs->plate_number;
         $paymentmode = null;
-        //dd($mobileNumber);
-        if($mobileNumber!=null && config('global.sms_station')[auth()->user('user')->stationName['StationID']]['status']==1){
-            $msgtext = urlencode('Dear '.$customerName.', we received your vehicle '.$plate_number.' at '.auth()->user('user')->stationName['ShortName'].'. To avoid waiting at the cashier, you can pay online using this link: https://gsstations.ae/qr/'.$this->job_number.' Alternatively, you can pay at the cashier via card or cash. For assistance, call 800477823.');
+        if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+            $msgtext = urlencode('Dear Customer, '.$plate_number.' received at '.auth()->user('user')->stationName['ShortName'].'. Track or pay online: https://gsstations.ae/qr/'.$this->job_number.'. For help, call 800477823.');
             //dd(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
         }

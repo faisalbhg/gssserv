@@ -639,21 +639,12 @@ class Operations extends Component
             }*/
 
 
-            if(auth()->user('user')->stationName['StationID']==4){
-                $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
-            }
-            else
-            {
-                $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
-            }
             
+            $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
-            if($mobileNumber!=''){
-                //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$this->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['ShortName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$services['job_number'].' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
-                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                    //dd($response);
-                //}
+            if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+                $msgtext = urlencode('Dear Customer, '.$this->jobcardDetails->plate_number.' is ready at '.auth()->user('user')->stationName['ShortName'].'. Please collect within 1 hr or Ɖ30/hr parking will apply. Thank you for choosing GSS. For help 800477823.');
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             }
         }
         
@@ -867,11 +858,7 @@ class Operations extends Component
         $arrData['order_number'] = $order_ref;
         $arrData['station'] = $station;
 
-        $mobileNumber=null;
-        if($arrData['station']==4)
-        {
-            $mobileNumber = isset($jobs->customer_mobile)?'971'.substr($jobs->customer_mobile, -9):null;
-        }
+        $mobileNumber = isset($jobs->customer_mobile)?'971'.substr($jobs->customer_mobile, -9):null;
         $customerName = isset($jobs->customer_name)?$jobs->customer_name:null;
 
         $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.synchronize_single_paymenkLink_url'),$arrData);
@@ -881,12 +868,10 @@ class Operations extends Component
         if($paymentResponse['order_response']['status']=='PURCHASED' || $paymentResponse['order_response']['status']=='CAPTURED' )
         {
             CustomerJobCards::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
-            if($mobileNumber!=null){
-                //dd($mobileNumber);  
-                //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', your payment of AED'.$orderResponseAmount.' for service on vehicle '.$jobs_plate_number.' at '.$jobs->stationInfo['ShortName'].' has been received. Receipt No:'.$paymentResponse['order_response']['orderReference'].', click here to access your gate pass for vehicle exit https://gsstations.ae/qr/'.$paymentResponse['order_response']['orderReference'].'. Thank you for your trust in GSS');
-                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                //}
+            if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+                $msgtext = urlencode('Dear Customer, Payment of Ɖ '.$orderResponseAmount.' received. For Gate pass & invoice, please click the link: https://gsstations.ae/qr/'.$paymentResponse['order_response']['orderReference'].'. Call 800477823 for help');
+
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             }
             session()->flash('paymentLinkStatusSuccess', 'Payment Link is paid..!');
             try {

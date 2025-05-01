@@ -675,28 +675,12 @@ class CarsTaxi extends Component
                 //return $e->getMessage();
             }
 
-
-            /*try {
-                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$services['customer_id'].'" ');
-            } catch (\Exception $e) {
-                //return $e->getMessage();
-            }*/
-
-
-            if(auth()->user('user')->stationName['StationID']==4){
-                $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
-            }
-            else
-            {
-                $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
-            }
-            
+            $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
+            //$mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
-            if($mobileNumber!=''){
-                //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$this->plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately, https://gsstations.ae/qr/'.$services['job_number'].' for the updates. Thank you for choosing GSS! . For assistance, call 800477823.');
-                    //$response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                //}
+            if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+                $msgtext = urlencode('Dear Customer, '.$this->plate_number.' is ready at '.auth()->user('user')->stationName['CorporateName'].'. Please collect within 1 hr or Ɖ30/hr parking will apply. Thank you for choosing GSS. For help 800477823.');
+                //$response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             }
         }
         
@@ -775,14 +759,12 @@ class CarsTaxi extends Component
 
 
 
-            //$mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
-            $mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
+            $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
+            //$mobileNumber = isset(auth()->user('user')->phone)?'971'.substr(auth()->user('user')->phone, -9):null;
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
-            if($mobileNumber!=''){
-                //if($mobileNumber=='971566993709'){
-                    $msgtext = urlencode('Dear '.$customerName.', your vehicle '.$plate_number.' is ready for pickup at '.auth()->user('user')->stationName['CorporateName'].'. Please collect your car within 1 hour from now , or a parking charge of AED 30 per hour will be applied separately. Thank you for choosing GSS! Visit '.url('qr/'.$job_number).' for the updates. For assistance, call 800477823.');
-                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                //}
+            if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+                $msgtext = urlencode('Dear Customer, '.$plate_number.' is ready at '.auth()->user('user')->stationName['CorporateName'].'. Please collect within 1 hr or Ɖ30/hr parking will apply. Thank you for choosing GSS. For help 800477823.');
+                //$response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             }
         }
         
