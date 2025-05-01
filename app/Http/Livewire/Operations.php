@@ -117,6 +117,7 @@ class Operations extends Component
 
     public function render()
     {
+        
         /*dd(CustomerVehicle::where('ceramic_wash_discount_count','>',0)->get());
         $ceramicJobNumber = [];
         foreach(CustomerJobCardServices::with(['jobInfo'])->whereIn('item_code',  config('global.ceramic.service'))->get() as $ceramicJob){

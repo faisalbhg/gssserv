@@ -583,7 +583,7 @@ class VehicleSearchSave extends Component
         $customerVehicleData['plate_category']=$this->plate_category;
         $customerVehicleData['plate_code']=$this->plate_code;
         $customerVehicleData['plate_number']=$this->plate_number;
-        $completePlateNumber = $this->plate_state.' '.$this->plate_code.' '.$this->plate_number;
+        $completePlateNumber = $this->plateStateCodeLetter.' '.$this->plate_code.' '.$this->plate_number;
         if($this->plate_country!='AE')
         {
             $plateNumberCode = Country::where(['CountryCode'=>$this->plate_country])->first();
