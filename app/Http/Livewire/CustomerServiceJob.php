@@ -1197,7 +1197,13 @@ class CustomerServiceJob extends Component
 
 
     public function cartSetDownQty($cartId){
-        CustomerServiceCart::find($cartId)->decrement('quantity');
+        $item = CustomerServiceCart::find($cartId); // or however you're retrieving it
+        if ($item->quantity > 1) {
+            $item->quantity--;
+            $item->save();
+        }
+
+        //CustomerServiceCart::find($cartId)->decrement('quantity');
     }
     public function cartSetUpQty($cartId){
         CustomerServiceCart::find($cartId)->increment('quantity');
