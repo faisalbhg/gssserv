@@ -1190,28 +1190,35 @@
             @if($showItemsSearchResults)
                 <div class="row">
                     @forelse($serviceItemsList as $servicesItem)
+                        <?php $itemPriceDetails = $servicesItem['priceDetails']; ?>
+                        <?php $itemDiscountDetails = $servicesItem['discountDetails']; ?>
+                        @if($itemPriceDetails->UnitPrice!=0)
                         <div class="col-md-4 col-sm-6">
                             <div class="card mt-2">
                                 <div class="card-header text-center p-2">
                                     <p class="font-weight-normal mt-2 text-capitalize text-sm- font-weight-bold mb-0">
-                                        {{strtolower($servicesItem->ItemName)}}<small>({{$servicesItem->ItemCode}})</small>
+                                        {{strtolower($itemPriceDetails->ItemName)}}<small>({{$itemPriceDetails->ItemCode}})</small>
                                     </p>
-                                    <h5 class="font-weight-bold mt-2" >
-                                        <small>AED</small>{{custom_round($servicesItem->UnitPrice)}}
+                                    <h5 class="font-weight-bold mt-2"  @if($itemDiscountDetails != null) style="text-decoration: line-through;" @endif>
+                                        <small>AED</small>{{custom_round($itemPriceDetails->UnitPrice)}}
                                     </h5>
-                                    
+                                    @if($itemDiscountDetails != null)
+                                    <h5 class="font-weight-bold mt-2">
+                                        <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ custom_round($itemPriceDetails->UnitPrice-(($itemDiscountDetails->DiscountPerc/100)*$itemPriceDetails->UnitPrice)) }}
+                                    </h5>
+                                    @endif
                                     <div class="ms-auto">
-                                        
-                                            <span class="badge bg-gradient-info">%off</span>
-                                        
+                                        @if(!empty($qlItemDiscountDetails))
+                                            <span class="badge bg-gradient-info">{{custom_round($qlItemDiscountDetails->DiscountPerc)}}%off</span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="card-body text-lg-left text-center p-2">
-                                    <input type="number" class="form-control w-30 float-start" placeholder="Qty" wire:model.defer="ql_item_qty.{{$servicesItem->ItemId}}" style="padding-left:5px !important;" />
-                                    <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$servicesItem->ItemCode}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                                    <input type="number" class="form-control w-30 float-start" placeholder="Qty" wire:model.defer="ql_item_qty.{{$itemPriceDetails->ItemId}}" style="padding-left:5px !important;" />
+                                    <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$itemPriceDetails->ItemCode}}','{{$itemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
                                     </a>
                                 </div>
-                                @if(@$serviceAddedMessgae[$servicesItem->ItemCode])
+                                @if(@$serviceAddedMessgae[$itemPriceDetails->ItemCode])
                                     <div class="text-center">
                                         <span class="alert-icon"><i class="ni ni-like-2 text-success"></i></span>
                                         <span class="alert-text text-success"><strong>Success!</strong> Added serves!</span>
@@ -1222,12 +1229,12 @@
                                 @endif
                             </div>
                         </div>
-                        
+                        @endif
                     @empty
                         <div class="alert alert-danger text-white" role="alert"><strong>Empty!</strong> The Searched items are not in stock!</div>
                     @endforelse
 
-                    <div class="float-end">{{$serviceItemsList->onEachSide(0)->links()}}</div>
+                    
                 </div>
             @endif
         @endif
