@@ -1982,8 +1982,9 @@ class CustomerServiceJob extends Component
             'package_number' => 'required',
         ]);
         $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
-        if($customerPackageInfo->payment_status==2){
-            if($customerPackageInfo->package_status==2){
+        //dd($customerPackageInfo);
+        if($customerPackageInfo->payment_status==1){
+            if($customerPackageInfo->package_status==1){
                 $mobileNumber = isset($customerPackageInfo->customerInfo['Mobile'])?'971'.substr($customerPackageInfo->customerInfo['Mobile'], -9):null;
                 $customerName = isset($customerPackageInfo->customerInfo['TenantName'])?$customerPackageInfo->customerInfo['TenantName']:null;
                 $otpPack = fake()->randomNumber(6);
