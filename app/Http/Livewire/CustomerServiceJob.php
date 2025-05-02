@@ -56,7 +56,7 @@ class CustomerServiceJob extends Component
     public $servicesGroupList, $service_group_id, $service_group_name, $service_group_code, $station, $section_service_search, $propertyCode, $selectedSectionName;
     public $selectServiceItems, $sectionsLists;
     public $serviceAddedMessgae=[],$cartItems = [], $cardShow=false, $ql_item_qty, $ceramic_dicount, $showManulDiscount=[],$manualDiscountInput;
-    public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $serviceItemsList=[];
+    public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $item_search_code, $serviceItemsList=[];
     public $quickLubeItemsList = [], $qlBrandsLists=[], $ql_search_brand, $ql_km_range, $ql_search_category, $itemQlCategories=[], $quickLubeItemSearch;
     public $customerGroupLists;
     public $selectedDiscount, $appliedDiscount=[], $showDiscountDroup=false, $discountSearch=true;
@@ -323,6 +323,10 @@ class CustomerServiceJob extends Component
                 if($this->item_search_name){
                     $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemName','like',"%{$this->item_search_name}%");
                 }
+                if($this->item_search_code){
+                    $inventoryItemMasterLists = $inventoryItemMasterLists->where('ItemCode','like',"%{$this->item_search_code}%");
+                }
+                
                 $inventoryItemMasterLists=$inventoryItemMasterLists->get();
                 $itemPriceLists = [];
                 foreach($inventoryItemMasterLists as $key => $itemMasterList)
@@ -564,7 +568,7 @@ class CustomerServiceJob extends Component
                 'customer_id'=>$this->customer_id,
                 'vehicle_id'=>$this->vehicle_id,
                 'station'=>auth()->user('user')['station_code'],
-                //'payment_status'=>1
+                'payment_status'=>1
             ])
             ->orderBy('id','DESC')->get();
             //dd($this->customerBookedPackages);
