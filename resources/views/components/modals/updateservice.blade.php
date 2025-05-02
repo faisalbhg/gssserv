@@ -100,7 +100,7 @@
                                                 <div class="col-md-12">
                                                     @if($jobcardDetails->payment_status==0)
                                                     <!-- <button type="button" wire:click="resendPaymentLink('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-success px-2">Re send Payment link</button> -->
-                                                    <a href="gsstations.ae/qr/{{$jobcardDetails->job_number}}" target="_blank"><button type="button" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button></a>
+                                                    <a href="https://gsstations.ae/qr/{{$jobcardDetails->job_number}}" target="_blank"><button type="button" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button></a>
                                                     @endif
                                                     
                                                 </div>
