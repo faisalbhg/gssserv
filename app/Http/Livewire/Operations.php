@@ -800,7 +800,6 @@ class Operations extends Component
 
     public function customerJobUpdate($job_number)
     {
-
         $getCountSalesJobStatus = CustomerJobCardServices::select(
             array(
                 \DB::raw('count(case when job_status = 0 then job_status end) new'),
@@ -810,7 +809,7 @@ class Operations extends Component
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
             )
         )->where(['job_number'=>$job_number])->first();
-        //dd($getCountSalesJobStatus);
+        
         if($getCountSalesJobStatus->working_progress>0){
             $mainSTatus=1;
         }
