@@ -287,7 +287,7 @@ class CustomerServiceJob extends Component
             $packageBookingServicesQuery = PackageBookingServices::with(['labourItemDetails'])->where([
                 'package_number'=>$this->package_number,
                 'division_code'=>auth()->user('user')['station_code'],
-                'payment_status'=>1
+                //'payment_status'=>1
             ])->get();
             $sectionServicePriceLists = [];
             foreach($packageBookingServicesQuery as $key => $packageServices)
@@ -1982,7 +1982,6 @@ class CustomerServiceJob extends Component
             'package_number' => 'required',
         ]);
         $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
-        //dd($customerPackageInfo);
         if($customerPackageInfo->payment_status==1){
             if($customerPackageInfo->package_status==1){
                 $mobileNumber = isset($customerPackageInfo->customer_mobile)?'971'.substr($customerPackageInfo->customer_mobile, -9):null;
@@ -1994,7 +1993,7 @@ class CustomerServiceJob extends Component
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 }
                 $this->showPackageOtpVerify=true;
-                session()->flash('package_success', 'Package is valid, '.$otpPack.' please enter the OTP shared in the registered mobile number..!');
+                session()->flash('package_success', 'Package is valid, Please enter the OTP shared in the registered mobile number..!');
             }
             else{
                 session()->flash('package_error', 'Package is invalid !');
@@ -2010,15 +2009,27 @@ class CustomerServiceJob extends Component
         $validatedData = $this->validate([
             'package_otp' => 'required',
         ]);
+        //dd(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp,'payment_status'=>1])->exists());
         if(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp,'payment_status'=>1])->exists())
         {
-            $this->openPackageDetailsVerify[$this->package_number]=true;
-            $this->showOpenPackageDetails=true;
-            $this->showPackageServiceSectionsList=true;
-            $this->showPackageOtpVerify=false;
-            $this->otpVerified=true;
-            $this->dispatchBrowserEvent('openServicesPackageListModal');
-
+            $packageInfoRed = PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp,'payment_status'=>1])->first();
+            //dd($packageInfoRed);
+            if($packageInfoRed->payment_status!=1){
+                $this->openPackageDetailsVerify[$this->package_number]=false;
+                $this->showPackageOtpVerify=true;
+                $this->otpVerified=false;
+                $this->otp_message='Package is not valied..!';
+                $this->dispatchBrowserEvent('scrollto', [
+                    'scrollToId' => 'packageOTPVerifyRow',
+                ]);
+            }else{
+                $this->openPackageDetailsVerify[$this->package_number]=true;
+                $this->showOpenPackageDetails=true;
+                $this->showPackageServiceSectionsList=true;
+                $this->showPackageOtpVerify=false;
+                $this->otpVerified=true;
+                $this->dispatchBrowserEvent('openServicesPackageListModal');
+            }
         }
         else
         {
