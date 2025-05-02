@@ -506,6 +506,10 @@ class SubmitCutomerServiceJob extends Component
                 $customerJobServiceData['package_code']=$cartData->package_code;
             }
 
+            if($cartData->cart_item_type==2){
+                $customerJobServiceData['job_status']=3;
+            }
+
             
             $total = $cartData->unit_price*$cartData->quantity;
             $totalAfterDisc = $total - $customerJobServiceDiscountAmount;

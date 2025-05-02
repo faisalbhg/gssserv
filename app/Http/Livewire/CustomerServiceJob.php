@@ -693,8 +693,7 @@ class CustomerServiceJob extends Component
 
     public function selectVehicle(){
         $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->first();
-        
-        
+
         $this->selectedCustomerVehicle=true;
 
         $this->showServiceGroup = true;
