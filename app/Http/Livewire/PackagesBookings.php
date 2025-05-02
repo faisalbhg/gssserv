@@ -174,7 +174,8 @@ class PackagesBookings extends Component
         $mobileNumber = isset($this->mobile)?'971'.substr($this->mobile, -9):null;
         $customerName = isset($this->name)?$this->name:null;
         if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
-            $msgtext = urlencode('Dear Customer, your GSS Service Contract OTP is '.$otpPack.'. It’s valid for 10 mins. Don’t share it. For help, call 800477823.');
+            $msgtext = urlencode('Dear Customer, your GSS package creation OTP is '.$otpPack.'. It’s valid for 10 mins. Don’t share it. For help, call 800477823.');
+
             $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
         }
         $this->showOtpVerify=true;
