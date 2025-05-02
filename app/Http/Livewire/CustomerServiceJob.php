@@ -1985,12 +1985,12 @@ class CustomerServiceJob extends Component
         //dd($customerPackageInfo);
         if($customerPackageInfo->payment_status==1){
             if($customerPackageInfo->package_status==1){
-                $mobileNumber = isset($customerPackageInfo->customerInfo['Mobile'])?'971'.substr($customerPackageInfo->customerInfo['Mobile'], -9):null;
-                $customerName = isset($customerPackageInfo->customerInfo['TenantName'])?$customerPackageInfo->customerInfo['TenantName']:null;
+                $mobileNumber = isset($customerPackageInfo->customer_mobile)?'971'.substr($customerPackageInfo->customer_mobile, -9):null;
+                $customerName = isset($customerPackageInfo->customer_name)?$customerPackageInfo->customer_name:null;
                 $otpPack = fake()->randomNumber(6);
                 PackageBookings::where(['package_number'=>$this->package_number])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
                 if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
-                    $msgtext = urlencode('Dear Customer, use OTP '.$otpPack.' to redeem your '.$this->package_number.'. Valid for 10 mins. Do not share it with anyone. For help, call 800477823');
+                    $msgtext = urlencode('Dear Customer, use OTP '.$otpPack.' to redeem your GSS Package:#'.$this->package_number.'. Valid for 10 mins. Do not share it with anyone. For help, call 800477823');
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 }
                 $this->showPackageOtpVerify=true;
@@ -2040,7 +2040,7 @@ class CustomerServiceJob extends Component
         $otpPack = fake()->randomNumber(6);
         PackageBookings::where(['package_number'=>$this->package_number])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);
         if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
-            $msgtext = urlencode('Dear Customer, use OTP '.$otpPack.' to redeem your '.$this->package_number.'. Valid for 10 mins. Do not share it with anyone. For help, call 800477823');
+            $msgtext = urlencode('Dear Customer, use OTP '.$otpPack.' to redeem your GSS Package: #'.$this->package_number.'. Valid for 10 mins. Do not share it with anyone. For help, call 800477823');
             $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
         }
         $this->showOtpVerify=true;

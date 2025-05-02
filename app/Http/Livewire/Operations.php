@@ -809,7 +809,8 @@ class Operations extends Component
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
             )
         )->where(['job_number'=>$job_number])->first();
-        
+        //dd($getCountSalesJobStatus);
+        $mainSTatus=1;
         if($getCountSalesJobStatus->working_progress>0){
             $mainSTatus=1;
         }
@@ -822,6 +823,7 @@ class Operations extends Component
         else if($getCountSalesJobStatus->delivered>0){
             $mainSTatus=4;
         }
+        
         $mianJobUpdate = [
             'job_status'=>$mainSTatus,
             'job_departent'=>$mainSTatus,
