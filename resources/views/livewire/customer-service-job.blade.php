@@ -823,13 +823,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="row d-none">
-                    <div class="col-md-8 col-sm-8">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                             <label for="seachByItemBrand">Items Name</label>
                             <input type="text" wire:model.defer="quickLubeItemSearch" name="" class="form-control">
                         </div>
                         @error('quickLubeItemSearch') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label for="seachByItemCode">Items Code</label>
+                            <input type="text" wire:model.defer="quickLubeItemCode" name="" id="seachByItemCode" class="form-control">
+                        </div>
+                        @error('quickLubeItemCode') <span class="text-danger">{{ $message }}</span> @enderror
                     </div>
                     <div class="col-md-4 col-sm-4">
                         <label></label>

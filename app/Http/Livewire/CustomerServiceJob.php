@@ -57,7 +57,7 @@ class CustomerServiceJob extends Component
     public $selectServiceItems, $sectionsLists;
     public $serviceAddedMessgae=[],$cartItems = [], $cardShow=false, $ql_item_qty, $ceramic_dicount, $showManulDiscount=[],$manualDiscountInput;
     public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $item_search_code, $serviceItemsList=[];
-    public $quickLubeItemsList = [], $qlBrandsLists=[], $ql_search_brand, $ql_km_range, $ql_search_category, $itemQlCategories=[], $quickLubeItemSearch;
+    public $quickLubeItemsList = [], $qlBrandsLists=[], $ql_search_brand, $ql_km_range, $ql_search_category, $itemQlCategories=[], $quickLubeItemSearch, $quickLubeItemCode;
     public $customerGroupLists;
     public $selectedDiscount, $appliedDiscount=[], $showDiscountDroup=false, $discountSearch=true;
     public $discount_card_imgae, $discount_card_number, $discount_card_validity;
@@ -286,8 +286,8 @@ class CustomerServiceJob extends Component
 
             $packageBookingServicesQuery = PackageBookingServices::with(['labourItemDetails'])->where([
                 'package_number'=>$this->package_number,
-                'division_code'=>auth()->user('user')['station_code']
-                //'payment_status'=>1
+                'division_code'=>auth()->user('user')['station_code'],
+                'payment_status'=>1
             ])->get();
             $sectionServicePriceLists = [];
             foreach($packageBookingServicesQuery as $key => $packageServices)
@@ -397,6 +397,9 @@ class CustomerServiceJob extends Component
                     }
                     if($this->quickLubeItemSearch){
                         $quickLubeItemsNormalList = $quickLubeItemsNormalList->where('ItemName','like',"%{$this->quickLubeItemSearch}%");
+                    }
+                    if($this->quickLubeItemCode){
+                        $quickLubeItemsNormalList = $quickLubeItemsNormalList->where('ItemCode','like',"%{$this->quickLubeItemCode}%");
                     }
 
                     $quickLubeItemsNormalList=$quickLubeItemsNormalList->get();
@@ -758,6 +761,7 @@ class CustomerServiceJob extends Component
         ]);
         $this->ql_km_range=$kmRange;
         $this->quickLubeItemSearch=null;
+        $this->quickLubeItemCode=null;
         $this->showQlItemSearch = true;
         $this->showQlItemsList = true;
         $this->showQlEngineOilItems=true;
@@ -776,16 +780,24 @@ class CustomerServiceJob extends Component
     }
 
     public function searchQuickLubeItem(){
-        $validatedData = $this->validate([
-            'quickLubeItemSearch' => 'required',
-        ]);
-        $this->ql_search_brand=null;
-        $this->ql_km_range=null;
-        $this->ql_search_category=null;
-        $this->showQlItemSearch = true;
-        $this->showQlItemsList = true;
-        $this->showQlEngineOilItems=true;
-        $this->showQlItemsOnly=false;
+        
+        if($this->quickLubeItemSearch==null && $this->quickLubeItemCode==null)
+        {
+            $validatedData = $this->validate([
+                'quickLubeItemSearch' => 'required',
+            ]);
+        }
+        else
+        {
+            $this->ql_search_brand=null;
+            $this->ql_km_range=null;
+            $this->ql_search_category=null;
+            $this->showQlItemSearch = true;
+            $this->showQlItemsList = true;
+            $this->showQlEngineOilItems=true;
+            $this->showQlItemsOnly=false;
+        }
+        
 
         
     }
@@ -1998,7 +2010,7 @@ class CustomerServiceJob extends Component
         $validatedData = $this->validate([
             'package_otp' => 'required',
         ]);
-        if(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp])->exists())
+        if(PackageBookings::where(['package_number'=>$this->package_number,'otp_code'=>$this->package_otp,'payment_status'=>1])->exists())
         {
             $this->openPackageDetailsVerify[$this->package_number]=true;
             $this->showOpenPackageDetails=true;
