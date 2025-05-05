@@ -644,7 +644,7 @@ class Operations extends Component
             $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
             $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
             if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
-                $msgtext = urlencode('Dear Customer, '.$this->jobcardDetails->plate_number.' is ready at '.auth()->user('user')->stationName['ShortName'].'. Please collect within 1 hr or Ɖ30/hr parking will apply. Thank you for choosing GSS. For help 800477823.');
+                $msgtext = urlencode('Dear Customer, '.$this->jobcardDetails->plate_number.' is ready at '.auth()->user('user')->stationName['ShortName'].'. Please collect within 1 hr or AED30/hr parking will apply. Thank you for choosing GSS. For help 800477823.');
                 $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             }
         }
@@ -903,7 +903,7 @@ class Operations extends Component
         {
             CustomerJobCards::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1]);
             if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
-                $msgtext = urlencode('Dear Customer, Payment of Ɖ '.$orderResponseAmount.' received. For Gate pass & invoice, please click the link: https://gsstations.ae/qr/'.$paymentResponse['order_response']['orderReference'].'. Call 800477823 for help');
+                $msgtext = urlencode('Dear Customer, Payment of AED '.$orderResponseAmount.' received. For Gate pass & invoice, please click the link: https://gsstations.ae/qr/'.$paymentResponse['order_response']['orderReference'].'. Call 800477823 for help');
 
                 $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             }

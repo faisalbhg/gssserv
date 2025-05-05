@@ -43,6 +43,7 @@ class VehicleSearchSave extends Component
 
     public function render()
     {
+        //dd(CustomerVehicle::where('plate_number_final','LIKE',"%AD AD%")->get());
         /*$pendingCustomersCartQuery = CustomerServiceCart::with(['customerInfo','vehicleInfo']);
         $pendingCustomersCartQuery = $pendingCustomersCartQuery->where(['created_by'=>auth()->user('user')['id']]);
         $this->pendingCustomersCart =  $pendingCustomersCartQuery->get();*/

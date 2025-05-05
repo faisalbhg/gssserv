@@ -289,8 +289,8 @@
             </div>
             <div class="row" id="serviceItemsListDiv">
                 <div class="col-md-12 col-sm-12">
-                    <button type="button" class="btn bg-gradient-secondary btn-tooltip opacity-5" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Quick Lube Section" data-container="body" data-animation="true" wire:click="selectSection(1)">Quick Lube</button>
-                    <button type="button" class="btn bg-gradient-secondary btn-tooltip opacity-5" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mechanical Section" data-container="body" data-animation="true" wire:click="selectSection(2)">Mechanical</button>
+                    <button type="button" class="btn @if($department_name=='Quick Lube') bg-gradient-primary opacity-10 @else bg-gradient-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Quick Lube Section" data-container="body" data-animation="true" wire:click="selectSection(1)">Quick Lube</button>
+                    <button type="button" class="btn @if($department_name=='Mechanical') bg-gradient-primary opacity-10 @else bg-gradient-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mechanical Section" data-container="body" data-animation="true" wire:click="selectSection(2)">Mechanical</button>
                     <div wire:loading wire:target="selectSection">
                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                             <div class="la-ball-beat">
