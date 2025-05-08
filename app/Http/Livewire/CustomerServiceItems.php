@@ -89,18 +89,7 @@ class CustomerServiceItems extends Component
     public function selectVehicle(){
         $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->first();
         
-        $results = CustomerDiscountGroup::select('customer_id', DB::raw('COUNT(*) as total'))
-        //->where('customer_id','!=',99) // condition
-        ->where('discount_id','=',9) // condition
-        ->groupBy('customer_id')           // group by the field to count duplicates
-        ->having(DB::raw('COUNT(*)'), '>', 1)      // optional: only get duplicates
-        ->get();
-        //dd($results);
-        foreach($results as $result){
-            $resultGroup = CustomerDiscountGroup::where(['customer_id'=>$result->customer_id,'discount_id'=>9])->get();
-            //dd($resultGroup);
-            CustomerDiscountGroup::where(['customer_id'=>$result->customer_id,'discount_id'=>9])->where('id','!=',$resultGroup[0]->id)->delete();
-        }
+        
 
         //dd(CustomerDiscountGroup::where(['discount_id'=>9,'customer_id'=>$this->customer_id, 'vehicle_id'=>$this->vehicle_id])->get());
         //dd($customers);
