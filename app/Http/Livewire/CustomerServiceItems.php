@@ -24,16 +24,19 @@ use App\Models\InventorySalesPrices;
 use App\Models\CustomerServiceCart;
 use App\Models\Development;
 use App\Models\Sections;
+use App\Models\LaborSalesPrices;
+use App\Models\LaborCustomerGroup;
+use App\Models\CustomerDiscountGroup;
 
 class CustomerServiceItems extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     public $customer_id, $vehicle_id, $job_number, $selected_section, $department_code, $department_name, $section_code, $section_name;
-    public $selectedCustomerVehicle=false, $showForms=false, $cardShow=false, $showItemsSearchResults=false;
+    public $selectedCustomerVehicle=false, $showForms=false, $cardShow=false, $showItemsSearchResults=false, $showLineDiscountItems=false;
     public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $item_search_code;
     public $serviceAddedMessgae=[],$cartItems = [], $cartItemCount, $ql_item_qty, $ceramic_dicount, $showManulDiscount=[],$manualDiscountInput;
-    public $confirming; 
+    public $confirming, $priceDiscountList, $itemDetails; 
 
     public function render()
     {
@@ -86,11 +89,24 @@ class CustomerServiceItems extends Component
     public function selectVehicle(){
         $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->first();
         
-        
-        $this->selectedCustomerVehicle=true;
+        $results = CustomerDiscountGroup::select('customer_id', DB::raw('COUNT(*) as total'))
+        //->where('customer_id','!=',99) // condition
+        ->where('discount_id','=',9) // condition
+        ->groupBy('customer_id')           // group by the field to count duplicates
+        ->having(DB::raw('COUNT(*)'), '>', 1)      // optional: only get duplicates
+        ->get();
+        //dd($results);
+        foreach($results as $result){
+            $resultGroup = CustomerDiscountGroup::where(['customer_id'=>$result->customer_id,'discount_id'=>9])->get();
+            //dd($resultGroup);
+            CustomerDiscountGroup::where(['customer_id'=>$result->customer_id,'discount_id'=>9])->where('id','!=',$resultGroup[0]->id)->delete();
+        }
 
+        //dd(CustomerDiscountGroup::where(['discount_id'=>9,'customer_id'=>$this->customer_id, 'vehicle_id'=>$this->vehicle_id])->get());
+        //dd($customers);
+
+        $this->selectedCustomerVehicle=true;
         $this->showServiceGroup = true;
-        
         $this->showVehicleAvailable = false;
         $this->selectedVehicleInfo=$customers;
 
@@ -125,6 +141,7 @@ class CustomerServiceItems extends Component
                 $departmentName = 'Quick Lube';
                 // code...
                 break;
+
             case '2':
                 $departmentName = 'Mechanical';
                 // code...
@@ -317,5 +334,55 @@ class CustomerServiceItems extends Component
         CustomerServiceCart::where(['customer_id'=>$this->customer_id, 'vehicle_id'=>$this->vehicle_id])->delete();
         
         session()->flash('cartsuccess', 'All Service Cart Clear Successfully !');
+    }
+
+    public function applyLineDiscount($item){
+        
+        //dd(LaborCustomerGroup::select(['Title','GroupType'])->where(['GroupType'=>14])->get());
+        $this->priceDiscountList=null;
+        if($item['cart_item_type']==1){
+            $inventorySalesPricesQuery = LaborSalesPrices::where([
+                'ServiceItemId'=>$item['item_id'],
+                //'CustomerGroupCode'=>$this->appliedDiscount['code']
+            ])->where('StartDate', '<=', Carbon::now());
+
+            $inventorySalesPricesQuery = $inventorySalesPricesQuery->with(['customerDiscountGroup'])->where(function ($query) {
+                $query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 4);
+                $query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 5);
+                $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
+            });
+            $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
+        }
+        else if($item['cart_item_type']==2){
+            $inventorySalesPricesQuery = InventorySalesPrices::where([
+                'ServiceItemId'=>$item['item_id'],
+                //'CustomerGroupCode'=>$this->appliedDiscount['code'],
+                'DivisionCode'=>auth()->user('user')['station_code'],
+            ]);
+            $inventorySalesPricesQuery = $inventorySalesPricesQuery->with(['customerDiscountGroup'])->where(function ($query) {
+                $query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 4);
+                $query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 5);
+                $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
+            });
+            $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
+        }
+        $this->itemDetails = $item;
+        $this->priceDiscountList = $inventorySalesPricesResult;
+        $this->showLineDiscountItems = true;
+        $this->dispatchBrowserEvent('showPriceDiscountList');
+    }
+
+    public function applyLineDiscountSubmit($itemDetails,$priceDiscount){
+        CustomerServiceCart::find($itemDetails)->update([
+            "price_id" => $priceDiscount['PriceID'],
+            "customer_group_id" => $priceDiscount['CustomerGroupId'],
+            "customer_group_code" => $priceDiscount['CustomerGroupCode'],
+            "min_price" => $priceDiscount['MinPrice'],
+            "max_price" => $priceDiscount['MaxPrice'],
+            "start_date" => $priceDiscount['StartDate'],
+            "end_date" => $priceDiscount['EndDate'],
+            "discount_perc" => $priceDiscount['DiscountPerc']
+        ]);
+        $this->dispatchBrowserEvent('closePriceDiscountList');
     }
 }

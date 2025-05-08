@@ -66,7 +66,7 @@
                                     <p class="mb-1"><b>Chaisis:</b> {{$selectedVehicleInfo['chassis_number']}}</p>
                                     @endif
                                     @if($selectedVehicleInfo['vehicle_km'])
-                                    <b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
+                                    <p class="mb-1"><b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
                                     @endif
                                     <div>
                                         <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Edit Customer/Discount/Vehicle" wire:click="editCustomer()">Edit Customer/Vehicle Other Service</button>
@@ -79,14 +79,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- @if(!empty($appliedDiscount))
-                                        <button class="btn bg-gradient-info text-white ms-0 py-1 px-3 m-0" wire:click.prevent="applyDiscountGroup()">Apply {{$appliedDiscount['code']}} Discount Group</button> 
-                                        <button type="button" wire:click="removeDiscount()" class="btn btn-danger btn-simple btn-lg mb-0 p-1">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                        </button>
-                                        @endif -->
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
@@ -97,7 +90,7 @@
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 my-2" id="cartDisplayId">
                     @if($cardShow)
                         <div class="card card-profile card-plain">
-                            <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Pricing Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
+                            <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Order Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
                             <div class="row">
                                 <div class="col-lg-8">
                                     <div class="card h-100">
@@ -112,13 +105,25 @@
                                                         <div class="d-flex flex-column">
                                                             <h6 class="mb-1 text-dark font-weight-bold text-sm">
                                                                 {{ $item->item_name }}
+                                                                <span class="text-xs">(#{{ $item->item_code }})</span>
+                                                                @if($item->extra_note)
+                                                                <br><span class="text-xs text-dark">Note: {{ $item->extra_note }}</span>
+                                                                @endif
                                                             </h6>
-                                                            <span class="text-xs">#{{ $item->item_code }}</span>
-                                                            @if($item->extra_note)
-                                                                <span class="text-xs text-dark">Note: {{ $item->extra_note }}</span>
-                                                            @endif
+                                                            
                                                             @if($item->customer_group_code)
                                                             <label wire:click.prevent="removeLineDiscount({{$item->id}})" class="badge bg-gradient-info cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
+                                                            @else
+                                                            <span><label wire:click.prevent="applyLineDiscount({{$item}})" class="badge bg-gradient-dark cursor-pointer">Apply Discount </label></span>
+                                                            <div wire:loading wire:target="applyLineDiscount">
+                                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                    <div class="la-ball-beat">
+                                                                        <div></div>
+                                                                        <div></div>
+                                                                        <div></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             @endif
 
                                                             @if($confirming===$item->id)
@@ -217,7 +222,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-12 ms-auto">
-                                    <h6 class="mb-3">Order Summary</h6>
+                                    <h6 class="mb-3">Price Summary</h6>
                                     <div class="d-flex justify-content-between">
                                         <span class="mb-2 text-sm">
                                         Product Price:
@@ -427,5 +432,167 @@
                 </div>
             @endif
         @endif
+
+        @if($showLineDiscountItems)
+            <!-- Modal -->
+            <style type="text/css">
+                .modal-body{
+                    max-height: calc(100vh - 300px);
+                    overflow-y: auto;
+                }
+            </style>
+            <div class="modal fade" id="showPriceDiscountListModal" tabindex="-1" role="dialog" aria-labelledby="showPriceDiscountListModalLabel" aria-hidden="true" wire:ignore.self style="z-index:99999;" >
+                <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:90%;">
+                    <div class="modal-content">
+                        
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="showPriceDiscountListModalLabel">{{$itemDetails['item_code']}} - {{$itemDetails['item_name']}}</h5>
+                        </div>
+                        <div class="modal-body py-0">
+                            @if(count($selectedVehicleInfo->customerDiscountLists)>0)
+                                <div class="row">
+                                    <h6><u>Saved Customer Discounts</u></h6>
+                                    @forelse($selectedVehicleInfo->customerDiscountLists as $customerDiscountLists)
+                                        <?php $end = \Carbon\Carbon::parse($customerDiscountLists->discount_card_validity);?>
+                                        @if($customerDiscountLists->discount_id==8 || $customerDiscountLists->discount_id==9)
+                                        <div class="col-lg-2 col-sm-3 my-2">
+                                            <div wire:click="savedCustomerDiscountGroup({{$customerDiscountLists}})" class="card cursor-pointer bg-gradient-info">
+                                                <div class="card-body  py-2">
+                                                    <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower($customerDiscountLists->discount_title)}}</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @elseif(\Carbon\Carbon::now()->diffInDays($end, false)>=0)
+                                        <div class="col-lg-2 col-sm-3 my-2">
+                                            <div wire:click="savedCustomerDiscountGroup({{$customerDiscountLists}})" class="card cursor-pointer bg-gradient-info">
+                                                <div class="card-body  py-2">
+                                                    <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower($customerDiscountLists->discount_title)}}</h6>
+                                                </div>
+                                            </div>
+                                            <small>Expired in: {{ $diff = Carbon\Carbon::parse($customerDiscountLists->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}</small>
+                                        </div>
+                                        @endif
+                                    @empty
+                                    @endforelse
+                                    <div wire:loading wire:target="savedCustomerDiscountGroup">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                            @endif
+                            <div class="row">
+                                @forelse($priceDiscountList as $priceDiscount)
+
+                                    @if($priceDiscount->customerDiscountGroup['GroupType'] == 1 && $priceDiscount->EndDate == null)
+                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
+                                            <div class="card card-profile mt-md-0 mt-5">
+                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
+                                                    <h4 class="mb-0">{{$priceDiscount->CustomerGroupCode}}</h4>
+                                                    <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
+                                                    <div class="row justify-content-center text-center">
+                                                        <div class="col-12 mx-auto">
+                                                            <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($itemDetails['unit_price'])}}</h4>
+                                                            <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($itemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$itemDetails['unit_price'])) }}</h5>
+                                                            
+                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$itemDetails['id']}}',{{$priceDiscount}})">Add Now</a>
+                                                            
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @elseif($priceDiscount->customerDiscountGroup['GroupType']==2)
+                                                            
+                                        <?php
+                                        $end = \Carbon\Carbon::parse($priceDiscount->EndDate);
+                                        $expired=false;
+                                        ?>
+                                        @if(\Carbon\Carbon::now()->diffInDays($end, false)>=0)
+                                            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
+                                                <div class="card card-profile mt-md-0 mt-5">
+                                                    <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
+                                                        <h4 class="mb-0">{{$priceDiscount->CustomerGroupCode}}</h4>
+                                                        <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
+                                                        <div class="row justify-content-center text-center">
+                                                            <div class="col-12 mx-auto">
+                                                                <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($itemDetails['unit_price'])}}</h4>
+                                                                <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($itemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$itemDetails['unit_price'])) }}</h5>
+                                                                
+                                                                <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$itemDetails['id']}}',{{$priceDiscount}})">Add Now</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                    @endif
+                                        
+                                @empty
+                                    <span class="text-danger text-center">Empty discount for this item..!</span>
+                                @endforelse
+                                <div wire:loading wire:target="addtoCart">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div wire:loading wire:target="addtoCartCP">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div wire:loading wire:target="applyLineDiscountSubmit">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div wire:loading wire:target="applyLineDiscountSubmit">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                            <!-- <button type="button" class="btn bg-gradient-primary">Save changes</button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 </main>
+
+<script type="text/javascript">
+    window.addEventListener('showPriceDiscountList',event=>{
+        $('#showPriceDiscountListModal').modal('show');
+    });
+    window.addEventListener('closePriceDiscountList',event=>{
+        $('#showPriceDiscountListModal').modal('hide');
+    });
+</script>
+

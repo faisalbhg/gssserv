@@ -12,5 +12,9 @@ class InventorySalesPrices extends Model
     protected $table = 'Inventory.SalesPrice';
     protected $primaryKey = 'PriceID';
 
+    public function customerDiscountGroup()
+    {
+        return $this->belongsTo(LaborCustomerGroup::class,'CustomerGroupId','Id');
+    }
 
 }

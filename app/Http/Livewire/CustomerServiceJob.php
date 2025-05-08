@@ -199,8 +199,12 @@ class CustomerServiceJob extends Component
             if($this->section_service_search){
                 $sectionServiceLists = $sectionServiceLists->where('ItemName','like',"%$this->section_service_search%");
             }
+
             $sectionServiceLists = $sectionServiceLists->orderBy('SortIndex','ASC')->get();
+            //dd($sectionServiceLists);
+
             $sectionServicePriceLists = [];
+
             foreach($sectionServiceLists as $key => $sectionServiceList)
             {
                 $sectionServicePriceLists[$key]['priceDetails'] = $sectionServiceList;
@@ -1352,7 +1356,7 @@ class CustomerServiceJob extends Component
         {
             if (!CustomerDiscountGroup::where([
                 'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->vehicle_id,
+                //'vehicle_id'=>$this->vehicle_id,
                 'discount_id'=>$this->selectedDiscount['id'],
             ])->exists())
             {
@@ -1484,7 +1488,7 @@ class CustomerServiceJob extends Component
         ]);
         $customerDiscountGroupQuery = CustomerDiscountGroup::where([
                 'customer_id'=>$this->customer_id,
-                'vehicle_id'=>$this->vehicle_id,
+                //'vehicle_id'=>$this->vehicle_id,
                 'discount_id'=>$this->selectedDiscount['id'],
                 'discount_card_number'=>$this->discount_card_number,
                 'is_active'=>1

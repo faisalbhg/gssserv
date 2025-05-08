@@ -10,4 +10,11 @@ class LaborSalesPrices extends Model
     use HasFactory;
 
     protected $table = 'Labor.SalesPrice';
+    protected $primaryKey = 'PriceID';
+    
+
+    public function customerDiscountGroup()
+    {
+        return $this->belongsTo(LaborCustomerGroup::class,'CustomerGroupId','Id');
+    }
 }
