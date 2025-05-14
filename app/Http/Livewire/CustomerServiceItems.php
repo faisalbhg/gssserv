@@ -89,10 +89,6 @@ class CustomerServiceItems extends Component
     public function selectVehicle(){
         $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->first();
         
-        
-
-        //dd(CustomerDiscountGroup::where(['discount_id'=>9,'customer_id'=>$this->customer_id, 'vehicle_id'=>$this->vehicle_id])->get());
-        //dd($customers);
 
         $this->selectedCustomerVehicle=true;
         $this->showServiceGroup = true;
