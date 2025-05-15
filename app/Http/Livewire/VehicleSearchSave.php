@@ -665,8 +665,8 @@ class VehicleSearchSave extends Component
         {
             $validateSaveVehicle['plate_country']='required';
             $validateSaveVehicle['plate_number']='required';
-            $validateSaveVehicle['plate_code']='required';
             if($this->plate_country=='AE'){
+                $validateSaveVehicle['plate_code']='required';
                 $validateSaveVehicle['plate_state']='required';
             }
             $validateSaveVehicle['vehicle_image'] = 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048';
