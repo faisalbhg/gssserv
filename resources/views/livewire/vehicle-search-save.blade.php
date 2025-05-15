@@ -248,7 +248,7 @@
                                     <div class="form-group openName">
                                         <label for="emailInput">Email</label>
                                         <input type="email" wire:model.defer="email" name="email" class="form-control @error('email') btn-outline-danger @enderror" id="emailInput" placeholder="Email">
-                                        
+                                        @error('email') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 d-none">

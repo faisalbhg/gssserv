@@ -545,12 +545,19 @@ class VehicleSearchSave extends Component
             $validateSaveVehicle['make'] = 'required';
             $validateSaveVehicle['model'] = 'required';
         }
-        //dd($validateSaveVehicle);
-        $validatedData = $this->validate($validateSaveVehicle);
+        
+        
 
         //Save Customer
         $insertCustmoerData['Mobile']=isset($this->mobile)?$this->mobile:'';
         $insertCustmoerData['TenantName']=isset($this->name)?$this->name:'Walk-In';
+        if($this->email!=null)
+        {
+            $validateSaveVehicle['email'] = 'required|email';
+            
+
+        }
+        $validatedData = $this->validate($validateSaveVehicle);
         $insertCustmoerData['Email']=isset($this->email)?$this->email:'';
         $insertCustmoerData['Active']=1;
         
