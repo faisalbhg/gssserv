@@ -337,6 +337,7 @@
                                         <option value="{{$plateCode->plateColorTitle}}">{{$plateCode->plateColorTitle}}</option>
                                         @endforeach
                                     </select>
+                                    @error('plate_code') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             @else
