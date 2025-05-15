@@ -120,6 +120,15 @@
                                     <input style="padding:0.5rem 0.3rem !important;" type="number" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="plate_number" name="plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Number">
                                 </div>
                             </div>
+                            <div class="col-md-4 col-sm-4">
+                                <div class="form-group">
+                                    <label for="plateNumber"></label>
+                                    <div class="form-check form-switch mt-1">
+                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" wire:model="numberPlateRequired">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">Plate Number Required</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         @if($showSearchByPlateNumberButton)
                             <div class="row">

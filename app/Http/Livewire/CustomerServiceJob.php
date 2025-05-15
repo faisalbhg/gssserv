@@ -75,7 +75,7 @@ class CustomerServiceJob extends Component
     public $customizedErrorMessage=[];
     public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
     public $showBundleList=false, $selectBundleMenu=false, $bundlleLists, $selectedBundles, $showBundleServiceSectionsList, $bundleServiceLists=[];
-    public $selectAdvanceCouponMenu=false, $showAdvanceCouponList=false, $showAdvanceCouponOtpVerify=false, $advance_coupon_number;
+    public $selectAdvanceCouponMenu=false, $showAdvanceCouponList=false, $showAdvanceCouponOtpVerify=false, $advance_coupon_number, $numberPlateRequired=true;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -1665,15 +1665,31 @@ class CustomerServiceJob extends Component
         $this->vehicle_km = $this->selectedVehicleInfo->vehicle_km;
     }
     public function updateVehicleCustomer(){
-        $validatedData = $this->validate([
-            'plate_country'=>'required',
-            'plate_state'=>'required',
-            'plate_code'=>'required',
-            'plate_number'=>'required',
-            'vehicle_type' => 'required',
-            'make' => 'required',
-            'model'=> 'required',
-        ]);
+        
+
+        if($this->numberPlateRequired)
+        {
+            $validateSaveVehicle['plate_country']='required';
+            $validateSaveVehicle['plate_number']='required';
+            if($this->plate_country=='AE'){
+                $validateSaveVehicle['plate_code']='required';
+                $validateSaveVehicle['plate_state']='required';
+            }
+            //$validateSaveVehicle['vehicle_image'] = 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048';
+            $validateSaveVehicle['vehicle_type'] = 'required';
+            $validateSaveVehicle['make'] = 'required';
+            $validateSaveVehicle['model'] = 'required';
+        }
+        else
+        {
+            //$validateSaveVehicle['vehicle_image'] = 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048';
+            $validateSaveVehicle['vehicle_type'] = 'required';
+            $validateSaveVehicle['make'] = 'required';
+            $validateSaveVehicle['model'] = 'required';
+        }
+        $validatedData = $this->validate($validateSaveVehicle);
+
+
 
         if($this->customer_code){
             $tenantcode = $this->customer_code;
@@ -1792,15 +1808,28 @@ class CustomerServiceJob extends Component
 
     public function addNewCustomerVehicle(){
         
-        $validatedData = $this->validate([
-            'plate_country'=>'required',
-            'plate_state'=>'required',
-            'plate_code'=>'required',
-            'plate_number'=>'required',
-            'vehicle_type' => 'required',
-            'make' => 'required',
-            'model'=> 'required',
-        ]);
+        
+        if($this->numberPlateRequired)
+        {
+            $validateSaveVehicle['plate_country']='required';
+            $validateSaveVehicle['plate_number']='required';
+            if($this->plate_country=='AE'){
+                $validateSaveVehicle['plate_code']='required';
+                $validateSaveVehicle['plate_state']='required';
+            }
+            //$validateSaveVehicle['vehicle_image'] = 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048';
+            $validateSaveVehicle['vehicle_type'] = 'required';
+            $validateSaveVehicle['make'] = 'required';
+            $validateSaveVehicle['model'] = 'required';
+        }
+        else
+        {
+            //$validateSaveVehicle['vehicle_image'] = 'required|image|mimes:jpg,jpeg,png,svg,gif,webp|max:10048';
+            $validateSaveVehicle['vehicle_type'] = 'required';
+            $validateSaveVehicle['make'] = 'required';
+            $validateSaveVehicle['model'] = 'required';
+        }
+        $validatedData = $this->validate($validateSaveVehicle);
 
         
         if($this->vehicle_image)
