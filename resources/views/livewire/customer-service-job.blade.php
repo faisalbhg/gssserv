@@ -462,6 +462,10 @@
                                                             <h6 class="mb-1 text-dark font-weight-bold text-sm">
                                                                 {{ $item->item_name }}
                                                             </h6>
+                                                            @if($item->isWarranty)
+                                                            <div><span class="badge bg-gradient-primary">{{$item->warrantyPeriod}} Months Warranty</span></div>
+                                                            @endif
+
                                                             <span class="text-xs">#{{ $item->item_code }}</span>
                                                             @if($item->extra_note)
                                                                 <span class="text-xs text-dark">Note: {{ $item->extra_note }}</span>

@@ -445,10 +445,10 @@
                 <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:90%;">
                     <div class="modal-content">
                         
-                        <div class="modal-header">
+                        <div class="modal-header" id="topScrolledPlace">
                             <h5 class="modal-title" id="showPriceDiscountListModalLabel">{{$itemDetails['item_code']}} - {{$itemDetails['item_name']}}</h5>
                         </div>
-                        <div class="modal-body py-0">
+                        <div class="modal-body py-0" id="scrollToDiscountTop" >
                             @if(count($selectedVehicleInfo->customerDiscountLists)>0)
                                 <div class="row">
                                     <h6><u>Saved Customer Discounts</u></h6>
@@ -486,6 +486,154 @@
                                 </div>
                                 <hr>
                             @endif
+                            @if($showSelectedDiscount)
+                            <div class="card  h-100 cursor-pointer">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-4 my-2">
+                                            <button type="button" class="btn bg-gradient-primary" >{{str_replace("_"," ",strtolower($selectedDiscount['title']))}}</button>
+                                        </div>
+                                        <div class="col-lg-10 col-sm-8 text-center" >
+                                            @if($searchStaffId)
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="employeeId">Employee Id</label>
+                                                        <input type="text" class="form-control" wire:model="employeeId" id="employeeId" placeholder="Staff/Employee Id">
+                                                        @error('employeeId') <span class="text-danger">{{ $message }}</span> @enderror
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-md-12">
+                                                    <button type="button" class="btn bg-gradient-primary" wire:click="checkStaffDiscountGroup()">Check Employee</button>
+                                                    <div wire:loading wire:target="checkStaffDiscountGroup">
+                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                            <div class="la-ball-beat">
+                                                                <div></div>
+                                                                <div></div>
+                                                                <div></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
+                                            @if($discountCardApplyForm)
+                                            <div class="row mb-0">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="discountCardImgae">Discount Card Imgae</label>
+                                                        <input type="file" class="form-control" wire:model.defer="discount_card_imgae">
+                                                        @error('discount_card_imgae') <span class="text-danger">{{ $message }}</span> @enderror
+                                                        @if ($discount_card_imgae)
+                                                        <img class="img-fluid border-radius-lg w-30" src="{{ $discount_card_imgae->temporaryUrl() }}">
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="discountCardNumber">Discount Card Number</label>
+                                                        <input type="text" class="form-control" wire:model="discount_card_number" placeholder="Discount Card Number">
+                                                        @error('discount_card_number') <span class="text-danger">{{ $message }}</span> @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="discountCardValidity">Discount Card Validity</label>
+                                                        <input type="date" class="form-control" id="discountCardValidity" wire:model="discount_card_validity" name="discountCardValidity" placeholder="Discount Card Validity" min="<?php echo date("Y-m-d"); ?>">
+                                                        @error('discount_card_validity') <span class="text-danger">{{ $message }}</span> @enderror
+                                                    </div>
+                                                </div>
+                                            
+                                                <div class="col-md-12">
+                
+                                                    <button type="button" class="btn bg-gradient-dark cursor-pointer " wire:click="clickDiscountGroup()" formmethod="">Back</button>
+                                                    <button type="button" class="btn bg-gradient-primary " wire:click="saveSelectedDiscountGroup()">Save changes</button>
+                                                    <div wire:loading wire:target="clickDiscountGroup">
+                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                            <div class="la-ball-beat">
+                                                                <div></div>
+                                                                <div></div>
+                                                                <div></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div wire:loading wire:target="saveSelectedDiscountGroup">
+                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                            <div class="la-ball-beat">
+                                                                <div></div>
+                                                                <div></div>
+                                                                <div></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
+                                            @if($engineOilDiscountForm)
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 my-2">
+                                                        <div wire:click="selectEngineOilDiscount(10)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                            <div class="card-body z-index-2 py-2">
+                                                                <h2 class="text-white">10%</h2>
+                                                                <p class="text-white">
+                                                                10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                            </div>
+                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 my-2">
+                                                        <div wire:click="selectEngineOilDiscount(15)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                            <div class="card-body z-index-2 py-2">
+                                                                <h2 class="text-white">15%</h2>
+                                                                <p class="text-white">
+                                                                15% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                            </div>
+                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 my-2">
+                                                        <div wire:click="selectEngineOilDiscount(20)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                            <div class="card-body z-index-2 py-2">
+                                                                <h2 class="text-white">20%</h2>
+                                                                <p class="text-white">
+                                                                20% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                            </div>
+                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 my-2">
+                                                        <div wire:click="selectEngineOilDiscount(25)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                                                            <div class="card-body z-index-2 py-2">
+                                                                <h2 class="text-white">25%</h2>
+                                                                <p class="text-white">
+                                                                25% Discount on Special Selected Engine Oil & Selected Wash Service</p>
+                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
+                                                            </div>
+                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div wire:loading wire:target="selectEngineOilDiscount">
+                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                        <div class="la-ball-beat">
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                 </div>
+                             </div>
+                            @endif
+                            
                             <div class="row">
                                 @forelse($priceDiscountList as $priceDiscount)
 
@@ -500,7 +648,7 @@
                                                             <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($itemDetails['unit_price'])}}</h4>
                                                             <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($itemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$itemDetails['unit_price'])) }}</h5>
                                                             
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$itemDetails['id']}}',{{$priceDiscount}})">Add Now</a>
+                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$itemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
                                                             
                                                                 
                                                         </div>
@@ -538,6 +686,39 @@
                                 @empty
                                     <span class="text-danger text-center">Empty discount for this item..!</span>
                                 @endforelse
+                                @if($itemDetails['cart_item_type']==1)
+                                    @if(in_array($itemDetails['item_code'],config('global.engine_oil_discount_voucher')['services']))
+                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
+                                            <div class="card card-profile mt-md-0 mt-5">
+                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
+                                                    <h4 class="mb-0">ENGINE_OIL</h4>
+                                                    <span class="badge bg-gradient-info">10%, 15%, 20%, 25% off</span>
+                                                    <div class="row justify-content-center text-center">
+                                                        <div class="col-12 mx-auto">
+                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyEngineOilLineDiscountSubmit('{{$itemDetails['id']}}','{{$itemDetails['item_code']}}')">Add Now</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @else
+                                    @if(in_array($itemDetails['item_code'],config('global.engine_oil_discount_voucher')['items']))
+                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
+                                            <div class="card card-profile mt-md-0 mt-5">
+                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
+                                                    <h4 class="mb-0">ENGINE_OIL</h4>
+                                                    <span class="badge bg-gradient-info">10%, 15%, 20%, 25% off</span>
+                                                    <div class="row justify-content-center text-center">
+                                                        <div class="col-12 mx-auto">
+                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyEngineOilLineDiscountSubmit('{{$itemDetails['id']}}','{{$itemDetails['item_code']}}')">Add Now</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endif
                                 <div wire:loading wire:target="addtoCart">
                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                         <div class="la-ball-beat">
@@ -575,6 +756,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button id="scrollTopBtn">Scroll to Top</button>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
@@ -594,5 +776,41 @@
     window.addEventListener('closePriceDiscountList',event=>{
         $('#showPriceDiscountListModal').modal('hide');
     });
+
+    window.addEventListener('scrolltoInModal',event=>{
+        $(document).ready(function(){
+            $('#showPriceDiscountListModal').fadeIn(300, function() {
+                let $modalContent = $('.modal-content');
+                let $target = $('#'+event.detail.scrollToId);
+
+                // Scroll modal content to the target element
+               /* $modalContent.animate({
+                scrollTop: $target.offset().top - $modalContent.offset().top + $modalContent.scrollTop()
+                }, 600);*/
+
+                $target.offset().top - $modalContent.offset().top + $modalContent.scrollTop();
+            });
+        });
+    });
+    window.addEventListener('scrolltoInModalTopNew',event=>{
+        $(document).ready(function(){
+            $('#showPriceDiscountListModal').on('shown.bs.modal', function (event) {
+            
+            // reset the scroll to top
+            $('#showPriceDiscountListModal .modal-body').scrollTop(0);
+            
+            // get the section using data
+            var section = $(event.relatedTarget).data('section');
+            
+            // get the top of the section
+            var sectionOffset = $('#topScrolledPlace').offset().top - 100;
+            
+            //scroll the container
+            $('#myModal .modal-body').animate({
+             scrollTop: sectionOffset}, "slow");
+            });
+        });
+    });
+
 </script>
 

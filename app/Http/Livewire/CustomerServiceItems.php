@@ -36,7 +36,12 @@ class CustomerServiceItems extends Component
     public $selectedCustomerVehicle=false, $showForms=false, $cardShow=false, $showItemsSearchResults=false, $showLineDiscountItems=false;
     public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $item_search_code;
     public $serviceAddedMessgae=[],$cartItems = [], $cartItemCount, $ql_item_qty, $ceramic_dicount, $showManulDiscount=[],$manualDiscountInput;
-    public $confirming, $priceDiscountList, $itemDetails; 
+    public $confirming, $priceDiscountList, $itemDetails;
+    public $showSelectedDiscount=false,$selectedDiscount, $appliedDiscount, $discountForm=false; 
+    public $customerSelectedDiscountGroup, $employeeId, $searchStaffId=false, $staffavailable;
+    public $discount_card_imgae, $discount_card_number, $discount_card_validity;
+    public $discountCardApplyForm=false, $engineOilDiscountForm=false;
+    public $engineOilDiscountPercentage, $customerDiscontGroupId, $customerDiscontGroupCode;
 
     public function render()
     {
@@ -323,7 +328,7 @@ class CustomerServiceItems extends Component
 
     public function applyLineDiscount($item){
         
-        //dd(LaborCustomerGroup::select(['Title','GroupType'])->where(['GroupType'=>14])->get());
+        //dd(LaborSalesPrices::where(['ServiceItemId'=>$item['item_id']])->get());
         $this->priceDiscountList=null;
         if($item['cart_item_type']==1){
             $inventorySalesPricesQuery = LaborSalesPrices::where([
@@ -352,13 +357,68 @@ class CustomerServiceItems extends Component
             $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
         }
         $this->itemDetails = $item;
+        //dd($inventorySalesPricesResult);
         $this->priceDiscountList = $inventorySalesPricesResult;
         $this->showLineDiscountItems = true;
         $this->dispatchBrowserEvent('showPriceDiscountList');
+        $this->dispatchBrowserEvent('scrolltoInModalTopNew');
     }
 
-    public function applyLineDiscountSubmit($itemDetails,$priceDiscount){
-        CustomerServiceCart::find($itemDetails)->update([
+    public function applyLineDiscountSubmit($itemDetails,$priceDiscount,$discountGroup){
+        
+        $this->selectedDiscount = [
+            'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
+            'code'=>$discountGroup['Code'],
+            'title'=>$discountGroup['Title'],
+            'id'=>$discountGroup['Id'],
+            'groupType'=>$discountGroup['GroupType'],
+        ];
+        $this->showSelectedDiscount=true;
+        if($discountGroup['GroupType']==2 || $discountGroup['GroupType']==6 )
+        {
+            $this->applyDIsountinItemService($itemDetails);
+
+            //$this->appliedDiscount = $this->selectedDiscount;
+        }
+        else{
+            $this->discountForm=true;
+            if($discountGroup['Id']==8 || $discountGroup['Id']==9){
+                $this->searchStaffId=true;
+                $this->discountCardApplyForm=false;
+                $this->engineOilDiscountForm=false;
+                $this->dispatchBrowserEvent('scrolltoInModal', [
+                    'scrollToId' => 'discountTop',
+                ]);
+            }
+            else if($discountGroup['Id']==41)
+            {
+                if(auth()->user('user')['station_id']!=1){
+                    $this->engineOilDiscountForm=true;
+                    $this->discountCardApplyForm=false;
+                    $this->searchStaffId=false;
+                    $this->dispatchBrowserEvent('scrolltoInModal', [
+                        'scrollToId' => 'discountTop',
+                    ]);
+                }
+                else
+                {
+                    $this->staffavailable="Discount Not Available..!";
+                }
+            }
+            else
+            {
+                $this->discountCardApplyForm=true;
+                $this->searchStaffId=false;
+                $this->engineOilDiscountForm=false;
+                $this->dispatchBrowserEvent('scrolltoInModal', [
+                    'scrollToId' => 'discountTop',
+                ]);
+            }
+        }
+
+        //dd($discountGroup);
+
+        /*CustomerServiceCart::find($itemDetails)->update([
             "price_id" => $priceDiscount['PriceID'],
             "customer_group_id" => $priceDiscount['CustomerGroupId'],
             "customer_group_code" => $priceDiscount['CustomerGroupCode'],
@@ -367,7 +427,227 @@ class CustomerServiceItems extends Component
             "start_date" => $priceDiscount['StartDate'],
             "end_date" => $priceDiscount['EndDate'],
             "discount_perc" => $priceDiscount['DiscountPerc']
+        ]);*/
+        //$this->dispatchBrowserEvent('closePriceDiscountList');
+    }
+
+    public function applyEngineOilLineDiscountSubmit($item_id){
+        $discountGroup = [
+            "Id" => "41",
+            "Code" => "ENGINE_OIL",
+            "Title" => "ENGINE OIL",
+            "Active" => "1",
+            "GroupType" => "3",
+            "UnitId" => null,
+            "DiscountCard" => null
+        ];
+        $this->selectedDiscount = [
+            'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
+            'code'=>$discountGroup['Code'],
+            'title'=>$discountGroup['Title'],
+            'id'=>$discountGroup['Id'],
+            'groupType'=>$discountGroup['GroupType'],
+        ];
+        $this->showSelectedDiscount=true;
+        if($discountGroup['Id']==41)
+        {
+            if(auth()->user('user')['station_id']!=1){
+                $this->engineOilDiscountForm=true;
+                $this->discountCardApplyForm=false;
+                $this->searchStaffId=false;
+                
+            }
+            else
+            {
+                $this->staffavailable="Discount Not Available..!";
+            }
+        }
+
+        $this->dispatchBrowserEvent('scrolltoInModal', [
+            'scrollToId' => 'scrollToDiscountTop',
         ]);
+    }
+
+    public function applyDIsountinItemService(){
+
+    }
+
+    public function selectDiscountGroup($discountGroup){
+        $this->selectedDiscount = [
+            'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
+            'code'=>$discountGroup['Code'],
+            'title'=>$discountGroup['Title'],
+            'id'=>$discountGroup['Id'],
+            'groupType'=>$discountGroup['GroupType'],
+        ];
+        if($discountGroup['GroupType']==2 || $discountGroup['GroupType']==6 )
+        {
+
+            $this->discountCardApplyForm=false;
+            $this->discountForm=false;
+            $this->appliedDiscount = $this->selectedDiscount;
+            //$this->applyDiscountOnCart();
+            //$this->applyItemToTempCart();
+            //$this->dispatchBrowserEvent('closeDiscountGroupModal');
+        }
+        else
+        {
+            $this->discountSearch=false;
+            $this->discountForm=true;
+            
+            if($discountGroup['Id']==8 || $discountGroup['Id']==9){
+                $this->searchStaffId=true;
+                $this->discountCardApplyForm=false;
+                $this->engineOilDiscountForm=false;
+            }
+            else if($discountGroup['Id']==41)
+            {
+                if(auth()->user('user')['station_id']!=1){
+                    $this->engineOilDiscountForm=true;
+                    $this->discountCardApplyForm=false;
+                    $this->searchStaffId=false;
+                }
+                else
+                {
+                    $this->staffavailable="Discount Not Available..!";
+                }
+            }
+            else
+            {
+                $this->discountCardApplyForm=true;
+                $this->searchStaffId=false;
+                $this->engineOilDiscountForm=false;
+            }
+        }
+    }
+
+    public function checkStaffDiscountGroup(){
+        $proceeddisctount=false;
+        $validatedData = $this->validate([
+             'employeeId' => 'required',
+        ]);
+        $this->employeeId = sprintf('%06d', $this->employeeId);
+        
+        //Call Procedure for Customer Staff ID Check
+        $customerStaffIdCheck = DB::select('EXEC GetEmployee @employee_code = "'.$this->employeeId.'"', [
+            $this->employeeId,
+        ]); 
+        
+        if($customerStaffIdCheck)
+        {
+            if (!CustomerDiscountGroup::where([
+                'customer_id'=>$this->customer_id,
+                //'vehicle_id'=>$this->vehicle_id,
+                'discount_id'=>$this->selectedDiscount['id'],
+            ])->exists())
+            {
+                $customerStaffIdResult = (array)$customerStaffIdCheck[0];
+                $customerDiscontGroupInfo = [
+                    'customer_id'=>$this->customer_id,
+                    'vehicle_id'=>$this->vehicle_id,
+                    'discount_id'=>$this->selectedDiscount['id'],
+                    'discount_unit_id'=>$this->selectedDiscount['unitId'],
+                    'discount_code'=>$this->selectedDiscount['code'],
+                    'discount_title'=>$this->selectedDiscount['title'],
+                    'employee_code'=>$customerStaffIdResult['employee_code'],
+                    'employee_name'=>$customerStaffIdResult['Name'],
+                    'groupType'=>$this->selectedDiscount['groupType'],
+                    'is_active'=>1,
+                    'is_default'=>1,
+                    'created_at'=>Carbon::now(),
+                ];
+                
+                $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
+            }
+            else
+            {
+
+                $customerDiscontGroup = CustomerDiscountGroup::where([
+                    'customer_id'=>$this->customer_id,
+                    'vehicle_id'=>$this->vehicle_id,
+                    'discount_id'=>$this->selectedDiscount['id']
+                ])->first();
+            }
+            
+            
+            $this->appliedDiscount = $this->selectedDiscount;
+            //$this->applyDiscountOnCart();
+            //$this->dispatchBrowserEvent('closeDiscountGroupModal');
+        }
+        else
+        {
+            $this->staffavailable="Employee does not exist..!";
+        }
+
+    }
+
+    public function clickDiscountGroup(){
+        $this->selectedDiscount=null;
+        $this->discountCardApplyForm=false;
+        
+    }
+
+    public function selectEngineOilDiscount($percentage){
+        
+        $this->discountCardApplyForm=false;
+        $this->discountForm=false;
+        $this->appliedDiscount = $this->selectedDiscount;
+
+        $this->engineOilDiscountPercentage=$percentage;
+        $this->customerDiscontGroupId = $this->selectedDiscount['id'];
+        $this->customerDiscontGroupCode = $this->selectedDiscount['code'];
+        $this->applyEngineOilDiscount();
+        
+        $this->dispatchBrowserEvent('closeDiscountGroupModal');
+    }
+
+    public function applyEngineOilDiscount(){
+        foreach($this->cartItems as $items)
+        {
+            if($items->cart_item_type==1){
+                if(in_array($items->item_code,config('global.engine_oil_discount_voucher')['services']))
+                {
+                    $discountSalePrice= $this->engineOilDiscountPercentage;
+                }
+                else
+                {
+                    $discountSalePrice= null;
+                }
+                
+
+            }
+            else if($items->cart_item_type==2)
+            {
+                if(in_array($items->item_code,config('global.engine_oil_discount_voucher')['items']))
+                {
+                    if($items->customer_group_code != 'MOBIL4+1'){
+                        $discountSalePrice= $this->engineOilDiscountPercentage;
+                    }
+                    else
+                    {
+                        $discountSalePrice= null;
+                    }
+                    
+                }
+                else
+                {
+                    $discountSalePrice= null;
+                }
+            }
+
+            if($discountSalePrice){
+                //$cartUpdate['price_id']=$discountSalePrice->PriceID;
+                $cartUpdate['customer_group_id']=$this->customerDiscontGroupId;
+                $cartUpdate['customer_group_code']=$this->customerDiscontGroupCode;
+                //$cartUpdate['min_price']=$discountSalePrice->MinPrice;
+                //$cartUpdate['max_price']=$discountSalePrice->MaxPrice;
+                //$cartUpdate['start_date']=$discountSalePrice->StartDate;
+                //$cartUpdate['end_date']=$discountSalePrice->EndDate;
+                $cartUpdate['discount_perc']=$discountSalePrice;
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$items->id])->update($cartUpdate);
+            }
+        }
+
         $this->dispatchBrowserEvent('closePriceDiscountList');
     }
 }

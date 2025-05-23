@@ -528,6 +528,16 @@ class SubmitCutomerServiceJob extends Component
             $customerJobServiceData['vat']=$tax;
             $customerJobServiceData['grand_total']=$grand_total;
 
+
+            //Warewnty
+            if($cartData->isWarranty){
+                $customerJobServiceData['iswarranty'] = $cartData->isWarranty;
+                $customerJobServiceData['warrantyperiod'] = $cartData->warrantyPeriod;
+                $customerJobServiceData['warrantyTerms'] = $cartData->warrantyTerms;
+                $customerJobServiceData['warranty_start'] = Carbon::now()->format('Y-m-d H:i:s');
+                $customerJobServiceData['warranty_ends'] = Carbon::now()->addMonths($cartData->warrantyPeriod)->format('Y-m-d H:i:s');
+            }
+
             if($job_update==true){
                 $customerJobServiceData['updated_by']=auth()->user('user')->id;
                 $customerJobServiceQuery = CustomerJobCardServices::where([

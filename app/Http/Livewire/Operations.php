@@ -117,6 +117,7 @@ class Operations extends Component
 
     public function render()
     {
+        //dd(JobcardChecklistEntries::where(['job_number'=>'JOB-GBD-00006890'])->limit(1)->get());
         
         /*dd(CustomerVehicle::where('ceramic_wash_discount_count','>',0)->get());
         $ceramicJobNumber = [];

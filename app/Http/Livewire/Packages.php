@@ -56,7 +56,7 @@ class Packages extends Component
         if($this->search_package_number)
         {
             $customerPackage = $customerPackage->where('package_number', 'like', "%{$this->search_package_number}%");
-            $getCountSalesPackage = $getCountSalesPackage->where('job_number', 'like', "%{$this->search_package_number}%");
+            $getCountSalesPackage = $getCountSalesPackage->where('package_number', 'like', "%{$this->search_package_number}%");
         }
         if($this->search_package_date){
             $customerPackage = $customerPackage->whereBetween('package_date_time', [$this->search_package_date." 00:00:00",$this->search_package_date." 23:59:59"]);

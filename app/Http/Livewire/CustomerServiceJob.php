@@ -887,6 +887,12 @@ class CustomerServiceJob extends Component
                     'created_by'=>auth()->user('user')['id'],
                     'created_at'=>Carbon::now(),
                 ];
+                if($servicePrice['IsWarranty'])
+                {
+                   $cartInsert['isWarranty'] = $servicePrice['IsWarranty'];
+                   $cartInsert['warrantyPeriod'] = $servicePrice['WarrantyPeriod'];
+                   $cartInsert['warrantyTerms'] = $servicePrice['WarrantyTerms'];
+                }
                 if($this->extra_note!=null){
                    $cartInsert['extra_note']=isset($this->extra_note[$servicePrice['ItemId']])?$this->extra_note[$servicePrice['ItemId']]:null; 
                 }
@@ -1292,6 +1298,7 @@ class CustomerServiceJob extends Component
 
 
     public function selectDiscountGroup($discountGroup){
+        //dd($discountGroup);
         $this->selectedDiscount = [
             'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
             'code'=>$discountGroup['Code'],
