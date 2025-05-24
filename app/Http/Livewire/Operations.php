@@ -118,6 +118,8 @@ class Operations extends Component
     public function render()
     {
         //dd(JobcardChecklistEntries::where(['job_number'=>'JOB-GBD-00006890'])->limit(1)->get());
+        //JOB-GWQ-00009383
+        //dd(CustomerJobCardServices::where(['job_number'=>'JOB-GWQ-00009383'])->get());
         
         /*dd(CustomerVehicle::where('ceramic_wash_discount_count','>',0)->get());
         $ceramicJobNumber = [];
@@ -1524,6 +1526,7 @@ class Operations extends Component
 
     public function addNewServiceItemsJob($job_number){
         //dd($this->jobcardDetails->customerJobServices);
+        CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'job_number'=>$job_number])->delete();
         foreach($this->jobcardDetails->customerJobServices as $customerJobServices){
             $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'item_id'=>$customerJobServices->item_id,'job_number'=>$job_number]);
             if($customerBasketCheck->count()==0)
@@ -1599,9 +1602,10 @@ class Operations extends Component
                     $cartInsert['discount_perc']=$customerJobServices->discount_percentage;
 
                     CustomerServiceCart::insert($cartInsert);
-                }else
+                }
+                else
                 {
-                    $customerBasketCheck->increment('quantity', 1);
+                    //$customerBasketCheck->increment('quantity', 1);
                 }
             }
         }

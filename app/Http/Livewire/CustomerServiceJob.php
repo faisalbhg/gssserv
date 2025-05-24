@@ -624,11 +624,13 @@ class CustomerServiceJob extends Component
                 $packageFinished=false;
             }
         }
+        //dd($packBookd);
         if($packageFinished==false)
         {
             $this->package_number= $packBookd['package_number'];
             $this->package_code= $packBookd['package_code'];
             $mobileNumber = isset($packBookd['customer_mobile'])?'971'.substr($packBookd['customer_mobile'], -9):null;
+            //$mobileNumber = '971566993709';
             $customerName = isset($packBookd['customer_name'])?$packBookd['customer_name']:null;
             $otpPack = fake()->randomNumber(6);
             PackageBookings::where(['package_number'=>$packBookd['package_number']])->update(['otp_code'=>$otpPack,'otp_verify'=>0]);

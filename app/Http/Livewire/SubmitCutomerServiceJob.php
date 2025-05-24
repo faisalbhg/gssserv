@@ -328,6 +328,7 @@ class SubmitCutomerServiceJob extends Component
         if($this->job_number)
         {
             $customerjobData['updated_by']=auth()->user('user')->id;
+            //dd($customerjobData);
             CustomerJobCards::where(['job_number'=>$this->job_number])->update($customerjobData);
             
 

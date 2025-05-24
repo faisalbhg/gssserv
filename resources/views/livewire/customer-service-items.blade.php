@@ -634,6 +634,7 @@
                              </div>
                             @endif
                             
+                            @if(empty($selectedDiscount))
                             <div class="row">
                                 @forelse($priceDiscountList as $priceDiscount)
 
@@ -756,7 +757,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button id="scrollTopBtn">Scroll to Top</button>
+                            @endif
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
@@ -777,40 +778,7 @@
         $('#showPriceDiscountListModal').modal('hide');
     });
 
-    window.addEventListener('scrolltoInModal',event=>{
-        $(document).ready(function(){
-            $('#showPriceDiscountListModal').fadeIn(300, function() {
-                let $modalContent = $('.modal-content');
-                let $target = $('#'+event.detail.scrollToId);
-
-                // Scroll modal content to the target element
-               /* $modalContent.animate({
-                scrollTop: $target.offset().top - $modalContent.offset().top + $modalContent.scrollTop()
-                }, 600);*/
-
-                $target.offset().top - $modalContent.offset().top + $modalContent.scrollTop();
-            });
-        });
-    });
-    window.addEventListener('scrolltoInModalTopNew',event=>{
-        $(document).ready(function(){
-            $('#showPriceDiscountListModal').on('shown.bs.modal', function (event) {
-            
-            // reset the scroll to top
-            $('#showPriceDiscountListModal .modal-body').scrollTop(0);
-            
-            // get the section using data
-            var section = $(event.relatedTarget).data('section');
-            
-            // get the top of the section
-            var sectionOffset = $('#topScrolledPlace').offset().top - 100;
-            
-            //scroll the container
-            $('#myModal .modal-body').animate({
-             scrollTop: sectionOffset}, "slow");
-            });
-        });
-    });
+    
 
 </script>
 
