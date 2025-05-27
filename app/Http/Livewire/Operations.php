@@ -623,6 +623,7 @@ class Operations extends Component
 
         $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$services['job_number']])->first();
         $this->jobcardDetails = $job;
+        //dd($this->jobcardDetails);
         $this->customerjobservices = $job->customerJobServices;
 
         if($mainSTatus==3)
@@ -841,6 +842,7 @@ class Operations extends Component
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
         $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
+        //dd($this->jobcardDetails);
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {
             $this->showchecklist[$jobcardDetailsList->id]=false;
@@ -886,6 +888,50 @@ class Operations extends Component
         $this->dispatchBrowserEvent('hideQwChecklistModel');
     }
     
+    public function checkOnlinePaymentStatus($job_number,$station){
+        //$arrData['job_number'] = 'JOB-GQS-00007592';
+        $arrData['job_number'] = $job_number;
+        
+        $arrData['station'] = $station;
+        //dd(config('global.check_paymenk_status_url'));
+        $response = Http::withBasicAuth('onlinewebtutor', 'admin123')->post(config('global.check_paymenk_status_url'),$arrData);
+        $paymentResponse = json_decode($response->getBody()->getContents(),true);
+        //dd($paymentResponse);
+        if($paymentResponse==null)
+        {
+            session()->flash('paymentLinkStatusError', 'not yet paid..!');
+        }
+        else
+        {
+
+            if($paymentResponse['order_response']['status']=='PURCHASED' || $paymentResponse['order_response']['status']=='CAPTURED' )
+            {
+                CustomerJobCards::where(['job_number'=>$paymentResponse['order_response']['orderReference']])->update(['payment_status'=>1,'payment_type'=>1]);
+                $orderResponseAmount = $paymentResponse['order_response']['amount'];
+                $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
+                $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
+                if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+                    
+                    $msgtext = urlencode('Dear Customer, Payment of AED '.$orderResponseAmount.' received. For Gate pass & invoice, click the link: https://gsstations.ae/qr/'.$paymentResponse['order_response']['orderReference'].'. Call 800477823 forhelp');
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+
+                }
+                session()->flash('paymentLinkStatusSuccess', 'Payment Link is paid..!');
+                try {
+                    DB::select('EXEC [dbo].[Job.CashierAcceptPayment] @jobId = "'.$paymentResponse['order_response']['orderReference'].'", @paymentmode = "L", @doneby = "admin", @paymentDate="'.Carbon::now().'",@amountcollected='.$orderResponseAmount.',@advanceInvoice=NULL ');
+                } catch (\Exception $e) {
+                    //dd($e->getMessage());
+                    //return $e->getMessage();
+                }
+                $this->customerJobUpdate($paymentResponse['order_response']['orderReference']);
+            }
+            else
+            {
+                session()->flash('paymentLinkStatusError', 'Payment Link is not yet paid..!');
+            }
+        }
+
+    }
 
     public function checkPaymentStatus($job_number, $order_ref, $station, $jobs_plate_number)
     {

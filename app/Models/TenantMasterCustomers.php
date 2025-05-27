@@ -62,7 +62,7 @@ class TenantMasterCustomers extends Model
         "CompanyId",
     ];
 
-    public function customervehicle()
+    public function customerVehicleDetails()
     {
         return $this->hasMany(CustomerVehicle::class,'customer_id','TenantId');
     }

@@ -286,10 +286,12 @@ return [
         "3"=>"Low Price",
         "4"=>"Hight Price",
     ],
+    
     //'bhr-paymenkLink_payment_url'=>'https://bhr.ae/payment-app/api/pbl-payment-panel',
     'paymenkLink_payment_url'=>'https://gsstations.ae/gssapi/api/new-payment-link',
     'synchronize_single_paymenkLink_url'=>'https://gsstations.ae/gssapi/api/single-pbl-synch-payment-panel',
-    
+    'check_paymenk_status_url'=>'https://gsstations.ae/gssapi/api/paymenk-status-url',
+
     'sms'=>[
         "1"=>[
             "name"=>"mshastra",

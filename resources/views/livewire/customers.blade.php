@@ -9,7 +9,6 @@
                             <div>
                                 <h5 class="mb-0">All Customers</h5>
                             </div>
-                            <input type="text"  class="form-control float-end" style="width:20%;" placeholder="Search Customer" wire:model="search_customer" />
                             <button wire:click="addNewCustomer()" class="btn bg-gradient-primary btn-sm" type="button">+ New Customer</button>
                         </div>
                         @if ($message = Session::get('success'))
@@ -32,6 +31,20 @@
                         @endif
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
+                        <div class="row px-4">
+                            <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+                                <label>Customer Name</label>
+                                <div class="form-group">
+                                    <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Customer Name" wire:model="search_customer" />
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+                                <label>Customer Mobile</label>
+                                <div class="form-group">
+                                    <input style="padding:0.5rem 0.3rem !important;"  type="text"  class="form-control" placeholder="Customer Mobile" wire:model="customer_mobile" />
+                                </div>
+                            </div>
+                        </div>
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
@@ -65,33 +78,33 @@
                                     <tr>
                                         <td class="ps-4">
                                             <span class="exploder badge badge-sm bg-gradient-primary">
-                                                <i class="fas fa-eye text-secondary text-white"></i> Show
+                                                <i class="fas fa-eye text-secondary text-white"></i> Show Vehicles
                                             </span>
                                         </td>
                                         <td class="ps-4">
-                                            <p class="text-xs font-weight-bold mb-0">{{$customer->id}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{$customer->TenantId}}</p>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{$customer->name}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{$customer->TenantName}}</p>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{$customer->mobile}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{$customer->Mobile}}</p>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{$customer->email}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{$customer->Email}}</p>
                                         </td>
                                         <td class="text-center">
-                                            <span class="text-secondary text-xs font-weight-bold">{{ \Carbon\Carbon::parse($customer->created_at)->format('dS M Y H:i A') }}</span>
+                                            <span class="text-secondary text-xs font-weight-bold">{{ \Carbon\Carbon::parse($customer->Creationdate)->format('dS M Y H:i A') }}</span>
                                         </td>
                                         <td class="text-center">
-                                            <span class="badge badge-sm {!!config('global.is_active')[$customer->is_active]['class']!!}">{{config('global.is_active')[$customer->is_active]['label']}}</span>
+                                            <span class="badge badge-sm {!!config('global.is_active')[$customer->Active]['class']!!}">{{config('global.is_active')[$customer->Active]['label']}}</span>
                                         </td>
                                         <td class="text-center">
-                                            <a wire:click="editCustomer({{$customer->id}})" class="mx-1" data-bs-toggle="tooltip"
-                                                data-bs-original-title="Edit Department {{$customer->name}}">
+                                            <a wire:click="editCustomer({{$customer->TenantId}})" class="mx-1" data-bs-toggle="tooltip"
+                                                data-bs-original-title="Edit Department {{$customer->TenantName}}">
                                                 <i class="fas fa-user-edit text-secondary"></i>
                                             </a>
-                                            <span  onclick="deletePost({{$customer->id}})">
+                                            <span  onclick="deletePost({{$customer->TenantId}})">
                                                 <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                             </span>
                                         </td>
@@ -112,7 +125,7 @@
                                               </tr>
                                             </thead>
                                             <tbody>
-                                                @forelse($customer->customervehicle as $customervehicle)
+                                                @forelse($customer->customerVehicleDetails as $customervehicle)
                                                 <tr>
                                                     <td>
                                                         @if($customervehicle['vehicle_image'])

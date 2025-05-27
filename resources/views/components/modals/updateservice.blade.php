@@ -92,19 +92,41 @@
                                                     <h6 class="my-2 text-sm text-white">
                                                         @if($jobcardDetails->payment_type) <span class="badge badge-sm {{config('global.payment.status_class')[$jobcardDetails->payment_status]}} text-sm btn-sm"> {{config('global.payment.type')[$jobcardDetails->payment_type]}} {{config('global.payment.status')[$jobcardDetails->payment_status]}}</span>
                                                         @endif
+                                                        @if($jobcardDetails->payment_status==0)
+                                                            <button wire:click="checkOnlinePaymentStatus('{{$jobcardDetails->job_number}}','{{$jobcardDetails->stationInfo['StationID']}}')" type="button" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button>
+                                                        @endif
+
+                                                        @if ($message = Session::get('paymentLinkStatusSuccess'))
+                                                            <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
+                                                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                                    <span aria-hidden="true">×</span>
+                                                                </button>
+                                                            </div>
+                                                        @endif
+                                                        @if ($message = Session::get('paymentLinkStatusError'))
+                                                            <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                                    <span aria-hidden="true">×</span>
+                                                                </button>
+                                                            </div>
+                                                        @endif
                                                     </h6>
                                                     
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <!-- <div class="row">
                                                 <div class="col-md-12">
                                                     @if($jobcardDetails->payment_status==0)
-                                                    <!-- <button type="button" wire:click="resendPaymentLink('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-success px-2">Re send Payment link</button> -->
-                                                    <a href="https://gsstations.ae/qr/{{$jobcardDetails->job_number}}" target="_blank"><button type="button" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button></a>
+                                                    <button type="button" wire:click="resendPaymentLink('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-success px-2">Re send Payment link</button> 
+                                                    <a href="https://gsstations.ae/qr/{{$jobcardDetails->job_number}}" ><button wire:click="checkOnlinePaymentStatus('{{$jobcardDetails->job_number}}')" type="button" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button></a>
                                                     @endif
                                                     
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </li>
                                         <!-- CheckList Status -->
                                         @if($jobcardDetails->checklistInfo!=null)
@@ -1199,6 +1221,15 @@
     </div>
 
     <div wire:loading wire:target="clickQlOperation">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <div wire:loading wire:target="checkOnlinePaymentStatus">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
             <div class="la-ball-beat">
                 <div></div>

@@ -637,7 +637,7 @@
                             @if(empty($selectedDiscount))
                             <div class="row">
                                 @forelse($priceDiscountList as $priceDiscount)
-
+                                    
                                     @if($priceDiscount->customerDiscountGroup['GroupType'] == 1 && $priceDiscount->EndDate == null)
                                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                             <div class="card card-profile mt-md-0 mt-5">
@@ -658,12 +658,15 @@
                                             </div>
                                         </div>
                                     @elseif($priceDiscount->customerDiscountGroup['GroupType']==2)
-                                                            
                                         <?php
-                                        $end = \Carbon\Carbon::parse($priceDiscount->EndDate);
-                                        $expired=false;
-                                        ?>
-                                        @if(\Carbon\Carbon::now()->diffInDays($end, false)>=0)
+                                        $givenDate = \Carbon\Carbon::parse($priceDiscount->EndDate); // Replace with your date
+                                        $now = \Carbon\Carbon::now();
+                                        if ($givenDate->isPast()) {
+                                            //
+                                        }
+                                        else
+                                        {
+                                            ?>
                                             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                                 <div class="card card-profile mt-md-0 mt-5">
                                                     <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
@@ -674,13 +677,17 @@
                                                                 <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($itemDetails['unit_price'])}}</h4>
                                                                 <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($itemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$itemDetails['unit_price'])) }}</h5>
                                                                 
-                                                                <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$itemDetails['id']}}',{{$priceDiscount}})">Add Now</a>
+                                                                <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$itemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endif
+                                            <?php
+                                        }
+                                        
+                                        ?>
+                                        
 
                                     @endif
                                         

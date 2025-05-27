@@ -42,6 +42,7 @@ class CustomerServiceItems extends Component
     public $discount_card_imgae, $discount_card_number, $discount_card_validity;
     public $discountCardApplyForm=false, $engineOilDiscountForm=false;
     public $engineOilDiscountPercentage, $customerDiscontGroupId, $customerDiscontGroupCode;
+    public $lineDIscountItemId, $linePriceDiscount;
 
     public function render()
     {
@@ -329,7 +330,17 @@ class CustomerServiceItems extends Component
     public function applyLineDiscount($item){
         $this->selectedDiscount=[];
         $this->showSelectedDiscount=false;
-        //dd(LaborSalesPrices::where(['ServiceItemId'=>$item['item_id']])->get());
+        /*dd(LaborSalesPrices::with(['customerDiscountGroup'])
+            ->where(function ($query) {
+                $query->whereRelation('customerDiscountGroup', 'GroupType', '=', 2);
+                $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
+            })
+            ->where('StartDate', '<=', Carbon::now())
+            ->where('EndDate', '>=', Carbon::now())
+            ->where('CustomerGroupCode', '!=', 'AJM_CAMP')
+            ->where(['ServiceItemId'=>$item['item_id']])
+            ->limit(2)
+            ->get());*/
         $this->priceDiscountList=null;
         if($item['cart_item_type']==1){
             $inventorySalesPricesQuery = LaborSalesPrices::where([
@@ -366,7 +377,8 @@ class CustomerServiceItems extends Component
     }
 
     public function applyLineDiscountSubmit($itemDetails,$priceDiscount,$discountGroup){
-
+        $this->lineDIscountItemId = $itemDetails;
+        $this->linePriceDiscount = $priceDiscount;
         $this->selectedDiscount = [
             'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
             'code'=>$discountGroup['Code'],
@@ -377,7 +389,7 @@ class CustomerServiceItems extends Component
         $this->showSelectedDiscount=true;
         if($discountGroup['GroupType']==2 || $discountGroup['GroupType']==6 )
         {
-            $this->applyDIsountinItemService($itemDetails);
+            $this->applyDIsountinItemService($itemDetails,$priceDiscount);
 
             //$this->appliedDiscount = $this->selectedDiscount;
         }
@@ -469,8 +481,23 @@ class CustomerServiceItems extends Component
         ]);
     }
 
-    public function applyDIsountinItemService(){
-
+    public function applyDIsountinItemService($itemCartId, $discountPrice){
+        dd($discountPrice);
+        $customerBasket = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$itemCartId])->first();
+        $cartUpdate['price_id']=$discountPrice['PriceID'];
+        $cartUpdate['customer_group_id']=$discountPrice['CustomerGroupId'];
+        $cartUpdate['customer_group_code']=$discountPrice['CustomerGroupCode'];
+        $cartUpdate['min_price']=$discountPrice['MinPrice'];
+        $cartUpdate['max_price']=$discountPrice['MaxPrice'];
+        $cartUpdate['start_date']=$discountPrice['StartDate'];
+        $cartUpdate['end_date']=$discountPrice['EndDate'];
+        $cartUpdate['discount_perc']=$discountPrice['DiscountPerc'];
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$itemCartId])->update($cartUpdate);
+        
+        $this->dispatchBrowserEvent('closePriceDiscountList');
+        $this->lineDIscountItemId = null;
+        $this->linePriceDiscount = null;
+        $this->selectedDiscount = null;
     }
 
     public function selectDiscountGroup($discountGroup){
@@ -533,7 +560,8 @@ class CustomerServiceItems extends Component
         $customerStaffIdCheck = DB::select('EXEC GetEmployee @employee_code = "'.$this->employeeId.'"', [
             $this->employeeId,
         ]); 
-        
+
+
         if($customerStaffIdCheck)
         {
             if (!CustomerDiscountGroup::where([
@@ -572,6 +600,7 @@ class CustomerServiceItems extends Component
             
             
             $this->appliedDiscount = $this->selectedDiscount;
+            $this->applyDIsountinItemService($this->lineDIscountItemId,$this->linePriceDiscount);
             //$this->applyDiscountOnCart();
             //$this->dispatchBrowserEvent('closeDiscountGroupModal');
         }

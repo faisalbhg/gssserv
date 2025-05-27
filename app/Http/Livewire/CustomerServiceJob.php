@@ -813,10 +813,12 @@ class CustomerServiceJob extends Component
     }
     public function addtoCart($servicePrice,$discount)
     {
+        //dd($servicePrice);
         $update=true;
         $addtoCartAllowed=false;
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
+        //dd($servicePrice);
         if(in_array($servicePrice['ItemCode'],config('global.extra_description_applied')))
         {
            $validatedData = $this->validate([
