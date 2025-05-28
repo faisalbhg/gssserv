@@ -148,7 +148,7 @@
                         <i style="font-size: 1rem;" class="fa-solid fa-lg fa-gear ps-2 pe-2 text-center
                         {{ in_array(request()->route()->getName(),['services-prices-list','services-master-list','services-section-group','services-groups','stations-list','departments-list','sections-list','checklist','customer-types']) ? 'text-white' : 'text-dark' }}"></i>
                     </div>
-                    <span class="nav-link-text ms-1"> Services </span>
+                    <span class="nav-link-text ms-1"> General </span>
                 </a>
                 <div class="collapse {{ in_array(request()->route()->getName(),['services-prices-list','services-master-list','services-section-group','services-groups','stations-list','departments-list','sections-list','checklist','customer-types']) ? 'show' : '' }}" id="serviceMenu" style="">
                     <ul class="nav ms-4 ps-3">
@@ -205,6 +205,12 @@
                             <a class="nav-link " href="{{ route('customer-types') }}">
                                 <span class="sidenav-mini-icon"> C </span>
                                 <span class="sidenav-normal"> Customer Types </span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Route::currentRouteName() == 'number-plate-codes' ? 'active' : '' }}">
+                            <a class="nav-link " href="{{ route('number-plate-codes') }}">
+                                <span class="sidenav-mini-icon"> C </span>
+                                <span class="sidenav-normal"> Number Plate Codes </span>
                             </a>
                         </li>
                     </ul>

@@ -23,13 +23,14 @@
             </div>
         @else
             @include('layouts.navbars.auth.sidebar')
-                @include('layouts.navbars.auth.nav')
-            
-                {{ $slot }}
+            @include('layouts.navbars.auth.nav')
+        
+            {{ $slot }}
             
                 
-            </main>
+            
              @include('layouts.footers.auth.footer')
+             </main>
         @endif
     @endauth
 

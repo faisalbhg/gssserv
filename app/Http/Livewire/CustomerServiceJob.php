@@ -2026,6 +2026,7 @@ class CustomerServiceJob extends Component
             'package_number' => 'required',
         ]);
         $customerPackageInfo = PackageBookings::with(['customerInfo','customerVehicle','stationInfo'])->where(['package_number'=>$this->package_number])->first();
+        //dd($customerPackageInfo);
         if($customerPackageInfo->payment_status==1){
             if($customerPackageInfo->package_status==1){
                 $mobileNumber = isset($customerPackageInfo->customer_mobile)?'971'.substr($customerPackageInfo->customer_mobile, -9):null;

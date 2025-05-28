@@ -51,6 +51,7 @@ use App\Http\Livewire\PackagesBookings;
 use App\Http\Livewire\MaterialRequisition;
 use App\Http\Livewire\Packages;
 use App\Http\Livewire\CustomerServiceItems;
+use App\Http\Livewire\Numberplates;
 
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
@@ -162,6 +163,9 @@ Route::middleware('auth')->group(function () {
     //Forman Material Requisition
     Route::get('material-requisition',MaterialRequisition::class)->name('material-requisition');
 
+
+    //NumberPlate
+    Route::get('number-plate-codes',Numberplates::class)->name('number-plate-codes');
 
 
     
