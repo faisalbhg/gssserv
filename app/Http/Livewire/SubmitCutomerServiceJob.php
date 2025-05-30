@@ -80,9 +80,9 @@ class SubmitCutomerServiceJob extends Component
 
         }
         if($this->customerSignature){
-            $this->dispatchBrowserEvent('scrollto', [
+            /*$this->dispatchBrowserEvent('scrollto', [
                 'scrollToId' => 'checkoutSignature',
-            ]);
+            ]);*/
         }
         return view('livewire.submit-cutomer-service-job');
     }
