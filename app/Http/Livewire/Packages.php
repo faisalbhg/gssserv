@@ -50,7 +50,7 @@ class Packages extends Component
         //dd($getCountSalesPackage);
 
 
-        $customerPackage = PackageBookings::with(['customerInfo','makeInfo','modelInfo','createdInfo']);
+        $customerPackage = PackageBookings::with(['makeInfo','modelInfo','createdInfo','customerPackageServices']);
         
         
         if($this->search_package_number)
@@ -83,6 +83,7 @@ class Packages extends Component
             $getCountSalesPackage = $getCountSalesPackage->where(['station'=>auth()->user('user')['station_code']]); 
         }
         $customerPackage = $customerPackage->where(['package_status'=>1])->orderBy('id','DESC')->paginate(10);
+        //dd($customerPackage);
         
         
         $getCountSalesPackage = $getCountSalesPackage->where(['package_status'=>1])->first();

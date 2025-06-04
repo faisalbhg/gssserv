@@ -1219,7 +1219,7 @@ class CustomerServiceJob extends Component
                 $cartInsert['max_price']=$discountPrice['unit_price'];
                 //$cartInsert['start_date']=$discountPrice['created_at'];
                 //$cartInsert['end_date']=$discountPrice['EndDate'];
-                $cartInsert['discount_perc']=100;
+                $cartInsert['discount_perc']=custom_round($discountPrice['DiscountPerc']);
             }
             if($this->job_number)
             {

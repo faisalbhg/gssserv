@@ -134,10 +134,10 @@
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Customer</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Package</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Pricec</th>
-                    <th></th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder">Customer</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder">Status</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder">Package</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder ps-2">Pricec</th>
                   </tr>
                 </thead>
 
@@ -163,17 +163,18 @@
                           </p>
                         </div>
                       </div>
+                    </td>
+                    <td>
                       <div class="">
-                        
-                            <span class="w-100 badge badge-sm {!!config('global.package.status_btn_class')[$package->payment_status]!!}">{{config('global.package.status')[$package->payment_status]}}</span>
-                            <div class="d-flex align-items-center justify-content-center">
-                                <span class="me-2 text-xs font-weight-bold">{{config('global.package.status_perc')[$package->payment_status]}}</span>
-                                <div>
-                                    <div class="progress">
-                                        <div class="progress-bar {{config('global.package.status_perc_class')[$package->payment_status]}}" role="progressbar" aria-valuenow="{{config('global.package.status_perc')[$package->payment_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.status_perc')[$package->payment_status]}};"></div>
-                                    </div>
-                                </div>
+                        <span class="w-100 badge badge-sm {!!config('global.package.status_btn_class')[$package->payment_status]!!}">{{config('global.package.status')[$package->payment_status]}}</span>
+                        <div class="d-none d-flex align-items-center justify-content-center">
+                          <span class="me-2 text-xs font-weight-bold">{{config('global.package.status_perc')[$package->payment_status]}}</span>
+                          <div>
+                            <div class="progress">
+                              <div class="progress-bar {{config('global.package.status_perc_class')[$package->payment_status]}}" role="progressbar" aria-valuenow="{{config('global.package.status_perc')[$package->payment_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.status_perc')[$package->payment_status]}};"></div>
                             </div>
+                          </div>
+                        </div>
                       </div>
                     </td>
                     <td>
@@ -204,16 +205,11 @@
                       </div>
                       <p class="text-sm font-weight-bold mb-0"></p>
                     </td>
-                    
-                    
-                    
-                    <td class="align-middle">
-
+                    <!-- <td class="align-middle">
                       <button type="button" wire:click="customerPackageDetails('{{$package}}')" class="btn btn-link text-secondary mb-0">
                         <i class="fa fa-edit fa-xl text-md"></i>
                       </button>
-                      <!-- data-bs-toggle="modal" data-bs-target="#serviceUpdateModal" -->
-                    </td>
+                    </td> -->
                   </tr>
                   @empty
                     <tr>
