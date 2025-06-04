@@ -84,9 +84,9 @@ class CustomerServiceJob extends Component
         if($this->vehicle_id && $this->customer_id)
         {
             $this->selectVehicle();
-            if($this->job_number==null){
+            /*if($this->job_number==null){
                 $this->checkExistingJobs();
-            }
+            }*/
         }
         if($this->job_number)
         {
