@@ -123,7 +123,7 @@
                                         
                                         <div class="card-body p-3 pb-0">
                                             <ul class="list-group">
-                                                <?php $total = 0;$totalDiscount=0; ?>
+                                                <?php $total = 0;$totalDiscount=0; $package_job=false; ?>
                                                 @foreach ($cartItems as $item)
                                                     <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
                                                         
@@ -161,12 +161,21 @@
                                                         $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*$item->unit_price)*$item->quantity);
                                                         //echo $totalDiscount;
                                                     }
+                                                    if($item->is_package==1){
+                                                        $package_job=true;
+
+                                                    }
                                                     ?>
                                                 @endforeach
                                                 <?php
                                                 $totalAfterDisc = $total - $totalDiscount;
                                                 if($selectedVehicleInfo['customerInfoMaster']['VatApplicable']==1){
                                                     $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
+                                                }
+
+                                                if($package_job)
+                                                {
+                                                    $tax = 0;
                                                 }
                                                 //$tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
                                                 $grand_total = $totalAfterDisc+$tax;
@@ -1178,7 +1187,11 @@
                             </div>
                             <div class="card-footer text-lg-left text-center pt-0">
                                 <div class="d-flex justify-content-center p-2">
-                                    @if($grand_total>0)
+                                    @if($package_job)
+                                        <div class="form-check">
+                                            <a wire:click="completePaymnet('empty')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Complete<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
+                                        </div>
+                                    @elseif($grand_total>0)
                                         @if($mobile)
                                         <div class="form-check">
                                             <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
@@ -1196,9 +1209,7 @@
                                             <a wire:click="payLater('paylater')" class="btn btn-icon bg-gradient-secondary d-lg-block mt-3 mb-0">Pay Later<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
                                         </div>
                                     @else
-                                        <div class="form-check">
-                                            <a wire:click="completePaymnet('empty')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Complete<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
-                                        </div>
+                                        
                                     @endif
 
                                     
@@ -1252,7 +1263,11 @@
                         </div>
                         <div class="card-footer text-lg-left text-center pt-0">
                             <div class="d-flex justify-content-center p-2">
-                                @if($grand_total>0)
+                                @if($package_job)
+                                    <div class="form-check">
+                                        <a wire:click="completePaymnet('empty')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Complete<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
+                                    </div>
+                                @elseif($grand_total>0)
                                     @if($mobile)
                                     <div class="form-check">
                                         <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>

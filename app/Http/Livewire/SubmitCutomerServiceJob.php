@@ -35,6 +35,7 @@ class SubmitCutomerServiceJob extends Component
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
     public $staff_id,$staff_number,$show_staff_details=false;
     public $job_date_time;
+    public $package_job=false;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -84,6 +85,7 @@ class SubmitCutomerServiceJob extends Component
                 'scrollToId' => 'checkoutSignature',
             ]);*/
         }
+        //dd($this->package_job);
         return view('livewire.submit-cutomer-service-job');
     }
 
@@ -164,6 +166,10 @@ class SubmitCutomerServiceJob extends Component
                     $this->showCheckList=true;
                     $this->dispatchBrowserEvent('imageUpload');
                 }
+                if($item->is_package==1){
+                    $this->package_job=true;
+
+                }
             }
             $this->total = $total;
             $this->totalAfterDisc = $this->total - $totalDiscount;
@@ -174,7 +180,11 @@ class SubmitCutomerServiceJob extends Component
             {
                 $this->tax = 0;
             }
-            $this->grand_total = $this->totalAfterDisc+$this->tax;
+            if($this->package_job)
+            {
+                $this->tax = 0;
+            }
+            $this->grand_total = custom_round($this->totalAfterDisc+$this->tax);
         }
         else
         {
@@ -325,6 +335,7 @@ class SubmitCutomerServiceJob extends Component
             $customerjobData['validate_number']=$this->staff_id;
             $customerjobData['validate_id']=$this->staff_number;
         }
+        //dd($customerjobData);
         if($this->job_number)
         {
             $customerjobData['updated_by']=auth()->user('user')->id;
@@ -445,6 +456,7 @@ class SubmitCutomerServiceJob extends Component
         $package_code=null;
         $package_number=null;
         $fourPLuOneRequested=false;
+        $packageGrand_total=0;
         foreach($this->cartItems as $cartData)
         {
             $customerJobServiceData = [
@@ -520,6 +532,11 @@ class SubmitCutomerServiceJob extends Component
             else
             {
                 $tax = 0;
+            }
+
+            if($cartData->is_package==1){
+                $tax = 0;
+
             }
 
             $grand_total = $totalAfterDisc+$tax;
@@ -637,6 +654,7 @@ class SubmitCutomerServiceJob extends Component
                 $package_code=$cartData->package_code;
                 $package_number=$cartData->package_number;
 
+                //$packageGrand_total = $packageGrand_total+$grand_total;//Package Price Total Service Wise
             }
 
             //Ceramic Wash Discount Count
@@ -757,12 +775,16 @@ class SubmitCutomerServiceJob extends Component
 
             if($is_package==true)
             {
+                //$packageGrand_total = $packageGrand_total - $totalDiscountInJob;
+
                 try {
                     DB::select('EXEC [ServicePackage.Redeem.FinancialEntries] @jobnumber = "'.$this->job_number.'", @packagenumber = "'.$package_number.'", @doneby = "'.auth()->user('user')->id.'" ');
                 } catch (\Exception $e) {
                     //dd($e->getMessage());
                     //return $e->getMessage();
                 }
+
+
 
             }
 

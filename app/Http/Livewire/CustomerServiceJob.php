@@ -84,7 +84,9 @@ class CustomerServiceJob extends Component
         if($this->vehicle_id && $this->customer_id)
         {
             $this->selectVehicle();
-            //$this->checkExistingJobs();
+            if($this->job_number==null){
+                $this->checkExistingJobs();
+            }
         }
         if($this->job_number)
         {
@@ -191,7 +193,7 @@ class CustomerServiceJob extends Component
 
         if($this->showServiceSectionsList)
         {
-            $sectionServiceLists = LaborItemMaster::with(['departmentName','sectionName'])->where([
+            $sectionServiceLists = LaborItemMaster::select("ItemId","ItemCode","CompanyCode","CategoryId","SubCategoryId","BrandId","LedgerId","SubLedgerId","SerialNo","BarCode","ItemName","Description","MinimumStockQuantity","MinimumOrderQuantity","StockQuantity","PurchasePrice","AveragePurchasePrice","SellingPriceType","SellingPriceMarkupType","SellingPrice","WarehouseId","AddVatToSellPrice","AllowDiscount","StorageBin","IsTerminated","TerminationDate","ReplacementPartId","Active","CreatedDate","CreatedBy","ModifiedDate","ModifiedBy","Origin","StockType","PriceCalculationMethod","Status","StatusChangedDate","ApprovalStatus","ApprovalDate","ApprovedBy","UnitMeasurement","QuantityBooked","Rank","ParentItemId","ApprovedDate","SubmittedDate","SubmittedBy","PurchaseUnitMeasurement","QuantityPerPurchase","VATGroupId","DivisionCode","DepartmentCode","SectionCode","UnitPrice","Id","SortIndex","CustomizePrice","MinPrice","MaxPrice","isDirectDiscount","DirectDiscPerc","ExtraNotes","CustomizeName","IsCeramicWash","IsWarranty","WarrantyPeriod","WarrantyTerms")->with(['departmentName','sectionName'])->where([
                 'SectionCode'=>$this->propertyCode,
                 'DivisionCode'=>auth()->user('user')['station_code'],
                 'Active'=>1,
@@ -294,12 +296,18 @@ class CustomerServiceJob extends Component
                 //'payment_status'=>1
             ])->get();
             $sectionServicePriceLists = [];
+            //dd($packageBookingServicesQuery);
             foreach($packageBookingServicesQuery as $key => $packageServices)
             {
                 $sectionServicePriceLists[$key]['package_quantity'] = $packageServices->quantity;
                 $sectionServicePriceLists[$key]['package_quantity_used'] = $packageServices->package_service_use_count;
                 $sectionServicePriceLists[$key]['priceDetails'] = $packageServices->labourItemDetails;
-                $packageServices['DiscountPerc']=100;
+                $serviceUnitPrice = $packageServices->unit_price;
+                $serviceDiscountPrice = $packageServices->discounted_price;
+                $servicePriceDiff = $serviceUnitPrice-$serviceDiscountPrice;
+
+                $discountPerc = ($servicePriceDiff/$serviceUnitPrice) * 100;
+                $packageServices['DiscountPerc']=round($discountPerc,2);
                 $sectionServicePriceLists[$key]['discountDetails']=$packageServices;
                 
             }
@@ -654,12 +662,17 @@ class CustomerServiceJob extends Component
     }
 
     public function checkExistingJobs(){
-        $existingJobs = CustomerJobCards::where(['vehicle_id'=>$this->vehicle_id,'customer_id'=>$this->customer_id,'payment_status'=>0])->where('job_status','!=',4);
+        $existingJobs = CustomerJobCards::where([
+            'vehicle_id'=>$this->vehicle_id,
+            'customer_id'=>$this->customer_id,
+            'payment_status'=>0
+        ])
+        ->where('job_status','!=',4);
         if($existingJobs->exists())
         {
             $existingJobs = $existingJobs->first();
-            
-            return redirect()->to('update_jobcard/'.$existingJobs->job_number);
+            //dd($existingJobs->job_number);
+            return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$existingJobs->job_number);
         }
     }
 
@@ -1145,11 +1158,14 @@ class CustomerServiceJob extends Component
 
      public function addtoCartPackage($servicePrice,$discount)
     {
+        //dd($servicePrice);
         $servicePrice = json_decode($servicePrice,true);
+
         $discountPrice = json_decode($discount,true);
-        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']]);
-        if($customerBasketCheck->count())
+        $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId'],'is_package'=>1]);
+        if($customerBasketCheck->exists())
         {
+            //dd($discountPrice);
             //$customerBasketCheck->increment('quantity', 1);
             if($discountPrice!=null){
                 $cartUpdate['price_id']=$discountPrice['id'];
@@ -1159,7 +1175,7 @@ class CustomerServiceJob extends Component
                 $cartUpdate['max_price']=$discountPrice['unit_price'];
                 //$cartUpdate['start_date']=$discountPrice['created_at'];
                 //$cartUpdate['end_date']=$discountPrice['EndDate'];
-                $cartUpdate['discount_perc']=100;
+                $cartUpdate['discount_perc']= custom_round($discountPrice['DiscountPerc']);
                 CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']])->update($cartUpdate);
             }
             
@@ -1252,7 +1268,7 @@ class CustomerServiceJob extends Component
 
     public function openServiceItems(){
 
-        //return redirect()->to('customer-service-items/'.$this->customer_id.'/'.$this->vehicle_id);
+        return redirect()->to('customer-service-items/'.$this->customer_id.'/'.$this->vehicle_id);
         
         $this->showServiceItems = true;
 

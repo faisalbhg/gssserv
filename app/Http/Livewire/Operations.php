@@ -117,6 +117,12 @@ class Operations extends Component
 
     public function render()
     {
+        /*foreach(CustomerJobCards::where('customer_mobile','=',"566993709")->get() as $jobUpdate)
+        {
+            //dd($jobUpdate->job_number);
+            CustomerJobCardServices::where(['job_number'=>$jobUpdate->job_number])->update(["job_status" => 4, "job_departent"=>4]);
+            CustomerJobCards::where(['job_number'=>$jobUpdate->job_number])->update(["job_status" => 4, "job_departent"=>4]);
+        }*/
         //dd(JobcardChecklistEntries::where(['job_number'=>'JOB-GBD-00006890'])->limit(1)->get());
         //JOB-GWQ-00009383
         //dd(CustomerJobCardServices::where(['job_number'=>'JOB-GWQ-00009383'])->get());

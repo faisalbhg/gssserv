@@ -446,7 +446,7 @@
                     <div class="modal-content">
                         
                         <div class="modal-header" id="topScrolledPlace">
-                            <h5 class="modal-title" id="showPriceDiscountListModalLabel">{{$itemDetails['item_code']}} - {{$itemDetails['item_name']}}</h5>
+                            <h5 class="modal-title" id="showPriceDiscountListModalLabel">{{$lineItemDetails['item_code']}} - {{$lineItemDetails['item_name']}}</h5>
                         </div>
                         <div class="modal-body py-0" id="scrollToDiscountTop" >
                             @if(count($selectedVehicleInfo->customerDiscountLists)>0)
@@ -456,17 +456,17 @@
                                         <?php $end = \Carbon\Carbon::parse($customerDiscountLists->discount_card_validity);?>
                                         @if($customerDiscountLists->discount_id==8 || $customerDiscountLists->discount_id==9)
                                         <div class="col-lg-2 col-sm-3 my-2">
-                                            <div wire:click="savedCustomerDiscountGroup({{$customerDiscountLists}})" class="card cursor-pointer bg-gradient-info">
+                                            <div wire:click="savedCustomerDiscountGroup({{json_encode($lineItemDetails)}},{{$customerDiscountLists}})" class="card cursor-pointer bg-gradient-info">
                                                 <div class="card-body  py-2">
-                                                    <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower($customerDiscountLists->discount_title)}}</h6>
+                                                    <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower(str_replace('_', ' ', $customerDiscountLists->discount_code))}}</h6>
                                                 </div>
                                             </div>
                                         </div>
                                         @elseif(\Carbon\Carbon::now()->diffInDays($end, false)>=0)
                                         <div class="col-lg-2 col-sm-3 my-2">
-                                            <div wire:click="savedCustomerDiscountGroup({{$customerDiscountLists}})" class="card cursor-pointer bg-gradient-info">
+                                            <div wire:click="savedCustomerDiscountGroup({{json_encode($lineItemDetails)}},{{$customerDiscountLists}})" class="card cursor-pointer bg-gradient-info">
                                                 <div class="card-body  py-2">
-                                                    <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower($customerDiscountLists->discount_title)}}</h6>
+                                                    <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower(str_replace('_', ' ', $customerDiscountLists->discount_title))}}</h6>
                                                 </div>
                                             </div>
                                             <small>Expired in: {{ $diff = Carbon\Carbon::parse($customerDiscountLists->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}</small>
@@ -474,6 +474,7 @@
                                         @endif
                                     @empty
                                     @endforelse
+                                    <p class="badge bg-gradient-danger text-light text-bold text-lg mb-0">{{$discountAvailability}}</p>
                                     <div wire:loading wire:target="savedCustomerDiscountGroup">
                                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                             <div class="la-ball-beat">
@@ -642,14 +643,14 @@
                                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                             <div class="card card-profile mt-md-0 mt-5">
                                                 <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
-                                                    <h4 class="mb-0">{{$priceDiscount->CustomerGroupCode}}</h4>
+                                                    <h4 class="mb-0 text-capitalize">{{ strtolower(str_replace('_', ' ', $priceDiscount->customerDiscountGroup['Title'])) }}</h4>
                                                     <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
                                                     <div class="row justify-content-center text-center">
                                                         <div class="col-12 mx-auto">
-                                                            <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($itemDetails['unit_price'])}}</h4>
-                                                            <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($itemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$itemDetails['unit_price'])) }}</h5>
+                                                            <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($lineItemDetails['unit_price'])}}</h4>
+                                                            <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$lineItemDetails['unit_price'])) }}</h5>
                                                             
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$itemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
+                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$lineItemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
                                                             
                                                                 
                                                         </div>
@@ -670,14 +671,14 @@
                                             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                                 <div class="card card-profile mt-md-0 mt-5">
                                                     <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
-                                                        <h4 class="mb-0">{{$priceDiscount->CustomerGroupCode}}</h4>
+                                                        <h4 class="mb-0 text-capitalize">{{ strtolower(str_replace('_', ' ', $priceDiscount->customerDiscountGroup['Title'])) }}</h4>
                                                         <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
                                                         <div class="row justify-content-center text-center">
                                                             <div class="col-12 mx-auto">
-                                                                <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($itemDetails['unit_price'])}}</h4>
-                                                                <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($itemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$itemDetails['unit_price'])) }}</h5>
+                                                                <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($lineItemDetails['unit_price'])}}</h4>
+                                                                <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$lineItemDetails['unit_price'])) }}</h5>
                                                                 
-                                                                <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$itemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
+                                                                <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$lineItemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -694,8 +695,8 @@
                                 @empty
                                     <span class="text-danger text-center">Empty discount for this item..!</span>
                                 @endforelse
-                                @if($itemDetails['cart_item_type']==1)
-                                    @if(in_array($itemDetails['item_code'],config('global.engine_oil_discount_voucher')['services']))
+                                @if($lineItemDetails['cart_item_type']==1)
+                                    @if(in_array($lineItemDetails['item_code'],config('global.engine_oil_discount_voucher')['services']))
                                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                             <div class="card card-profile mt-md-0 mt-5">
                                                 <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
@@ -703,7 +704,7 @@
                                                     <span class="badge bg-gradient-info">10%, 15%, 20%, 25% off</span>
                                                     <div class="row justify-content-center text-center">
                                                         <div class="col-12 mx-auto">
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyEngineOilLineDiscountSubmit('{{$itemDetails['id']}}','{{$itemDetails['item_code']}}')">Add Now</a>
+                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyEngineOilLineDiscountSubmit('{{$lineItemDetails['id']}}','{{$lineItemDetails['item_code']}}')">Add Now</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -711,7 +712,7 @@
                                         </div>
                                     @endif
                                 @else
-                                    @if(in_array($itemDetails['item_code'],config('global.engine_oil_discount_voucher')['items']))
+                                    @if(in_array($lineItemDetails['item_code'],config('global.engine_oil_discount_voucher')['items']))
                                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                             <div class="card card-profile mt-md-0 mt-5">
                                                 <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
@@ -719,7 +720,7 @@
                                                     <span class="badge bg-gradient-info">10%, 15%, 20%, 25% off</span>
                                                     <div class="row justify-content-center text-center">
                                                         <div class="col-12 mx-auto">
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyEngineOilLineDiscountSubmit('{{$itemDetails['id']}}','{{$itemDetails['item_code']}}')">Add Now</a>
+                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyEngineOilLineDiscountSubmit('{{$lineItemDetails['id']}}','{{$lineItemDetails['item_code']}}')">Add Now</a>
                                                         </div>
                                                     </div>
                                                 </div>

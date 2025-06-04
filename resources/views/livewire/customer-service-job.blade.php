@@ -453,7 +453,7 @@
                                         
                                         <div class="card-body p-3 pb-0">
                                             <ul class="list-group">
-                                                <?php $total = 0;$totalDiscount=0; ?>
+                                                <?php $total = 0;$totalDiscount=0; $package_job=false; ?>
                                                 @foreach ($cartItems as $item)
 
                                                     <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
@@ -549,6 +549,10 @@
                                                         $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*$item->unit_price)*$item->quantity);
                                                         //echo $totalDiscount;
                                                     }
+                                                    if($item->is_package==1){
+                                                        $package_job=true;
+
+                                                    }
                                                     ?>
                                                 @endforeach
                                                 <?php
@@ -558,6 +562,11 @@
                                                     $tax = $totalAfterDisc * (config('global.TAX_PERCENT') / 100);
                                                 }
                                                 else
+                                                {
+                                                    $tax = 0;
+                                                }
+
+                                                if($package_job)
                                                 {
                                                     $tax = 0;
                                                 }

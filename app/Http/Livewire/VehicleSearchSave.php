@@ -43,20 +43,18 @@ class VehicleSearchSave extends Component
 
     public function render()
     {
-        /*foreach(PlateCode::where(['plateEmiratesId'=>3,'is_active'=>1])->where('plateColorTitle','LIKE',"%SHJ%")->get() as $plateCode)
-        {
-            //dd($plateCode->plateColorTitle);
-            $newPlateCOde = str_replace("SHJ ", "", $plateCode->plateColorTitle);
-            //dd($newPlateCOde);
-            PlateCode::where(['id'=>$plateCode->id])->update(['plateColorTitle'=>$newPlateCOde]);
-        }*/
-        /*dd(CustomerVehicle::where('plate_number_final','LIKE',"%Dubai%")->get());
-        foreach(CustomerVehicle::where('plate_number_final','LIKE',"%Dubai%")->get() as $finalNumberPLate)
+
+        //dd(CustomerVehicle::where('plate_number_final','LIKE',"%Dubai%")->get());
+        /*foreach(CustomerVehicle::where('plate_number_final','LIKE',"%Dubai%")->get() as $finalNumberPLate)
         {
             //dd($finalNumberPLate);
             $newFinalNumberPLate = str_replace("Dubai", "DXB", $finalNumberPLate->plate_number_final);
+            //$newFinalNumberPLateCode = str_replace("AD", "", $finalNumberPLate->plate_code);
             //dd($newFinalNumberPLate);
-            CustomerVehicle::where(['id'=>$finalNumberPLate->id])->update(['plate_number_final'=>$newFinalNumberPLate]);
+            CustomerVehicle::where(['id'=>$finalNumberPLate->id])->update([
+                'plate_number_final'=>$newFinalNumberPLate,
+                //'plate_code'=>$newFinalNumberPLateCode
+            ]);
         }*/
         /*$pendingCustomersCartQuery = CustomerServiceCart::with(['customerInfo','vehicleInfo']);
         $pendingCustomersCartQuery = $pendingCustomersCartQuery->where(['created_by'=>auth()->user('user')['id']]);

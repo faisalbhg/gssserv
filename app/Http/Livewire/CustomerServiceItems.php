@@ -36,13 +36,13 @@ class CustomerServiceItems extends Component
     public $selectedCustomerVehicle=false, $showForms=false, $cardShow=false, $showItemsSearchResults=false, $showLineDiscountItems=false;
     public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $item_search_code;
     public $serviceAddedMessgae=[],$cartItems = [], $cartItemCount, $ql_item_qty, $ceramic_dicount, $showManulDiscount=[],$manualDiscountInput;
-    public $confirming, $priceDiscountList, $itemDetails;
+    public $confirming, $priceDiscountList, $lineItemDetails;
     public $showSelectedDiscount=false,$selectedDiscount, $appliedDiscount, $discountForm=false; 
     public $customerSelectedDiscountGroup, $employeeId, $searchStaffId=false, $staffavailable;
     public $discount_card_imgae, $discount_card_number, $discount_card_validity;
     public $discountCardApplyForm=false, $engineOilDiscountForm=false;
     public $engineOilDiscountPercentage, $customerDiscontGroupId, $customerDiscontGroupCode;
-    public $lineDIscountItemId, $linePriceDiscount;
+    public $lineDIscountItemId, $linePriceDiscount, $discountAvailability;
 
     public function render()
     {
@@ -328,20 +328,11 @@ class CustomerServiceItems extends Component
     }
 
     public function applyLineDiscount($item){
-        $this->selectedDiscount=[];
+        $this->lineDIscountItemId = $item['id'];
+        $this->selectedDiscount=null;
         $this->showSelectedDiscount=false;
-        /*dd(LaborSalesPrices::with(['customerDiscountGroup'])
-            ->where(function ($query) {
-                $query->whereRelation('customerDiscountGroup', 'GroupType', '=', 2);
-                $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
-            })
-            ->where('StartDate', '<=', Carbon::now())
-            ->where('EndDate', '>=', Carbon::now())
-            ->where('CustomerGroupCode', '!=', 'AJM_CAMP')
-            ->where(['ServiceItemId'=>$item['item_id']])
-            ->limit(2)
-            ->get());*/
         $this->priceDiscountList=null;
+
         if($item['cart_item_type']==1){
             $inventorySalesPricesQuery = LaborSalesPrices::where([
                 'ServiceItemId'=>$item['item_id'],
@@ -368,16 +359,194 @@ class CustomerServiceItems extends Component
             });
             $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
         }
-        $this->itemDetails = $item;
-        //dd($inventorySalesPricesResult);
+        $this->lineItemDetails = $item;
         $this->priceDiscountList = $inventorySalesPricesResult;
         $this->showLineDiscountItems = true;
         $this->dispatchBrowserEvent('showPriceDiscountList');
         $this->dispatchBrowserEvent('scrolltoInModalTopNew');
     }
 
+    /**
+     * Apply Discount on Saved Discount
+     * customer based
+     * */
+    public function savedCustomerDiscountGroup($item,$savedCustomerDiscount){
+
+        $this->selectedDiscount = [
+            'unitId'=>isset($savedCustomerDiscount['discount_unit_id'])?$savedCustomerDiscount['discount_unit_id']:null,
+            'code'=>$savedCustomerDiscount['discount_code'],
+            'title'=>$savedCustomerDiscount['discount_title'],
+            'id'=>$savedCustomerDiscount['discount_id'],
+            'groupType'=>$savedCustomerDiscount['groupType'],
+        ];
+        $this->appliedDiscount = $this->selectedDiscount;
+        $savedCustDiscount = $this->applyDiscountOnSavedCustomerDiscount();
+        
+        if($savedCustDiscount){
+            $getSavedCustDiscount = $savedCustDiscount->customerDiscountGroup;
+            if($savedCustomerDiscount['discount_id']==8 || $savedCustomerDiscount['discount_id']==9){
+                $customerStaffIdCheck = $this->checkStffAvailablity($savedCustomerDiscount['employee_code']);
+                if($customerStaffIdCheck)
+                {
+                    $this->applyDIsountinItemService($savedCustDiscount);    
+                }
+                else
+                {
+                    $this->staffavailable="Employee does not exist..!";
+                }
+            }
+            else
+            {
+                $this->applyDIsountinItemService($savedCustDiscount);
+            }
+        }
+        else
+        {
+            $this->discountAvailability="Discount is unavailable for this..!";
+        }
+
+
+        
+            
+    }
+
+
+    /**
+     * CHecking HR System STaff Available or not
+     **/
+    public function checkStffAvailablity($employee_code){
+        $this->employeeId = sprintf('%06d', $employee_code);
+        
+        //Call Procedure for Customer Staff ID Check
+        $customerStaffIdCheck = DB::select('EXEC GetEmployee @employee_code = "'.$this->employeeId.'"', [
+            $this->employeeId,
+        ]); 
+        return $customerStaffIdCheck;
+    }
+
+
+    /**
+     * Check Staff DIscount Submit
+     * */
+    public function checkStaffDiscountGroup(){
+        $proceeddisctount=false;
+
+        $validatedData = $this->validate([
+             'employeeId' => 'required',
+        ]);
+        $this->employeeId = sprintf('%06d', $this->employeeId);
+        
+        //Call Procedure for Customer Staff ID Check
+        $customerStaffIdCheck = DB::select('EXEC GetEmployee @employee_code = "'.$this->employeeId.'"', [
+            $this->employeeId,
+        ]); 
+
+        if($customerStaffIdCheck)
+        {
+            if (!CustomerDiscountGroup::where([
+                'customer_id'=>$this->customer_id,
+                //'vehicle_id'=>$this->vehicle_id,
+                'discount_id'=>$this->selectedDiscount['id'],
+            ])->exists())
+            {
+                $customerStaffIdResult = (array)$customerStaffIdCheck[0];
+                $customerDiscontGroupInfo = [
+                    'customer_id'=>$this->customer_id,
+                    'vehicle_id'=>$this->vehicle_id,
+                    'discount_id'=>$this->selectedDiscount['id'],
+                    'discount_unit_id'=>$this->selectedDiscount['unitId'],
+                    'discount_code'=>$this->selectedDiscount['code'],
+                    'discount_title'=>$this->selectedDiscount['title'],
+                    'employee_code'=>$customerStaffIdResult['employee_code'],
+                    'employee_name'=>$customerStaffIdResult['Name'],
+                    'groupType'=>$this->selectedDiscount['groupType'],
+                    'is_active'=>1,
+                    'is_default'=>1,
+                    'created_at'=>Carbon::now(),
+                ];
+                
+                $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
+            }
+            else
+            {
+
+                $customerDiscontGroup = CustomerDiscountGroup::where([
+                    'customer_id'=>$this->customer_id,
+                    'vehicle_id'=>$this->vehicle_id,
+                    'discount_id'=>$this->selectedDiscount['id']
+                ])->first();
+            }
+
+            $this->appliedDiscount = $this->selectedDiscount;
+            $this->applyDIsountinItemService($this->linePriceDiscount);
+            //$this->applyDiscountOnCart();
+            //$this->dispatchBrowserEvent('closeDiscountGroupModal');
+        }
+        else
+        {
+            $this->staffavailable="Employee does not exist..!";
+        }
+
+    }
+
+    public function applyDiscountOnSavedCustomerDiscount()
+    {
+        $item = $this->lineItemDetails;
+        $discountGroupType = $this->selectedDiscount['groupType'];
+        if($item['cart_item_type']==1){
+            $inventorySalesPricesQuery = LaborSalesPrices::where([
+                'ServiceItemId'=>$this->lineItemDetails['id'],
+                'CustomerGroupCode'=>$this->selectedDiscount['code']
+            ])->where('StartDate', '<=', Carbon::now());
+
+            $inventorySalesPricesQuery = $inventorySalesPricesQuery->with(['customerDiscountGroup'])->where(function ($query)  use ($discountGroupType)  {
+                $query->whereRelation('customerDiscountGroup', 'GroupType', '=', $discountGroupType);
+                //$query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 5);
+                $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
+            });
+            $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
+        }
+        else if($item['cart_item_type']==2){
+            $inventorySalesPricesQuery = InventorySalesPrices::where([
+                'ServiceItemId'=>$item['item_id'],
+                'CustomerGroupCode'=>$this->selectedDiscount['code'],
+                'DivisionCode'=>auth()->user('user')['station_code'],
+            ]);
+
+            $inventorySalesPricesQuery = $inventorySalesPricesQuery->with(['customerDiscountGroup'])->where(function ($query) use ($discountGroupType) {
+                $query->whereRelation('customerDiscountGroup', 'GroupType', '=', $discountGroupType);
+                //$query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 5);
+                $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
+            });
+            $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
+        }
+        $savedCustDiscount = null;
+        foreach($inventorySalesPricesResult as $inventorySalesPrices)
+        {
+            if($inventorySalesPrices->customerDiscountGroup['GroupType'] == 1 && $inventorySalesPrices->EndDate == null)
+            {
+                $savedCustDiscount = $inventorySalesPrices;
+            }
+            elseif($inventorySalesPrices->customerDiscountGroup['GroupType']==2)
+            {
+                $givenDate = \Carbon\Carbon::parse($inventorySalesPrices->EndDate); // Replace with your date
+                $now = \Carbon\Carbon::now();
+                if ($givenDate->isPast()) {
+                    //
+                }
+                else
+                {
+                    $savedCustDiscount = $inventorySalesPrices;
+                }
+            }
+        }
+        return $savedCustDiscount;
+        
+    }
+
+
     public function applyLineDiscountSubmit($itemDetails,$priceDiscount,$discountGroup){
-        $this->lineDIscountItemId = $itemDetails;
+        
         $this->linePriceDiscount = $priceDiscount;
         $this->selectedDiscount = [
             'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
@@ -389,7 +558,7 @@ class CustomerServiceItems extends Component
         $this->showSelectedDiscount=true;
         if($discountGroup['GroupType']==2 || $discountGroup['GroupType']==6 )
         {
-            $this->applyDIsountinItemService($itemDetails,$priceDiscount);
+            $this->applyDIsountinItemService($priceDiscount);
 
             //$this->appliedDiscount = $this->selectedDiscount;
         }
@@ -481,8 +650,9 @@ class CustomerServiceItems extends Component
         ]);
     }
 
-    public function applyDIsountinItemService($itemCartId, $discountPrice){
-        dd($discountPrice);
+    public function applyDIsountinItemService($discountPrice){
+        //dd($discountPrice);
+        $itemCartId = $this->lineItemDetails['id'];
         $customerBasket = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$itemCartId])->first();
         $cartUpdate['price_id']=$discountPrice['PriceID'];
         $cartUpdate['customer_group_id']=$discountPrice['CustomerGroupId'];
@@ -498,6 +668,9 @@ class CustomerServiceItems extends Component
         $this->lineDIscountItemId = null;
         $this->linePriceDiscount = null;
         $this->selectedDiscount = null;
+
+        $this->discountCardApplyForm=false;
+        $this->showSelectedDiscount=false;
     }
 
     public function selectDiscountGroup($discountGroup){
@@ -549,67 +722,7 @@ class CustomerServiceItems extends Component
         }
     }
 
-    public function checkStaffDiscountGroup(){
-        $proceeddisctount=false;
-        $validatedData = $this->validate([
-             'employeeId' => 'required',
-        ]);
-        $this->employeeId = sprintf('%06d', $this->employeeId);
-        
-        //Call Procedure for Customer Staff ID Check
-        $customerStaffIdCheck = DB::select('EXEC GetEmployee @employee_code = "'.$this->employeeId.'"', [
-            $this->employeeId,
-        ]); 
-
-
-        if($customerStaffIdCheck)
-        {
-            if (!CustomerDiscountGroup::where([
-                'customer_id'=>$this->customer_id,
-                //'vehicle_id'=>$this->vehicle_id,
-                'discount_id'=>$this->selectedDiscount['id'],
-            ])->exists())
-            {
-                $customerStaffIdResult = (array)$customerStaffIdCheck[0];
-                $customerDiscontGroupInfo = [
-                    'customer_id'=>$this->customer_id,
-                    'vehicle_id'=>$this->vehicle_id,
-                    'discount_id'=>$this->selectedDiscount['id'],
-                    'discount_unit_id'=>$this->selectedDiscount['unitId'],
-                    'discount_code'=>$this->selectedDiscount['code'],
-                    'discount_title'=>$this->selectedDiscount['title'],
-                    'employee_code'=>$customerStaffIdResult['employee_code'],
-                    'employee_name'=>$customerStaffIdResult['Name'],
-                    'groupType'=>$this->selectedDiscount['groupType'],
-                    'is_active'=>1,
-                    'is_default'=>1,
-                    'created_at'=>Carbon::now(),
-                ];
-                
-                $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
-            }
-            else
-            {
-
-                $customerDiscontGroup = CustomerDiscountGroup::where([
-                    'customer_id'=>$this->customer_id,
-                    'vehicle_id'=>$this->vehicle_id,
-                    'discount_id'=>$this->selectedDiscount['id']
-                ])->first();
-            }
-            
-            
-            $this->appliedDiscount = $this->selectedDiscount;
-            $this->applyDIsountinItemService($this->lineDIscountItemId,$this->linePriceDiscount);
-            //$this->applyDiscountOnCart();
-            //$this->dispatchBrowserEvent('closeDiscountGroupModal');
-        }
-        else
-        {
-            $this->staffavailable="Employee does not exist..!";
-        }
-
-    }
+    
 
     public function clickDiscountGroup(){
         $this->selectedDiscount=null;
@@ -690,13 +803,14 @@ class CustomerServiceItems extends Component
             'discount_card_validity' => 'required',
         ]);
         $customerDiscountGroupQuery = CustomerDiscountGroup::where([
-                'customer_id'=>$this->customer_id,
-                //'vehicle_id'=>$this->vehicle_id,
-                'discount_id'=>$this->selectedDiscount['id'],
-                'discount_card_number'=>$this->discount_card_number,
-                'is_active'=>1
-            ]);
-        if (!$customerDiscountGroupQuery->exists())
+            'customer_id'=>$this->customer_id,
+            //'vehicle_id'=>$this->vehicle_id,
+            'discount_id'=>$this->selectedDiscount['id'],
+            'discount_card_number'=>$this->discount_card_number,
+            'is_active'=>1
+        ]);
+
+        if(!$customerDiscountGroupQuery->exists())
         {
         
             $customerDiscontGroupInfo = [
@@ -718,6 +832,7 @@ class CustomerServiceItems extends Component
             {
                 $customerDiscontGroupInfo['discount_card_imgae'] = $this->discount_card_imgae->store('discount_group', 'public');
             }
+            //dd($customerDiscontGroupInfo);
             $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
         }
         else{
@@ -729,8 +844,20 @@ class CustomerServiceItems extends Component
         }
 
         $this->appliedDiscount = $this->selectedDiscount;
+        $this->applyDIsountinItemService($this->linePriceDiscount);
         //$this->applyDiscountOnCart();
         $this->dispatchBrowserEvent('closeDiscountGroupModal');
 
     }
+
+
+    public function submitService(){
+        if($this->job_number){
+            return redirect()->to('submit-job-update/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$this->job_number);
+        }
+        else{
+            return redirect()->to('submit-job/'.$this->customer_id.'/'.$this->vehicle_id);
+        }
+    }
+
 }
