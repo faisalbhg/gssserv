@@ -500,7 +500,7 @@ class CustomerServiceItems extends Component
         $discountGroupType = $this->selectedDiscount['groupType'];
         if($item['cart_item_type']==1){
             $inventorySalesPricesQuery = LaborSalesPrices::where([
-                'ServiceItemId'=>$this->lineItemDetails['id'],
+                'ServiceItemId'=>$this->lineItemDetails['item_id'],
                 'CustomerGroupCode'=>$this->selectedDiscount['code']
             ])->where('StartDate', '<=', Carbon::now());
 
