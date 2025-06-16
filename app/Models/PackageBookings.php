@@ -95,4 +95,9 @@ class PackageBookings extends Model
     public function createdInfo(){
         return $this->belongsTo(User::class,'created_by','id');
     }
+
+    public function packageSubTypes()
+    {
+        return $this->belongsTo(PackageSubTypes::class,'package_type','SubTypeId');
+    }
 }

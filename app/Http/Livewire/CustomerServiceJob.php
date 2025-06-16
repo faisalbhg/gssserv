@@ -883,7 +883,7 @@ class CustomerServiceJob extends Component
         
         if($this->showPackageList)
         {
-            $this->customerBookedPackages = PackageBookings::with(['customerPackageServices'])->where([
+            $this->customerBookedPackages = PackageBookings::with(['customerPackageServices','packageSubTypes'])->where([
                 'customer_id'=>$this->customer_id,
                 'vehicle_id'=>$this->vehicle_id,
                 'station'=>auth()->user('user')['station_code'],

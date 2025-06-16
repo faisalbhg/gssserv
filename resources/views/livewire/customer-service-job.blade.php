@@ -1575,7 +1575,23 @@
                                                         <div class="card bg-cover text-center my-2" >
                                                             <!-- style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')" -->
                                                             <div class="card-body z-index-2 py-2 text-center">
-                                                                <span class="badge rounded-pill bg-light {{config('global.package.type')[$packBookd->package_type]['bg_class']}} {{config('global.package.type')[$packBookd->package_type]['text_class']}}">{{config('global.package.type')[$packBookd->package_type]['title']}}</span>
+                                                                <?php
+                                                                    switch($packBookd->packageSubTypes['Description']){
+                                                                        case 'SILVER':
+                                                                            $buttontext = 'silver_button text-dark';
+                                                                            break;
+                                                                        case 'GOLD':
+                                                                            $buttontext = 'gold_button text-white';
+                                                                            break;
+                                                                        case 'PLATINUM':
+                                                                            $buttontext = 'platinum_button text-white';
+                                                                            break;
+                                                                        default:
+                                                                            $buttontext = 'platinum_button text-white';
+                                                                            break;
+                                                                    }
+                                                                ?>
+                                                                <span class="badge rounded-pill bg-light {{$buttontext}}">{{$packBookd->packageSubTypes['Description']}}</span>
                                                                 <h4 class="text-white">{{$packBookd->package_name}}</h4>
 
                                                                 <div class="row">
