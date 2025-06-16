@@ -561,8 +561,24 @@ class CustomerServiceJob extends Component
             }
 
             $sectionServiceLists = $sectionServiceLists->orderBy('SortIndex','ASC')->get();
-            
+            if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14){
+                //$sectionServicePriceLists = [];
+                foreach($sectionServiceLists as $key => $sectionServiceList){
+                    $discountLaborSalesPrices = LaborSalesPrices::where([
+                        'ServiceItemId'=>$sectionServiceList->ItemId,
+                        'CustomerGroupCode'=>$this->selectedVehicleInfo->customerInfoMaster['TenantCode']
+                    ]);
+                    $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
+                    if($discountLaborSalesPrices->exists()){
+                        $sectionServiceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
+                    }
 
+                    
+                    //dd($sectionServiceLists);
+                    
+                }
+            }
+            //dd($sectionServiceLists);
             $this->sectionServiceLists = $sectionServiceLists;
         }
         else
@@ -936,9 +952,12 @@ class CustomerServiceJob extends Component
                 $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
             });
             $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
+
+            //dd($inventorySalesPricesResult);
         }
         $this->lineItemDetails = $item;
         $this->priceDiscountList = $inventorySalesPricesResult;
+        //dd($this->priceDiscountList);
         $this->showLineDiscountItems = true;
         $this->dispatchBrowserEvent('showPriceDiscountList');
         $this->dispatchBrowserEvent('scrolltoInModalTopNew');
@@ -1525,7 +1544,7 @@ class CustomerServiceJob extends Component
         $addtoCartAllowed=false;
         $servicePrice = json_decode($servicePrice,true);
         $discountPrice = json_decode($discount,true);
-        //dd($servicePrice);
+        //dd($discountPrice);
         if(in_array($servicePrice['ItemCode'],config('global.extra_description_applied')))
         {
            $validatedData = $this->validate([

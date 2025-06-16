@@ -1018,7 +1018,7 @@
                             <div class="row">
                                 @forelse($sectionServiceLists as $sectionServiceList)
                                     <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
-                                    <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
+                                    <?php $discountDetails = isset($sectionServiceList['discountDetails'])?$sectionServiceList['discountDetails']:null; ?>
                                     @if($priceDetails->UnitPrice!=0)
                                     <div class="col-md-6 col-sm-6">
                                         

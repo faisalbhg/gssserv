@@ -1047,7 +1047,7 @@
                             <div class="row">
                                 @forelse($sectionServiceLists as $sectionServiceList)
                                     <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
-                                    <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
+                                    <?php $discountDetails = isset($sectionServiceList['discountDetails'])?$sectionServiceList['discountDetails']:null; ?>
                                     @if($sectionServiceList->UnitPrice!=0)
                                     <div class="col-md-6 col-sm-6">
                                         
@@ -1080,9 +1080,14 @@
                                                 <div class="col-12">
                                                     <div class="d-flex border-radius-lg p-0 mt-2">
                                                         <p class="w-100 text-md font-weight-bold text-dark my-auto me-2 float-start">
-                                                        <span class="float-start" >
+                                                        <span class="float-start" @if($discountDetails != null) style="text-decoration: line-through;" @endif >
                                                             <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{custom_round($sectionServiceList->UnitPrice)}}
                                                         </span>
+                                                        @if($discountDetails != null)
+                                                        <span  class="float-end">
+                                                        <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{ custom_round($sectionServiceList->UnitPrice-(($discountDetails['DiscountPerc']/100)*$sectionServiceList->UnitPrice)) }}
+                                                        </span>
+                                                        @endif
                                                         </p>
                                                         
                                                     </div>
@@ -1094,14 +1099,16 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="d-flex border-radius-lg p-0 mt-2">
-                                                        
+                                                        @if($discountDetails != null)
+                                                        <span class="badge bg-gradient-info">{{custom_round($discountDetails['DiscountPerc'])}}%off</span>
+                                                        @endif
                                                         @if($sectionServiceList->ItemCode==  config('global.ceramic.discount_in') && $selectedVehicleInfo->ceramic_wash_discount_count < 1)
                                                         <input type="number" style="padding-left: 5px !important;" class="form-control w-50" placeholder="{{$sectionServiceList->ItemName}} Discount Count..!" wire:model="ceramic_dicount.{{$sectionServiceList->ItemId}}">
                                                         @elseif($sectionServiceList->ItemCode==  config('global.ceramic.discount_in'))
                                                         Balance: {{$selectedVehicleInfo->ceramic_wash_discount_count}}
                                                         @endif
                                                         
-                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$sectionServiceList}}')">Add Now</a>
+                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$sectionServiceList}}','{{$discountDetails}}')">Add Now</a>
                                                         
                                                         
                                                     </div>
@@ -1421,7 +1428,23 @@
                                         
                                         ?>
                                         
-
+                                    @else
+                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
+                                            <div class="card card-profile mt-md-0 mt-5">
+                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
+                                                    <h4 class="mb-0 text-capitalize">{{ strtolower(str_replace('_', ' ', $priceDiscount->customerDiscountGroup['Title'])) }}</h4>
+                                                    <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
+                                                    <div class="row justify-content-center text-center">
+                                                        <div class="col-12 mx-auto">
+                                                            <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($lineItemDetails['unit_price'])}}</h4>
+                                                            <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$lineItemDetails['unit_price'])) }}</h5>
+                                                            
+                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$lineItemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endif
                                         
                                 @empty
@@ -1460,6 +1483,7 @@
                                         </div>
                                     @endif
                                 @endif
+
                                 <div wire:loading wire:target="addtoCart">
                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                         <div class="la-ball-beat">

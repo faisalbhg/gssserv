@@ -113,6 +113,9 @@ class PackagesBookings extends Component
         
         foreach($this->packageInfo->packageDetails as $packageDetails)
         {
+            $packageServiceTotal = $packageDetails->DiscountedPrice*$packageDetails->Quantity;
+            $packageServiceTax = custom_round($discountedPrice * (config('global.TAX_PERCENT') / 100));
+            $packageServiceGrantTotal = $packageServiceTotal+$packageServiceTax;
             $customerPkgServiceData = [
                 'package_number'=>$this->package_number,
                 'package_id'=>$packageId->id,
@@ -139,10 +142,10 @@ class PackagesBookings extends Component
                 'section_name'=>$packageDetails->labourItemDetails['CompanyCode'],
                 'department_name'=>$packageDetails->labourItemDetails['CompanyCode'],
                 'station'=>auth()->user('user')->stationName['LandlordCode'],
-                'total_price'=>$this->total,
+                'total_price'=>$packageServiceTotal,
                 'quantity'=>$packageDetails->Quantity,
-                'vat'=>$this->tax,
-                'grand_total'=>$this->grand_total,
+                'vat'=>$packageServiceTax,
+                'grand_total'=>$packageServiceGrantTotal,
                 'package_status'=>1,
                 'job_status'=>1,
                 'job_departent'=>1,
