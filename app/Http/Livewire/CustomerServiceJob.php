@@ -950,7 +950,6 @@ class CustomerServiceJob extends Component
      * customer based
      * */
     public function savedCustomerLineDiscountGroup($item,$savedCustomerDiscount){
-
         $this->selectedDiscount = [
             'unitId'=>isset($savedCustomerDiscount['discount_unit_id'])?$savedCustomerDiscount['discount_unit_id']:null,
             'code'=>$savedCustomerDiscount['discount_code'],
@@ -988,10 +987,11 @@ class CustomerServiceJob extends Component
     public function applyDiscountOnSavedCustomerDiscount()
     {
         $item = $this->lineItemDetails;
+        //dd($item);
         $discountGroupType = $this->selectedDiscount['groupType'];
         if($item['cart_item_type']==1){
             $inventorySalesPricesQuery = LaborSalesPrices::where([
-                'ServiceItemId'=>$this->lineItemDetails['id'],
+                'ServiceItemId'=>$this->lineItemDetails['item_id'],
                 'CustomerGroupCode'=>$this->selectedDiscount['code']
             ])->where('StartDate', '<=', Carbon::now());
 
@@ -1001,6 +1001,7 @@ class CustomerServiceJob extends Component
                 $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
             });
             $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
+            //dd($inventorySalesPricesResult);
         }
         else if($item['cart_item_type']==2){
             $inventorySalesPricesQuery = InventorySalesPrices::where([
