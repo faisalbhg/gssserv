@@ -351,7 +351,7 @@
                                     <div>
                                         <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Edit Customer/Discount/Vehicle" wire:click="editCustomer()">Edit</button>
                                         <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle"  wire:click="addNewVehicle()">New Vehicle</button>
-                                        <button type="button" class="btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
+                                        <button type="button" class="d-none btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
                                         <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
                                         <div wire:loading wire:target="openServiceGroup">
                                             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
@@ -363,7 +363,7 @@
                                             </div>
                                         </div>
                                         @if(!empty($appliedDiscount))
-                                        <button class="btn bg-gradient-danger btn-sm" wire:click.prevent="removeDiscount()">Remove Discount - {{strtolower(str_replace("_"," ",$appliedDiscount['code']))}}</button>
+                                        <button class="d-none btn bg-gradient-danger btn-sm" wire:click.prevent="removeDiscount()">Remove Discount - {{strtolower(str_replace("_"," ",$appliedDiscount['code']))}}</button>
                                         <div wire:loading wire:target="removeDiscount">
                                             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                 <div class="la-ball-beat">
@@ -379,7 +379,7 @@
                                         @endif -->
 
                                         @if(@$appliedDiscount['groupType']==3)
-                                        <button class="btn bg-gradient-success btn-sm " wire:click.prevent="applyEngineOilDiscount()">Apply {{$engineOilDiscountPercentage}}% Discount</button>
+                                        <button class="d-none btn bg-gradient-success btn-sm " wire:click.prevent="applyEngineOilDiscount()">Apply {{$engineOilDiscountPercentage}}% Discount</button>
                                         @endif
 
                                         <br>
