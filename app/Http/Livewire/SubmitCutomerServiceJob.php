@@ -308,6 +308,7 @@ class SubmitCutomerServiceJob extends Component
                 JobCardsDeletedServices::create($customerJobCardServices->toArray());
                 CustomerJobCardServices::where(['job_number'=>$customerJobCardServices->job_number,'item_id'=>$customerJobCardServices->item_id])->delete();
             }
+
         }
         
     }
@@ -581,13 +582,13 @@ class SubmitCutomerServiceJob extends Component
                     'item_code'=>$cartData->item_code,
                 ]);
 
-                if($cartData->discount_perc){
+                /*if($cartData->discount_perc){
                     $customerJobServiceQuery->where([
                         'discount_id'=>$cartData->customer_group_id,
                         'discount_code'=>$cartData->customer_group_code
                     ]);
-                }
-
+                }*/
+                //dd($customerJobServiceQuery->exists());
                 if($customerJobServiceQuery->exists()){
                     $customerJobServiceQuery->update($customerJobServiceData);
                     $customerJobServiceId = $customerJobServiceQuery->first();    
