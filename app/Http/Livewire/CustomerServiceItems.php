@@ -134,7 +134,7 @@ class CustomerServiceItems extends Component
                 break;
 
             case '2':
-                $departmentName = 'Mechanical';
+                $departmentName = 'General Service';
                 // code...
                 break;
             
@@ -147,8 +147,13 @@ class CustomerServiceItems extends Component
                 'DevelopmentName'=>$departmentName,
                 'LandlordCode'=>auth()->user('user')['station_code']
             ])->first();
+        //dd($departmentDetails);
         $this->department_code=$departmentDetails->department_code;
         $this->department_name=$departmentDetails->department_name;
+        if($this->department_name == 'General Service')
+        {
+            $this->department_name = 'Mechanical';    
+        }
 
         $sectionsDetails = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')
             ->where([

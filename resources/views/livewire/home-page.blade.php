@@ -33,29 +33,49 @@
 <main class="main-content position-relative  border-radius-lg">
     <div class="container-fluid py-2">
         
-        
-
-        <p class="h5 mt-2">Jobs Over View @if($selected_date) On {{ \Carbon\Carbon::parse($selected_date)->format('dS M Y') }} @endif @if(auth()->user('user')->user_type==1)
-        <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
-            <div class="form-group">
-                <select class="form-control" id="stationSelect" wire:model="search_station">
-                    <option value="">-Select Station-</option>
-                    @foreach($stationsList as $station)
-                    <option value="{{$station->LandlordCode}}">{{$station->CorporateName}}</option>
-                    @endforeach
-                </select>
-                <div wire:loading wire:target="search_station">
-                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                        <div class="la-ball-beat">
-                            <div></div>
-                            <div></div>
-                            <div></div>
+        <div class="row">
+            <div class="col-xl-6 col-md-6 col-sm-6 mb-2">
+                <p class="h5 mt-2">Jobs Over View @if($selected_date) On {{ \Carbon\Carbon::parse($selected_date)->format('dS M Y') }} @endif</p>
+                @if(auth()->user('user')->user_type==1)
+                    <div class="row">
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <select class="form-control" id="stationSelect" wire:model="search_station">
+                                    <option value="">-Select Station-</option>
+                                    @foreach($stationsList as $station)
+                                    <option value="{{$station->LandlordCode}}">{{$station->CorporateName}}</option>
+                                    @endforeach
+                                </select>
+                                <div wire:loading wire:target="search_station">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                @endif
+            </div>
+            <div class="col-xl-6 col-md-6 col-sm-6 mb-2">
+                <div class="row">
+                    <div class="col-12">
+                        <a href="{{ route('job-start') }}">
+                        <div class="card bg-cover text-center my-4" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
+                            <div class="card-body z-index-2 py-4">
+                                <h2 class="text-white"><i class="fa fa-plus text-white mb-3" aria-hidden="true"></i> New Job</h2>
+                                
+                            </div>
+                            <div class="mask bg-gradient-primary border-radius-lg"></div>
+                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        @endif </p>
         <div class="row  mb-4">
             <div class="col-md-6">
                 <div class="card mb-0">
@@ -160,16 +180,7 @@
                 
                 <div class="row mt-lg-0 mt-0">
                     <p class="h5 mt-2">{{$jobList}}</p>
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="card h-100">
-                          <div class="card-body d-flex flex-column justify-content-center text-center">
-                            <a href="{{ route('job-card') }}">
-                              <i class="fa fa-plus text-secondary mb-3" aria-hidden="true"></i>
-                              <h5 class=" text-secondary"> New Job </h5>
-                            </a>
-                          </div>
-                        </div>
-                    </div>
+                    
                     @foreach($customerjobsLists as $custJob)
                     <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
                         <div class="card h-100" wire:click="dashCustomerJobUpdate('{{$custJob->job_number}}')">
@@ -199,7 +210,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
 <script src="https://unpkg.com/lightpick@latest/lightpick.js"></script>
 <script type="text/javascript">
-    
+    var dateToday = new Date();
     window.addEventListener('datePicker',event=>{
         
 
@@ -207,7 +218,7 @@
         //var some_date = '2024-11-20';
         //var dateToday = new Date('December 17, 2024 03:24:00');
 
-        var dateToday = new Date();
+        
 
         new Lightpick({
             field: document.getElementById('demo-13'),
@@ -236,7 +247,6 @@
     
 
     // demo-13
-    var dateToday = new Date();
     new Lightpick({
         field: document.getElementById('demo-13'),
         inline: true,

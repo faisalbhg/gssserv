@@ -461,36 +461,23 @@
                                                         <div class="d-flex flex-column">
                                                             <h6 class="mb-1 text-dark font-weight-bold text-sm">
                                                                 {{ $item->item_name }}
-                                                                <span class="text-xs">(#{{ $item->item_code }})</span>
-                                                                @if($item->extra_note)
-                                                                <br><span class="text-xs text-dark">Note: {{ $item->extra_note }}</span>
-                                                                @endif
                                                             </h6>
-
                                                             @if($item->isWarranty)
                                                             <div><span class="badge bg-gradient-primary">{{$item->warrantyPeriod}} Months Warranty</span></div>
                                                             @endif
 
+                                                            <span class="text-xs">#{{ $item->item_code }}</span>
+                                                            @if($item->extra_note)
+                                                                <span class="text-xs text-dark">Note: {{ $item->extra_note }}</span>
+                                                            @endif
                                                             @if($item->customer_group_code)
                                                             <label wire:click.prevent="removeLineDiscount({{$item->id}})" class="badge bg-gradient-info cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
-                                                            @else
-                                                            <span><label wire:click.prevent="applyLineDiscount({{$item}})" class="badge bg-gradient-dark cursor-pointer">Apply Discount </label></span>
-                                                            <div wire:loading wire:target="applyLineDiscount">
-                                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                    <div class="la-ball-beat">
-                                                                        <div></div>
-                                                                        <div></div>
-                                                                        <div></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
                                                             @endif
 
                                                             @if($confirming===$item->id)
                                                             <p>
-                                                                <span><label wire:click.prevent="kill({{ $item->id }},{{ $item->item_id }})" class="badge bg-gradient-success cursor-pointer"><i class="fa fa-trash"></i> Yes</label></span>
-                                                                <span><label wire:click.prevent="safe({{ $item->id }})" class="badge bg-gradient-info cursor-pointer"><i class="fa fa-trash"></i> No</label></span>
-                                                                
+                                                                <label class="p-0 text-success bg-red-600 cursor-pointer float-start" wire:click.prevent="kill({{ $item->id }},{{ $item->item_id }})"><i class="fa fa-trash"></i> Yes</label>
+                                                                <label class="p-0 text-info bg-red-600 cursor-pointer float-end" wire:click.prevent="safe({{ $item->id }})"><i class="fa fa-trash"></i> No</label>
                                                                 <div wire:loading wire:target="kill">
                                                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                                         <div class="la-ball-beat">
@@ -512,16 +499,9 @@
                                                             </p>
 
                                                             @else
-                                                            <span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
-                                                            <div wire:loading wire:target="confirmDelete">
-                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                        <div class="la-ball-beat">
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                
+                                                                    <label class="p-0 text-danger bg-red-600 cursor-pointer" wire:click.prevent="confirmDelete({{ $item->id }})"><i class="fa fa-trash"></i> Remove</label>
+                                                                
                                                             @endif
 
                                                         </div>
@@ -540,7 +520,7 @@
                                                                             <i class="fa-solid fa-square-minus fa-xl"></i>
                                                                         </span>
                                                                     @endif
-                                                                    <label class="mb-0">{{$item->quantity}}</label>
+                                                                    {{$item->quantity}}
                                                                     <span class="px-2 cursor-pointer" wire:click="cartSetUpQty({{ $item->id }})">
                                                                         <i class="fa-solid fa-square-plus fa-xl"></i>
                                                                     </span>
@@ -550,15 +530,6 @@
                                                             @else
                                                                 {{$item->quantity}}
                                                             @endif
-                                                            <div wire:loading wire:target="cartSetDownQty,cartSetUpQty">
-                                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                    <div class="la-ball-beat">
-                                                                        <div></div>
-                                                                        <div></div>
-                                                                        <div></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}}
@@ -874,7 +845,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row d-none">
+                <div class="row">
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                             <label for="seachByItemBrand">Items Name</label>
@@ -1048,41 +1019,46 @@
                                 @forelse($sectionServiceLists as $sectionServiceList)
                                     <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
                                     <?php $discountDetails = $sectionServiceList['discountDetails']; ?>
-                                    @if($sectionServiceList->UnitPrice!=0)
+                                    @if($priceDetails->UnitPrice!=0)
                                     <div class="col-md-6 col-sm-6">
                                         
                                         <div class="bg-gray-100 shadow my-3 p-2">
                                             <div class="row mb-1">
                                                 <div class="col-12">
-                                                    <p class="text-sm text-center font-weight-bold text-dark">{{$sectionServiceList->ItemCode}} - {{$sectionServiceList->ItemName}}</p>
+                                                    <p class="text-sm text-center font-weight-bold text-dark">{{$priceDetails->ItemCode}} - {{$priceDetails->ItemName}}</p>
                                                     
-                                                    @if(in_array($sectionServiceList->ItemCode,config('global.extra_description_applied')))
-                                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Descriptions..!" wire:model="extra_description.{{$sectionServiceList->ItemId}}"></textarea >
-                                                    @error('extra_description.'.$sectionServiceList->ItemId) <span class="text-danger">Descriptions Required..!</span> @enderror
+                                                    @if(in_array($priceDetails->ItemCode,config('global.extra_description_applied')))
+                                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Descriptions..!" wire:model="extra_description.{{$priceDetails->ItemId}}"></textarea >
+                                                    @error('extra_description.'.$priceDetails->ItemId) <span class="text-danger">Descriptions Required..!</span> @enderror
 
-                                                    <input type="number" style="padding-left: 5px !important;display:none;" class="w-50 mt-2 form-control" placeholder="Discount Amount..!" wire:model="mechanical_discount.{{$sectionServiceList->ItemId}}" />
+                                                    <input type="number" style="padding-left: 5px !important;display:none;" class="w-50 mt-2 form-control" placeholder="Discount Amount..!" wire:model="mechanical_discount.{{$priceDetails->ItemId}}" />
 
                                                     @endif
 
-                                                    @if(in_array($sectionServiceList->ItemCode,config('global.extra_notes_applied')))
-                                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$sectionServiceList->ItemId}}"></textarea >
+                                                    @if(in_array($priceDetails->ItemCode,config('global.extra_notes_applied')))
+                                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$priceDetails->ItemId}}"></textarea >
                                                     @endif
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                @if($sectionServiceList->CustomizePrice==1)
+                                                @if($priceDetails->CustomizePrice==1)
                                                 
                                                 <div class="col-12">
-                                                    <input type="number" class="form-control w-50 float-start" placeholder="Price {{$sectionServiceList->MinPrice}} - {{$sectionServiceList->MaxPrice}}" wire:model="customise_service_item_price.{{$sectionServiceList->ItemId}}" style="padding-left:5px !important;" >
+                                                    <input type="number" class="form-control w-50 float-start" placeholder="Price {{$priceDetails->MinPrice}} - {{$priceDetails->MaxPrice}}" wire:model="customise_service_item_price.{{$priceDetails->ItemId}}" style="padding-left:5px !important;" >
                                                 </div>
-                                                @error('customise_service_item_price.'.$sectionServiceList->ItemId) <span class="text-danger">Price Required..!</span> @enderror
+                                                @error('customise_service_item_price.'.$priceDetails->ItemId) <span class="text-danger">Price Required..!</span> @enderror
                                                 @else
                                                 <div class="col-12">
                                                     <div class="d-flex border-radius-lg p-0 mt-2">
                                                         <p class="w-100 text-md font-weight-bold text-dark my-auto me-2 float-start">
-                                                        <span class="float-start" >
-                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{custom_round($sectionServiceList->UnitPrice)}}
+                                                        <span class="float-start" @if($discountDetails != null) style="text-decoration: line-through;" @endif>
+                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{custom_round($priceDetails->UnitPrice)}}
                                                         </span>
+                                                        @if($discountDetails != null)
+                                                        <span  class="float-end">
+                                                        <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{ custom_round($priceDetails->UnitPrice-(($discountDetails['DiscountPerc']/100)*$priceDetails->UnitPrice)) }}
+                                                        </span>
+                                                        @endif
                                                         </p>
                                                         
                                                     </div>
@@ -1094,14 +1070,16 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="d-flex border-radius-lg p-0 mt-2">
-                                                        
-                                                        @if($sectionServiceList->ItemCode==  config('global.ceramic.discount_in') && $selectedVehicleInfo->ceramic_wash_discount_count < 1)
-                                                        <input type="number" style="padding-left: 5px !important;" class="form-control w-50" placeholder="{{$sectionServiceList->ItemName}} Discount Count..!" wire:model="ceramic_dicount.{{$sectionServiceList->ItemId}}">
-                                                        @elseif($sectionServiceList->ItemCode==  config('global.ceramic.discount_in'))
+                                                        @if($discountDetails != null)
+                                                        <span class="badge bg-gradient-info">{{custom_round($discountDetails['DiscountPerc'])}}%off</span>
+                                                        @endif
+                                                        @if($priceDetails->ItemCode==  config('global.ceramic.discount_in') && $selectedVehicleInfo->ceramic_wash_discount_count < 1)
+                                                        <input type="number" style="padding-left: 5px !important;" class="form-control w-50" placeholder="{{$priceDetails->ItemName}} Discount Count..!" wire:model="ceramic_dicount.{{$priceDetails->ItemId}}">
+                                                        @elseif($priceDetails->ItemCode==  config('global.ceramic.discount_in'))
                                                         Balance: {{$selectedVehicleInfo->ceramic_wash_discount_count}}
                                                         @endif
                                                         
-                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$sectionServiceList}}')">Add Now</a>
+                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$priceDetails}}','{{$discountDetails}}')">Add Now</a>
                                                         
                                                         
                                                     </div>
@@ -1112,7 +1090,7 @@
                                             
                                             
                                             
-                                            @if(@$serviceAddedMessgae[$sectionServiceList->ItemCode])
+                                            @if(@$serviceAddedMessgae[$priceDetails->ItemCode])
                                             <div class="text-center">
                                                 <span class="alert-icon"><i class="ni ni-like-2 text-success"></i></span>
                                                 <span class="alert-text text-success"><strong>Success!</strong> Added serves!</span>
@@ -1121,7 +1099,7 @@
                                                 </button>
                                             </div>
                                             @endif
-                                            @if(@$customizedErrorMessage[$sectionServiceList->ItemId])
+                                            @if(@$customizedErrorMessage[$priceDetails->ItemId])
                                             <div class="text-center">
                                                 
                                                 <span class="alert-text text-danger"><strong>Error!</strong> Enter valied price!</span>
@@ -1165,350 +1143,130 @@
             </div>
         @endif
 
-        @if($showLineDiscountItems)
-            <!-- Modal -->
-            <style type="text/css">
-                .modal-body{
-                    max-height: calc(100vh - 300px);
-                    overflow-y: auto;
-                }
-            </style>
-            <div class="modal fade" id="showPriceDiscountListModal" tabindex="-1" role="dialog" aria-labelledby="showPriceDiscountListModalLabel" aria-hidden="true" wire:ignore.self style="z-index:99999;" >
-                <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:90%;">
-                    <div class="modal-content">
-                        
-                        <div class="modal-header" id="topScrolledPlace">
-                            <h5 class="modal-title" id="showPriceDiscountListModalLabel">{{$lineItemDetails['item_code']}} - {{$lineItemDetails['item_name']}}</h5>
+        @if($showServiceItems)
+            <div class="row" id="serviceItemsListDiv">
+                <div class="col-md-4 col-sm-6">
+                    <div class="form-group">
+                        <label for="seachByItemCategory">Category</label>
+                        <select class="form-control" id="seachItemByCategory" wire:model="item_search_category">
+                            <option value="">-Select-</option>
+                            @foreach($itemCategories as $itemCategory)
+                            <option value="{{$itemCategory->CategoryId}}">{{$itemCategory->Description}}</option>
+                            @endforeach
+                        </select>
+                        @error('item_search_category') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+                <div wire:loading wire:target="item_search_category">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
                         </div>
-                        <div class="modal-body py-0" id="scrollToDiscountTop" >
-                            @if(count($selectedVehicleInfo->customerDiscountLists)>0)
-                                <div class="row">
-                                    <h6><u>Saved Customer Discounts</u></h6>
-                                    @forelse($selectedVehicleInfo->customerDiscountLists as $customerDiscountLists)
-                                        <?php $end = \Carbon\Carbon::parse($customerDiscountLists->discount_card_validity);?>
-                                        @if($customerDiscountLists->discount_id==8 || $customerDiscountLists->discount_id==9)
-                                        <div class="col-lg-2 col-sm-3 my-2">
-                                            <div wire:click="savedCustomerLineDiscountGroup({{json_encode($lineItemDetails)}},{{$customerDiscountLists}})" class="card cursor-pointer bg-gradient-info">
-                                                <div class="card-body  py-2">
-                                                    <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower(str_replace('_', ' ', $customerDiscountLists->discount_code))}}</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @elseif(\Carbon\Carbon::now()->diffInDays($end, false)>=0)
-                                        <div class="col-lg-2 col-sm-3 my-2">
-                                            <div wire:click="savedCustomerLineDiscountGroup({{json_encode($lineItemDetails)}},{{$customerDiscountLists}})" class="card cursor-pointer bg-gradient-info">
-                                                <div class="card-body  py-2">
-                                                    <h6 class="font-weight-bold text-capitalize text-center text-sm text-light mb-0">{{strtolower(str_replace('_', ' ', $customerDiscountLists->discount_title))}}</h6>
-                                                </div>
-                                            </div>
-                                            <small>Expired in: {{ $diff = Carbon\Carbon::parse($customerDiscountLists->discount_card_validity)->diffForHumans(Carbon\Carbon::now()) }}</small>
-                                        </div>
-                                        @endif
-                                    @empty
-                                    @endforelse
-                                    <p class="badge bg-gradient-danger text-light text-bold text-lg mb-0">{{$discountAvailability}}</p>
-                                    <div wire:loading wire:target="savedCustomerLineDiscountGroup">
-                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                            <div class="la-ball-beat">
-                                                <div></div>
-                                                <div></div>
-                                                <div></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                            @endif
-                            @if($showSelectedDiscount)
-                            <div class="card  h-100 cursor-pointer">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-2 col-sm-4 my-2">
-                                            <button type="button" class="btn bg-gradient-primary" >{{str_replace("_"," ",strtolower($selectedDiscount['title']))}}</button>
-                                        </div>
-                                        <div class="col-lg-10 col-sm-8 text-center" >
-                                            @if($searchStaffId)
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="employeeId">Employee Id</label>
-                                                        <input type="text" class="form-control" wire:model="employeeId" id="employeeId" placeholder="Staff/Employee Id">
-                                                        @error('employeeId') <span class="text-danger">{{ $message }}</span> @enderror
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="col-md-12">
-                                                    <button type="button" class="btn bg-gradient-primary" wire:click="checkLineStaffDiscountGroup()">Check Employee</button>
-                                                    <div wire:loading wire:target="checkLineStaffDiscountGroup">
-                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                            <div class="la-ball-beat">
-                                                                <div></div>
-                                                                <div></div>
-                                                                <div></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                            @if($discountCardApplyForm)
-                                            <div class="row mb-0">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="discountCardImgae">Discount Card Imgae</label>
-                                                        <input type="file" class="form-control" wire:model.defer="discount_card_imgae">
-                                                        @error('discount_card_imgae') <span class="text-danger">{{ $message }}</span> @enderror
-                                                        @if ($discount_card_imgae)
-                                                        <img class="img-fluid border-radius-lg w-30" src="{{ $discount_card_imgae->temporaryUrl() }}">
-                                                        @endif
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="discountCardNumber">Discount Card Number</label>
-                                                        <input type="text" class="form-control" wire:model="discount_card_number" placeholder="Discount Card Number">
-                                                        @error('discount_card_number') <span class="text-danger">{{ $message }}</span> @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="discountCardValidity">Discount Card Validity</label>
-                                                        <input type="date" class="form-control" id="discountCardValidity" wire:model="discount_card_validity" name="discountCardValidity" placeholder="Discount Card Validity" min="<?php echo date("Y-m-d"); ?>">
-                                                        @error('discount_card_validity') <span class="text-danger">{{ $message }}</span> @enderror
-                                                    </div>
-                                                </div>
-                                            
-                                                <div class="col-md-12">
-                
-                                                    <button type="button" class="btn bg-gradient-dark cursor-pointer " wire:click="clickLineDiscountGroup()" formmethod="">Back</button>
-                                                    <button type="button" class="btn bg-gradient-primary " wire:click="saveSelectedLineDiscountGroup()">Save changes</button>
-                                                    <div wire:loading wire:target="clickLineDiscountGroup">
-                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                            <div class="la-ball-beat">
-                                                                <div></div>
-                                                                <div></div>
-                                                                <div></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div wire:loading wire:target="saveSelectedLineDiscountGroup">
-                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                            <div class="la-ball-beat">
-                                                                <div></div>
-                                                                <div></div>
-                                                                <div></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                            @if($engineOilDiscountForm)
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilLineDiscount(10)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">10%</h2>
-                                                                <p class="text-white">
-                                                                10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilLineDiscount(15)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">15%</h2>
-                                                                <p class="text-white">
-                                                                15% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilLineDiscount(20)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">20%</h2>
-                                                                <p class="text-white">
-                                                                20% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilLineDiscount(25)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">25%</h2>
-                                                                <p class="text-white">
-                                                                25% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div wire:loading wire:target="selectEngineOilLineDiscount">
-                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                        <div class="la-ball-beat">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                 </div>
-                            </div>
-                            @endif
-                            
-                            @if(empty($selectedDiscount))
-                            <div class="row">
-                                @forelse($priceDiscountList as $priceDiscount)
-                                    
-                                    @if($priceDiscount->customerDiscountGroup['GroupType'] == 1 && $priceDiscount->EndDate == null)
-                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
-                                            <div class="card card-profile mt-md-0 mt-5">
-                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
-                                                    <h4 class="mb-0 text-capitalize">{{ strtolower(str_replace('_', ' ', $priceDiscount->customerDiscountGroup['Title'])) }}</h4>
-                                                    <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
-                                                    <div class="row justify-content-center text-center">
-                                                        <div class="col-12 mx-auto">
-                                                            <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($lineItemDetails['unit_price'])}}</h4>
-                                                            <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$lineItemDetails['unit_price'])) }}</h5>
-                                                            
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$lineItemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
-                                                            
-                                                                
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @elseif($priceDiscount->customerDiscountGroup['GroupType']==2)
-                                        <?php
-                                        $givenDate = \Carbon\Carbon::parse($priceDiscount->EndDate); // Replace with your date
-                                        $now = \Carbon\Carbon::now();
-                                        if ($givenDate->isPast()) {
-                                            //
-                                        }
-                                        else
-                                        {
-                                            ?>
-                                            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
-                                                <div class="card card-profile mt-md-0 mt-5">
-                                                    <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
-                                                        <h4 class="mb-0 text-capitalize">{{ strtolower(str_replace('_', ' ', $priceDiscount->customerDiscountGroup['Title'])) }}</h4>
-                                                        <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
-                                                        <div class="row justify-content-center text-center">
-                                                            <div class="col-12 mx-auto">
-                                                                <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($lineItemDetails['unit_price'])}}</h4>
-                                                                <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$lineItemDetails['unit_price'])) }}</h5>
-                                                                
-                                                                <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$lineItemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <?php
-                                        }
-                                        
-                                        ?>
-                                        
-
-                                    @endif
-                                        
-                                @empty
-                                    <span class="text-danger text-center">Empty discount for this item..!</span>
-                                @endforelse
-                                @if($lineItemDetails['cart_item_type']==1)
-                                    @if(in_array($lineItemDetails['item_code'],config('global.engine_oil_discount_voucher')['services']))
-                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
-                                            <div class="card card-profile mt-md-0 mt-5">
-                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
-                                                    <h4 class="mb-0">ENGINE_OIL</h4>
-                                                    <span class="badge bg-gradient-info">10%, 15%, 20%, 25% off</span>
-                                                    <div class="row justify-content-center text-center">
-                                                        <div class="col-12 mx-auto">
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyEngineOilLineDiscountSubmit('{{$lineItemDetails['id']}}','{{$lineItemDetails['item_code']}}')">Add Now</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                @else
-                                    @if(in_array($lineItemDetails['item_code'],config('global.engine_oil_discount_voucher')['items']))
-                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
-                                            <div class="card card-profile mt-md-0 mt-5">
-                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
-                                                    <h4 class="mb-0">ENGINE_OIL</h4>
-                                                    <span class="badge bg-gradient-info">10%, 15%, 20%, 25% off</span>
-                                                    <div class="row justify-content-center text-center">
-                                                        <div class="col-12 mx-auto">
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyEngineOilLineDiscountSubmit('{{$lineItemDetails['id']}}','{{$lineItemDetails['item_code']}}')">Add Now</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                @endif
-                                <div wire:loading wire:target="addtoCart">
-                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                        <div class="la-ball-beat">
-                                            <div></div>
-                                            <div></div>
-                                            <div></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div wire:loading wire:target="addtoCartCP">
-                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                        <div class="la-ball-beat">
-                                            <div></div>
-                                            <div></div>
-                                            <div></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div wire:loading wire:target="applyLineDiscountSubmit">
-                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                        <div class="la-ball-beat">
-                                            <div></div>
-                                            <div></div>
-                                            <div></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div wire:loading wire:target="applyLineDiscountSubmit">
-                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                        <div class="la-ball-beat">
-                                            <div></div>
-                                            <div></div>
-                                            <div></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                            <!-- <button type="button" class="btn bg-gradient-primary">Save changes</button> -->
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="form-group">
+                        <label for="seachByItemSubCategory">Sub Category</label>
+                        <select class="form-control" id="seachItemBySubCategory" wire:model="item_search_subcategory">
+                            <option value="">-Select-</option>
+                            @foreach($itemSubCategories as $itemSubCategory)
+                            <option value="{{$itemSubCategory->SubCategoryId}}">{{$itemSubCategory->Description}}</option>
+                            @endforeach
+                        </select>
+                        @error('item_search_subcategory') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="form-group">
+                        <label for="seachByItemBrand">Brand</label>
+                        <select class="form-control" id="seachByItemBrand" wire:model="item_search_brand">
+                            <option value="">-Select-</option>
+                            @foreach($itemBrandsLists as $itemBrand)
+                            <option value="{{$itemBrand->BrandId}}">{{$itemBrand->Description}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8 col-sm-6">
+                    <div class="form-group">
+                        <label for="seachByItemName">Items Name</label>
+                        <input type="text" wire:model="item_search_name" name="" id="seachByItemName" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="form-group">
+                        <label for="seachByItemName">Items Code</label>
+                        <input type="text" wire:model="item_search_code" name="" id="seachByItemCode" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                        <button class="btn bg-gradient-info" wire:click="searchServiceItems">Search</button>
+                    </div>
+                </div>
+                <div wire:loading wire:target="searchServiceItems">
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                        <div class="la-ball-beat">
+                            <div></div>
+                            <div></div>
+                            <div></div>
                         </div>
                     </div>
                 </div>
             </div>
-        @endif
+            @if($showItemsSearchResults)
+                <div class="row">
+                    @forelse($serviceItemsList as $servicesItem)
+                        <?php $itemPriceDetails = $servicesItem['priceDetails']; ?>
+                        <?php $itemDiscountDetails = $servicesItem['discountDetails']; ?>
+                        @if($itemPriceDetails->UnitPrice!=0)
+                        <div class="col-md-4 col-sm-6">
+                            <div class="card mt-2">
+                                <div class="card-header text-center p-2">
+                                    <p class="font-weight-normal mt-2 text-capitalize text-sm- font-weight-bold mb-0">
+                                        {{strtolower($itemPriceDetails->ItemName)}}<small>({{$itemPriceDetails->ItemCode}})</small>
+                                    </p>
+                                    <h5 class="font-weight-bold mt-2"  @if($itemDiscountDetails != null) style="text-decoration: line-through;" @endif>
+                                        <small>AED</small>{{custom_round($itemPriceDetails->UnitPrice)}}
+                                    </h5>
+                                    @if($itemDiscountDetails != null)
+                                    <h5 class="font-weight-bold mt-2">
+                                        <span class="text-secondary text-sm me-1">{{config('global.CURRENCY')}}</span>{{ custom_round($itemPriceDetails->UnitPrice-(($itemDiscountDetails->DiscountPerc/100)*$itemPriceDetails->UnitPrice)) }}
+                                    </h5>
+                                    @endif
+                                    <div class="ms-auto">
+                                        @if(!empty($qlItemDiscountDetails))
+                                            <span class="badge bg-gradient-info">{{custom_round($qlItemDiscountDetails->DiscountPerc)}}%off</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="card-body text-lg-left text-center p-2">
+                                    <input type="number" class="form-control w-30 float-start" placeholder="Qty" wire:model.defer="ql_item_qty.{{$itemPriceDetails->ItemId}}" style="padding-left:5px !important;" />
+                                    <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$itemPriceDetails->ItemCode}}','{{$itemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                @if(@$serviceAddedMessgae[$itemPriceDetails->ItemCode])
+                                    <div class="text-center">
+                                        <span class="alert-icon"><i class="ni ni-like-2 text-success"></i></span>
+                                        <span class="alert-text text-success"><strong>Success!</strong> Added serves!</span>
+                                        <button type="button" class="btn-close text-success" data-bs-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        @endif
+                    @empty
+                        <div class="alert alert-danger text-white" role="alert"><strong>Empty!</strong> The Searched items are not in stock!</div>
+                    @endforelse
 
-        
+                    
+                </div>
+            @endif
+        @endif
 
         @if($showPackageList)
             <div class="row mt-4">
@@ -1532,55 +1290,63 @@
                                 </button>
                             </div>
                             @endif
-                            <div class="row mb-4" id="packageServiceListDiv">
-                                <div class="col-md-12">
+                            <div class="row" id="packageServiceListDiv">
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
                                     <div class="card h-100">
                                         <div class="card-header text-left p-2 pb-0">
-                                            <h5>Customer Purchased Packags</h5>
-                                            <hr>
+                                            <h5>Customer Packags</h5>
                                         </div>
                                         <div class="card-body text-lg-start text-left pt-0 p-2">
-                                            <div class="row">
-                                                @forelse($customerBookedPackages as $packBookd)
-                                                    <?php
-                                                    $packageBookedDateTime = new Carbon\Carbon($packBookd->package_date_time);
-                                                    $endPackageDateTime = $packageBookedDateTime->addMonth($packBookd->package_duration);
-                                                    ?>
-                                                    
-                                                    <div class="col-md-6">
-                                                        <div class="card bg-cover text-center my-2" >
-                                                            <!-- style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')" -->
+                                            
+                                            @if($showPackageOtpVerify)
+                                            <div class="row d-none">
+                                                <div class="col-md-12 col-sm-12 mb-4" >
+                                                    <div class="card p-2 mb-4">
+                                                        
+                                                        <div class="card-body text-lg-left text-center pt-0">
+                                                            <label for="packageOTPVerify">Package OTP Verify</label>
+                                                            <div class="form-group">
+                                                                <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model.defer="package_otp">
+                                                                <button class="btn btn-outline-success mb-0" type="button" wire:click="verifyPackageOtp">Verify</button>
+                                                                <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendPackageOtp">Resend</button>
+                                                                <div wire:loading wire:target="verifyPackageOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div wire:loading wire:target="resendOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @error('package_otp') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                                            @if($package_otp_message)<span class="mb-4 text-danger">{{ $package_otp_message }}</span>@endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
+                                            @forelse($customerBookedPackages as $packBookd)
+                                                <?php
+                                                $packageBookedDateTime = new Carbon\Carbon($packBookd->package_date_time);
+                                                $endPackageDateTime = $packageBookedDateTime->addMonth($packBookd->package_duration);
+                                                ?>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="card bg-cover text-center my-2" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
                                                             <div class="card-body z-index-2 py-2 text-center">
                                                                 <span class="badge rounded-pill bg-light {{config('global.package.type')[$packBookd->package_type]['bg_class']}} {{config('global.package.type')[$packBookd->package_type]['text_class']}}">{{config('global.package.type')[$packBookd->package_type]['title']}}</span>
                                                                 <h4 class="text-white">{{$packBookd->package_name}}</h4>
-
-                                                                <div class="row">
-                                                                    <div class="col-md-6">
-                                                                        <h6 class="mb-0 align-items-left text-light text-bold">Service/Item</h6>
-                                                                    </div>
-                                                                    <div class="col-md-6 d-flex justify-content-end align-items-right">
-                                                                        <p class="mb-0 text-light text-bold">Balance</p>
-                                                                    </div>
-                                                                </div>
-
-                                                                <ul class="list-group">
-                                                                    @foreach($packBookd->customerPackageServices as $customerPackageServices)
-                                                                    <li class="list-group-item border-0 d-flex justify-content-between ps-2 mb-2 border-radius-lg">
-                                                                        <div class="d-flex align-items-left">
-                                                                            <button class="btn btn-icon-only btn-rounded @if($customerPackageServices->package_service_use_count==$customerPackageServices->quantity) btn-outline-danger @else btn-outline-success @endif mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
-                                                                            <div class="d-flex flex-column">
-                                                                                <h6 class="mb-1 text-dark text-left text-sm">{{$customerPackageServices->item_name}}</h6>
-                                                                                <span class="text-xs">Qty: {{$customerPackageServices->quantity}}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="d-flex align-items-center @if($customerPackageServices->package_service_use_count==$customerPackageServices->quantity) text-danger @else text-success @endif text-gradient text-sm font-weight-bold">
-                                                                            {{$customerPackageServices->quantity-$customerPackageServices->package_service_use_count}}
-                                                                        </div>
-                                                                    </li>
-                                                                    @endforeach
-                                                                </ul>
-                                                                
-                                                                @if(\Carbon\Carbon::now()->diffInDays($endPackageDateTime, false)>=0 || $customerPackageServices->package_service_use_count<=$customerPackageServices->quantity)
+                                                                @if(\Carbon\Carbon::now()->diffInDays($endPackageDateTime, false)>=0)
                                                                     <button  wire:click="redeemPackageDetails({{$packBookd}})" class="btn bg-gradient-primary mb-2 btn-sm">Redeem</button>
                                                                 @else
                                                                 <button class="btn bg-gradient-dark mb-2 btn-sm opacity-7">Expired</button>
@@ -1594,56 +1360,92 @@
 
                                                         </div>
                                                     </div>
-                                                    
-                                                @empty
-                                                    <span class="text-danger">empty..!</span>
-                                                @endforelse
-                                                <div class="col-md-6">
-                                                    <div class="form-group p-2 text-center">
-                                                        <label>Redeem Package with Package Number</label>
-                                                        <input class="form-control" type="text" wire:model="package_number" id="redeemPackageNumber" placeholder="Redeem Package Number..!">
-                                                        @error('package_number') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
-                                                        <button  wire:click="validatePackageContinue()" class="btn bg-gradient-primary m-2 btn-sm">Redeem</button>
+                                                </div>
+                                            @empty
+                                                <span class="text-danger">empty..!</span>
+                                            @endforelse
+                                            <div wire:loading wire:target="openPackageDetails" >
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
                                                     </div>
-                                                    <div wire:loading wire:target="validatePackageContinue" >
-                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                            <div class="la-ball-beat">
-                                                                <div></div>
-                                                                <div></div>
-                                                                <div></div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header text-left p-2 pb-0">
+                                            <h5>Redeem Packages</h5>
+                                        </div>
+                                        <div class="card-body text-lg-start text-left pt-0 p-2">
+                                            
+                                            @if($showPackageOtpVerify)
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12 mb-0" >
+                                                    <div class="card p-2 mb-4">
+                                                        
+                                                        <div class="card-body text-lg-left text-center pt-0">
+                                                            <label for="packageOTPVerify">Package OTP Verify</label>
+                                                            <div class="form-group">
+                                                                <input type="numer" class="form-control" placeholder="Package OTP Verify..!" aria-label="Package OTP Verify..!" aria-describedby="button-addon4" id="packageOTPVerify" wire:model.defer="package_otp">
+                                                                <button class="btn btn-outline-success mb-0" type="button" wire:click="verifyPackageOtp">Verify</button>
+                                                                <button class="btn btn-outline-info mb-0" type="button"  wire:click="resendPackageOtp">Resend</button>
+                                                                <div wire:loading wire:target="verifyPackageOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div wire:loading wire:target="resendOtp" >
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
+                                                            @error('package_otp') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                                            @if($package_otp_message)<span class="mb-4 text-danger">{{ $package_otp_message }}</span>@endif
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            @endif
+                                            
+                                            <div class="form-group p-2 text-center">
+                                                <input class="form-control" type="text" wire:model="package_number" id="redeemPackageNumber" placeholder="Redeem Package Number..!">
+
+                                                @error('package_number') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                                <button  wire:click="validatePackageContinue()" class="btn bg-gradient-primary m-2 btn-sm">Redeem</button>
+                                            </div>
+                                            <div wire:loading wire:target="validatePackageContinue" >
+                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                    <div class="la-ball-beat">
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row" >
-                                @include('components.modals.pckageRedeem')
-                                
                                 @foreach($servicePackages as $servicePackage)
                                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-lg-4 mb-4">
                                         <div class="card h-100" >
                                             <div class="card-header text-center pt-4 pb-3">
-                                                <?php
-                                                switch($servicePackage->packageSubTypes['Description']){
-                                                    case 'SILVER':
-                                                        $buttontext = 'silver_button text-dark';
-                                                        break;
-                                                    case 'GOLD':
-                                                        $buttontext = 'gold_button text-white';
-                                                        break;
-                                                    case 'PLATINUM':
-                                                        $buttontext = 'platinum_button text-white';
-                                                        break;
-                                                    default:
-                                                        $buttontext = 'platinum_button text-white';
-                                                        break;
-                                                }
-                                                ?>
-                                                <span class="badge rounded-pill bg-light {{$buttontext}}">{{$servicePackage->packageSubTypes['Description']}}</span>
+                                                <span class="badge rounded-pill bg-light gold_button text-white">{{$servicePackage->packageSubTypes['Description']}}</span>
                                                 <h4>{{$servicePackage->PackageName}}</h4>
                                                 @if($servicePackage->Duration)
                                                 <p class="text-sm font-weight-bold text-dark mt-2 mb-0">Duration: {{$servicePackage->Duration}} Months</p>
@@ -1994,16 +1796,6 @@
                 </div>
             </div>
         </div>
-
-        <div wire:loading wire:target="redeemPackageDetails">
-            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                <div class="la-ball-beat">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-            </div>
-        </div>
     </div>
 </main>
 @push('custom_script')
@@ -2097,23 +1889,6 @@
             }, 100);
         });
     });
-
-    window.addEventListener('showPriceDiscountList',event=>{
-        $('#showPriceDiscountListModal').modal('show');
-    });
-    window.addEventListener('closePriceDiscountList',event=>{
-        $('#showPriceDiscountListModal').modal('hide');
-    });
-
-    window.addEventListener('showpckageRedeemModal',event=>{
-        $('#pckageRedeemModal').modal('show');
-    });
-    window.addEventListener('closepckageRedeemModal',event=>{
-        $('#pckageRedeemModal').modal('hide');
-    });
-
-
-    
 
 </script>
 @endpush

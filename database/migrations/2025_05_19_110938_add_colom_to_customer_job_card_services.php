@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('customer_job_card_services', function (Blueprint $table) {
-            $table->datetime('warranty_start')->nullable()->after('warrantyTerms');
-            $table->datetime('warranty_ends')->nullable()->after('warranty_start');
+            //$table->datetime('warranty_start')->nullable()->after('warrantyTerms');
+            //$table->datetime('warranty_ends')->nullable()->after('warranty_start');
         });
     }
 

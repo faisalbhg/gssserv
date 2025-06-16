@@ -1,3 +1,11 @@
+@push('custom_css')
+<style type="text/css">
+  .explode
+  {
+    background: #eee;
+  }
+</style>
+@endpush
 <main class="main-content">
   <div class="container-fluid py-4">
 
@@ -143,7 +151,7 @@
 
                 <tbody>
                   @forelse( $customerPackages as $package)
-                  <tr class="cursor-pointer" wire:click="customerPackageDetails('{{$package->package_number}}')">
+                  <tr class="cursor-pointer" >
                     <td>
                       <div class="d-flex px-3 py-1">
                         <div>
@@ -163,6 +171,7 @@
                           </p>
                         </div>
                       </div>
+                      
                     </td>
                     <td>
                       <div class="">
@@ -176,6 +185,18 @@
                           </div>
                         </div>
                       </div>
+
+                      <div class="mt-2">
+                        <span class="exploder badge badge-sm bg-gradient-info cursor-pointer" wire:click="customerPackageDetails('{{$package->package_number}}')">
+                          <i class="fas fa-flag text-secondary text-white"></i> Package Redeem
+                        </span>
+                      </div>
+                      <div class="mt-2">
+                        <span class="exploder badge badge-sm bg-gradient-primary cursor-pointer">
+                            <i class="fas fa-eye text-secondary text-white"></i> Package Details
+                          </span>
+                      </div>
+
                     </td>
                     <td>
                         <div class="d-flex px-3 py-1">
@@ -187,6 +208,7 @@
                                 @endif
                             </div>
                         </div>
+                        
                     </td>
                     
                     <td>
@@ -210,6 +232,147 @@
                         <i class="fa fa-edit fa-xl text-md"></i>
                       </button>
                     </td> -->
+                  </tr>
+                  <tr class="explode hide">
+                    <td colspan="6" style="display: none;    padding: 10px;">
+                      <div class="card mb-4">
+                        <div class="card-header">
+                          <h4>Package Details</h4>
+                        </div>
+                        <div class="card-body">
+                        <table class="table align-items-center justify-content-center mb-0">
+                          <thead>
+                            <tr>
+                              <th>Service/Item</th>
+                              <th>Qty</th>
+                              <th>Used</th>
+                              <th>Status</th>
+                              <th>Unit Price</th>
+                              <th>Grand Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @forelse($package->customerPackageServices as $customerPackageServices)
+                            <tr class="cursor-pointer" >
+                              <td>
+                                <div class="d-flex px-3 py-1">
+                                  <div>
+                                    {{$customerPackageServices->item_name}}
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <div class="d-flex px-3 py-1">
+                                  <div>
+                                    {{$customerPackageServices->quantity}}
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <div class="d-flex px-3 py-1">
+                                  {{$customerPackageServices->package_service_use_count}}
+                                </div>
+                              </td>
+                              <td>
+                                <div class="d-flex px-3 py-1">
+                                  @if($customerPackageServices->quantity>$customerPackageServices->package_service_use_count)
+                                    <?php $packageBookedDateTime = new Carbon\Carbon($package->package_date_time); ?>
+                                    <?php $endPackageDateTime = $packageBookedDateTime->addMonth($package->package_duration); ?>
+                                    @if(\Carbon\Carbon::now()->diffInDays($endPackageDateTime, false)>=0)
+                                      <span class="badge bg-gradient-success">Active</span>
+                                    @else
+                                      <span class="badge bg-gradient-danger">Expired</span>
+                                    @endif
+                                  @else
+                                  <span class="badge bg-gradient-danger">Package Used</span>
+                                  @endif
+                                </div>
+                              </td>
+                              <td>
+                                <div class="d-flex px-3 py-1">
+                                  <div style="text-decoration: line-through;">
+                                    {{$customerPackageServices->unit_price}} * {{$customerPackageServices->quantity}}
+                                  </div>
+                                  <div class="mx-2 text-dark font-weight-bold">
+                                    {{$customerPackageServices->discounted_price}} * {{$customerPackageServices->quantity}}
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <div class="d-flex px-3 py-1">
+                                  <div style="text-decoration: line-through;">
+                                    {{$customerPackageServices->total_price}}
+                                  </div>
+                                  <div class="mx-2 text-dark font-weight-bold">
+                                    {{$customerPackageServices->grand_total}}
+                                  </div>
+                                </div>
+                              </td>
+                              </tr>
+                              @empty
+                              <tr>
+                                  <td colspan="8">No Record Found</td>
+                              </tr>
+                              @endforelse
+                          </tbody>
+                        </table>
+                        </div>
+                      </div>
+
+                      <div class="card">
+                        <div class="card-header">
+                          <h4>Package History</h4>
+                        </div>
+                        <div class="card-body">
+                        <table class="table align-items-center justify-content-center mb-0">
+                          <thead>
+                            <tr>
+                              <th>Job Details</th>
+                              <th>Vehicle</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @forelse($package->packageHistory as $packageHistory)
+                            <tr class="cursor-pointer" >
+                              <td>
+                                <div class="d-flex px-3 py-1">
+                                  <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">{{$packageHistory->jobInfo['job_number']}}</h6>
+                                    <p class="text-sm font-weight-bold mb-0">{{ \Carbon\Carbon::parse($packageHistory->jobInfo['job_date_time'])->format('dS M Y h:i A') }}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <div class="d-flex px-3 py-1">
+                                  <div>
+                                    <img src="{{url('public/storage/'.$packageHistory->jobInfo['vehicle_image'])}}" class="avatar me-3" alt="avatar image">
+                                  </div>
+                                  <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">{{$packageHistory->jobInfo->makeInfo['vehicle_name']}} - <small>{{$packageHistory->jobInfo->modelInfo['vehicle_model_name']}} </small></h6>
+                                    <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">{{$packageHistory->jobInfo['plate_number']}}</span></p>
+                                    <hr class="m-0">
+                                    <p class="text-sm text-dark mb-0">{{$packageHistory->jobInfo['customer_name']}}
+                                      @if($packageHistory->jobInfo['customer_email']!='')
+                                      <br>{{$packageHistory->jobInfo['customer_email']}}
+                                      @endif
+                                      @if(isset($packageHistory->jobInfo['customer_mobile']))
+                                      <br>{{$packageHistory->jobInfo['customer_mobile']}}
+                                      @endif
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              </tr>
+                              @empty
+                              <tr>
+                                  <td colspan="8">No Record Found</td>
+                              </tr>
+                              @endforelse
+                          </tbody>
+                        </table>
+                        </div>
+                      </div>
+                     </td>
                   </tr>
                   @empty
                     <tr>
@@ -238,6 +401,20 @@
     </div>
 </main>
 @push('custom_script')
-  
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $(".exploder").click(function(){
+        $(this).toggleClass("btn-success btn-danger");
+        $(this).children("span").toggleClass("glyphicon-search glyphicon-zoom-out");  
+        $(this).closest("tr").next("tr").toggleClass("hide");
+        if($(this).closest("tr").next("tr").hasClass("hide")){
+          $(this).closest("tr").next("tr").children("td").slideUp();
+        }
+        else{
+          $(this).closest("tr").next("tr").children("td").slideDown(350);
+        }
+      });
+    });
+  </script>
 @endpush
 

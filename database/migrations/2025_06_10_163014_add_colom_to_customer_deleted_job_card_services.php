@@ -13,10 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('customer_service_carts', function (Blueprint $table) {
-            /*$table->boolean('isWarranty')->nullable()->after('ceramic_wash_discount_count');
-            $table->integer('warrantyPeriod')->nullable()->after('isWarranty');
-            $table->text('warrantyTerms')->nullable()->after('warrantyPeriod');*/
+        Schema::table('customer_deleted_job_card_services', function (Blueprint $table) {
+            $table->integer('is_blocked')->nullable()->after('is_active');
         });
     }
 
@@ -27,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('customer_service_carts', function (Blueprint $table) {
+        Schema::table('customer_deleted_job_card_services', function (Blueprint $table) {
             //
         });
     }

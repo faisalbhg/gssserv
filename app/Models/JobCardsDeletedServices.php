@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CustomerJobCardServices extends Model
+class JobCardsDeletedServices extends Model
 {
     use HasFactory;
+    
+    protected $table = 'customer_deleted_job_card_services';
 
     protected $fillable = [
         'job_number',
@@ -93,26 +95,4 @@ class CustomerJobCardServices extends Model
         'uppdated_at',
         
     ];
-
-    public function jobInfo()
-    {
-        return $this->belongsTo(CustomerJobCards::class, 'job_number', 'job_number')->with(['makeInfo','modelInfo']);
-    }
-
-    public function customerJobServiceLogs()
-    {
-        return $this->hasMany(CustomerJobCardServiceLogs::class,'customer_job__card_service_id','id');
-    }
-
-    public function departmentName(){
-        return $this->belongsTo(Development::class,'department_code','DevelopmentCode');
-    }
-
-    public function sectionName(){
-        return $this->belongsTo(Sections::class,'section_code','PropertyCode');
-    }
-
-    public function laborItemMaster(){
-        return $this->belongsTo(LaborItemMaster::class,'item_code','ItemCode')->with(['departmentName','sectionName']);
-    }
 }

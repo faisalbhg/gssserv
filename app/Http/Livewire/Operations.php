@@ -117,6 +117,8 @@ class Operations extends Component
 
     public function render()
     {
+        
+        //dd(CustomerJobCardServices::limit(1)->first());
         /*foreach(CustomerJobCards::where('customer_mobile','=',"566993709")->get() as $jobUpdate)
         {
             //dd($jobUpdate->job_number);
@@ -1577,9 +1579,10 @@ class Operations extends Component
     }
 
     public function addNewServiceItemsJob($job_number){
-        //dd($this->jobcardDetails->customerJobServices);
         CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'job_number'=>$job_number])->delete();
-        foreach($this->jobcardDetails->customerJobServices as $customerJobServices){
+        
+        foreach($this->jobcardDetails->customerJobServices as $customerJobServices)
+        {
             $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'item_id'=>$customerJobServices->item_id,'job_number'=>$job_number]);
             if($customerBasketCheck->count()==0)
             {
@@ -1661,7 +1664,6 @@ class Operations extends Component
                 }
             }
         }
-        //dd(CustomerServiceCart::where(['job_number'=>$this->job_number])->get());
         return redirect()->to('customer-service-job/'.$this->jobcardDetails->customer_id.'/'.$this->jobcardDetails->vehicle_id.'/'.$job_number);
 
     }

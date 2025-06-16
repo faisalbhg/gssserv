@@ -43,7 +43,7 @@ class HomePage extends Component
                 \DB::raw('SUM(grand_total) as saletotal'),
             )
         );
-        $customerjobsQuery = CustomerJobCards::with(['customerInfo']);
+        //$customerjobsQuery = CustomerJobCards::with(['customerInfo']);
         if($this->selected_date)
         {
     
@@ -59,25 +59,21 @@ class HomePage extends Component
         }
 
         $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$startDate, $endDate]);
-        $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);
-
-            //$getCountSalesJobStatus = $getCountSalesJobStatus->where(['job_date_time'=>$this->selected_date]);
-            //$customerjobsQuery = $customerjobsQuery->where(['job_date_time'=>$this->selected_date]);
-        
+        //$customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$startDate, $endDate]);
         $this->getCountSalesJob = $getCountSalesJobStatus->where(['created_by'=>auth()->user('user')->id])->first();
 
         if($this->filterJobStatus)
         {
-            $customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
+            //$customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
         }
-        $this->customerjobsLists = $customerjobsQuery->where(['created_by'=>auth()->user('user')->id])->get();
+        //$this->customerjobsLists = $customerjobsQuery->where(['created_by'=>auth()->user('user')->id])->get();
         return view('livewire.home-page');
     }
 
     public function getSelectedDate( $date ) {
         if(Carbon::parse($date)->format('Y-m-d')!=$this->selected_date){
             $this->selected_date = Carbon::parse($date)->format('Y-m-d');
-            $this->dispatchBrowserEvent('datePicker');
+            //$this->dispatchBrowserEvent('datePicker');
         }
         //dd($this->selected_date);
         

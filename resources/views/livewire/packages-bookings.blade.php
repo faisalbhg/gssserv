@@ -85,7 +85,23 @@
                 <div class="col-md-6 col-sm-6 mb-4" >
                     <div class="card h-100">
                         <div class="card-header text-center pt-4 pb-3">
-                            <span class="badge rounded-pill bg-light {{config('global.package.type')[$packageInfo->PackageType]['bg_class']}} {{config('global.package.type')[$packageInfo->PackageType]['text_class']}}">{{config('global.package.type')[$packageInfo->PackageType]['title']}}</span>
+                            <?php
+                            switch($packageInfo->packageSubTypes['Description']){
+                                case 'SILVER':
+                                    $buttontext = 'silver_button text-dark';
+                                    break;
+                                case 'GOLD':
+                                    $buttontext = 'gold_button text-white';
+                                    break;
+                                case 'PLATINUM':
+                                    $buttontext = 'platinum_button text-white';
+                                    break;
+                                default:
+                                    $buttontext = 'platinum_button text-white';
+                                    break;
+                            }
+                            ?>
+                            <span class="text-capitalize badge rounded-pill bg-light {{$buttontext}}">{{strtolower($packageInfo->packageSubTypes['Description'])}}</span>
                             <h4>{{$packageInfo->PackageName}}</h4>
                             @if($packageInfo->Duration)
                             <p class="text-sm font-weight-bold text-dark mt-2 mb-0">Duration: {{$packageInfo->Duration}} Months</p>

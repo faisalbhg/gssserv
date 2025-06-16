@@ -48,7 +48,7 @@ class PackagesBookings extends Component
         }
         if($this->package_id)
         {
-             $packageInfoResult = ServicePackage::with(['packageDetails'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code'],'Id'=>$this->package_id])->first();
+             $packageInfoResult = ServicePackage::with(['packageDetails','packageSubTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code'],'Id'=>$this->package_id])->first();
              //dd($packageInfoResult);
              
              $totalPrice=0;

@@ -228,12 +228,15 @@
     </script>
 
     <div x-data="{ loading: false }" x-show="loading" @loading.window="loading = $event.detail.loading">
-        <div style="display: flex; justify-content: center; align-items: center; background-color: #170b2a; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
             <div class="la-ball-beat">
-                <img src="{{ asset('img/animated_car.gif') }}" width="200">
+                <div></div>
+                <div></div>
+                <div></div>
             </div>
         </div>
     </div>
+
     
 
     

@@ -27,7 +27,7 @@
                             @error('cancelationReason') <span class="text-danger">{{ $message }}</span> @enderror
                             <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
                             @else
-                            <button type="button" wire:click="cancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-danger px-2 mx-2 d-none">Cancel Job</button>
+                            <button type="button" wire:click="cancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-danger px-2 mx-2 {{!in_array((auth()->user('user')->user_type),config('global.user_type_access')['administrator']) ? 'd-none': ''}}">Cancel Job</button>
                             @if($cancelError)<br><span class="text-danger">{{$cancelError}}</span>@endif
                             @endif
                         @endif

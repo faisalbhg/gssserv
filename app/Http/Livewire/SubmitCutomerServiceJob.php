@@ -25,6 +25,7 @@ use App\Models\ServiceChecklist;
 use App\Models\PackageBookings;
 use App\Models\PackageBookingServices;
 use App\Models\PackageBookingServiceLogs;
+use App\Models\JobCardsDeletedServices;
 
 class SubmitCutomerServiceJob extends Component
 {
@@ -297,6 +298,20 @@ class SubmitCutomerServiceJob extends Component
 
     }
 
+    public function jobServiceTableUpdate(){
+        $missing = [];
+        foreach(CustomerJobCardServices::where(['job_number'=>$this->job_number])->get() as $tabKey => $customerJobCardServices){
+            $availableServiceItem = CustomerServiceCart::where(['job_number'=>$this->job_number,'item_id'=>$customerJobCardServices->item_id]);
+            $customerJobMissing = [];
+            if(!$availableServiceItem->exists()){
+                //JobCardsDeletedServices::insert((array) $customerJobCardServices);
+                JobCardsDeletedServices::create($customerJobCardServices->toArray());
+                CustomerJobCardServices::where(['job_number'=>$customerJobCardServices->job_number,'item_id'=>$customerJobCardServices->item_id])->delete();
+            }
+        }
+        
+    }
+
     
 
     public function createJob(){
@@ -304,6 +319,7 @@ class SubmitCutomerServiceJob extends Component
         if($this->job_number){
             $job_update = true;
             MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
+            $this->jobServiceTableUpdate();
         }
         $this->job_date_time =  Carbon::parse($this->job_date_time)->format('Y-m-d H:i:s');
         $customerjobData = [
@@ -519,9 +535,9 @@ class SubmitCutomerServiceJob extends Component
                 $customerJobServiceData['package_code']=$cartData->package_code;
             }
 
-            if($cartData->cart_item_type==2){
+            /*if($cartData->cart_item_type==2){
                 $customerJobServiceData['job_status']=3;
-            }
+            }*/
 
             
             $total = $cartData->unit_price*$cartData->quantity;

@@ -59,6 +59,11 @@ class PackageBookings extends Model
         return $this->hasMany(PackageBookingServices::class,'package_number','package_number')->with(['labourItemDetails']);
     }
 
+    public function packageHistory()
+    {
+        return $this->hasMany(CustomerJobCardServices::class,'package_number','package_number')->with(['jobInfo']);
+    }
+
     public function customerInfo()
     {
         //return $this->belongsTo(Customers::class, 'customer_id', 'id');

@@ -185,12 +185,12 @@
                           <h6 class="mb-0 text-sm">{{$jobs->makeInfo['vehicle_name']}} - <small>{{$jobs->modelInfo['vehicle_model_name']}} </small></h6>
                           <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">{{$jobs->plate_number}}</span></p>
                           <hr class="m-0">
-                          <p class="text-sm text-dark mb-0">{{$jobs->customerInfo['TenantName']}}
-                            @if($jobs->customerInfo['Email']!='')
-                            <br>{{$jobs->customerInfo['Email']}}
+                          <p class="text-sm text-dark mb-0">{{$jobs->customer_name}}
+                            @if($jobs->customer_email!='')
+                            <br>{{$jobs->customer_email}}
                             @endif
-                            @if(isset($jobs->customerInfo['Mobile']))
-                            <br>{{$jobs->customerInfo['Mobile']}}
+                            @if(isset($jobs->customer_mobile))
+                            <br>{{$jobs->customer_mobile}}
                             @endif
                           </p>
                         </div>

@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Hash;
 
 class Dashboard extends Component
 {
-    public $getCountSalesJob, $customerjobsLists, $selected_date, $filterJobStatus, $jobList, $homeCountIconeBg='bg-gradient-dark';
+    public $getCountSalesJob, $customerjobsLists=[], $selected_date, $filterJobStatus, $jobList, $homeCountIconeBg='bg-gradient-dark';
     protected $listeners = ["selectDate" => 'getSelectedDate'];
     public $pendingCustomersCart, $search_station;
 
@@ -57,39 +57,39 @@ class Dashboard extends Component
                 \DB::raw('SUM(grand_total) as saletotal'),
             )
         );
-        $customerjobsQuery = CustomerJobCards::with(['customerInfo','createdInfo']);
+        //$customerjobsQuery = CustomerJobCards::with(['customerInfo','createdInfo']);
 
         if($this->selected_date){
-            $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+            //$customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
             $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
         }
         else
         {
             
             $this->selected_date = Carbon::now()->format('Y-m-d');
-            $customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+            //$customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
             $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
         }
         
         if($this->search_station){
             $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>$this->search_station]);
-            $customerjobsQuery = $customerjobsQuery->where(['station'=>$this->search_station]);
+            //$customerjobsQuery = $customerjobsQuery->where(['station'=>$this->search_station]);
             $this->dispatchBrowserEvent('datePicker');
         }
 
 
         if($this->filterJobStatus)
         {
-            $customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
+            //$customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
         }
 
         if(auth()->user('user')->user_type!=1){
             $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>auth()->user('user')['station_code']]);
-            $customerjobsQuery = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']]);
+            //$customerjobsQuery = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']]);
         }
 
         $this->getCountSalesJob = $getCountSalesJobStatus->first();
-        $this->customerjobsLists = $customerjobsQuery->get();
+        //$this->customerjobsLists = $customerjobsQuery->get();
         $this->stationsList = Landlord::all();
         $this->dispatchBrowserEvent('datePicker');
         return view('livewire.home-page');
@@ -108,31 +108,31 @@ class Dashboard extends Component
         switch ($filter) {
             case 'total':
                 $this->filterJobStatus=null;
-                $this->jobList='Total';
+                //$this->jobList='Total';
                 $this->homeCountIconeBg='bg-gradient-dark';
                 break;
 
             case 'working_progress':
                 $this->filterJobStatus=1;
-                $this->jobList='Working Progress';
+                //$this->jobList='Working Progress';
                 $this->homeCountIconeBg='bg-gradient-info';
                 break;
             
             case 'work_finished':
                 $this->filterJobStatus=2;
-                $this->jobList='Work Finished';
+                //$this->jobList='Work Finished';
                 $this->homeCountIconeBg='bg-gradient-warning';
                 break;
 
             case 'ready_to_deliver':
                 $this->filterJobStatus=3;
-                $this->jobList='Ready to Deliver';
+                //$this->jobList='Ready to Deliver';
                 $this->homeCountIconeBg='bg-gradient-success';
                 break;
 
             case 'delivered':
                 $this->filterJobStatus=4;
-                $this->jobList='Delivered';
+                //$this->jobList='Delivered';
                 $this->homeCountIconeBg='bg-gradient-success';
                 break;
 
@@ -140,7 +140,7 @@ class Dashboard extends Component
                 $this->filterJobStatus=null;
                 break;
         }
-        $this->dispatchBrowserEvent('datePicker');
+        //$this->dispatchBrowserEvent('datePicker');
     }
 
     public function dashCustomerJobUpdate($job_number){
