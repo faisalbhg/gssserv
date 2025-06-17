@@ -137,7 +137,7 @@
                                                     @endif
 
                                                     @if(!$button_allowed)
-                                                    <a class="btn btn-icon {{config('global.bundles.type_class')[$bdlerviceList['BundleDiscountType']]}} d-lg-block mt-3 mb-0 opacity-4">Buy Now <i class="fas fa-arrow-right ms-1"></i></a>
+                                                    <a class="btn btn-icon {{config('global.bundles.type_class')[$bdlerviceList['BundleDiscountType']]}} d-lg-block mt-3 mb-0" wire:click="bundleAddtoCartDiscountApply()" >Buy Now <i class="fas fa-arrow-right ms-1"></i></a>
                                                     @endif
                                                     
                                                     

@@ -1376,6 +1376,7 @@
                             
                             @if(empty($selectedDiscount))
                             <div class="row">
+                                <?php $discountempty = false; ?>
                                 @forelse($priceDiscountList as $priceDiscount)
                                     
                                     @if($priceDiscount->customerDiscountGroup['GroupType'] == 1 && $priceDiscount->EndDate == null)
@@ -1397,6 +1398,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php $discountempty = false; ?>
                                     @elseif($priceDiscount->customerDiscountGroup['GroupType']==2)
                                         <?php
                                         $givenDate = \Carbon\Carbon::parse($priceDiscount->EndDate); // Replace with your date
@@ -1423,6 +1425,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <?php $discountempty = false; ?>
                                             <?php
                                         }
                                         
@@ -1445,10 +1448,11 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php $discountempty = false; ?>
                                     @endif
                                         
                                 @empty
-                                    <span class="text-danger text-center">Empty discount for this item..!</span>
+                                    <?php $discountempty = true; ?>
                                 @endforelse
                                 @if($lineItemDetails['cart_item_type']==1)
                                     @if(in_array($lineItemDetails['item_code'],config('global.engine_oil_discount_voucher')['services']))
@@ -1465,6 +1469,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php $discountempty = false; ?>
+                                    @else
+                                        <?php $discountempty = true; ?>
                                     @endif
                                 @else
                                     @if(in_array($lineItemDetails['item_code'],config('global.engine_oil_discount_voucher')['items']))
@@ -1481,7 +1488,13 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php $discountempty = false; ?>
+                                    @else
+                                        <?php $discountempty = true; ?>
                                     @endif
+                                @endif
+                                @if($discountempty)
+                                <span class="text-danger text-center">Empty discount for this item..!</span>
                                 @endif
 
                                 <div wire:loading wire:target="addtoCart">

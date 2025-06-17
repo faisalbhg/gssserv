@@ -78,7 +78,7 @@ class CustomerServiceJob extends Component
     public $selectAdvanceCouponMenu=false, $showAdvanceCouponList=false, $showAdvanceCouponOtpVerify=false, $advance_coupon_number, $numberPlateRequired=true;
     public $lineDIscountItemId, $linePriceDiscount, $discountAvailability;
     public $showSelectedDiscount=false, $priceDiscountList, $lineItemDetails, $showLineDiscountItems=false; 
-
+    
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
         $this->vehicle_id = $request->vehicle_id;
@@ -2466,7 +2466,7 @@ class CustomerServiceJob extends Component
                 
                 if($serviceBundleDiscountedPrice->Type=='S')
                 {
-                    $bundleLaborMaster = LaborItemMaster::with(['departmentName','sectionName'])->where([
+                    $bundleLaborMaster = LaborItemMaster::select("ItemId","ItemCode","CompanyCode","CategoryId","SubCategoryId","BrandId","LedgerId","SubLedgerId","SerialNo","BarCode","ItemName","Description","MinimumStockQuantity","MinimumOrderQuantity","StockQuantity","PurchasePrice","AveragePurchasePrice","SellingPriceType","SellingPriceMarkupType","SellingPrice","WarehouseId","AddVatToSellPrice","AllowDiscount","StorageBin","IsTerminated","TerminationDate","ReplacementPartId","Active","CreatedDate","CreatedBy","ModifiedDate","ModifiedBy","Origin","StockType","PriceCalculationMethod","Status","StatusChangedDate","ApprovalStatus","ApprovalDate","ApprovedBy","UnitMeasurement","QuantityBooked","Rank","ParentItemId","ApprovedDate","SubmittedDate","SubmittedBy","PurchaseUnitMeasurement","QuantityPerPurchase","VATGroupId","DivisionCode","DepartmentCode","SectionCode","UnitPrice","Id","SortIndex","CustomizePrice","MinPrice","MaxPrice","isDirectDiscount","DirectDiscPerc","ExtraNotes","CustomizeName","IsCeramicWash","IsWarranty","WarrantyPeriod","WarrantyTerms")->with(['departmentName','sectionName'])->where([
                         //'DivisionCode'=>auth()->user('user')['station_code'],
                         'Active'=>1,
                         'ItemCode'=>$serviceBundleDiscountedPrice->ServiceItemCode,
@@ -2488,6 +2488,12 @@ class CustomerServiceJob extends Component
 
         $this->showBundleServiceSectionsList=true;
         $this->dispatchBrowserEvent('openBundleServicesListModal');
+    }
+
+    public function bundleAddtoCartDiscountApply()
+    {
+        $this->dispatchBrowserEvent('closeBundleServicesListModal');
+        $this->clickDiscountGroup();
     }
 
     public function bundleAddtoCart($bundleListDetails){
