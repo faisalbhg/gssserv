@@ -24,7 +24,7 @@ class PackagesBookings extends Component
 {
     use WithFileUploads;
     public $selectedCustomerVehicle=true, $showCheckout=true, $successPage=false, $showCustomerSignature=false, $showOtpVerify=false, $otpVerified=false;
-    public $package_number, $total, $totalDiscount, $grand_total, $tax;
+    public $package_number, $total, $totalDiscount, $totalAfterDisc, $grand_total, $tax;
     public $customer_id, $vehicle_id, $package_id, $selectedVehicleInfo, $mobile, $name, $email, $customerSignature, $packageInfo;
     public $package_otp, $otp_message;
     
@@ -48,23 +48,24 @@ class PackagesBookings extends Component
         }
         if($this->package_id)
         {
-             $packageInfoResult = ServicePackage::with(['packageDetails','packageSubTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code'],'Id'=>$this->package_id])->first();
-             //dd($packageInfoResult);
-             
-             $totalPrice=0;
-             $unitPrice=0;
-             $discountedPrice=0;
-             foreach($packageInfoResult->packageDetails as $packgInfo)
-             {
+            $packageInfoResult = ServicePackage::with(['packageDetails','packageSubTypes'])->where(['Status'=>'A','Division'=>auth()->user('user')['station_code'],'Id'=>$this->package_id])->first();
+            //dd($packageInfoResult);
+
+            $totalPrice=0;
+            $unitPrice=0;
+            $discountedPrice=0;
+            foreach($packageInfoResult->packageDetails as $packgInfo)
+            {
                 $totalPrice = $totalPrice+($packgInfo->UnitPrice*$packgInfo->Quantity);
                 $discountedPrice = $discountedPrice+($packgInfo->DiscountedPrice*$packgInfo->Quantity);
-             }
-             $this->total = custom_round($totalPrice);
-             $this->totalDiscount = custom_round($discountedPrice);
-             $this->tax = custom_round($discountedPrice * (config('global.TAX_PERCENT') / 100));
-             $this->grand_total = round($this->tax+$this->totalDiscount);
-             $this->packageInfo = $packageInfoResult;
-             //dd($this->packageInfo);
+            }
+            $this->total = custom_round($totalPrice);
+            $this->totalDiscount = custom_round($discountedPrice);
+            $this->totalAfterDisc = $this->total - $this->totalDiscount;
+            $this->tax = custom_round($this->totalDiscount * (config('global.TAX_PERCENT') / 100));
+            $this->grand_total = round($this->tax+$this->totalDiscount);
+            $this->packageInfo = $packageInfoResult;
+            //dd($this->packageInfo);
         }
         return view('livewire.packages-bookings');
     }
@@ -114,7 +115,7 @@ class PackagesBookings extends Component
         foreach($this->packageInfo->packageDetails as $packageDetails)
         {
             $packageServiceTotal = $packageDetails->DiscountedPrice*$packageDetails->Quantity;
-            $packageServiceTax = custom_round($discountedPrice * (config('global.TAX_PERCENT') / 100));
+            $packageServiceTax = custom_round($packageServiceTotal * (config('global.TAX_PERCENT') / 100));
             $packageServiceGrantTotal = $packageServiceTotal+$packageServiceTax;
             $customerPkgServiceData = [
                 'package_number'=>$this->package_number,
