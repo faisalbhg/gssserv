@@ -371,7 +371,7 @@ class VehicleSearchSave extends Component
             });
         }
         if($serachBy=='plate'){
-            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('plate_code', 'like', "%{$this->plate_code}%")->where('plate_number', 'like', $this->plate_number);
+            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('plate_code', 'like', $this->plate_code)->where('plate_number', 'like', $this->plate_number);
         }
         if($serachBy=='chaisis'){
             $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('chassis_number', 'like', "%{$this->chassis_number}%");
@@ -384,7 +384,7 @@ class VehicleSearchSave extends Component
             
             $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('customer_id', '=', $this->contract_customer_id);
         }
-        $this->customers = $searchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1)->limit(10)->get();
+        $this->customers = $searchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1)->get();
     }
 
 

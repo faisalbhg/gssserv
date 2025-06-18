@@ -727,7 +727,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="w-75 float-end" id="upfile1" src="@if($vImageR1) {{$vImageR1->temporaryUrl()}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer"  />
+                                    <img class="w-75 float-end" id="upfile1" src="@if($vImageR1) {{$vImageR1->temporaryUrl()}} @elseif($existingImageR1) {{ url('public/storage/'.$existingImageR1)}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer"  />
                                     @error('vImageR1') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
@@ -753,7 +753,8 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="w-75 float-start" id="upfile2" src="@if ($vImageR2) {{ $vImageR2->temporaryUrl() }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer"  />
+                                    
+                                    <img class="w-75 float-start" id="upfile2" src="@if($vImageR2) {{$vImageR2->temporaryUrl()}} @elseif ($existingImageR2) {{ url('public/storage/'.$existingImageR2)}} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer"  />
                                     @error('vImageR2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <hr>
@@ -782,7 +783,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="w-75 float-end" id="upfile3" src="@if ($vImageF) {{ $vImageF->temporaryUrl() }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="w-75 float-end" id="upfile3" src="@if($vImageF) {{$vImageF->temporaryUrl()}} @elseif($existingImageF) {{ url('public/storage/'.$existingImageF)}} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('vImageF') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
@@ -808,7 +809,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="w-75 float-start" id="upfile4" src="@if ($vImageB) {{ $vImageB->temporaryUrl() }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="w-75 float-start" id="upfile4" src="@if($vImageB) {{$vImageB->temporaryUrl()}} @elseif($existingImageB) {{ url('public/storage/'.$existingImageB)}} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('vImageB') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <hr>
@@ -837,7 +838,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="w-75 float-end" id="upfile5" src="@if ($vImageL1) {{ $vImageL1->temporaryUrl() }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer"  />
+                                    <img class="w-75 float-end" id="upfile5" src="@if ($vImageL1) {{$vImageL1->temporaryUrl()}} @elseif($existingImageL1) {{ url('public/storage/'.$existingImageL1)}} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer"  />
                                     @error('vImageL1') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
@@ -863,7 +864,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="w-75 float-start" id="upfile6" src="@if ($vImageL2) {{ $vImageL2->temporaryUrl() }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer"   />
+                                    <img class="w-75 float-start" id="upfile6" src="@if ($vImageL2) {{$vImageL2->temporaryUrl()}} @elseif($existingImageL2) {{ url('public/storage/'.$existingImageL2)}} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer"   />
                                     @error('vImageL2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                             </div>
@@ -893,7 +894,7 @@
                                         </div>
                                     </div>
                                     
-                                    <img class="img-fluid img-thumbnail shadow" id="dashImage1" src="@if ($dash_image1) {{ $dash_image1->temporaryUrl() }} @else {{asset('img/dashImage1.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="img-fluid img-thumbnail shadow" id="dashImage1" src="@if($dash_image1) {{$dash_image1->temporaryUrl()}} @elseif($existingdash_image1) {{ url('public/storage/'.$existingdash_image1)}} @else {{asset('img/dashImage1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('dash_image1') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
@@ -919,7 +920,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="img-fluid img-thumbnail shadow" id="dashImage2" src="@if ($dash_image2) {{ $dash_image2->temporaryUrl() }} @else {{asset('img/dashImage2.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="img-fluid img-thumbnail shadow" id="dashImage2" src="@if ($dash_image2) {{$dash_image2->temporaryUrl()}} @elseif($existingdash_image2) {{ url('public/storage/'.$existingdash_image2)}} @else {{asset('img/dashImage2.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('dash_image2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <hr>
@@ -948,7 +949,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="img-fluid img-thumbnail shadow" id="passengerSeatImage" src="@if ($passenger_seat_image) {{ $passenger_seat_image->temporaryUrl() }} @else {{asset('img/passangerSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="img-fluid img-thumbnail shadow" id="passengerSeatImage" src="@if($passenger_seat_image) {{$passenger_seat_image->temporaryUrl()}} @elseif($existingpassenger_seat_image) {{ url('public/storage/'.$existingpassenger_seat_image)}} @else {{asset('img/passangerSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('passenger_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
@@ -974,7 +975,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="img-fluid img-thumbnail shadow" id="driverSeatImage" src="@if ($driver_seat_image) {{ $driver_seat_image->temporaryUrl() }} @else {{asset('img/driverSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="img-fluid img-thumbnail shadow" id="driverSeatImage" src="@if($driver_seat_image) {{$driver_seat_image->temporaryUrl()}} @elseif($existingdriver_seat_image) {{ url('public/storage/'.$driver_seat_image)}} @else {{asset('img/driverSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('driver_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <hr>
@@ -1003,7 +1004,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="@if ($back_seat1) {{ $back_seat1->temporaryUrl() }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="@if($back_seat1) {{$back_seat1->temporaryUrl()}} @elseif($existingback_seat1) {{ url('public/storage/'.$existingback_seat1)}} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('back_seat1') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
@@ -1029,7 +1030,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="img-fluid img-thumbnail shadow" id="backSeat2Image" src="@if ($back_seat2) {{ $back_seat2->temporaryUrl() }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat2Image" src="@if($back_seat2) {{$back_seat2->temporaryUrl()}} @elseif($existingback_seat2) {{ url('public/storage/'.$existingback_seat2)}} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
                                     @error('back_seat2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                             </div>
@@ -1057,7 +1058,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="img-fluid img-thumbnail shadow" id="backSeat3Image" src="@if ($back_seat3) {{ $back_seat3->temporaryUrl() }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat3Image" src="@if($back_seat3) {{$back_seat3->temporaryUrl()}} @elseif($existingback_seat3) {{ url('public/storage/'.$existingback_seat3)}} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('back_seat3') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6">
@@ -1083,7 +1084,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="img-fluid img-thumbnail shadow" id="backSeat4Image1" src="@if ($back_seat4) {{ $back_seat4->temporaryUrl() }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat4Image1" src="@if($back_seat4) {{$back_seat4->temporaryUrl()}} @elseif($existingback_seat4) {{ url('public/storage/'.$existingback_seat4)}} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
                                     @error('back_seat4') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                             </div>
@@ -1111,7 +1112,7 @@
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
-                                    <img class="img-fluid img-thumbnail shadow" id="backSeat3Image1" src="@if ($roof_images) {{ $roof_images->temporaryUrl() }} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
+                                    <img class="img-fluid img-thumbnail shadow" id="backSeat3Image1" src="@if($roof_images) {{$roof_images->temporaryUrl()}} @elseif($existingroof_images) {{ url('public/storage/'.$existingroof_images)}} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                             </div>

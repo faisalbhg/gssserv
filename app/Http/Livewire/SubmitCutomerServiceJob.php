@@ -32,7 +32,12 @@ class SubmitCutomerServiceJob extends Component
     use WithFileUploads;
     public $customer_id, $vehicle_id, $mobile, $name, $email, $selectedVehicleInfo;
     public $selectedCustomerVehicle=true, $showCheckout=true, $successPage=false, $showCheckList=false, $showQLCheckList=false, $showFuelScratchCheckList=false, $showCustomerSignature=false, $discountApply=false;
-    public $serviceAddedMessgae=[], $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $roof_images, $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
+    public $serviceAddedMessgae=[], $cartItemCount, $cartItems=[], $job_number, $total, $totalAfterDisc, $grand_total, $tax;
+
+    public $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $roof_images;
+    public $existingImageR1, $existingImageR2, $existingImageF, $existingImageB, $existingImageL1, $existingImageL2, $existingdash_image1, $existingdash_image2, $existingpassenger_seat_image, $existingdriver_seat_image, $existingback_seat1, $existingback_seat2, $existingback_seat3, $existingback_seat4, $existingroof_images;
+
+    public $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
     public $staff_id,$staff_number,$show_staff_details=false;
     public $job_date_time;
@@ -104,12 +109,12 @@ class SubmitCutomerServiceJob extends Component
             $this->checklistLabel = json_decode($this->checklistEntry->checklist,true);
             $this->fuel = $this->checklistEntry->fuel;
             $this->vehicle_image = json_decode($this->checklistEntry->vehicle_image,true);
-            /*$this->vImageR1 = $this->vehicle_image['vImageR1'];
-            $this->vImageR2 = $this->vehicle_image['vImageR1'];
-            $this->vImageF = $this->vehicle_image['vImageF'];
-            $this->vImageB = $this->vehicle_image['vImageB'];
-            $this->vImageL1 = $this->vehicle_image['vImageL1'];
-            $this->vImageL2 = $this->vehicle_image['vImageL2'];*/
+            $this->existingImageR1 = $this->vehicle_image['vImageR1'];
+            $this->existingImageR2 = $this->vehicle_image['vImageR2'];
+            $this->existingImageF = $this->vehicle_image['vImageF'];
+            $this->existingImageB = $this->vehicle_image['vImageB'];
+            $this->existingImageL1 = $this->vehicle_image['vImageL1'];
+            $this->existingImageL2 = $this->vehicle_image['vImageL2'];
             $this->turn_key_on_check_for_fault_codes = $this->checklistEntry->turn_key_on_check_for_fault_codes;
             $this->start_engine_observe_operation = $this->checklistEntry->start_engine_observe_operation;
             $this->reset_the_service_reminder_alert = $this->checklistEntry->reset_the_service_reminder_alert;
@@ -299,16 +304,14 @@ class SubmitCutomerServiceJob extends Component
     }
 
     public function jobServiceTableUpdate(){
-        $missing = [];
-        foreach(CustomerJobCardServices::where(['job_number'=>$this->job_number])->get() as $tabKey => $customerJobCardServices){
-            $availableServiceItem = CustomerServiceCart::where(['job_number'=>$this->job_number,'item_id'=>$customerJobCardServices->item_id]);
-            $customerJobMissing = [];
-            if(!$availableServiceItem->exists()){
-                //JobCardsDeletedServices::insert((array) $customerJobCardServices);
-                JobCardsDeletedServices::create($customerJobCardServices->toArray());
-                CustomerJobCardServices::where(['job_number'=>$customerJobCardServices->job_number,'item_id'=>$customerJobCardServices->item_id])->delete();
-            }
 
+        
+        $missing = [];
+        $fourPLuOneRequested = false;
+        
+        foreach(CustomerJobCardServices::where(['job_number'=>$this->job_number])->get() as $tabKey => $customerJobCardServices){
+            JobCardsDeletedServices::create($customerJobCardServices->toArray());
+            CustomerJobCardServices::where(['job_number'=>$customerJobCardServices->job_number,'id'=>$customerJobCardServices->id])->delete();
         }
         
     }
@@ -582,12 +585,14 @@ class SubmitCutomerServiceJob extends Component
                     'item_code'=>$cartData->item_code,
                 ]);
 
-                /*if($cartData->discount_perc){
-                    $customerJobServiceQuery->where([
-                        'discount_id'=>$cartData->customer_group_id,
-                        'discount_code'=>$cartData->customer_group_code
-                    ]);
-                }*/
+                if($cartData->item_code=='I09137'){
+                    if($cartData->discount_perc){
+                        $customerJobServiceQuery->where([
+                            //'discount_id'=>$cartData->customer_group_id,
+                            'discount_code'=>$cartData->customer_group_code
+                        ]);
+                    }
+                }
                 //dd($customerJobServiceQuery->exists());
                 if($customerJobServiceQuery->exists()){
                     $customerJobServiceQuery->update($customerJobServiceData);
