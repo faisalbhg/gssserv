@@ -47,6 +47,10 @@ class CustomerServiceCart extends Model
         'isWarranty',
         'warrantyPeriod',
         'warrantyTerms',
+        'manual_discount_value',
+        'manual_discount_percentage',
+        'manual_discount_applied_by',
+        'manual_discount_applied_datetime',
         'created_by',
         'updated_by',
         'created_at',
@@ -63,6 +67,13 @@ class CustomerServiceCart extends Model
     {
         return $this->belongsTo(CustomerVehicle::class,'vehicle_id','id')->with(['makeInfo','modelInfo']);
     }
+
+    public function manualDiscountServiceInfo()
+    {
+        return $this->belongsTo(ManualDiscountServices::class,'id','cart_id');
+    }
+
+    
 
     
 }

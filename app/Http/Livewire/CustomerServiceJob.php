@@ -45,6 +45,8 @@ use App\Models\ServiceBundleType;
 use App\Models\ServiceBundle;
 use App\Models\ServiceBundleDiscountedPrice;
 use App\Models\Landlord;
+use App\Models\ManualDiscountAprovals;
+use App\Models\ManualDiscountServices;
 
 
 class CustomerServiceJob extends Component
@@ -78,6 +80,7 @@ class CustomerServiceJob extends Component
     public $selectAdvanceCouponMenu=false, $showAdvanceCouponList=false, $showAdvanceCouponOtpVerify=false, $advance_coupon_number, $numberPlateRequired=true;
     public $lineDIscountItemId, $linePriceDiscount, $discountAvailability;
     public $showSelectedDiscount=false, $priceDiscountList, $lineItemDetails, $showLineDiscountItems=false; 
+    public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValue;
     
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -561,7 +564,7 @@ class CustomerServiceJob extends Component
             }
 
             $sectionServiceLists = $sectionServiceLists->orderBy('SortIndex','ASC')->get();
-            if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14){
+            if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14 || $this->selectedVehicleInfo->ceramic_wash_discount_count > 0){
                 //$sectionServicePriceLists = [];
                 foreach($sectionServiceLists as $key => $sectionServiceList){
                     $discountLaborSalesPrices = LaborSalesPrices::where([
@@ -573,10 +576,32 @@ class CustomerServiceJob extends Component
                         $sectionServiceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
                     }
 
+                    if($sectionServiceList->ItemCode == 'S322')
+                    {
+                        $discountLaborSalesPricesCeramcDis = LaborSalesPrices::where([
+                            'ServiceItemId'=>$sectionServiceList->ItemId,
+                            'CustomerGroupCode'=>'CERAMIC_WASH',
+                        ]);
+                        $discountLaborSalesPricesCeramcDis = $discountLaborSalesPricesCeramcDis->where('StartDate', '<=', Carbon::now());
+                        //$discountLaborSalesPricesCeramcDis = $discountLaborSalesPricesCeramcDis->where('EndDate', '>=', Carbon::now() );
+                        $sectionServiceLists[$key]['discountDetails'] = $discountLaborSalesPricesCeramcDis->first();
+                        
+                    }
+
                     
                     //dd($sectionServiceLists);
                     
                 }
+            }
+            if($this->selectedVehicleInfo->ceramic_wash_discount_count > 0)
+            {
+                $discountLaborSalesPrices = LaborSalesPrices::where([
+                        'ServiceItemId'=>$sectionServiceList->ItemId,
+                        'CustomerGroupCode'=>'CERAMIC_WASH',
+                    ]);
+                $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
+                //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
+                $sectionServiceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
             }
             //dd($sectionServiceLists);
             $this->sectionServiceLists = $sectionServiceLists;
@@ -926,6 +951,7 @@ class CustomerServiceJob extends Component
         $this->selectedDiscount=null;
         $this->showSelectedDiscount=false;
         $this->priceDiscountList=null;
+        $this->applyManualDiscount=true;
 
         if($item['cart_item_type']==1){
             $inventorySalesPricesQuery = LaborSalesPrices::where([
@@ -1264,6 +1290,7 @@ class CustomerServiceJob extends Component
                 $this->searchStaffId=true;
                 $this->discountCardApplyForm=false;
                 $this->engineOilDiscountForm=false;
+                $this->manulDiscountForm=false;
                 $this->dispatchBrowserEvent('scrolltoInModal', [
                     'scrollToId' => 'discountTop',
                 ]);
@@ -1274,6 +1301,7 @@ class CustomerServiceJob extends Component
                     $this->engineOilDiscountForm=true;
                     $this->discountCardApplyForm=false;
                     $this->searchStaffId=false;
+                    $this->manulDiscountForm=false;
                     $this->dispatchBrowserEvent('scrolltoInModal', [
                         'scrollToId' => 'discountTop',
                     ]);
@@ -1287,6 +1315,7 @@ class CustomerServiceJob extends Component
             {
                 $this->discountCardApplyForm=true;
                 $this->searchStaffId=false;
+                $this->manulDiscountForm=false;
                 $this->engineOilDiscountForm=false;
                 $this->dispatchBrowserEvent('scrolltoInModal', [
                     'scrollToId' => 'discountTop',
@@ -1307,6 +1336,101 @@ class CustomerServiceJob extends Component
             "discount_perc" => $priceDiscount['DiscountPerc']
         ]);*/
         //$this->dispatchBrowserEvent('closePriceDiscountList');
+    }
+
+    public function applyManualLineDiscountSubmit($cartId,$ItemCode){
+        $selectedManualDiscountGroup = LaborCustomerGroup::where('GroupType','=',7)->where(['Active'=>true])->first();
+        $this->selectedDiscount = [
+            'unitId'=>isset($selectedManualDiscountGroup['UnitId'])?$selectedManualDiscountGroup['UnitId']:null,
+            'code'=>$selectedManualDiscountGroup['Code'],
+            'title'=>$selectedManualDiscountGroup['Title'],
+            'id'=>$selectedManualDiscountGroup['Id'],
+            'groupType'=>$selectedManualDiscountGroup['GroupType'],
+        ];
+        $this->showSelectedDiscount=true;
+        $this->engineOilDiscountForm=false;
+        $this->discountCardApplyForm=false;
+        $this->searchStaffId=false;
+        $this->manulDiscountForm=true;
+    }
+
+    public function saveManulDiscountAproval(){
+        $validatedData = $this->validate([
+            'manualDiscountValue' => 'required',
+        ]);
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$this->lineItemDetails['id']])->update([
+            'manual_discount_value'=>$this->manualDiscountValue,
+            'manual_discount_percentage'=>custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100),
+            'manual_discount_applied_by'=>auth()->user('user')['id'],
+            'manual_discount_applied_datetime'=>Carbon::now()
+        ]);
+        $this->dispatchBrowserEvent('closePriceDiscountList');
+        $this->lineDIscountItemId = null;
+        $this->linePriceDiscount = null;
+        $this->selectedDiscount = null;
+
+        $this->discountCardApplyForm=false;
+        $this->showSelectedDiscount=false;
+    }
+
+    public function sendManualDiscountApproval(){
+        $manualDiscountAprovals = ManualDiscountAprovals::create([
+            'customer_id'=>$this->customer_id,
+            'vehicle_id'=>$this->vehicle_id,
+            'customer_name'=>$this->name,
+            'customer_mobile'=>$this->mobile,
+            'customer_email'=>$this->email,
+            'make'=>$this->selectedVehicleInfo->make,
+            'vehicle_image'=>$this->selectedVehicleInfo->vehicle_image,
+            'model'=>$this->selectedVehicleInfo->model,
+            'plate_number'=>$this->selectedVehicleInfo->plate_number_final,
+            'station'=>auth()->user('user')['station_code'],
+            'discount_status'=>1,
+            'created_by'=>auth()->user('user')['id'],
+            'is_active'=>1,
+        ]);
+
+        $cartTotal=0;
+        $manualDiscountTotal=0;
+        foreach($this->cartItems as $cartItems)
+        {
+            if($cartItems->manual_discount_value!=null){
+                ManualDiscountServices::create([
+                    'manual_discount_ref_no'=>$manualDiscountAprovals->id,
+                    'item_id'=>$cartItems->item_id,
+                    'cart_id'=>$cartItems->id,
+                    'item_code'=>$cartItems->item_code,
+                    'item_name'=>$cartItems->item_name,
+                    'service_item_type'=>$cartItems->cart_item_type,
+                    'department_code'=>$cartItems->department_code,
+                    'department_name'=>$cartItems->department_name,
+                    'section_code'=>$cartItems->section_code,
+                    'section_name'=>$cartItems->section_name,
+                    'unit_price'=>$cartItems->unit_price,
+                    'quantity'=>$cartItems->quantity,
+                    'manual_discount_value'=>$cartItems->manual_discount_value,
+                    'manual_discount_percentage'=>$cartItems->manual_discount_percentage,
+                    'manual_discount_applied_by'=>$cartItems->manual_discount_applied_by,
+                    'manual_discount_applied_datetime'=>$cartItems->manual_discount_applied_datetime,
+                    'discount_status'=>1,
+                    'created_by'=>auth()->user('user')['id'],
+                    'is_active'=>1,
+                ]);
+                $manualDiscountTotal = $manualDiscountTotal+($cartItems->manual_discount_value*$cartItems->quantity);
+            }
+            $cartTotal = $cartTotal+($cartItems->unit_price*$cartItems->quantity);
+        }
+
+        $manualDiscountTotalPercentage = custom_round(($manualDiscountTotal/$cartTotal)*100);
+        ManualDiscountAprovals::where(['id'=>$manualDiscountAprovals->id])->update([
+            'manual_discount_value'=>$manualDiscountTotal,
+            'manual_discount_percentage'=>$manualDiscountTotalPercentage,
+            'manual_discount_applied_by'=>auth()->user('user')['id'],
+            'manual_discount_applied_datetime'=>Carbon::now()
+        ]);
+
+        session()->flash('cartsuccess', 'Manual discount successfully send for approval, please wait until the discount approved!');
+        
     }
 
     public function applyEngineOilLineDiscountSubmit($item_id){
@@ -1333,6 +1457,7 @@ class CustomerServiceJob extends Component
                 $this->engineOilDiscountForm=true;
                 $this->discountCardApplyForm=false;
                 $this->searchStaffId=false;
+                $this->manulDiscountForm=false;
                 
             }
             else
@@ -1412,7 +1537,7 @@ class CustomerServiceJob extends Component
 
     public function getCartInfo($value='')
     {
-        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
+        $this->cartItems = CustomerServiceCart::with(['manualDiscountServiceInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
         $this->cartItemCount = count($this->cartItems); 
         if($this->cartItemCount>0)
         {
@@ -2056,6 +2181,7 @@ class CustomerServiceJob extends Component
             
             if($discountGroup['Id']==8 || $discountGroup['Id']==9){
                 $this->searchStaffId=true;
+                $this->manulDiscountForm=false;
                 $this->discountCardApplyForm=false;
                 $this->engineOilDiscountForm=false;
             }
@@ -2065,6 +2191,7 @@ class CustomerServiceJob extends Component
                     $this->engineOilDiscountForm=true;
                     $this->discountCardApplyForm=false;
                     $this->searchStaffId=false;
+                    $this->manulDiscountForm=false;
                 }
                 else
                 {
@@ -2075,6 +2202,7 @@ class CustomerServiceJob extends Component
             {
                 $this->discountCardApplyForm=true;
                 $this->searchStaffId=false;
+                $this->manulDiscountForm=false;
                 $this->engineOilDiscountForm=false;
             }
         }
@@ -2284,6 +2412,18 @@ class CustomerServiceJob extends Component
 
         CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$serviceId])->update($cartUpdate);
     }
+
+    public function removeManualLineDiscount($serviceId){
+        $cartUpdate['manual_discount_value']=null;
+        $cartUpdate['manual_discount_percentage']=null;
+        $cartUpdate['manual_discount_applied_by']=null;
+        $cartUpdate['manual_discount_applied_datetime']=null;
+        //$this->getCartInfo();
+
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$serviceId])->update($cartUpdate);
+    }
+
+
 
     public function removeDiscount(){
 

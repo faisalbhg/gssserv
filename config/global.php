@@ -160,6 +160,29 @@ return [
         ],
     ],
 
+    //Manual Discount
+    'manualDiscount'=>[
+        'status' => [
+            '0'=>'Pending',
+            '1'=>'Pending',
+            '2'=>'Success',
+            '3'=>'Rejected',
+        ],
+        'status_text_class' => [
+            '0'=>'text-warning',
+            '1'=>'text-warning',
+            '2'=>'text-success',
+            '3'=>'text-danger',
+        ],
+        'status_btn_class' => [
+            '0'=>'bg-gradient-warning',
+            '1'=>'bg-gradient-warning',
+            '2'=>'bg-gradient-success',
+            '3'=>'bg-gradient-danger',
+        ],
+    ],
+
+
     'job_status' => [
         '0'=>'Start',
         '1'=>'Working Progress',

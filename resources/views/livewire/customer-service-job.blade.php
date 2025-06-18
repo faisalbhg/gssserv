@@ -450,10 +450,18 @@
                             <div class="row">
                                 <div class="col-lg-8">
                                     <div class="card h-100">
-                                        
+                                        @if ($message = Session::get('cartsuccess'))
+                                        <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
+                                            <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                            <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        @endif
                                         <div class="card-body p-3 pb-0">
                                             <ul class="list-group">
-                                                <?php $total = 0;$totalDiscount=0; $package_job=false; ?>
+                                                <?php $total = 0;$totalDiscount=0; $package_job=false; $manualDiscountAvailable=false; $aprovalWaiting=false;?>
                                                 @foreach ($cartItems as $item)
 
                                                     <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
@@ -473,6 +481,17 @@
 
                                                             @if($item->customer_group_code)
                                                             <label wire:click.prevent="removeLineDiscount({{$item->id}})" class="badge bg-gradient-info cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
+                                                            @elseif($item->manual_discount_value)
+                                                            <?php $manualDiscountAvailable=true;?>
+                                                            <label  class="badge bg-gradient-warning cursor-pointer"> 
+                                                                @if($item->manualDiscountServiceInfo)
+                                                                {{config('global.manualDiscount.status')[$item->manualDiscountServiceInfo['discount_status']]}}
+                                                                @else
+                                                                <?php $aprovalWaiting=true;?>
+                                                                <i class="fa fa-trash text-danger" wire:click.prevent="removeManualLineDiscount({{$item->id}})"></i>
+                                                                @endif
+                                                                 - Manual Discount {{ custom_round($item->manual_discount_percentage) }}% Off 
+                                                                  </label>
                                                             @else
                                                             <span><label wire:click.prevent="applyLineDiscount({{$item}})" class="badge bg-gradient-dark cursor-pointer">Apply Discount </label></span>
                                                             <div wire:loading wire:target="applyLineDiscount">
@@ -526,10 +545,12 @@
 
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
-                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{custom_round($item->unit_price)}}</button>
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code || $item->manual_discount_value!= null) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{custom_round($item->unit_price)}}</button>
 
                                                             @if($item->customer_group_code)
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ custom_round($item->unit_price-(($item->discount_perc/100)*($item->unit_price))) }}</button>
+                                                            @elseif($item->manual_discount_value)
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ custom_round($item->unit_price-(($item->manual_discount_percentage/100)*($item->unit_price))) }}</button>
                                                             @endif
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
@@ -564,6 +585,8 @@
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}}
                                                             @if($item->customer_group_code)
                                                             {{ custom_round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)))*$item->quantity }}
+                                                            @elseif($item->manual_discount_value)
+                                                            {{ custom_round($item->unit_price-(($item->manual_discount_percentage/100)*($item->unit_price)))*$item->quantity }}
                                                             @else
                                                             {{custom_round($item->unit_price*$item->quantity)}}
                                                             @endif</button>
@@ -577,6 +600,9 @@
                                                     if($item->discount_perc){
                                                         $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*$item->unit_price)*$item->quantity);
                                                         //echo $totalDiscount;
+                                                    }
+                                                    else if($item->manual_discount_value){
+                                                        $totalDiscount = $totalDiscount+custom_round((($item->manual_discount_percentage/100)*$item->unit_price)*$item->quantity);
                                                     }
                                                     if($item->is_package==1){
                                                         $package_job=true;
@@ -642,7 +668,24 @@
                                         <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{custom_round($grand_total)}}</span>
                                     </div>
                                     @if($cardShow)
-                                    <button type="button" class="btn bg-gradient-success btn-sm float-end" wire:click="submitService()">Confirm & Continue</button>
+                                        @if($manualDiscountAvailable)
+                                            @if($aprovalWaiting)
+                                            <button type="button" class="btn bg-gradient-warning btn-sm float-end" wire:click="sendManualDiscountApproval()">Send for Manual Discount Approval</button>
+                                            @else
+                                            <button type="button" class="btn bg-gradient-warning btn-sm float-end" >Pending Manual Discount Approval</button>
+                                            @endif
+                                        @else
+                                        <button type="button" class="btn bg-gradient-success btn-sm float-end" wire:click="submitService()">Confirm & Continue</button>
+                                        @endif
+                                    <div wire:loading wire:target="sendManualDiscountApproval">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div wire:loading wire:target="submitService">
                                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                             <div class="la-ball-beat">
@@ -654,6 +697,15 @@
                                     </div>
                                     @endif
                                     <div wire:loading wire:target="removeLineDiscount">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div wire:loading wire:target="removeManualLineDiscount">
                                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                             <div class="la-ball-beat">
                                                 <div></div>
@@ -1368,6 +1420,35 @@
                                                     </div>
                                                 </div>
                                             @endif
+
+                                            @if($manulDiscountForm)
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h4 >Manual Discount Amount</h4>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <div class="form-group">
+                                                                <input type="number" class="form-control" wire:model="manualDiscountValue" id="manualDiscountValue" placeholder="Manual Discount Value">
+                                                                @error('manualDiscountValue') <span class="text-danger">{{ $message }}</span> @enderror
+                                                            </div>
+                                                        </div>
+                                                    
+                                                        <div class="col-6">
+                                                            <button type="button" class="btn bg-gradient-primary" wire:click="saveManulDiscountAproval()">Save Discount</button>
+                                                            <div wire:loading wire:target="saveManulDiscountAproval">
+                                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                    <div class="la-ball-beat">
+                                                                        <div></div>
+                                                                        <div></div>
+                                                                        <div></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
                                         </div>
                                     </div>
                                  </div>
@@ -1378,7 +1459,6 @@
                             <div class="row">
                                 <?php $discountempty = false; ?>
                                 @forelse($priceDiscountList as $priceDiscount)
-                                    
                                     @if($priceDiscount->customerDiscountGroup['GroupType'] == 1 && $priceDiscount->EndDate == null)
                                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                             <div class="card card-profile mt-md-0 mt-5">
@@ -1493,10 +1573,19 @@
                                         <?php $discountempty = true; ?>
                                     @endif
                                 @endif
+                                
                                 @if($discountempty)
                                 <span class="text-danger text-center">Empty discount for this item..!</span>
                                 @endif
-
+                                <div wire:loading wire:target="applyManualLineDiscountSubmit">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div wire:loading wire:target="addtoCart">
                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                         <div class="la-ball-beat">
