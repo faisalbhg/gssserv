@@ -729,34 +729,14 @@ class SubmitCutomerServiceJob extends Component
         
 
         $vehicle_image=[];
-        //dd($vehicle_image);
+        
         if($this->showCheckList)
         {
-            $vehicle_image = [
-                'vImageR1'=>isset($this->vImageR1)?$this->vImageR1->store('car_image', 'public'):null,
-                'vImageR2'=>isset($this->vImageR2)?$this->vImageR2->store('car_image', 'public'):null,
-                'vImageF'=>isset($this->vImageF)?$this->vImageF->store('car_image', 'public'):null,
-                'vImageB'=>isset($this->vImageB)?$this->vImageB->store('car_image', 'public'):null,
-                'vImageL1'=>isset($this->vImageL1)?$this->vImageL1->store('car_image', 'public'):null,
-                'vImageL2'=>isset($this->vImageL2)?$this->vImageL2->store('car_image', 'public'):null,
-                'dash_image1'=>isset($this->dash_image1)?$this->dash_image1->store('car_image', 'public'):null,
-                'dash_image2'=>isset($this->dash_image2)?$this->dash_image2->store('car_image', 'public'):null,
-                'passenger_seat_image'=>isset($this->passenger_seat_image)?$this->passenger_seat_image->store('car_image', 'public'):null,
-                'driver_seat_image'=>isset($this->driver_seat_image)?$this->driver_seat_image->store('car_image', 'public'):null,
-                'back_seat1'=>isset($this->back_seat1)?$this->back_seat1->store('car_image', 'public'):null,
-                'back_seat2'=>isset($this->back_seat2)?$this->back_seat2->store('car_image', 'public'):null,
-                'back_seat3'=>isset($this->back_seat3)?$this->back_seat3->store('car_image', 'public'):null,
-                'back_seat4'=>isset($this->back_seat4)?$this->back_seat4->store('car_image', 'public'):null,
-                'roof_images'=>isset($this->roof_images)?$this->roof_images->store('car_image', 'public'):null,
-            ];
-            
-
             $checkListEntryData = [
                 'checklist'=>json_encode($this->checklistLabel),
                 'fuel'=>$this->fuel,
                 'scratches_found'=>$this->scratchesFound,
                 'scratches_notfound'=>$this->scratchesNotFound,
-                'vehicle_image'=>json_encode($vehicle_image),
                 'signature'=>$this->customerSignature,
                 'turn_key_on_check_for_fault_codes'=>$this->turn_key_on_check_for_fault_codes,
                 'start_engine_observe_operation'=>$this->start_engine_observe_operation,
@@ -780,17 +760,143 @@ class SubmitCutomerServiceJob extends Component
                 'ubi_comments'=>$this->ubi_comments,
             ];
             if($job_update==true){
+                if($this->vImageR1==null){
+                    $vehicle_image['vImageR1']=$this->existingImageR1;
+                }
+                else{
+                    $vehicle_image['vImageR1']=$this->vImageR1->store('car_image', 'public');
+                }
+                
+                if($this->vImageR2==null){
+                    $vehicle_image['vImageR2']=$this->existingImageR2;
+                }
+                else{
+                    $vehicle_image['vImageR2']=$this->vImageR2->store('car_image', 'public');
+                }
+
+                if($this->vImageF==null){
+                    $vehicle_image['vImageF']=$this->existingImageF;
+                }
+                else{
+                    $vehicle_image['vImageF']=$this->vImageF->store('car_image', 'public');
+                }
+
+                if($this->vImageB==null){
+                    $vehicle_image['vImageB']=$this->existingImageB;
+                }
+                else{
+                    $vehicle_image['vImageB']=$this->vImageB->store('car_image', 'public');
+                }
+
+                if($this->vImageL1==null){
+                    $vehicle_image['vImageL1']=$this->existingImageL1;
+                }
+                else{
+                    $vehicle_image['vImageL1']=$this->vImageL1->store('car_image', 'public');
+                }
+
+                if($this->vImageL2==null){
+                    $vehicle_image['vImageL2']=$this->existingImageL2;
+                }
+                else{
+                    $vehicle_image['vImageL2']=$this->vImageL2->store('car_image', 'public');
+                }
+
+                if($this->dash_image1==null){
+                    $vehicle_image['dash_image1']=$this->existingdash_image1;
+                }
+                else{
+                    $vehicle_image['dash_image1']=$this->dash_image1->store('car_image', 'public');
+                }
+
+                if($this->dash_image2==null){
+                    $vehicle_image['dash_image2']=$this->existingdash_image2;
+                }
+                else{
+                    $vehicle_image['dash_image2']=$this->dash_image2->store('car_image', 'public');
+                }
+
+                if($this->passenger_seat_image==null){
+                    $vehicle_image['passenger_seat_image']=$this->existingpassenger_seat_image;
+                }
+                else{
+                    $vehicle_image['passenger_seat_image']=$this->passenger_seat_image->store('car_image', 'public');
+                }
+
+                if($this->driver_seat_image==null){
+                    $vehicle_image['driver_seat_image']=$this->existingdriver_seat_image;
+                }
+                else{
+                    $vehicle_image['driver_seat_image']=$this->driver_seat_image->store('car_image', 'public');
+                }
+
+                if($this->back_seat1==null){
+                    $vehicle_image['back_seat1']=$this->existingback_seat1;
+                }
+                else{
+                    $vehicle_image['back_seat1']=$this->back_seat1->store('car_image', 'public');
+                }
+
+                if($this->back_seat2==null){
+                    $vehicle_image['back_seat2']=$this->existingback_seat2;
+                }
+                else{
+                    $vehicle_image['back_seat2']=$this->back_seat2->store('car_image', 'public');
+                }
+
+                if($this->back_seat3==null){
+                    $vehicle_image['back_seat3']=$this->existingback_seat3;
+                }
+                else{
+                    $vehicle_image['back_seat3']=$this->back_seat3->store('car_image', 'public');
+                }
+
+                if($this->back_seat4==null){
+                    $vehicle_image['back_seat4']=$this->existingback_seat4;
+                }
+                else{
+                    $vehicle_image['back_seat4']=$this->back_seat4->store('car_image', 'public');
+                }
+
+                if($this->roof_images==null){
+                    $vehicle_image['roof_images']=$this->existingroof_images;
+                }
+                else{
+                    $vehicle_image['roof_images']=$this->roof_images->store('car_image', 'public');
+                }
+                $checkListEntryData['vehicle_image']=json_encode($vehicle_image);
                 $checkListEntryData['updated_by']=auth()->user('user')->id;
+                //dd($checkListEntryData);
                 $checkListEntryInsert = JobcardChecklistEntries::where(['job_number'=>$this->job_number])->update($checkListEntryData);
             }
-            else
-            {
+            else{
+                $vehicle_image = [
+                    'vImageR1'=>isset($this->vImageR1)?$this->vImageR1->store('car_image', 'public'):null,
+                    'vImageR2'=>isset($this->vImageR2)?$this->vImageR2->store('car_image', 'public'):null,
+                    'vImageF'=>isset($this->vImageF)?$this->vImageF->store('car_image', 'public'):null,
+                    'vImageB'=>isset($this->vImageB)?$this->vImageB->store('car_image', 'public'):null,
+                    'vImageL1'=>isset($this->vImageL1)?$this->vImageL1->store('car_image', 'public'):null,
+                    'vImageL2'=>isset($this->vImageL2)?$this->vImageL2->store('car_image', 'public'):null,
+                    'dash_image1'=>isset($this->dash_image1)?$this->dash_image1->store('car_image', 'public'):null,
+                    'dash_image2'=>isset($this->dash_image2)?$this->dash_image2->store('car_image', 'public'):null,
+                    'passenger_seat_image'=>isset($this->passenger_seat_image)?$this->passenger_seat_image->store('car_image', 'public'):null,
+                    'driver_seat_image'=>isset($this->driver_seat_image)?$this->driver_seat_image->store('car_image', 'public'):null,
+                    'back_seat1'=>isset($this->back_seat1)?$this->back_seat1->store('car_image', 'public'):null,
+                    'back_seat2'=>isset($this->back_seat2)?$this->back_seat2->store('car_image', 'public'):null,
+                    'back_seat3'=>isset($this->back_seat3)?$this->back_seat3->store('car_image', 'public'):null,
+                    'back_seat4'=>isset($this->back_seat4)?$this->back_seat4->store('car_image', 'public'):null,
+                    'roof_images'=>isset($this->roof_images)?$this->roof_images->store('car_image', 'public'):null,
+                ];
+                $checkListEntryData['vehicle_image']=json_encode($vehicle_image);
                 $checkListEntryData['job_number']=$this->job_number;
                 $checkListEntryData['job_id']=$customerjobId;
                 $checkListEntryData['created_by']=auth()->user('user')->id;
 
                 $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
+
+                
             }
+            
         }
 
         if($job_update!=true){
