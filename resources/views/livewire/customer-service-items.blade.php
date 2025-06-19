@@ -69,8 +69,8 @@
                                     <p class="mb-1"><b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
                                     @endif
                                     <div>
-                                        <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Edit Customer/Discount/Vehicle" wire:click="editCustomer()">Edit Customer/Vehicle Other Service</button>
-                                        <div wire:loading wire:target="editCustomer">
+                                        <button type="button" class="btn bg-gradient-dark btn-tooltip " title="Edit Customer/Discount/Vehicle" wire:click="backToService()">Back to Other Service</button>
+                                        <div wire:loading wire:target="backToService">
                                             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                 <div class="la-ball-beat">
                                                     <div></div>

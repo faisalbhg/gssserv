@@ -2105,8 +2105,14 @@ class CustomerServiceJob extends Component
     }
 
     public function openServiceItems(){
-
-        return redirect()->to('customer-service-items/'.$this->customer_id.'/'.$this->vehicle_id);
+        if($this->job_number){
+            return redirect()->to('customer-service-items/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$this->job_number);
+        }
+        else
+        {
+            return redirect()->to('customer-service-items/'.$this->customer_id.'/'.$this->vehicle_id);
+        }
+            
         
         $this->showServiceItems = true;
 
