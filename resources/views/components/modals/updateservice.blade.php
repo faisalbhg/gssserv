@@ -967,8 +967,7 @@
                                                 @endif
                                             </div>
                                         </div>
-                                    @elseif($services->service_item_type==2 && $services->section_name == 'Quick Lube')
-
+                                    @elseif($services->service_item_type==2 && $services->department_name == 'Quick Lube')
                                         @if($qlServiceUpdate==false)
                                             <?php $qlServiceUpdate=true; ?>
                                             <div class="row">
@@ -1023,7 +1022,7 @@
                                         @if($services->job_status==1)
                                             @if($showchecklist[$services->id])
                                                 
-                                                @if(in_array($services->section_name, config('global.check_list.oilChange.services')))
+                                                @if(in_array($services->department_name, config('global.check_list.oilChange.services')))
 
                                                     @include('components.checklist.oilChange-checklist')
                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
