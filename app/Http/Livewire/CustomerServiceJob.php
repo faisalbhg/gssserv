@@ -73,7 +73,7 @@ class CustomerServiceJob extends Component
     public $package_number, $package_code, $showPackageOtpVerify=false, $package_otp, $package_otp_message, $customerBookedPackages=[], $openPackageDetailsVerify,$showOpenPackageDetails=false, $sectionPackageServiceLists=[];
     public $customize_price=-1, $customise_service_item_price, $extra_note,$extra_description, $mechanical_discount;
     public $showTempCart=false,$jobDetails, $tempCartItems, $tempCartItemCount;
-    public $confirming;
+    public $confirming, $confirmingRA=false;
     public $customizedErrorMessage=[];
     public $new_make, $new_make_id, $makeSearchResult=[], $modelSearchResult=[], $showAddNewModel=false, $new_model;
     public $showBundleList=false, $selectBundleMenu=false, $bundlleLists, $selectedBundles, $showBundleServiceSectionsList, $bundleServiceLists=[];
@@ -2100,7 +2100,7 @@ class CustomerServiceJob extends Component
     public function clearAllCart()
     {
         CustomerServiceCart::where(['customer_id'=>$this->customer_id, 'vehicle_id'=>$this->vehicle_id])->delete();
-        
+        $this->confirmingRA = false;
         session()->flash('cartsuccess', 'All Service Cart Clear Successfully !');
     }
 
@@ -2761,6 +2761,10 @@ class CustomerServiceJob extends Component
     {
         $this->confirming = $id;
     }
+    public function confirmDeleteRA()
+    {
+        $this->confirmingRA = true;
+    }
 
     public function kill($id,$item_id)
     {
@@ -2776,6 +2780,10 @@ class CustomerServiceJob extends Component
 
     public function safe($id){
         $this->confirming = null;
+    }
+
+    public function safeRA(){
+        $this->confirmingRA = false;
     }
 
 

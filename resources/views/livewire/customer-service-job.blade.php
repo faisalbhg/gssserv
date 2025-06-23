@@ -629,7 +629,45 @@
                                                 ?>
                                             </ul>
                                             
-                                            <button class="btn bg-gradient-danger btn-sm float-end" wire:click.prevent="clearAllCart">Remove All Cart</button>
+                                            @if($confirmingRA)
+                                            <p>
+                                                <span><label wire:click.prevent="clearAllCart" class="badge bg-gradient-success cursor-pointer"><i class="fa fa-trash"></i> Yes</label></span>
+                                                <span><label wire:click.prevent="safeRA" class="badge bg-gradient-info cursor-pointer"><i class="fa fa-trash"></i> No</label></span>
+                                                
+                                                <div wire:loading wire:target="clearAllCart">
+                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                        <div class="la-ball-beat">
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div wire:loading wire:target="safeRA">
+                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                        <div class="la-ball-beat">
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p>
+
+                                            @else
+                                            <span><label wire:click.prevent="confirmDeleteRA" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove All</label></span>
+                                            <div wire:loading wire:target="confirmDeleteRA">
+                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                        <div class="la-ball-beat">
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            <button class="d-none btn bg-gradient-danger btn-sm float-end" wire:click.prevent="clearAllCart">Remove All Cart</button>
                                         </div>
                                     </div>
                                 </div>
