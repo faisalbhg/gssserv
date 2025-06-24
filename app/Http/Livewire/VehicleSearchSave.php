@@ -6,6 +6,7 @@ use Livewire\Component;
 
 use Illuminate\Http\Request;
 use Livewire\WithFileUploads;
+
 use Carbon\Carbon;
 use Session;
 use Illuminate\Support\Facades\Http;
@@ -636,18 +637,18 @@ class VehicleSearchSave extends Component
 
         if($this->vehicle_image){
 
-            //$customerVehicleData['vehicle_image'] = $this->vehicle_image->store('vehicle', 'public');
-            $customerVehicleData['vehicle_image_base64']=base64_encode(file_get_contents($this->vehicle_image->getRealPath()));
+            $customerVehicleData['vehicle_image'] = $this->vehicle_image->store('vehicle', 'public');
+            //$customerVehicleData['vehicle_image_base64']=base64_encode(file_get_contents($this->vehicle_image->getRealPath()));
         }
 
         if($this->plate_number_image){
-            //$customerVehicleData['plate_number_image'] = $this->plate_number_image->store('plate_number', 'public');
-            $customerVehicleData['plate_number_image_base64']=base64_encode(file_get_contents($this->plate_number_image->getRealPath()));
+            $customerVehicleData['plate_number_image'] = $this->plate_number_image->store('plate_number', 'public');
+            //$customerVehicleData['plate_number_image_base64']=base64_encode(file_get_contents($this->plate_number_image->getRealPath()));
         }
 
         if($this->chaisis_image){
-            //$customerVehicleData['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
-            $customerVehicleData['chaisis_image_base64']=base64_encode(file_get_contents($this->chaisis_image->getRealPath()));
+            $customerVehicleData['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
+            //$customerVehicleData['chaisis_image_base64']=base64_encode(file_get_contents($this->chaisis_image->getRealPath()));
         }
         $customerVehicleDetails = CustomerVehicle::create($customerVehicleData);
         $this->vehicle_id = $customerVehicleDetails->id;
@@ -720,18 +721,18 @@ class VehicleSearchSave extends Component
 
         if($this->vehicle_image){
 
-            //$customerVehicleData['vehicle_image'] = $this->vehicle_image->store('vehicle', 'public');
-            $customerVehicleData['vehicle_image_base64']=base64_encode(file_get_contents($this->vehicle_image->getRealPath()));
+            $customerVehicleData['vehicle_image'] = $this->vehicle_image->store('vehicle', 'public');
+            //$customerVehicleData['vehicle_image_base64']=base64_encode(file_get_contents($this->vehicle_image->getRealPath()));
         }
 
         if($this->plate_number_image){
-            //$customerVehicleData['plate_number_image'] = $this->plate_number_image->store('plate_number', 'public');
-            $customerVehicleData['plate_number_image_base64'] = base64_encode(file_get_contents($this->plate_number_image->getRealPath()));
+            $customerVehicleData['plate_number_image'] = $this->plate_number_image->store('plate_number', 'public');
+            //$customerVehicleData['plate_number_image_base64'] = base64_encode(file_get_contents($this->plate_number_image->getRealPath()));
         }
 
         if($this->chaisis_image){
-            //$customerVehicleData['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
-            $customerVehicleData['chaisis_image_base64']=base64_encode(file_get_contents($this->chaisis_image->getRealPath()));
+            $customerVehicleData['chaisis_image'] = $this->chaisis_image->store('chaisis_image', 'public');
+            //$customerVehicleData['chaisis_image_base64']=base64_encode(file_get_contents($this->chaisis_image->getRealPath()));
         }
         $customerVehicleDetails = CustomerVehicle::create($customerVehicleData);
         $this->vehicle_id = $customerVehicleDetails->id;

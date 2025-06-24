@@ -851,7 +851,7 @@ class Operations extends Component
         $this->canceljobReasonButton=false;
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
-        $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerVehicle','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
+        $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
         //dd($this->jobcardDetails);
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {

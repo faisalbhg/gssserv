@@ -46,7 +46,7 @@
                         <a href="javascript:;" class="">
                             <div class="card card-background mb-4" style="align-items: inherit;">
                                 <!-- move-on-hover-->
-                                <div class="full-background" style="background-image: url('data:image/png;base64,{{$jobcardDetails->customerVehicle['vehicle_image_base64']}}')"></div>
+                                <div class="full-background" style="background-image: url('data:image/png;base64,{{$jobcardDetails->vehicle_image}}')"></div>
                                 <div class="card-body pt-2">
                                     @if($jobcardDetails->customerInfo['TenantName'])
                                     <h4 class="text-white mb-0 pb-0 text-white">{{$jobcardDetails->customerInfo['TenantName']}}</h4>
@@ -881,7 +881,7 @@
                                                 @if($services->job_status==1)
                                                     @include('components.checklist.serviceTimer')
                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
-                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> MEchanical {{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                     </a>
                                                 @elseif($services->job_status>=2 && $services->job_status<3)
                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'mech')">
@@ -896,7 +896,7 @@
                                             @if(in_array($services->section_name, config('global.check_list.mechanical.services')))
 
                                                 <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'mech')">
-                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> Mechanical {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
                                                 </a>
                                             @endif
                                         @endif
@@ -918,7 +918,7 @@
                                                         <i class="fas fa-check opacity-10" aria-hidden="true"></i>
                                                     </div>
                                                     <div>
-                                                        <span class="ps-3">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
+                                                        <span class="ps-3 {{config('global.jobs.status_text_class')[$services->job_status]}}">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -945,7 +945,7 @@
                                                 @if($services->job_status==1)
                                                     @include('components.checklist.qlServiceTimer')
                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
-                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">Quick Lube {{config('global.jobs.status')[$services->job_status+1]}}</button>
                                                     </a>
                                                 @elseif($services->job_status>=2 && $services->job_status<3)
                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
@@ -962,7 +962,7 @@
 
                                                 @include('components.checklist.oilChange-checklist')
                                                 <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
-                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> Quick Lube {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
                                                 </a>
                                             @endif
                                         @endif
@@ -986,7 +986,7 @@
                                                         <i class="fas fa-check opacity-10" aria-hidden="true"></i>
                                                     </div>
                                                     <div>
-                                                        <span class="ps-3">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
+                                                        <span class="ps-3 {{config('global.jobs.status_text_class')[$services->job_status]}}">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
                                                     </div>
                                                 </div>
                                             </div>
