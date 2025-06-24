@@ -46,7 +46,7 @@
                         <a href="javascript:;" class="">
                             <div class="card card-background mb-4" style="align-items: inherit;">
                                 <!-- move-on-hover-->
-                                <div class="full-background" style="background-image: url('data:image/png;base64,{{$jobcardDetails->vehicle_image}}')"></div>
+                                <div class="full-background" style="background-image: url('{{url("public/storage/".$jobcardDetails->vehicle_image)}}')"></div>
                                 <div class="card-body pt-2">
                                     @if($jobcardDetails->customerInfo['TenantName'])
                                     <h4 class="text-white mb-0 pb-0 text-white">{{$jobcardDetails->customerInfo['TenantName']}}</h4>
