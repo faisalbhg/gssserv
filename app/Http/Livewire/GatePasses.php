@@ -29,7 +29,7 @@ class GatePasses extends Component
 
     public function render()
     {
-        $jobsQuery = CustomerJobCards::with(['customerInfo','makeInfo','modelInfo']);
+        $jobsQuery = CustomerJobCards::with(['customerInfo','customerVehicle','makeInfo','modelInfo']);
         if($this->filter){
             $jobsQuery = $jobsQuery->whereIn('job_status', $this->filter);
         }

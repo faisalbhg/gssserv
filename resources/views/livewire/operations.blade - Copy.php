@@ -178,7 +178,9 @@
                   <tr class="cursor-pointer" wire:click="customerJobUpdate('{{$jobs->job_number}}')">
                     <td>
                       <div class="d-flex px-3 py-1">
-                        
+                        <div>
+                          <img src="{{url('public/storage/'.$jobs->vehicle_image)}}" class="avatar me-3" alt="avatar image">
+                        </div>
                         <div class="d-flex flex-column justify-content-center">
                           <h6 class="mb-0 text-sm">{{$jobs->makeInfo['vehicle_name']}} - <small>{{$jobs->modelInfo['vehicle_model_name']}} </small></h6>
                           <p class="text-sm font-weight-bold text-secondary mb-0"><span class="text-success">{{$jobs->plate_number}}</span></p>

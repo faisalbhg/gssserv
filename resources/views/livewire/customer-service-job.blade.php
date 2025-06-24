@@ -313,8 +313,8 @@
                             <div class="card card-profile card-plain">
                                 <div class="position-relative">
                                     <div class="blur-shadow-image">
-                                        <img class="w-100 rounded-3 shadow-lg" src="{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}">
-                                        <!-- <img class="w-100 rounded-3 shadow-lg" src="data:image/png;base64,{{$selectedVehicleInfo['vehicle_image_base64']}}"> -->
+                                        <!-- <img class="w-100 rounded-3 shadow-lg" src="{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}"> -->
+                                        <img class="w-100 rounded-3 shadow-lg" src="data:image/png;base64,{{$selectedVehicleInfo['vehicle_image_base64']}}">
                                     </div>
 
                                 </div>

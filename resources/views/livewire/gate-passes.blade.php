@@ -132,7 +132,7 @@
                             <div class="card-body p-3">
                                 <div class="d-flex">
                                     <div class="avatar avatar-xl bg-gradient-dark border-radius-md p-0 shadow">
-                                        <img src="{{'public/storage/'.$job->vehicle_image}}" alt="slack_logo">
+                                        <img src="data:image/png;base64,{{$job->customerVehicle['vehicle_image_base64']}}" alt="slack_logo">
                                     </div>
                                     <div class="ms-3 my-auto">
                                         <h6 class="text-primary mb-0 mt-0 ">{{$job->plate_number}}</h6>

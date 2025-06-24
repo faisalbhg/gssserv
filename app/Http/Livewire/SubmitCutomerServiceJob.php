@@ -336,7 +336,7 @@ class SubmitCutomerServiceJob extends Component
             'vehicle_id'=>$this->vehicle_id,
             'vehicle_type'=>isset($this->selectedVehicleInfo['vehicle_type'])?$this->selectedVehicleInfo['vehicle_type']:0,
             'make'=>$this->selectedVehicleInfo['make'],
-            'vehicle_image'=>$this->selectedVehicleInfo['vehicle_image'],
+            //'vehicle_image'=>$this->selectedVehicleInfo['vehicle_image_base64'],
             'model'=>$this->selectedVehicleInfo['model'],
             'plate_number'=>$this->selectedVehicleInfo['plate_number_final'],
             'chassis_number'=>$this->selectedVehicleInfo['chassis_number'],

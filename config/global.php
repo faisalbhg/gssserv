@@ -1115,7 +1115,10 @@ return [
                     ],
                 ],
             ],
-        ]
+        ],
+        "mechanical"=>[
+            "services"=>["Mechanical"],
+        ],
     ],
     'ceramic'=>[
         'service' =>[

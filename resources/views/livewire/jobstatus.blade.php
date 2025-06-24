@@ -18,7 +18,7 @@
             </div>
             
             <div class="col-md-12">
-                <div class="card bg-cover text-center" style="background-image: url('{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}')">
+                <div class="card bg-cover text-center" style="background-image: url('data:image/png;base64,{{$selectedVehicleInfo->vehicle_image_base64}}')">
                 <div class="card-body z-index-2 py-9">
                 <h2 class="text-white">{{$selectedVehicleInfo['plate_number_final']}}</h2>
                 <p class="text-uppercase text-sm font-weight-bold mb-2 text-white">{{isset($selectedVehicleInfo->makeInfo)?$selectedVehicleInfo->makeInfo['vehicle_name']:''}}, {{isset($selectedVehicleInfo->modelInfo['vehicle_model_name'])?$selectedVehicleInfo->modelInfo['vehicle_model_name']:''}}</p>

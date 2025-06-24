@@ -554,8 +554,9 @@ class Operations extends Component
     }
 
 
-    public function updateJobService($services,$ql=null)
+    public function updateJobService($services,$qlmech=null)
     {
+        //dd(CustomerJobCardServices::where(['job_number'=>$services['job_number'],'section_name'=>'Mechanical'])->get());
         $jobServiceId = $services['id'];
         $this->job_status = $services['job_status']+1;
         $this->job_departent = $services['job_departent']+1;
@@ -576,8 +577,11 @@ class Operations extends Component
             ]);
         }
         
-        if($ql!=null){
+        if($qlmech=='ql'){
             CustomerJobCardServices::where(['job_number'=>$services['job_number'],'department_name'=>'Quick Lube'])->update($serviceJobUpdate);
+        }
+        else if($qlmech=='mech'){
+            CustomerJobCardServices::where(['job_number'=>$services['job_number'],'section_name'=>'Mechanical'])->update($serviceJobUpdate);
         }
         else
         {
@@ -847,7 +851,7 @@ class Operations extends Component
         $this->canceljobReasonButton=false;
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
-        $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
+        $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerVehicle','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
         //dd($this->jobcardDetails);
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {
