@@ -904,13 +904,12 @@
                                     <div class="col-md-4 mb-4">
                                         <div class="card">
                                             <div class="card-header text-center pt-4 pb-3">
-                                                <span class="badge rounded-pill bg-light text-dark">{{$services->section_name}}</span>
+                                                <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
                                                 <h5 class="text-dark">
                                                     @if($services->quantity>1)
                                                         {{$services->quantity.' x '}}
                                                     @endif
                                                     {{$services->item_name}}
-                                                    <span class=" bg-gradient-dark text-gradient text-sm font-weight-bold">({{$services->department_name}})</span>
                                                 </h5>
                                             </div>
                                             <div class="card-body text-lg-left text-center pt-0">
@@ -972,13 +971,13 @@
                                     <div class="col-md-4 mb-4">
                                         <div class="card">
                                             <div class="card-header text-center pt-4 pb-3">
-                                                <span class="badge rounded-pill bg-light text-dark">{{$services->section_name}}</span>
+                                                <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
                                                 <h5 class="text-dark">
                                                     @if($services->quantity>1)
                                                         {{$services->quantity.' x '}}
                                                     @endif
                                                     {{$services->item_name}}
-                                                    <span class=" bg-gradient-dark text-gradient text-sm font-weight-bold">({{$services->department_name}})</span>
+                                                    
                                                 </h5>
                                             </div>
                                             <div class="card-body text-lg-left text-center pt-0">
