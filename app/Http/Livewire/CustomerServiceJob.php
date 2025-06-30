@@ -954,6 +954,7 @@ class CustomerServiceJob extends Component
     }
 
     public function applyLineDiscount($item){
+        //dd($item);
         $this->lineDIscountItemId = $item['id'];
         $this->selectedDiscount=null;
         $this->showSelectedDiscount=false;

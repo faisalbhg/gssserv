@@ -468,8 +468,10 @@ class CustomerServiceItems extends Component
                 $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
             });
             $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
+            //dd($inventorySalesPricesResult);
         }
         $this->lineItemDetails = $item;
+        //dd($this->lineItemDetails['unit_price']);
         $this->priceDiscountList = $inventorySalesPricesResult;
         $this->showLineDiscountItems = true;
         $this->dispatchBrowserEvent('showPriceDiscountList');

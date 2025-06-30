@@ -1518,13 +1518,16 @@
                                         <?php $discountempty = false; ?>
                                     @elseif($priceDiscount->customerDiscountGroup['GroupType']==2)
                                         <?php
-                                        $givenDate = \Carbon\Carbon::parse($priceDiscount->EndDate); // Replace with your date
+                                        $endCampVali = \Carbon\Carbon::parse($priceDiscount->EndDate);
+                                        if(\Carbon\Carbon::now()->diffInDays($endCampVali, false)>=0)
+                                        {
+                                        /*$givenDate = \Carbon\Carbon::parse($priceDiscount->EndDate); // Replace with your date
                                         $now = \Carbon\Carbon::now();
                                         if ($givenDate->isPast()) {
                                             //
                                         }
                                         else
-                                        {
+                                        {*/
                                             ?>
                                             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                                 <div class="card card-profile mt-md-0 mt-5">
