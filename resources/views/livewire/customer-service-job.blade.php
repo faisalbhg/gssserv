@@ -481,28 +481,17 @@
 
                                                             @if($item->customer_group_code)
                                                             <label wire:click.prevent="removeLineDiscount({{$item->id}})" class="badge bg-gradient-info cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
-                                                            @elseif($item->manual_discount_value)
-                                                            <?php $manualDiscountAvailable=true;?>
-                                                            <label  class="badge bg-gradient-warning cursor-pointer"> 
-                                                                @if($item->manualDiscountServiceInfo)
-                                                                {{config('global.manualDiscount.status')[$item->manualDiscountServiceInfo['discount_status']]}}
-                                                                @else
-                                                                <?php $aprovalWaiting=true;?>
-                                                                <i class="fa fa-trash text-danger" wire:click.prevent="removeManualLineDiscount({{$item->id}})"></i>
-                                                                @endif
-                                                                 - Manual Discount {{ custom_round($item->manual_discount_percentage) }}% Off 
-                                                                  </label>
                                                             @else
-                                                            <span><label wire:click.prevent="applyLineDiscount({{$item}})" class="badge bg-gradient-dark cursor-pointer">Apply Discount </label></span>
-                                                            <div wire:loading wire:target="applyLineDiscount">
-                                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                    <div class="la-ball-beat">
-                                                                        <div></div>
-                                                                        <div></div>
-                                                                        <div></div>
+                                                                <span><label wire:click.prevent="applyLineDiscount({{$item}})" class="badge bg-gradient-dark cursor-pointer">Apply Discount </label></span>
+                                                                <div wire:loading wire:target="applyLineDiscount">
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
                                                             @endif
 
                                                             @if($confirming===$item->id)
@@ -545,12 +534,10 @@
 
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
-                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code || $item->manual_discount_value!= null) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{custom_round($item->unit_price)}}</button>
+                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4" @if($item->customer_group_code) style="text-decoration: line-through;" @endif >{{config('global.CURRENCY')}} {{custom_round($item->unit_price)}}</button>
 
                                                             @if($item->customer_group_code)
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ custom_round($item->unit_price-(($item->discount_perc/100)*($item->unit_price))) }}</button>
-                                                            @elseif($item->manual_discount_value)
-                                                            <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}} {{ custom_round($item->unit_price-(($item->manual_discount_percentage/100)*($item->unit_price))) }}</button>
                                                             @endif
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
@@ -585,8 +572,7 @@
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}}
                                                             @if($item->customer_group_code)
                                                             {{ custom_round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)))*$item->quantity }}
-                                                            @elseif($item->manual_discount_value)
-                                                            {{ custom_round($item->unit_price-(($item->manual_discount_percentage/100)*($item->unit_price)))*$item->quantity }}
+                                                            
                                                             @else
                                                             {{custom_round($item->unit_price*$item->quantity)}}
                                                             @endif</button>
@@ -601,9 +587,7 @@
                                                         $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*$item->unit_price)*$item->quantity);
                                                         //echo $totalDiscount;
                                                     }
-                                                    else if($item->manual_discount_value){
-                                                        $totalDiscount = $totalDiscount+custom_round((($item->manual_discount_percentage/100)*$item->unit_price)*$item->quantity);
-                                                    }
+                                                    
                                                     if($item->is_package==1){
                                                         $package_job=true;
 
@@ -1461,17 +1445,17 @@
                                             @if($manulDiscountForm)
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <h4 >Manual Discount Amount</h4>
+                                                        <h4 >Manual Discount Percentage</h4>
                                                         <div class="row">
                                                             <div class="col-6">
                                                                 <div class="form-group">
-                                                                    <input type="number" class="form-control" wire:model="manualDiscountValue" id="manualDiscountValue" placeholder="Manual Discount Value">
+                                                                    <input type="number" class="form-control" wire:model="manualDiscountValue" id="manualDiscountValue" placeholder="Manual Discount Percentage">
                                                                     @error('manualDiscountValue') <span class="text-danger">{{ $message }}</span> @enderror
                                                                 </div>
                                                             </div>
                                                         
                                                             <div class="col-6">
-                                                                <button type="button" class="btn bg-gradient-primary" wire:click="saveManulDiscountAproval()">Save Discount</button>
+                                                                <button type="button" class="btn bg-gradient-primary" wire:click="saveManulDiscountAproval()">Apply Discount</button>
                                                                 <div wire:loading wire:target="saveManulDiscountAproval">
                                                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                                         <div class="la-ball-beat">
@@ -1613,7 +1597,6 @@
                                         <?php $discountempty = true; ?>
                                     @endif
                                 @endif
-                                @if(in_array((auth()->user('user')->user_type),config('global.user_type_access')['administrator']))
                                     @if($applyManualDiscount)
                                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                             <div class="card card-profile mt-md-0 mt-5">
@@ -1630,7 +1613,6 @@
                                         </div>
                                         <?php $discountempty = false; ?>
                                     @endif
-                                @endif
                                 @if($discountempty)
                                 <span class="text-danger text-center">Empty discount for this item..!</span>
                                 @endif

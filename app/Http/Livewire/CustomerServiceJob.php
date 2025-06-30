@@ -84,7 +84,7 @@ class CustomerServiceJob extends Component
     public $selectAdvanceCouponMenu=false, $showAdvanceCouponList=false, $showAdvanceCouponOtpVerify=false, $advance_coupon_number, $numberPlateRequired=true;
     public $lineDIscountItemId, $linePriceDiscount, $discountAvailability;
     public $showSelectedDiscount=false, $priceDiscountList, $lineItemDetails, $showLineDiscountItems=false; 
-    public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValue;
+    public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValue, $manulDiscountForm=false;
     
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -1366,12 +1366,29 @@ class CustomerServiceJob extends Component
         $validatedData = $this->validate([
             'manualDiscountValue' => 'required',
         ]);
-        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$this->lineItemDetails['id']])->update([
-            'manual_discount_value'=>$this->manualDiscountValue,
-            'manual_discount_percentage'=>custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100),
-            'manual_discount_applied_by'=>auth()->user('user')['id'],
-            'manual_discount_applied_datetime'=>Carbon::now()
-        ]);
+        
+        $cartUpdate['price_id']=158;
+        $cartUpdate['customer_group_id']=158;
+        $cartUpdate['customer_group_code']='MANUAL_DISCOUNT';
+        $cartUpdate['min_price']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
+        $cartUpdate['max_price']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
+        $cartUpdate['start_date']=null;
+        $cartUpdate['end_date']=null;
+        $cartUpdate['discount_perc']=$this->manualDiscountValue;
+        $cartUpdate['manual_discount_value']=$this->manualDiscountValue;
+        $cartUpdate['manual_discount_percentage']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
+        $cartUpdate['manual_discount_applied_by']=auth()->user('user')['id'];
+        $cartUpdate['manual_discount_applied_datetime']=Carbon::now();
+
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$this->lineItemDetails['id']])->update($cartUpdate);
+
+
+
+        
+
+        //CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']])->update($cartUpdate);
+
+
         $this->dispatchBrowserEvent('closePriceDiscountList');
         $this->lineDIscountItemId = null;
         $this->linePriceDiscount = null;
