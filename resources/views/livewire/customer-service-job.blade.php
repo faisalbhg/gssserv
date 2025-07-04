@@ -26,6 +26,7 @@
         @if($showForms)
             <div class="card px-3 my-2" >
                 <div class="card-body p-0">
+                    @if($selectedVehicleInfo->customerInfoMaster['Paymethod']!=2)
                     @if($searchByMobileNumber)
                         <div class="row">
                             @if($showByMobileNumber)
@@ -55,6 +56,7 @@
                                 </div>
                             @endif
                         </div>
+                    @endif
                     @endif
                     @if($showPlateNumber)
                         <div class="row">
@@ -349,9 +351,8 @@
                                     <b>KM Reading:</b> {{$selectedVehicleInfo['vehicle_km']}}</p>
                                     @endif
                                     <div>
-                                        @if($selectedVehicleInfo->customerInfoMaster['Paymethod']!=2)
+                                        
                                         <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Edit Customer/Discount/Vehicle" wire:click="editCustomer()">Edit</button>
-                                        @endif
                                         <button type="button" class="btn bg-gradient-primary btn-tooltip btn-sm" title="Add Customer/Discount/Vehicle"  wire:click="addNewVehicle()">New Vehicle</button>
                                         <button type="button" class="d-none btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
                                         <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
