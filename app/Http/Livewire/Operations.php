@@ -370,7 +370,7 @@ class Operations extends Component
             else
             {
                 CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>5]);
-                MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
+                //MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
                 /*MaterialRequest::where(['sessionId'=>$this->job_number])->update([
                     'Status'=>'C',
                     'ApprovalStatus'=>'C',
