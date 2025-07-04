@@ -181,7 +181,8 @@ class Operations extends Component
                 \DB::raw('count(case when job_status = 2 then job_status end) work_finished'),
                 \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
-                \DB::raw('count(case when job_status in (0,1,2,3,4) then job_status end) total'),
+                \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
+                \DB::raw('count(case when job_status in (0,1,2,3,4,5) then job_status end) total'),
                 \DB::raw('SUM(grand_total) as saletotal'),
             )
         );
@@ -189,6 +190,7 @@ class Operations extends Component
 
         $customerjobs = CustomerJobCards::with(['customerInfo','makeInfo','modelInfo','createdInfo']);
         if($this->filter){
+            //dd($this->filter);
             $customerjobs = $customerjobs->whereIn('job_status', $this->filter);
         }
         if($this->search_job_number)
@@ -277,11 +279,12 @@ class Operations extends Component
     public function filterJobListPage($statusFilter)
     {
         switch($statusFilter){
-            case 'total': $this->filter = [0,1,2,3,4];break;
+            case 'total': $this->filter = [0,1,2,3,4,5];break;
             case 'working_progress': $this->filter = [1];break;
             case 'work_finished': $this->filter = [2,3];break;
             case 'ready_to_deliver': $this->filter = [3];break;
             case 'delivered': $this->filter = [4];break;
+            case 'cancelled': $this->filter = [5];break;
         }
         $this->filterTab = $statusFilter;
         $this->dispatchBrowserEvent('filterTab',['tabName'=>$this->filterTab]);
@@ -344,6 +347,8 @@ class Operations extends Component
     }
 
     public function confirmCancelJob($job_number){
+        //dd(MaterialRequest::limit(1)->get());
+        //dd($job_number);
         $validatedData = $this->validate([
             'cancelationReason' => 'required',
         ]);
@@ -353,6 +358,7 @@ class Operations extends Component
             'cancelled_by'=>auth()->user('user')->id,
             'cancelled_date_time'=>Carbon::now()
         ]);
+        //dd(CustomerJobCards::where(['job_number'=>$job_number])->first());
         //dd($this->jobcardDetails->meterialRequestResponse);
         if($this->jobcardDetails->meterialRequestResponse)
         {
@@ -363,14 +369,19 @@ class Operations extends Component
             }
             else
             {
-                MaterialRequest::where(['sessionId'=>$this->job_number])->update([
+                CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>5]);
+                MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
+                /*MaterialRequest::where(['sessionId'=>$this->job_number])->update([
                     'Status'=>'C',
                     'ApprovalStatus'=>'C',
                     'Cancelled'=>Carbon::now(),
                     'CancelledBy'=>auth()->user('user')->id
-                ]);
+                ]);*/
             }
             
+        }
+        else{
+            CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>5]);
         }
         $this->customerJobUpdate($job_number);
     }
@@ -605,6 +616,7 @@ class Operations extends Component
                 \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
                 \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+                \DB::raw('count(case when job_status = 5 then job_status end) cencelled'),
             )
         )->where(['job_number'=>$services['job_number']])->first();
         //dd($getCountSalesJobStatus);
@@ -821,6 +833,7 @@ class Operations extends Component
                 \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
                 \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+                \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
             )
         )->where(['job_number'=>$job_number])->first();
         //dd($getCountSalesJobStatus);
@@ -836,6 +849,9 @@ class Operations extends Component
         }
         else if($getCountSalesJobStatus->delivered>0){
             $mainSTatus=4;
+        }
+        else if($getCountSalesJobStatus->cancelled>0){
+            $mainSTatus=5;
         }
         
         $mianJobUpdate = [

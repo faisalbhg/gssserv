@@ -128,6 +128,17 @@
               </div>
           </div>
       </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount cancelled">
+          <div class="card bg-gradient-danger shadow text-white">
+              <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('cancelled')">
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Cancelled</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->cancelled}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
+      </div>
       <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount work_finished">
           <div class="card bg-gradient-warning shadow text-white">
               <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('work_finished')">
