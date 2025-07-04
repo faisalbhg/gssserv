@@ -123,7 +123,8 @@ class CustomerServiceJob extends Component
 
     public function customerJobDetails(){
         $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo']);
-        $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number,'payment_status'=>0]);
+        $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
+        $customerJobCardsQuery = $customerJobCardsQuery->where('payment_status','!=',1);
 
         $this->jobDetails =  $customerJobCardsQuery->first();
         if($this->jobDetails){
