@@ -6,7 +6,6 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
-        "alimranahmed/laraocr": "^1.2",
         "barryvdh/laravel-dompdf": "^2.0",
         "darryldecode/cart": "^4.2",
         "doctrine/dbal": "^4.2",

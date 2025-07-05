@@ -155,7 +155,7 @@ Route::middleware('auth')->group(function () {
 
     //UpdateJobCardds
     Route::get('/update_jobcard/{job_number}',UpdateJobCards::class)->name('update_jobcard');
-    Route::get('submit-jobcard-update/{job_number}', UpdateJobCardSubmit::class)->name('submit-jobcard-update');
+    Route::get('submit-job-update/{job_number}', UpdateJobCardSubmit::class)->name('submit-job-update');
 
     //GatePasses
     Route::get('gatepasses',GatePasses::class)->name('gatepasses');
