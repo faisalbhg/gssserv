@@ -87,7 +87,7 @@ Route::middleware('auth')->group(function () {
     Route::get('customer-service-job/{customer_id}/{vehicle_id}',CustomerServiceJob::class)->name('customer-service-job');
     Route::get('submit-job/{customer_id}/{vehicle_id}', SubmitCutomerServiceJob::class)->name('submit-job');
     //UpdateCustomerJobs
-    Route::get('customer-service-job/{customer_id}/{vehicle_id}/{job_number}',CustomerServiceJob::class)->name('customer-service-job');
+    Route::get('customer-service-job/{customer_id}/{vehicle_id}/{job_number}',CustomerServiceJob::class)->name('customer-service-job-update');
     Route::get('submit-job-update/{customer_id}/{vehicle_id}/{job_number}', SubmitCutomerServiceJob::class)->name('submit-job-update');
 
     Route::get('customer-service-items/{customer_id}/{vehicle_id}', CustomerServiceItems::class)->name('customer-service-items');
