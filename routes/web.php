@@ -91,7 +91,7 @@ Route::middleware('auth')->group(function () {
     Route::get('submit-job-update/{customer_id}/{vehicle_id}/{job_number}', SubmitCutomerServiceJob::class)->name('submit-job-update');
 
     Route::get('customer-service-items/{customer_id}/{vehicle_id}', CustomerServiceItems::class)->name('customer-service-items');
-    Route::get('customer-service-items/{customer_id}/{vehicle_id}/{job_number}', CustomerServiceItems::class)->name('customer-service-items');
+    Route::get('customer-service-items/{customer_id}/{vehicle_id}/{job_number}', CustomerServiceItems::class)->name('customer-service-items-update');
 
     ;
 
@@ -155,7 +155,7 @@ Route::middleware('auth')->group(function () {
 
     //UpdateJobCardds
     Route::get('/update_jobcard/{job_number}',UpdateJobCards::class)->name('update_jobcard');
-    Route::get('submit-job-update/{job_number}', UpdateJobCardSubmit::class)->name('submit-job-update');
+    Route::get('submit-jobcard-update/{job_number}', UpdateJobCardSubmit::class)->name('submit-jobcard-update');
 
     //GatePasses
     Route::get('gatepasses',GatePasses::class)->name('gatepasses');
