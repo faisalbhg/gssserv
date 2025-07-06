@@ -110,7 +110,7 @@
                                                         @if ($message = Session::get('paymentLinkStatusError'))
                                                             <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
                                                                 <span class="alert-icon"><i class="ni ni-like-2"></i></span>
-                                                                <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                                                <span class="alert-text"> {{ $message }}</span>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                                                                     <span aria-hidden="true">×</span>
                                                                 </button>
