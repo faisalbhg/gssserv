@@ -878,9 +878,8 @@ class Operations extends Component
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
             //$this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID'], $this->jobcardDetails->plate_number);
         }
-        
-        //$this->customerJobServiceLogs = CustomerJobCardServices::where(['job_number'=>$job_number])->get();
-        //dd($this->customerJobServiceLogs);
+        /*$this->customerJobServiceLogs = CustomerJobCardServices::with(['customerJobServiceLogs'])->where(['job_number'=>$job_number])->get();
+        dd($this->customerJobServiceLogs);*/
         if($this->jobcardDetails->checklistInfo!=null){
             $this->checkListDetails=$this->jobcardDetails->checklistInfo;
             $this->checklistLabels = ServiceChecklist::get();
