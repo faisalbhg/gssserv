@@ -578,7 +578,7 @@ class SubmitCutomerServiceJob extends Component
 
             if($job_update==true){
                 $customerJobServiceData['updated_by']=auth()->user('user')->id;
-                $customerJobServiceQuery = CustomerJobCardServices::where([
+                /*$customerJobServiceQuery = CustomerJobCardServices::where([
                     'job_number'=>$this->job_number,
                     'job_id'=>$customerjobId,
                     'item_id'=>$cartData->item_id,
@@ -593,7 +593,6 @@ class SubmitCutomerServiceJob extends Component
                         ]);
                     }
                 }
-                //dd($customerJobServiceQuery->exists());
                 if($customerJobServiceQuery->exists()){
                     $customerJobServiceQuery->update($customerJobServiceData);
                     $customerJobServiceId = $customerJobServiceQuery->first();    
@@ -602,14 +601,16 @@ class SubmitCutomerServiceJob extends Component
                 {
                     $customerJobServiceData['created_by']=auth()->user('user')->id;
                     $customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
-                }
+                }*/
                 
             }
             else
             {
                 $customerJobServiceData['created_by']=auth()->user('user')->id;
-                $customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
+                //$customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
             }
+            //$customerJobServiceData['created_by']=auth()->user('user')->id;
+            $customerJobServiceId = CustomerJobCardServices::create($customerJobServiceData);
             //dd($customerJobServiceId);
             
             CustomerJobCardServiceLogs::create([
@@ -1079,15 +1080,15 @@ class SubmitCutomerServiceJob extends Component
 
     public function payLater()
     {
-        if($this->job_number==Null){
-            $this->createJob();
-        }
+        $this->createJob();
         CustomerJobCards::where(['job_number'=>$this->job_number])->update(['job_create_status'=>0]);
         CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
         $this->successPage=true;
         $this->showCheckout =false;
         $this->cardShow=false;
         $this->showServiceGroup=false;
+        $this->showPayLaterCheckout=false;
+        $this->selectedCustomerVehicle=false;
     }
 
     public function dashCustomerJobUpdate($job_number)
