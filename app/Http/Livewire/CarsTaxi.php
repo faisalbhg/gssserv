@@ -48,6 +48,7 @@ class CarsTaxi extends Component
     public $customerjobservices =[];
     public $job_status, $job_departent;
     public $showchecklist=[],$checklist_comments,$checklists;
+    public $canceljobReasonButton=false,$cancelError,$cancelationReason;
 
     public function render()
     {
@@ -839,5 +840,77 @@ class CarsTaxi extends Component
 
     public function markScrach($img){
         //
+    }
+
+    public function cancelJob($job_number)
+    {
+        if($this->jobcardDetails->meterialRequestResponse)
+        {
+            $response = DB::select('EXEC [dbo].[CheckMaterialIssued] @materialrequisioncode = "'.$this->jobcardDetails->meterialRequestResponse.'" ');
+            if(!empty($response)){
+                $this->cancelError='Materials already issued, please contact store to return the items and proceed cancellation..!';
+                $this->canceljobReasonButton=false;
+            }
+            else
+            {
+                $this->canceljobReasonButton=true;
+            }
+        }
+        else
+        {
+            $this->canceljobReasonButton=true;
+        }
+        
+        /*CustomerJobCards::where(['job_number'=>$job_number])->update(['job_status'=>5]);
+        if($customerJobDetails->meterialRequestResponse)
+        {
+            try {
+                DB::select('EXEC [dbo].[CheckMaterialIssued] @materialrequisioncode = "'.$customerJobDetails->meterialRequestResponse.'" ');
+            } catch (\Exception $e) {
+                //dd($e->getMessage());
+                //return $e->getMessage();
+            }
+        }*/
+        
+    }
+
+    public function confirmCancelJob($job_number){
+        //dd(MaterialRequest::limit(1)->get());
+        //dd($job_number);
+        $validatedData = $this->validate([
+            'cancelationReason' => 'required',
+        ]);
+        CustomerJobCards::where(['job_number'=>$job_number])->update([
+            'job_status'=>5,
+            'cancellation_reson'=>$this->cancelationReason,
+            'cancelled_by'=>auth()->user('user')->id,
+            'cancelled_date_time'=>Carbon::now()
+        ]);
+        //dd(CustomerJobCards::where(['job_number'=>$job_number])->first());
+        //dd($this->jobcardDetails->meterialRequestResponse);
+        if($this->jobcardDetails->meterialRequestResponse)
+        {
+            $response = DB::select('EXEC [dbo].[CheckMaterialIssued] @materialrequisioncode = "'.$this->jobcardDetails->meterialRequestResponse.'" ');
+            if(!empty($response)){
+                $this->cancelError='Materials already issued, please contact store to return the items and proceed cancellation..!';
+                $this->canceljobReasonButton=false;
+            }
+            else
+            {
+                CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>5]);
+                //MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
+                /*MaterialRequest::where(['sessionId'=>$this->job_number])->update([
+                    'Status'=>'C',
+                    'ApprovalStatus'=>'C',
+                    'Cancelled'=>Carbon::now(),
+                    'CancelledBy'=>auth()->user('user')->id
+                ]);*/
+            }
+            
+        }
+        else{
+            CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>5]);
+        }
+        $this->customerJobUpdate($job_number);
     }
 }
