@@ -832,10 +832,10 @@ class CarsTaxi extends Component
         $this->showVehicleImageDetails=false;
     }
 
-    public function qualityCheck($services,$ql=null)
+    public function qualityCheck($servicesId,$ql=null)
     {
-        //dd($services['id']);
-        $this->showchecklist[$services['id']]=true;
+        //dd($services);
+        $this->showchecklist[$servicesId]=true;
     }
 
     public function markScrach($img){
@@ -912,5 +912,35 @@ class CarsTaxi extends Component
             CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>5]);
         }
         $this->customerJobUpdate($job_number);
+    }
+
+    public function clickQlJobOperation($in_out,$up_ser,$service)
+    {
+        $service = CustomerJobCardServices::find($service);
+        if($in_out=='start')
+        {
+            $serviceUpdate[$up_ser.'_time_in'] = Carbon::now();
+        }
+        else if($in_out=='stop')
+        {
+            $serviceUpdate[$up_ser.'_time_out'] = Carbon::now();
+        }
+        CustomerJobCardServices::where(['job_number'=>$service->job_number,'id'=>$service->id])->update($serviceUpdate);
+        $serviceJobUpdateLog = [
+            'job_number'=>$service->job_number,
+            'customer_job__card_service_id'=>$service->id,
+            'job_status'=>$service->job_status,
+            'job_departent'=>$service->job_departent,
+            'job_description'=>json_encode($serviceUpdate),
+        ];
+        CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
+
+        //$this->customerJobUpdate($service['job_number']);
+        //$this->customerjobservices = CustomerJobCardServices::where(['job_number'=>$service['job_number']])->get();
+        //dd($this->customerjobservices);
+        $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$service['job_number']])->first();
+        $this->jobcardDetails = $job;
+        //dd($this->jobcardDetails);
+        $this->customerjobservices = $job->customerJobServices;
     }
 }
