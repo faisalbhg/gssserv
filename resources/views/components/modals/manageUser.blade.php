@@ -82,6 +82,15 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <div class="form-group">
+                                                        <label for="cancelationAccess"></label>
+                                                        <div class="form-check form-switch mt-1">
+                                                            <input class="form-check-input" type="checkbox" id="cancelationAccessBtn" wire:model="cancellation_access">
+                                                            <label class="form-check-label" for="cancelationAccessBtn">Job Cancelation Access</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
                                                         <label for="isActiveSelect">is Active</label>
                                                         <select class="form-control" id="isActiveSelect" wire:model="is_active">
                                                             <option @if($is_active==1) selected @endif value="1">Active</option>

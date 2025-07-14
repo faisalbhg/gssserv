@@ -18,7 +18,7 @@ class UserManagement extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $title, $buttonName, $user_id, $name, $email, $password, $showpasswordinput=false, $phone, $user_type, $station_id, $created_by, $updated_by, $is_active, $is_blocked, $userId, $manageUser = false,$users, $stationsList, $departmentsList,$search_station;
+    public $title, $buttonName, $user_id, $name, $email, $password, $showpasswordinput=false, $phone, $user_type, $cancellation_access=false, $station_id, $created_by, $updated_by, $is_active, $is_blocked, $userId, $manageUser = false,$users, $stationsList, $departmentsList,$search_station;
 
 
     public function render()
@@ -57,6 +57,7 @@ class UserManagement extends Component
         $this->is_active = 1;
         $this->manageUser = true;
         $this->user_type = true;
+        $this->cancellation_access = false;
         $this->title = 'Add New User';
         $this->buttonName = 'Save';
         $this->dispatchBrowserEvent('showUserModel');
@@ -79,6 +80,7 @@ class UserManagement extends Component
         $this->user_type = $user->user_type;
         $this->user_id = $user->id;
         $this->is_active = $user->is_active;
+        $this->cancellation_access = $user->cancellation_access;
         $this->manageUser = true;
         $this->title = 'Edit User';
         $this->buttonName = 'Update';
@@ -108,6 +110,7 @@ class UserManagement extends Component
                 'user_type'=>$this->user_type,
                 'station_id'=>$dtationDtls[0],
                 'station_code'=>$dtationDtls[1],
+                'cancellation_access'=>$this->cancellation_access,
                 'is_active'=>$this->is_active,
             ]);
             session()->flash('success', 'User updated successfully !');
@@ -123,6 +126,7 @@ class UserManagement extends Component
                 'user_type'=>$this->user_type,
                 'station_id'=>$dtationDtls[0],
                 'station_code'=>$dtationDtls[1],
+                'cancellation_access'=>$this->cancellation_access,
                 'is_active'=>$this->is_active,
                 'created_by'=>auth()->user('user')->id,
             ]);
