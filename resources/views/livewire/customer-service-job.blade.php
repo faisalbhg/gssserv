@@ -2247,6 +2247,10 @@
     window.addEventListener('openJobHIstoryModal',event=>{
         $('#jobHIstoryModal').modal('show');
     });
+    window.addEventListener('closeJobHIstoryModal',event=>{
+        $('#jobHIstoryModal').modal('hide');
+    });
+    
     window.addEventListener('openPendingJobListModal',event=>{
         $('#pendingJobListModal').modal('show');
     });

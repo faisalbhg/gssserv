@@ -2980,6 +2980,33 @@ class CustomerServiceJob extends Component
             'customer_id'=>$this->customer_id,
             'job_number'=>$job_number
         ])->first();
-        dd($jobsDetails);
-    }
+        foreach($jobsDetails->customerJobServices as $customerJobServices)
+        {
+            $cartInsert = [
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->vehicle_id,
+                'item_id'=>$customerJobServices->item_id,
+                'item_code'=>$customerJobServices->item_code,
+                'cart_item_type'=>$customerJobServices->service_item_type,
+                'company_code'=>$customerJobServices->company_code,
+                'category_id'=>$customerJobServices->category_id,
+                'sub_category_id'=>$customerJobServices->sub_category_id,
+                'brand_id'=>$customerJobServices->brand_id,
+                'bar_code'=>$customerJobServices->bar_code,
+                'item_name'=>$customerJobServices->item_name,
+                'description'=>$customerJobServices->description,
+                'division_code'=>$customerJobServices->division_code,
+                'department_code'=>$customerJobServices->department_code,
+                'department_name'=>$customerJobServices->department_name,
+                'section_code'=>$customerJobServices->section_code,
+                'unit_price'=>$customerJobServices->total_price,
+                'quantity'=>$customerJobServices->quantity,
+                'created_by'=>auth()->user('user')->id,
+                'created_at'=>Carbon::now(),
+            ];
+
+            CustomerServiceCart::insert($cartInsert);
+        }
+        $this->dispatchBrowserEvent('closeJobHIstoryModal');
+    }   
 }
