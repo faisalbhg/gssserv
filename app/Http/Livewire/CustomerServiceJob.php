@@ -1593,11 +1593,11 @@ class CustomerServiceJob extends Component
         ])->where('payment_status','!=',1)->where('job_status','<',3);
         if($existingJobs->exists())
         {
-            $this->showPendingJobList=true;
-            $this->pendingExistingJobs = $existingJobs->get();
-            $this->dispatchBrowserEvent('openPendingJobListModal');
-            //$existingJobs = $existingJobs->first();
-            //return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$existingJobs->job_number);
+            //$this->showPendingJobList=true;
+            //$this->pendingExistingJobs = $existingJobs->get();
+            //$this->dispatchBrowserEvent('openPendingJobListModal');
+            $existingJobs = $existingJobs->first();
+            return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$existingJobs->job_number);
         }
     }
 
