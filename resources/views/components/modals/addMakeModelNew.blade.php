@@ -12,7 +12,7 @@
     <div class="modal-content">
         
         <div class="modal-header">
-            <h5 class="modal-title" id="addMakeModelModel">Add New Make Model</h5>
+            <h5 class="modal-title" id="addMakeModelModelLabel">Add New Make Model</h5>
             <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
                 <span class="text-dark" aria-hidden="true">&times;</span>
             </button>

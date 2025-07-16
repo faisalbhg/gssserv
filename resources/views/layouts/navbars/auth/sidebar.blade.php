@@ -79,7 +79,7 @@
                 </a>
             </li>
 
-            <li class="nav-item pb-2 {{!in_array((auth()->user('user')->user_type),config('global.user_type_access')['section-forman']) ? 'd-none': ''}}">
+            <li class="nav-item pb-2 {{!in_array((auth()->user('user')->user_type),config('global.user_type_access')['section-foreman']) ? 'd-none': ''}}">
                 <a class="nav-link {{ in_array(request()->route()->getName(),['material-requisition']) ? 'active' : ' ' }}"
                     href="{{ route('material-requisition') }}">
                     <div

@@ -264,15 +264,28 @@ return [
         '3'=>'Full',
     ],
     "user_type" => [
-        "1"=>"Administrator",
+        "1"=>"Admin",
         "2"=>"Operation",
-        "3"=>"Service",
+        "3"=>"Services",
         "4"=>"Sales",
         "5"=>"Finance",
         "6"=>"Security",
         "7"=>"Quality",
-        "8"=>"Section Forman",
+        "8"=>"Section Foreman",
         "9"=>"Mechanical",
+    ],
+    "user_group" => [
+        "1"=>"Service Adviser",
+        "2"=>"Operations",
+        "3"=>"Customer Support",
+        "4"=>"Cashier",
+        "5"=>"Accountant",
+        "6"=>"Security",
+        "7"=>"Wash Quality",
+        "8"=>"Section Foreman",
+        "9"=>"Mechanic",
+        "10"=>"Lube Quality",
+        "11"=>"Area Manager",
     ],
     "user_type_access"=>[
         "administrator"=>[
@@ -281,7 +294,7 @@ return [
         "operation"=>[
             "1","2","3","4","8","9"
         ],
-        "section-forman"=>[
+        "section-foreman"=>[
             "1","2","8"
         ],
 

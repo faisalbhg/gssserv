@@ -438,7 +438,23 @@
                                         </button>
                                         @endif -->
                                     </div>
-                                    
+                                    <button type="button" class="btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
+                                    <div wire:loading wire:target="clickShowSignature">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if($customerSignature)
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <img class="w-100" src="{{$customerSignature}}" />
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -2158,6 +2174,13 @@
         @if($showAddMakeModelNew)
             @include('components.modals.addMakeModelNew')
         @endif
+        @if($showPendingJobList)
+            @include('components.modals.pendingJobListModal')
+        @endif
+
+        @if($showCustomerSignature)
+        @include('components.modals.customerSignatureModel')
+        @endif
 
         <div wire:loading wire:target="addtoCartItem">
             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
@@ -2193,7 +2216,14 @@
 @push('custom_script')
 
 <script type="text/javascript">
-    
+    @if($showPendingJobList)
+        $(document).ready(function(){
+            $('#pendingJobListModal').modal('show');   
+        })
+    @endif
+    window.addEventListener('openPendingJobListModal',event=>{
+        $('#pendingJobListModal').modal('show');
+    });
     window.addEventListener('openServicesListModal',event=>{
         $('#servicePriceModal').modal('show');
     });
@@ -2295,9 +2325,32 @@
     window.addEventListener('closepckageRedeemModal',event=>{
         $('#pckageRedeemModal').modal('hide');
     });
-
-
     
 
+</script>
+
+<!-- Signature Script -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/signature_pad@3.0.0-beta.3/dist/signature_pad.umd.min.js"></script>
+<script type="text/javascript">
+window.addEventListener('showSignature',event=>{
+    $('#customerSignatureModal').modal('show');
+    var signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        penColor: 'rgb(0, 0, 0)'
+    });
+    var saveButton = document.getElementById('saveSignature');
+    var cancelButton = document.getElementById('clearSignature');
+    saveButton.addEventListener('click', function (event) {
+        var data = signaturePad.toDataURL('image/png');
+        console.log(data);
+        @this.set('customerSignature', data);
+        $('#customerSignatureModal').modal('hide');
+        // Send data to server instead...
+        //window.open(data);
+    });
+    cancelButton.addEventListener('click', function (event) {
+        signaturePad.clear();
+    });
+});
 </script>
 @endpush

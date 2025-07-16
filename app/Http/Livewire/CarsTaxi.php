@@ -49,6 +49,7 @@ class CarsTaxi extends Component
     public $job_status, $job_departent;
     public $showchecklist=[],$checklist_comments,$checklists;
     public $canceljobReasonButton=false,$cancelError,$cancelationReason;
+    public $onlyChaisisRequired=false;
 
     public function render()
     {
@@ -124,7 +125,7 @@ class CarsTaxi extends Component
                 if( array_key_exists( 'ct_number',$this->getErrorBag()->messages() ) ){
                     $scrollTo = 'ctNumberInput';
                 }else if( array_key_exists( 'meter_id',$this->getErrorBag()->messages() ) ){
-                    $scrollTo = 'ctNumberInput';
+                    $scrollTo = 'meterIdInput';
                 }else if( array_key_exists( 'plate_code',$this->getErrorBag()->messages() ) ){
                     $scrollTo = 'plateCode';
                 }else if( array_key_exists( 'plate_number',$this->getErrorBag()->messages() ) ){
@@ -140,6 +141,9 @@ class CarsTaxi extends Component
                 }
                 else if( array_key_exists( 'model',$this->getErrorBag()->messages() ) ){
                     $scrollTo = 'vehicleModelInput';
+                }
+                else if( array_key_exists( 'chassis_number',$this->getErrorBag()->messages() ) ){
+                    $scrollTo = 'chaisisNumberInput';
                 }
 
                 
@@ -369,16 +373,26 @@ class CarsTaxi extends Component
 
     public function createTaxiJob()
     {
-        $validatedData = $this->validate([
-            'ct_number' => 'required',
-            'meter_id' => 'required',
-            //'plate_code' => 'required',
-            'plate_number' => 'required',
-            'plate_number_image' => 'required',
-            'make' => 'required',
-            'model' => 'required',
-            'vehicle_type' => 'required',
-        ]);
+        if($this->onlyChaisisRequired){
+            $validatedData = $this->validate([
+                'chassis_number' => 'required',
+                'make' => 'required',
+                'model' => 'required',
+                'vehicle_type' => 'required',
+            ]);
+        }
+        else{
+            $validatedData = $this->validate([
+                'ct_number' => 'required',
+                'meter_id' => 'required',
+                //'plate_code' => 'required',
+                'plate_number' => 'required',
+                'plate_number_image' => 'required',
+                'make' => 'required',
+                'model' => 'required',
+                'vehicle_type' => 'required',
+            ]);
+        }
 
         $customerVehicleData['customer_id']=$this->customer_id;
         $customerVehicleData['vehicle_type']=$this->vehicle_type;
@@ -549,7 +563,7 @@ class CarsTaxi extends Component
             //dd($e->getMessage());
             //return $e->getMessage();
         }
-        return redirect()->to('kabil-llc');
+        return redirect()->to('kabi-llc');
 
         $this->showlistCarTaxiToday=true;
     }

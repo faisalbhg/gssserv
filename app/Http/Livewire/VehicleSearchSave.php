@@ -362,7 +362,7 @@ class VehicleSearchSave extends Component
         $searchCustomerVehicleQuery = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo']);
         if($serachBy=='mobile'){
             $validatedData = $this->validate([
-                'mobile'=> 'required',
+                'mobile'=> 'required|min:9|max:10',
             ]);
             if($this->mobile[0]=='0'){
                 $this->mobile = ltrim($this->mobile, $this->mobile[0]);

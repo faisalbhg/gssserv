@@ -251,9 +251,9 @@
                 </div>
                 <div class="col-md-4 col-sm-4">
                     <div class="form-group">
-                        <label for="ctNumberInput">Meter ID </label>
+                        <label for="meterIdInput">Meter ID </label>
                         <div class="input-group mb-0">
-                            <input class="form-control" placeholder="Meter ID" type="text" wire:model="meter_id" name="ct_number" minlength="1" maxlength="7" id="ctNumberInput">
+                            <input class="form-control" placeholder="Meter ID" type="text" wire:model="meter_id" name="meter_id" minlength="1" maxlength="7" id="meterIdInput">
                         </div>
                         @error('meter_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                     </div>
@@ -373,6 +373,16 @@
                         <input type="text" class="form-control" id="chaisisNumberInput" wire:model="chassis_number" name="chassis_number" placeholder="Chassis Number">
                     </div>
                     @error('chassis_number') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-4 col-sm-4">
+                    <div class="form-group">
+                        <label for="plateNumber"></label>
+                        <div class="form-check form-switch mt-1">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" wire:model="onlyChaisisRequired">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Only Chaisis Number Required</label>
+                        </div>
+                    </div>
                 </div>
             </div>
 

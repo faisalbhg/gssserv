@@ -61,31 +61,29 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-uppercase text-dark text-xs font-weight-bolder opacity-7">
                                             ID
                                         </th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-center text-uppercase text-dark text-xs font-weight-bolder opacity-7">
                                             Name
                                         </th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-center text-uppercase text-dark text-xs font-weight-bolder opacity-7">
                                             Email
                                         </th>
-                                        <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <!-- <th class="text-center text-uppercase text-dark text-xs font-weight-bolder opacity-7">
                                             Phone
                                         </th> -->
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-center text-uppercase text-dark text-xs font-weight-bolder opacity-7">
                                             Station
                                         </th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-center text-uppercase text-dark text-xs font-weight-bolder opacity-7">
                                             Role
                                         </th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Creation Date
-                                        </th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        
+                                        <th class="text-center text-uppercase text-dark text-xs font-weight-bolder opacity-7">
                                             Status
                                         </th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-center text-uppercase text-dark text-xs font-weight-bolder opacity-7">
                                             Action
                                         </th>
                                     </tr>
@@ -110,9 +108,6 @@
                                         </td>
                                         <td class="text-center">
                                             <p class="text-xs font-weight-bold mb-0">{{config('global.user_type')[$user->user_type]}}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="text-secondary text-xs font-weight-bold">{{$user->created_at}}</span>
                                         </td>
                                         <td class="text-center">
                                             <span class="badge badge-sm {!!config('global.is_active')[$user->is_active]['class']!!}">{{config('global.is_active')[$user->is_active]['label']}}</span>

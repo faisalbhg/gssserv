@@ -51,6 +51,7 @@ use App\Models\ServiceBundleDiscountedPrice;
 use App\Models\Landlord;
 use App\Models\ManualDiscountAprovals;
 use App\Models\ManualDiscountServices;
+use App\Models\TempCustomerSignature;
 
 
 class CustomerServiceJob extends Component
@@ -85,7 +86,18 @@ class CustomerServiceJob extends Component
     public $lineDIscountItemId, $linePriceDiscount, $discountAvailability;
     public $showSelectedDiscount=false, $priceDiscountList, $lineItemDetails, $showLineDiscountItems=false; 
     public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValue, $manulDiscountForm=false;
+    public $pendingExistingJobs=null, $showPendingJobList=false;
+    public $customerSignature, $showCustomerSignature=false;
     
+    public function clickShowSignature()
+    {
+        TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->delete();
+        $this->customerSignature=null;
+        $this->showCustomerSignature=true;
+        $this->dispatchBrowserEvent('showSignature');
+
+    }
+
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
         $this->vehicle_id = $request->vehicle_id;
@@ -93,9 +105,9 @@ class CustomerServiceJob extends Component
         if($this->vehicle_id && $this->customer_id)
         {
             $this->selectVehicle();
-            /*if($this->job_number==null){
+            if($this->job_number==null){
                 $this->checkExistingJobs();
-            }*/
+            }
         }
         if($this->job_number)
         {
@@ -117,7 +129,7 @@ class CustomerServiceJob extends Component
         $this->mobile = $customers->customerInfoMaster['Mobile'];
         $this->name = $customers->customerInfoMaster['TenantName'];
         $this->email = $customers->customerInfoMaster['Email'];
-
+        
         
     }
 
@@ -125,13 +137,16 @@ class CustomerServiceJob extends Component
         $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','tempServiceCart','checklistInfo']);
         $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
         $customerJobCardsQuery = $customerJobCardsQuery->where('payment_status','!=',1);
+        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','<',3);
 
         $this->jobDetails =  $customerJobCardsQuery->first();
+        //dd($this->jobDetails);
         if($this->jobDetails){
             $this->customer_id = $this->jobDetails->customer_id;
             $this->vehicle_id = $this->jobDetails->vehicle_id;
 
             $this->showTempCart = true;
+            //dd(CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'job_number'=>$this->job_number])->exists());
             if(!CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'job_number'=>$this->job_number])->exists())
             {
                 foreach($this->jobDetails->customerJobServices as $customerJobServices)
@@ -957,6 +972,25 @@ class CustomerServiceJob extends Component
         $this->getCartInfo();
         $this->dispatchBrowserEvent('selectSearchEvent');
         $this->emit('chosenUpdated');
+        if($this->job_number)
+        {
+            $this->customerJobDetails();
+        }
+        if($this->customerSignature){
+            if(!TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists()){
+                TempCustomerSignature::create([
+                    'customer_id'=>$this->customer_id,
+                    'vehicle_id'=>$this->vehicle_id,
+                    'signature'=>$this->customerSignature,
+                    'is_active'=>1,
+                ]);
+            }
+        }
+        if(TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists())
+        {
+            $tempCustomerSignature = TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->first();
+            $this->customerSignature = $tempCustomerSignature->signature;
+        }
         return view('livewire.customer-service-job');
     }
 
@@ -1553,17 +1587,17 @@ class CustomerServiceJob extends Component
     }
 
     public function checkExistingJobs(){
-        $existingJobs = CustomerJobCards::where([
+        $existingJobs = CustomerJobCards::with(['customerJobServices'])->where([
             'vehicle_id'=>$this->vehicle_id,
-            'customer_id'=>$this->customer_id,
-            'payment_status'=>0
-        ])
-        ->where('job_status','!=',4);
+            'customer_id'=>$this->customer_id
+        ])->where('payment_status','!=',1)->where('job_status','<',3);
         if($existingJobs->exists())
         {
-            $existingJobs = $existingJobs->first();
-            //dd($existingJobs->job_number);
-            return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$existingJobs->job_number);
+            $this->showPendingJobList=true;
+            $this->pendingExistingJobs = $existingJobs->get();
+            $this->dispatchBrowserEvent('openPendingJobListModal');
+            //$existingJobs = $existingJobs->first();
+            //return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$existingJobs->job_number);
         }
     }
 

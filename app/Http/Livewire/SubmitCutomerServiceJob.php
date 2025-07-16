@@ -26,6 +26,7 @@ use App\Models\PackageBookings;
 use App\Models\PackageBookingServices;
 use App\Models\PackageBookingServiceLogs;
 use App\Models\JobCardsDeletedServices;
+use App\Models\TempCustomerSignature;
 
 class SubmitCutomerServiceJob extends Component
 {
@@ -92,6 +93,21 @@ class SubmitCutomerServiceJob extends Component
             ]);*/
         }
         //dd($this->package_job);
+        if($this->customerSignature){
+            if(!TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists()){
+                TempCustomerSignature::create([
+                    'customer_id'=>$this->customer_id,
+                    'vehicle_id'=>$this->vehicle_id,
+                    'signature'=>$this->customerSignature,
+                    'is_active'=>1,
+                ]);
+            }
+        }
+        if(TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists())
+        {
+            $tempCustomerSignature = TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->first();
+            $this->customerSignature = $tempCustomerSignature->signature;
+        }
         return view('livewire.submit-cutomer-service-job');
     }
 
@@ -99,43 +115,51 @@ class SubmitCutomerServiceJob extends Component
         //dd(JobcardChecklistEntries::where(['job_number'=>'JOB-GWW-00000028'])->get());
         $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo']);
         $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
+        $customerJobCardsQuery = $customerJobCardsQuery->where('payment_status','!=',1);
+        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','<',3);
         $this->jobDetails =  $customerJobCardsQuery->first();
-        //dd($this->jobDetails);
-        $this->showFuelScratchCheckList=true;
-        $this->checklistEntry = JobcardChecklistEntries::where(['job_number'=>$this->job_number])->first();
-        //dd($this->checklistEntry);
-        if($this->checklistEntry){
+        if($this->jobDetails){
+            //dd($this->jobDetails);
+            $this->showFuelScratchCheckList=true;
+            $this->checklistEntry = JobcardChecklistEntries::where(['job_number'=>$this->job_number])->first();
             //dd($this->checklistEntry);
-            $this->checklistLabel = json_decode($this->checklistEntry->checklist,true);
-            $this->fuel = $this->checklistEntry->fuel;
-            $this->vehicle_image = json_decode($this->checklistEntry->vehicle_image,true);
-            $this->existingImageR1 = $this->vehicle_image['vImageR1'];
-            $this->existingImageR2 = $this->vehicle_image['vImageR2'];
-            $this->existingImageF = $this->vehicle_image['vImageF'];
-            $this->existingImageB = $this->vehicle_image['vImageB'];
-            $this->existingImageL1 = $this->vehicle_image['vImageL1'];
-            $this->existingImageL2 = $this->vehicle_image['vImageL2'];
-            $this->turn_key_on_check_for_fault_codes = $this->checklistEntry->turn_key_on_check_for_fault_codes;
-            $this->start_engine_observe_operation = $this->checklistEntry->start_engine_observe_operation;
-            $this->reset_the_service_reminder_alert = $this->checklistEntry->reset_the_service_reminder_alert;
-            $this->stick_update_service_reminder_sticker_on_b_piller = $this->checklistEntry->stick_update_service_reminder_sticker_on_b_piller;
-            $this->interior_cabin_inspection_comments = $this->checklistEntry->interior_cabin_inspection_comments;
-            $this->check_power_steering_fluid_level = $this->checklistEntry->check_power_steering_fluid_level;
-            $this->check_power_steering_tank_cap_properly_fixed = $this->checklistEntry->check_power_steering_tank_cap_properly_fixed;
-            $this->check_brake_fluid_level = $this->checklistEntry->check_brake_fluid_level;
-            $this->brake_fluid_tank_cap_properly_fixed = $this->checklistEntry->brake_fluid_tank_cap_properly_fixed;
-            $this->check_engine_oil_level = $this->checklistEntry->check_engine_oil_level;
-            $this->check_radiator_coolant_level = $this->checklistEntry->check_radiator_coolant_level;
-            $this->check_radiator_cap_properly_fixed = $this->checklistEntry->check_radiator_cap_properly_fixed;
-            $this->top_off_windshield_washer_fluid = $this->checklistEntry->top_off_windshield_washer_fluid;
-            $this->check_windshield_cap_properly_fixed = $this->checklistEntry->check_windshield_cap_properly_fixed;
-            $this->underHoodInspectionComments = $this->checklistEntry->underHoodInspectionComments;
-            $this->check_for_oil_leaks_engine_steering = $this->checklistEntry->check_for_oil_leaks_engine_steering;
-            $this->check_for_oil_leak_oil_filtering = $this->checklistEntry->check_for_oil_leak_oil_filtering;
-            $this->check_drain_lug_fixed_properly = $this->checklistEntry->check_drain_lug_fixed_properly;
-            $this->check_oil_filter_fixed_properly = $this->checklistEntry->check_oil_filter_fixed_properly;
-            $this->ubi_comments = $this->checklistEntry->ubi_comments;
-            $this->customerSignature = $this->checklistEntry->signature;
+            if($this->checklistEntry){
+                //dd($this->checklistEntry);
+                $this->checklistLabel = json_decode($this->checklistEntry->checklist,true);
+                $this->fuel = $this->checklistEntry->fuel;
+                $this->vehicle_image = json_decode($this->checklistEntry->vehicle_image,true);
+                $this->existingImageR1 = $this->vehicle_image['vImageR1'];
+                $this->existingImageR2 = $this->vehicle_image['vImageR2'];
+                $this->existingImageF = $this->vehicle_image['vImageF'];
+                $this->existingImageB = $this->vehicle_image['vImageB'];
+                $this->existingImageL1 = $this->vehicle_image['vImageL1'];
+                $this->existingImageL2 = $this->vehicle_image['vImageL2'];
+                $this->turn_key_on_check_for_fault_codes = $this->checklistEntry->turn_key_on_check_for_fault_codes;
+                $this->start_engine_observe_operation = $this->checklistEntry->start_engine_observe_operation;
+                $this->reset_the_service_reminder_alert = $this->checklistEntry->reset_the_service_reminder_alert;
+                $this->stick_update_service_reminder_sticker_on_b_piller = $this->checklistEntry->stick_update_service_reminder_sticker_on_b_piller;
+                $this->interior_cabin_inspection_comments = $this->checklistEntry->interior_cabin_inspection_comments;
+                $this->check_power_steering_fluid_level = $this->checklistEntry->check_power_steering_fluid_level;
+                $this->check_power_steering_tank_cap_properly_fixed = $this->checklistEntry->check_power_steering_tank_cap_properly_fixed;
+                $this->check_brake_fluid_level = $this->checklistEntry->check_brake_fluid_level;
+                $this->brake_fluid_tank_cap_properly_fixed = $this->checklistEntry->brake_fluid_tank_cap_properly_fixed;
+                $this->check_engine_oil_level = $this->checklistEntry->check_engine_oil_level;
+                $this->check_radiator_coolant_level = $this->checklistEntry->check_radiator_coolant_level;
+                $this->check_radiator_cap_properly_fixed = $this->checklistEntry->check_radiator_cap_properly_fixed;
+                $this->top_off_windshield_washer_fluid = $this->checklistEntry->top_off_windshield_washer_fluid;
+                $this->check_windshield_cap_properly_fixed = $this->checklistEntry->check_windshield_cap_properly_fixed;
+                $this->underHoodInspectionComments = $this->checklistEntry->underHoodInspectionComments;
+                $this->check_for_oil_leaks_engine_steering = $this->checklistEntry->check_for_oil_leaks_engine_steering;
+                $this->check_for_oil_leak_oil_filtering = $this->checklistEntry->check_for_oil_leak_oil_filtering;
+                $this->check_drain_lug_fixed_properly = $this->checklistEntry->check_drain_lug_fixed_properly;
+                $this->check_oil_filter_fixed_properly = $this->checklistEntry->check_oil_filter_fixed_properly;
+                $this->ubi_comments = $this->checklistEntry->ubi_comments;
+                $this->customerSignature = $this->checklistEntry->signature;
+            }
+        }
+        else
+        {
+            return redirect()->to('/customer-job-update/'.$this->job_number);
         }
         
     }
@@ -238,7 +262,8 @@ class SubmitCutomerServiceJob extends Component
             }
         }
         
-
+        TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->delete();
+        $this->customerSignature=null;
         $this->showCustomerSignature=true;
         $this->dispatchBrowserEvent('showSignature');
 
@@ -998,6 +1023,10 @@ class SubmitCutomerServiceJob extends Component
                     //dd($e->getMessage());
                     //return $e->getMessage();
                 }
+            }
+            else if($this->jobDetails->meterialRequestResponse)
+            {
+                
             }
         }
         
