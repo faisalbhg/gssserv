@@ -131,7 +131,7 @@ class CarsTaxi extends Component
                 }else if( array_key_exists( 'plate_number',$this->getErrorBag()->messages() ) ){
                     $scrollTo = 'plateNumber';
                 }else if( array_key_exists( 'plate_number_image',$this->getErrorBag()->messages() ) ){
-                    $scrollTo = 'plateImage';
+                    $scrollTo = 'plateImageFile';
                 }
                 else if( array_key_exists( 'vehicle_type',$this->getErrorBag()->messages() ) ){
                     $scrollTo = 'vehicleTypeInput';
@@ -379,6 +379,7 @@ class CarsTaxi extends Component
                 'make' => 'required',
                 'model' => 'required',
                 'vehicle_type' => 'required',
+                'plate_number_image' => 'required',
             ]);
         }
         else{

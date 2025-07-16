@@ -2958,4 +2958,8 @@ class CustomerServiceJob extends Component
             'scrollToId' => 'bundleServiceListDiv',
         ]);
     }
+
+    public function openJobHistory(){
+        
+    }
 }
