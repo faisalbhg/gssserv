@@ -357,6 +357,15 @@
                                         <button type="button" class="d-none btn bg-gradient-info btn-tooltip btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Discount Group" data-container="body" data-animation="true" wire:click="clickDiscountGroup()">Discount Group</button>
                                         <button class="btn bg-gradient-info btn-sm" wire:click="openServiceGroup">Services</button>
                                         <button class="btn bg-gradient-dark btn-sm" wire:click="openJobHistory">History</button>
+                                        <div wire:loading wire:target="openJobHistory">
+                                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                <div class="la-ball-beat">
+                                                    <div></div>
+                                                    <div></div>
+                                                    <div></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div wire:loading wire:target="openServiceGroup">
                                             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                 <div class="la-ball-beat">
@@ -552,14 +561,14 @@
                                                             @else
                                                             <span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
                                                             <div wire:loading wire:target="confirmDelete">
-                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                        <div class="la-ball-beat">
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                        </div>
+                                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                    <div class="la-ball-beat">
+                                                                        <div></div>
+                                                                        <div></div>
+                                                                        <div></div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
                                                             @endif
 
                                                         </div>
@@ -2190,7 +2199,10 @@
         @endif
 
         @if($showCustomerSignature)
-        @include('components.modals.customerSignatureModel')
+            @include('components.modals.customerSignatureModel')
+        @endif
+        @if($shoeJobHistoryModal)
+            @include('components.modals.jobHistoryModal')
         @endif
 
         <div wire:loading wire:target="addtoCartItem">
@@ -2232,6 +2244,9 @@
             $('#pendingJobListModal').modal('show');   
         })
     @endif
+    window.addEventListener('openJobHIstoryModal',event=>{
+        $('#jobHIstoryModal').modal('show');
+    });
     window.addEventListener('openPendingJobListModal',event=>{
         $('#pendingJobListModal').modal('show');
     });

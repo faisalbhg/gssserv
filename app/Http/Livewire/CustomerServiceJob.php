@@ -88,6 +88,7 @@ class CustomerServiceJob extends Component
     public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValue, $manulDiscountForm=false;
     public $pendingExistingJobs=null, $showPendingJobList=false;
     public $customerSignature, $showCustomerSignature=false;
+    public $shoeJobHistoryModal=false, $jobsHistory;
     
     public function clickShowSignature()
     {
@@ -2960,6 +2961,25 @@ class CustomerServiceJob extends Component
     }
 
     public function openJobHistory(){
-        
+        $this->shoeJobHistoryModal=true;
+        $jobsHistoryQuery = CustomerJobCards::with(['customerJobServices'])->where([
+            'vehicle_id'=>$this->vehicle_id,
+            'customer_id'=>$this->customer_id,
+            'payment_status'=>1,
+            'job_status'=>4
+        ]);
+        $this->jobsHistory = $jobsHistoryQuery->get();
+        //dd($this->jobsHistory);
+        $this->dispatchBrowserEvent('openJobHIstoryModal');
+    }
+
+    public function makeNewSameJob($job_number)
+    {
+        $jobsDetails = CustomerJobCards::with(['customerJobServices'])->where([
+            'vehicle_id'=>$this->vehicle_id,
+            'customer_id'=>$this->customer_id,
+            'job_number'=>$job_number
+        ])->first();
+        dd($jobsDetails);
     }
 }
