@@ -1593,17 +1593,37 @@ class CustomerServiceJob extends Component
         ])->where('payment_status','!=',1)->where('job_status','<',3);
         if($existingJobs->exists())
         {
-            //$this->showPendingJobList=true;
-            //$this->pendingExistingJobs = $existingJobs->get();
-            //$this->dispatchBrowserEvent('openPendingJobListModal');
-            $existingJobs = $existingJobs->first();
-            return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$existingJobs->job_number);
+            $this->showPendingJobList=true;
+            $this->pendingExistingJobs = $existingJobs->get();
+            $this->dispatchBrowserEvent('openPendingJobListModal');
+            //$existingJobs = $existingJobs->first();
+            //return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$existingJobs->job_number);
         }
     }
 
     public function getCartInfo($value='')
     {
-        $this->cartItems = CustomerServiceCart::with(['manualDiscountServiceInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
+        $customerServiceCartQuery = CustomerServiceCart::with(['manualDiscountServiceInfo','customerInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id]);
+        if($this->job_number)
+        {
+            $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>$this->job_number]);
+        }
+        else
+        {
+            $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>null]);
+        }
+        $this->cartItemCount = $customerServiceCartQuery->count();
+        if($this->cartItemCount>0){
+            $this->cartItems = $customerServiceCartQuery->get();
+            $this->cardShow=true;
+        }
+        else
+        {
+            $this->cardShow=false;
+        }
+
+        /*$this->cartItems = CustomerServiceCart::with(['manualDiscountServiceInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
+        
         $this->cartItemCount = count($this->cartItems); 
         if($this->cartItemCount>0)
         {
@@ -1612,7 +1632,7 @@ class CustomerServiceJob extends Component
         else
         {
             $this->cardShow=false;
-        }
+        }*/
 
 
     }

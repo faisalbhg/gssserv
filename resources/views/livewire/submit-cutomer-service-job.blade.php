@@ -207,7 +207,7 @@
                 @if($showFuelScratchCheckList)
                     <div class="col-xxs-12 col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 mb-4">
                         <div class="card">
-                            <div class="card-header text-center pt-4 pb-3">
+                            <div class="card-header text-left pt-4 pb-3">
                                 <h5 class="font-weight-bold mt-2">Check List</h5>
                             </div>
                             <div class="card-body text-left pt-0">
@@ -695,6 +695,11 @@
                         </div>
                     </div>
                 @endif
+            </div>
+        @endif
+        
+        @if($showvehicleImage)
+            <div class="row mt-3">
                 <div class="col-md-12 mb-4">
                     <div class="card">
                         <div class="card-header text-center pt-4 pb-3">
@@ -1119,8 +1124,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        @endif
 
-                
+        @if($showTermsandCondition)
+            <div class="row mt-3">
                 <div class="col-md-12 mb-4">
                     <div class="card">
                         <div class="card-body text-left pt-4">
@@ -1132,8 +1140,12 @@
                         </div>
                     </div>
                 </div>
-                  
             </div>
+        @endif
+
+        
+        @if($showSignaturePad)
+            <!--Signature pad -->
             <div class="row mt-3">
                 <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 mb-4">
                     <div class="card">
@@ -1164,85 +1176,35 @@
                     </div>
                 </div>
             </div>
-            @if($customerSignature)
-                <div class="row mt-3" id="checkoutSignature">
-                    <div class="col-md-12 mb-4" >
-                        <div class="card p-2 mb-4">
-                            <div class="card-header text-center pt-4 pb-3">
-                                
-                                <h1 class="font-weight-bold mt-2">
-                                    Payment Confirmation
-                                </h1>
-                                <hr>
-                                
-                            </div>
-                            <div class="card-body text-lg-left text-center pt-0">
-                                <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ custom_round($total) }}</span></p>
-                                @if($totalDiscount>0 )
-                                <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ custom_round($totalDiscount) }}</span></p>
-                                @endif
-                                <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ custom_round($tax) }}</span></p>
-                                <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ custom_round($grand_total) }}</span></p>
-                                
-                                
-                            </div>
-                            <div class="card-footer text-lg-left text-center pt-0">
-                                <div class="d-flex justify-content-center p-2">
-                                    @if($package_job)
-                                        <div class="form-check">
-                                            <a wire:click="completePaymnet('empty')"  wire:loading.attr="disabled" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Complete<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
-                                        </div>
-                                    @elseif($grand_total>0)
-                                        @if($mobile)
-                                        <div class="form-check">
-                                            <a wire:click="completePaymnet('link')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
-                                        </div>
-                                        @endif
-                                    
-                                        <div class="form-check">
-                                            <a wire:click="completePaymnet('card')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
-                                        </div>
-                                    
-                                        <div class="form-check">
-                                            <a wire:click="completePaymnet('cash')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Cash Payment<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
-                                        </div>
-                                        <div class="form-check">
-                                            <a wire:click="payLater('paylater')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-secondary d-lg-block mt-3 mb-0">Pay Later<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
-                                        </div>
-                                    @else
-                                        
-                                    @endif
+        @endif
+        @if($customerSignature || $showCheckout)
+            <div class="row mt-3" id="checkoutSignature">
+                <div class="col-md-12 mb-4" >
+                    @if($updatedSms)
+                    <div class="card p-2 mb-4">
+                        <div class="card-header text-left pt-4 pb-3">
+                            <h5 class="font-weight-bold mt-2">SMS Confirmation in Job Update</h5>
+                            <hr>
+                        </div>
+                        <div class="card-body text-lg-left text-left pt-0">
 
-                                    
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS1" value="yes">
+                                        <label class="custom-control-label" for="customRadio1">Send SMS</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio"  wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS2" value="no">
+                                        <label class="custom-control-label" for="customRadio2">Do Not Send SMS</label>
+                                    </div>
+                                    @error('jobUpdateSendSMS') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div wire:loading wire:target="completePaymnet">
-                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                        <div class="la-ball-beat">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </div>
-                </div>
-                <div wire:loading wire:target="payLater">
-                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                        <div class="la-ball-beat">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-        @endif
+                    @endif
 
-        @if($showCheckout)
-            <div class="row mt-3">
-                <div class="col-md-12 mb-4" >
                     <div class="card p-2 mb-4">
                         <div class="card-header text-center pt-4 pb-3">
                             
@@ -1254,11 +1216,12 @@
                         </div>
                         <div class="card-body text-lg-left text-center pt-0">
                             <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ custom_round($total) }}</span></p>
-                            @if($totalDiscount>0 )
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ custom_round($totalDiscount) }}</span></p>
+                            @if($totalAfterDisc>0 )
+                            <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ custom_round($totalAfterDisc) }}</span></p>
                             @endif
                             <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ custom_round($tax) }}</span></p>
                             <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ custom_round($grand_total) }}</span></p>
+
                             
                             
                         </div>
@@ -1266,29 +1229,27 @@
                             <div class="d-flex justify-content-center p-2">
                                 @if($package_job)
                                     <div class="form-check">
-                                        <a wire:click="completePaymnet('empty')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Complete<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
+                                        <a wire:click="completePaymnet('empty')"  wire:loading.attr="disabled" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Complete<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
                                     </div>
                                 @elseif($grand_total>0)
                                     @if($mobile)
                                     <div class="form-check">
-                                        <a wire:click="completePaymnet('link')" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
+                                        <a wire:click="completePaymnet('link')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-info d-lg-block mt-3 mb-0">Pay By Link<i class="fa-solid fa-comments-dollar ms-1" ></i></a>
                                     </div>
                                     @endif
                                 
                                     <div class="form-check">
-                                        <a wire:click="completePaymnet('card')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
+                                        <a wire:click="completePaymnet('card')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Pay By Card<i class="fa-solid fa-credit-card ms-1" ></i></a>
                                     </div>
                                 
                                     <div class="form-check">
-                                        <a wire:click="completePaymnet('cash')" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Cash Payment<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
+                                        <a wire:click="completePaymnet('cash')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Cash Payment<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
                                     </div>
                                     <div class="form-check">
-                                        <a wire:click="payLater('paylater')" class="btn btn-icon bg-gradient-secondary d-lg-block mt-3 mb-0">Pay Later<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
+                                        <a wire:click="payLater('paylater')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-secondary d-lg-block mt-3 mb-0">Pay Later<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
                                     </div>
                                 @else
-                                    <div class="form-check">
-                                        <a wire:click="completePaymnet('empty')" class="btn btn-icon bg-gradient-success d-lg-block mt-3 mb-0">Complete<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
-                                    </div>
+                                    
                                 @endif
 
                                 
@@ -1316,6 +1277,8 @@
                 </div>
             </div>
         @endif
+
+        
         @if($successPage)
             <div class="row mt-3">
                 <div class="col-md-12 mb-4" >

@@ -43,6 +43,7 @@
                                     </div>
                                 </div>
                                 <h4 class="font-weight-bold mt-2">{{$pendingJob->job_number}}</h4>
+                                <h6 class="font-weight-bold mt-2 {{config('global.jobs.status_text_class')[$pendingJob->job_status]}}">{{config('global.jobs.status')[$pendingJob->job_status]}}</h6>
                             </div>
                             <div class="card-body text-lg-left text-left pt-0">
                                 @foreach($pendingJob->customerJobServices as $custJobService)
@@ -57,8 +58,8 @@
                                 @endforeach
                                 
 
-                                <a href="{{url('customer-service-job/'.$pendingJob->customer_id.'/'.$pendingJob->vehicle_id.'/'.$pendingJob->job_number)}}" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Edit Job<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i></a>
-                                <a href="{{url('customer-job-update/'.$pendingJob->job_number)}}" class="btn btn-icon bg-gradient-primary d-lg-block mt-3 mb-0">Status Update<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i></a>
+                                <a href="{{url('customer-service-job/'.$pendingJob->customer_id.'/'.$pendingJob->vehicle_id.'/'.$pendingJob->job_number)}}" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Update Job<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i></a><!-- 
+                                <a href="{{url('customer-job-update/'.$pendingJob->job_number)}}" class="btn btn-icon bg-gradient-primary d-lg-block mt-3 mb-0">Status Update<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i></a> -->
                             </div>
                         </div>
                     </div>

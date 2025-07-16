@@ -43,6 +43,7 @@ class SubmitCutomerServiceJob extends Component
     public $staff_id,$staff_number,$show_staff_details=false;
     public $job_date_time;
     public $package_job=false;
+    public $showSignaturePad=false, $showvehicleImage=true, $showTermsandCondition=false, $jobUpdateSendSMS, $updatedSms=false;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -57,6 +58,7 @@ class SubmitCutomerServiceJob extends Component
 
         if($this->job_number)
         {
+            $this->updatedSms=true;
             $this->customerJobDetails();
         }
 
@@ -72,6 +74,9 @@ class SubmitCutomerServiceJob extends Component
             }else if( array_key_exists( 'staff_number',$this->getErrorBag()->messages() ) ){
                 $scrollTo = 'staffNumberInput';
             }
+            else if( array_key_exists( 'jobUpdateSendSMS',$this->getErrorBag()->messages() ) ){
+                $scrollTo = 'jobUpdateSendSMS1';
+            }
             $this->dispatchBrowserEvent('scrollto', [
                 'scrollToId' => $scrollTo,
             ]);
@@ -85,14 +90,8 @@ class SubmitCutomerServiceJob extends Component
         {
             $this->showFuelScratchCheckList=true;
             $this->checklistLabels= ServiceChecklist::get();
-
         }
-        if($this->customerSignature){
-            /*$this->dispatchBrowserEvent('scrollto', [
-                'scrollToId' => 'checkoutSignature',
-            ]);*/
-        }
-        //dd($this->package_job);
+        
         if($this->customerSignature){
             if(!TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists()){
                 TempCustomerSignature::create([
@@ -108,6 +107,8 @@ class SubmitCutomerServiceJob extends Component
             $tempCustomerSignature = TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->first();
             $this->customerSignature = $tempCustomerSignature->signature;
         }
+        //
+            
         return view('livewire.submit-cutomer-service-job');
     }
 
@@ -170,7 +171,13 @@ class SubmitCutomerServiceJob extends Component
         {
             $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>$this->job_number]);
         }
+        else
+        {
+            $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>null]);
+        }
         $this->cartItemCount = $customerServiceCartQuery->count();
+        //dd($this->cartItemCount);
+        
         //$this->cartItemCustomer = $customerServiceCartQuery->first();
         if($this->cartItemCount>0){
             $this->cartItems = $customerServiceCartQuery->get();
@@ -194,6 +201,8 @@ class SubmitCutomerServiceJob extends Component
                 {
                     $this->showCheckout =false;
                     $this->showCheckList=true;
+                    $this->showSignaturePad=true;
+                    $this->showTermsandCondition=true;
                     $this->dispatchBrowserEvent('imageUpload');
                 }
                 if($item->is_package==1){
@@ -271,6 +280,11 @@ class SubmitCutomerServiceJob extends Component
 
     public function completePaymnet($mode){
         //stationName
+        if($this->job_number){
+            $validatedData = $this->validate([
+                'jobUpdateSendSMS' => 'required'
+            ]);
+        }
         $this->createJob();
         $this->job_number;
         
@@ -282,7 +296,19 @@ class SubmitCutomerServiceJob extends Component
         if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
             $msgtext = urlencode('Dear Customer, '.$plate_number.' received at '.auth()->user('user')->stationName['ShortName'].'. Track or pay online: https://gsstations.ae/qr/'.$this->job_number.'. For help, call 800477823.');
             //dd(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-            $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+            
+            if(!$this->updatedSms)
+            {
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+            }
+            else
+            {
+                if($this->jobUpdateSendSMS=='yes')
+                {
+                    $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                }
+            }
+            
         }
 
         $createJobUpdate['job_create_status']=1;
@@ -785,6 +811,8 @@ class SubmitCutomerServiceJob extends Component
                 'check_oil_filter_fixed_properly'=>$this->check_oil_filter_fixed_properly,
                 'ubi_comments'=>$this->ubi_comments,
             ];
+        }
+        if($this->showvehicleImage){
             if($job_update==true){
                 if($this->vImageR1==null){
                     $vehicle_image['vImageR1']=$this->existingImageR1;
@@ -917,12 +945,8 @@ class SubmitCutomerServiceJob extends Component
                 $checkListEntryData['job_number']=$this->job_number;
                 $checkListEntryData['job_id']=$customerjobId;
                 $checkListEntryData['created_by']=auth()->user('user')->id;
-
-                $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);
-
-                
+                $checkListEntryInsert = JobcardChecklistEntries::create($checkListEntryData);                
             }
-            
         }
 
         if($job_update!=true){
@@ -1030,15 +1054,17 @@ class SubmitCutomerServiceJob extends Component
             }
         }
         
-        
-
-        
-
+  
+        TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->delete();
+        $this->customerSignature=null;
 
         $this->showCheckList=false;
-        $this->showCheckout =true;
-
-
+        $this->showvehicleImage=false;
+        $this->showTermsandCondition=false;
+        $this->showCheckout =false;
+        $this->showSignaturePad=false;
+        $this->customerSignature=null;
+        
     }
 
     public function sendPaymentLink($customerjobs)
