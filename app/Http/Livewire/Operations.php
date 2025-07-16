@@ -204,7 +204,7 @@ class Operations extends Component
         }
         if($this->search_plate_number)
         {
-            $customerjobs = $customerjobs->where('plate_number', '=',$this->search_plate_number);
+            $customerjobs = $customerjobs->where('plate_number', '=',"%{$this->search_plate_number}%");
         }
         if($this->search_payment)
         {
