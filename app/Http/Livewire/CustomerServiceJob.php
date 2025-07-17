@@ -1947,7 +1947,7 @@ class CustomerServiceJob extends Component
 
     public function addtoCartItem($ItemCode,$discount=null)
     {
-        dd(ItemWarehouse::first());
+        //dd(ItemWarehouse::first());
         $items = InventoryItemMaster::where(['ItemCode'=>$ItemCode])->first();
         $discountPrice = json_decode($discount,true);    
         $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$items->ItemId]);
