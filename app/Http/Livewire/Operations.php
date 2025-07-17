@@ -94,7 +94,7 @@ class Operations extends Component
     public $showchecklist=[],$checklist_comments,$checklists;
     public $selectAll = false;
     public $vImageR1Cl1, $vImageR2Cl1, $vImageFCl1, $vImageBCl1, $vImageL1Cl1, $vImageL2Cl1, $customerSignatureCl1,$roof_imagesCl1, $dash_image1Cl1, $dash_image2Cl1, $passenger_seat_imageCl1, $driver_seat_imageCl1, $back_seat1Cl1, $back_seat2Cl1, $back_seat3Cl1, $back_seat4Cl1, $photoCl1, $car_roof_imagesCl1;
-    public $canceljobReasonButton=false,$cancelError,$cancelationReason;
+    public $canceljobReasonButton=false,$cancelError,$cancelationReason, $customerSignatureShow;
 
 
     
@@ -880,6 +880,7 @@ class Operations extends Component
         }
         /*$this->customerJobServiceLogs = CustomerJobCardServices::with(['customerJobServiceLogs'])->where(['job_number'=>$job_number])->get();
         dd($this->customerJobServiceLogs);*/
+        //dd($this->jobcardDetails->checklistInfo);
         if($this->jobcardDetails->checklistInfo!=null){
             $this->checkListDetails=$this->jobcardDetails->checklistInfo;
             $this->checklistLabels = ServiceChecklist::get();
@@ -905,6 +906,8 @@ class Operations extends Component
             $this->check_drain_lug_fixed_properly = $this->checkListDetails['check_drain_lug_fixed_properly'];
             $this->check_oil_filter_fixed_properly = $this->checkListDetails['check_oil_filter_fixed_properly'];
             $this->ubi_comments = $this->checkListDetails['ubi_comments'];
+            $this->customerSignatureShow = $this->checkListDetails['signature'];
+
             //dd($this->checkListDetails);
         }
 

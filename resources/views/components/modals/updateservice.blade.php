@@ -850,6 +850,25 @@
                             </div>
                         </div>
                     </div>
+
+                    @if($customerSignatureShow)
+                    <div class="row">
+                        <div class="col-md-6 mt-0">
+                            <div class="card card-blog card-plain">
+                                <div class="card-header text-left pt-4 pb-3">
+                                    <h5 class="font-weight-bold mt-2">Signature</h5>
+                                </div>
+                                <div class="card-body px-1 pt-3">
+                                    <div class="position-relative">
+                                        <a class="d-block blur-shadow-image">
+                                            <img src="{{$customerSignatureShow}}" alt="img-blur-shadow" class="img-fluid shadow border-radius-lg">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 @endif
 
@@ -1160,6 +1179,25 @@
        </div>
     </div>
     
+    <div wire:loading wire:target="openVehicleImageDetails">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+    <div wire:loading wire:target="closeVehicleImageDetails">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
     <div wire:loading wire:target="checklistToggleSelectAll">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
             <div class="la-ball-beat">

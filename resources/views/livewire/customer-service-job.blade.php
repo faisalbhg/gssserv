@@ -973,6 +973,15 @@
                         <div class="form-group pt-1">
                             <button class="btn bg-gradient-primary me-2" wire:click="qlItemkmRange(5000)">5K</button>
                             <button class="btn bg-gradient-primary" wire:click="qlItemkmRange(10000)">10K</button>
+                            <div wire:loading wire:target="qlItemkmRange">
+                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                    <div class="la-ball-beat">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-4">
@@ -984,6 +993,15 @@
                                 <option value="{{$itemQlCategory->CategoryId}}">{{$itemQlCategory->Description}}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div wire:loading wire:target="qlCategorySelect">
+                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                <div class="la-ball-beat">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1006,36 +1024,19 @@
                         <label></label>
                         <div class="form-group pt-1">
                             <button class="btn bg-gradient-info" wire:click="searchQuickLubeItem">Search</button>
+                            <div wire:loading wire:target="searchQuickLubeItem">
+                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                    <div class="la-ball-beat">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div wire:loading wire:target="qlItemkmRange">
-                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                        <div class="la-ball-beat">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </div>
-                </div>
-                <div wire:loading wire:target="qlCategorySelect">
-                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                        <div class="la-ball-beat">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </div>
-                </div>
-                <div wire:loading wire:target="searchQuickLubeItem">
-                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                        <div class="la-ball-beat">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </div>
-                </div>
+                
                 <!-- serviceQlItems -->
                 @if($showQlItemsList)
                     <div class="row"  id="serviceQlItems">

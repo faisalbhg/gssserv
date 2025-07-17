@@ -53,6 +53,7 @@ class CarsTaxi extends Component
 
     public function render()
     {
+        
         //dd(LaborItemMaster::where(['Active'=>1])->whereIn('ItemCode', ['S255','S408'])->get());
         $carTaxiServiceInfoQuery = LaborItemMaster::where(['Active'=>1,'DivisionCode'=>auth()->user('user')['station_code'],])->where('UnitPrice','>',0)->whereIn('ItemCode', ['S255','S408']);
         $this->all_car_taxi_Service = $carTaxiServiceInfoQuery->get();
@@ -81,8 +82,6 @@ class CarsTaxi extends Component
                     \DB::raw('SUM(grand_total) as saletotal'),
                 )
             );
-
-
             $carTaxiJobs = CustomerJobCards::with(['customerJobServices','makeInfo','modelInfo']);
             if($this->filter){
                 $carTaxiJobs = $carTaxiJobs->whereIn('job_status', $this->filter);
@@ -429,6 +428,7 @@ class CarsTaxi extends Component
             'customer_mobile'=>$this->mobile,
             'vehicle_id'=>$this->vehicle_id,
             'vehicle_type'=>$this->vehicle_type,
+            'chassis_number'=>$this->chassis_number,
             'make'=>$this->make,
             'vehicle_image'=>$customerVehicleData['vehicle_image'],
             'model'=>$this->model,
@@ -792,6 +792,7 @@ class CarsTaxi extends Component
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
         $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number,'is_contract'=>1])->first();
+        //dd($this->jobcardDetails);
         $this->jobOrderReference=null;
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {

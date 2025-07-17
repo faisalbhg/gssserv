@@ -20,8 +20,8 @@
             
             <div class="modal-body">
                 <div class="row">
-                    @foreach($jobsHistory as $jobHistory)
-                    <div class="col-md-4 mb-4">
+                    @forelse($jobsHistory as $jobHistory)
+                    <div class="col-md-6 mb-4">
                         <div class="card card-pricing">
                             <div class="card-header text-center pt-4 pb-3">
                                 <div class="card card-background move-on-hover">
@@ -72,7 +72,9 @@
                             </div>
                         </div>
                     </div>
-                    @endforeach
+                    @empty
+                    <h5 class="text-danger text-center">Emoty..!</h5>
+                    @endforelse
                     
                 </div>
             </div>
