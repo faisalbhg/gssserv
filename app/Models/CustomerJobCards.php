@@ -32,6 +32,7 @@ class CustomerJobCards extends Model
         'validate_name',
         'validate_number',
         'validate_id',
+        'carTaxiJobs',
         'ct_number',
         'meter_id',
         'station',

@@ -53,7 +53,6 @@ class CarsTaxi extends Component
 
     public function render()
     {
-        
         //dd(LaborItemMaster::where(['Active'=>1])->whereIn('ItemCode', ['S255','S408'])->get());
         $carTaxiServiceInfoQuery = LaborItemMaster::where(['Active'=>1,'DivisionCode'=>auth()->user('user')['station_code'],])->where('UnitPrice','>',0)->whereIn('ItemCode', ['S255','S408']);
         $this->all_car_taxi_Service = $carTaxiServiceInfoQuery->get();
@@ -422,6 +421,7 @@ class CarsTaxi extends Component
 
         $customerjobData = [
             'job_number'=>Carbon::now()->format('y').Carbon::now()->format('m').Carbon::now()->format('d').rand(1,1000),
+            'carTaxiJobs'=>1,
             'job_date_time'=>Carbon::now(),
             'customer_id'=>$this->customer_id,
             'customer_name'=>$this->name,
