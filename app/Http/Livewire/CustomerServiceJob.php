@@ -915,7 +915,7 @@ class CustomerServiceJob extends Component
                             {
                                 $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
                             }
-                            $this->ql_item_qty[$qlMakeModelCatItm->ItemId]=1;
+                            $this->ql_item_qty[$qlItemMakeModelItem->ItemId]=1;
 
                         }
                     }

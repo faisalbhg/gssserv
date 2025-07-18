@@ -1074,12 +1074,20 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="card-body text-lg-left text-center p-2">
-                                        @if($qlItemPriceDetails->ItemCode!='I09137')
-                                        <input type="number" class="form-control w-30 float-start" placeholder="Qty" wire:model="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" style="padding-left:5px !important;" />
-                                        @endif
-                                        <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$qlItemPriceDetails->ItemCode}}','{{$qlItemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
-                                        </a>
+                                    <div class="card-body text-lg-left text-left p-2">
+                                        <div class="row"> 
+                                            @if($qlItemPriceDetails->ItemCode!='I09137')
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label>Qty:</label><input type="number" class="form-control w-50 float-start" placeholder="Qty" wire:model="ql_item_qty.{{$qlItemPriceDetails->ItemId}}" style="padding-left:5px !important;" />
+                                                </div>
+                                            </div>
+                                            @endif
+                                            <div class="col-6">
+                                                <a href="javascript:;" class="btn btn-icon bg-gradient-primary d-lg-block m-0 float-end p-2" wire:click="addtoCartItem('{{$qlItemPriceDetails->ItemCode}}','{{$qlItemDiscountDetails}}')">Buy Now<i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                     @if(@$serviceAddedMessgae[$qlItemPriceDetails->ItemCode])
                                     <div class="text-center">
