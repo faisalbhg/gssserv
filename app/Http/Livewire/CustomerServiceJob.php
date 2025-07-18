@@ -812,7 +812,7 @@ class CustomerServiceJob extends Component
                         {
                             $qlItemPriceLists[$key]['discountDetails']=null;
                         }
-                        $this->ql_item_qty[$qlItemsList->ItemId]=1;
+                        //$this->ql_item_qty[$qlItemsList->ItemId]=null;
                         
                     }
                     $this->quickLubeItemsList = $qlItemPriceLists;
@@ -915,7 +915,7 @@ class CustomerServiceJob extends Component
                             {
                                 $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
                             }
-                            $this->ql_item_qty[$qlItemMakeModelItem->ItemId]=1;
+                            //$this->ql_item_qty[$qlItemMakeModelItem->ItemId]=null;
 
                         }
                     }
@@ -1951,10 +1951,11 @@ class CustomerServiceJob extends Component
     {
         $items = InventoryItemMaster::where(['ItemCode'=>$ItemCode])->first();
         $qty=1;
-        if($this->ql_item_qty[$items->ItemId]!='')
+        if(isset($this->ql_item_qty[$items->ItemId]))
         {
             $qty=$this->ql_item_qty[$items->ItemId];
         }
+        
         //dd($qty);
         //$qty = isset($this->ql_item_qty[$items->ItemId])?$this->ql_item_qty[$items->ItemId]:1;
         if($this->checkItemStock($items->ItemId, $items->ItemCode, $qty)){
