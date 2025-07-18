@@ -48,7 +48,7 @@ class CarsTaxi extends Component
     public $customerjobservices =[];
     public $job_status, $job_departent;
     public $showchecklist=[],$checklist_comments,$checklists;
-    public $canceljobReasonButton=false,$cancelError,$cancelationReason;
+    public $canceljobReasonButton=false,$cancelError,$cancelationReason,$customerSignatureShow;
     public $onlyChaisisRequired=false;
 
     public function render()
@@ -81,7 +81,7 @@ class CarsTaxi extends Component
                     \DB::raw('SUM(grand_total) as saletotal'),
                 )
             );
-            $carTaxiJobs = CustomerJobCards::with(['customerJobServices','makeInfo','modelInfo']);
+            $carTaxiJobs = CustomerJobCards::with(['customerInfo','customerJobServices','makeInfo','modelInfo']);
             if($this->filter){
                 $carTaxiJobs = $carTaxiJobs->whereIn('job_status', $this->filter);
             }
@@ -114,6 +114,7 @@ class CarsTaxi extends Component
 
             $this->getCountCarTaxiJob = $getCountCarTaxiJob->first();
             $this->carTaxiJobs = $carTaxiJobs->get();
+            
         }
         else
         {
@@ -832,6 +833,7 @@ class CarsTaxi extends Component
             $this->check_drain_lug_fixed_properly = $this->checkListDetails['check_drain_lug_fixed_properly'];
             $this->check_oil_filter_fixed_properly = $this->checkListDetails['check_oil_filter_fixed_properly'];
             $this->ubi_comments = $this->checkListDetails['ubi_comments'];
+            $this->customerSignatureShow = $this->jobcardDetails->checklistInfo['signature'];
             //dd($this->checkListDetails);
         }
         

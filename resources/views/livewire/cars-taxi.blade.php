@@ -179,8 +179,10 @@
                                         </div>
                                     </div>
                                     <h6 class="mb-0 text-sm mt-2">{{$taxiJob->makeInfo['vehicle_name']}} - <small>{{$taxiJob->modelInfo['vehicle_model_name']}} </small></h6>
+
                                       <p class="text-sm font-weight-bold text-primary mb-0">{{$taxiJob->plate_number}}</p>
                                       <hr class="m-0">
+                                      <h5>{{$taxiJob->customerInfo['TenantName']}}</h5>
                                       <p class="text-sm text-dark mb-0"><i class="fa-solid fa-user text-default mt-3"></i> {{$taxiJob->customer_name}}
                                         @if(isset($taxiJob->customer_mobile))
                                         <br><i class="fa-solid fa-phone text-default mb-3"></i> {{$taxiJob->customer_mobile}}

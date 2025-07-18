@@ -117,7 +117,13 @@ class Operations extends Component
 
     public function render()
     {
-        
+        /*dd(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027167'])->get());
+        foreach(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027446'])->get() as $jobsservice)
+        {
+            $customerJobServiceData = json_decode($jobsservice->job_description,true);
+            CustomerJobCardServices::create($customerJobServiceData);
+
+        }*/
         //dd(CustomerJobCardServices::limit(1)->first());
         /*foreach(CustomerJobCards::where('customer_mobile','=',"566993709")->get() as $jobUpdate)
         {

@@ -301,575 +301,575 @@
                     </div>
                 </div>
                 @if($showVehicleImageDetails)
-                <div class="row">
-                    <div class="col-12 col-md-12 col-xl-4 my-4">
-                        <div class="card h-100">
-                            <div class="card-header pb-0 p-3">
-                                
-                            </div>
-                            <div class="card-body p-3">
-                                <h6 class="mb-0">Check List</h6>
-                                <ul class="list-group">
-                                    @foreach($checklistLabels as $clKey => $checklist)
-                                    <li class="list-group-item border-0 px-0">
-                                        <div class="form-check form-switch ps-0">
-                                            <input class="form-check-input ms-auto" type="checkbox" id="checkList{{ str_replace(" ","",$checklist->checklist_label) }}" disabled @if(isset($vehicleCheckedChecklist[$checklist->id])) checked="" @endif>
-                                            <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="checkList{{ str_replace(" ","",$checklist->checklist_label) }}">{{$checklist->checklist_label}}</label>
-                                        </div>
-                                    </li>
-                                    @endforeach
-                                    <p>Note: Minor surface scratches defects, stone chipping, scratches on glasses etc. are included</p>
-                                </ul>
-                                <hr class="horizontal gray-light my-4 mb-4">
-                                <h6 class="mb-0">Found</h6>
-                                <p class="text-sm">{{$checkListDetails->scratches_found}}</p>
-
-                                <h6 class="mt-3">Not Found</h6>
-                                <p class="text-sm">{{$checkListDetails->scratches_notfound}}</p>
-                                <hr class="horizontal gray-light my-4 mb-4">
-                            </div>
-                        </div>
-                    </div>
-                    @if($checkListDetails['turn_key_on_check_for_fault_codes'] || $checkListDetails['start_engine_observe_operation'] || $checkListDetails['reset_the_service_reminder_alert'] || $checkListDetails['stick_update_service_reminder_sticker_on_b_piller'] || $checkListDetails['interior_cabin_inspection_comments'])
-                    <div class="col-12 col-md-6 col-xl-4 my-4">
-                        <div class="card h-100">
-                            <div class="card-header pb-0 p-3">
-                                
-                            </div>
-                            <div class="card-body p-3">
-                                <h6 class="mt-4 mb-0">Interior Cabin Inspection</h6>
-                                <div class="row"> 
-                                    <label>Turn key on - check for fault codes</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="turn_key_on_check_for_fault_codes" value="1" id="turn_key_on_check_for_fault_codes1" disabled>
-                                            <label class="custom-control-label" for="turn_key_on_check_for_fault_codes1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="turn_key_on_check_for_fault_codes" value="2" id="turn_key_on_check_for_fault_codes2" disabled>
-                                            <label class="custom-control-label" for="turn_key_on_check_for_fault_codes2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="turn_key_on_check_for_fault_codes" value="3" id="turn_key_on_check_for_fault_codes3" disabled>
-                                            <label class="custom-control-label" for="turn_key_on_check_for_fault_codes3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('turn_key_on_check_for_fault_codes') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Start Engine - observe operation</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="start_engine_observe_operation" value="1" id="start_engine_observe_operation1" disabled>
-                                            <label class="custom-control-label" for="start_engine_observe_operation1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="start_engine_observe_operation" value="2" id="start_engine_observe_operation2" disabled>
-                                            <label class="custom-control-label" for="start_engine_observe_operation2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="start_engine_observe_operation" value="3" id="start_engine_observe_operation3" disabled>
-                                            <label class="custom-control-label" for="start_engine_observe_operation3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('start_engine_observe_operation') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Reset the Service Reminder Alert</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="reset_the_service_reminder_alert" value="1" id="reset_the_service_reminder_alert1" disabled>
-                                            <label class="custom-control-label" for="reset_the_service_reminder_alert1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="reset_the_service_reminder_alert" value="2" id="reset_the_service_reminder_alert2" disabled>
-                                            <label class="custom-control-label" for="reset_the_service_reminder_alert2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="reset_the_service_reminder_alert" value="3" id="reset_the_service_reminder_alert3" disabled>
-                                            <label class="custom-control-label" for="reset_the_service_reminder_alert3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('reset_the_service_reminder_alert') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Stick & Update Service Reminder Sticker on B-Piller</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="stick_update_service_reminder_sticker_on_b_piller" value="1" id="stick_update_service_reminder_sticker_on_b_piller1" disabled>
-                                            <label class="custom-control-label" for="stick_update_service_reminder_sticker_on_b_piller1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="stick_update_service_reminder_sticker_on_b_piller" value="2" id="stick_update_service_reminder_sticker_on_b_piller2" disabled>
-                                            <label class="custom-control-label" for="stick_update_service_reminder_sticker_on_b_piller2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="stick_update_service_reminder_sticker_on_b_piller" value="3" id="stick_update_service_reminder_sticker_on_b_piller3" disabled>
-                                            <label class="custom-control-label" for="stick_update_service_reminder_sticker_on_b_piller3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('stick_update_service_reminder_sticker_on_b_piller') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Comments</label>
-                                    <div class="col-md-12">
-                                        <div class="form-check mb-3 ps-0">
-                                            <textarea class="form-control" id="interior_cabin_inspection_comments" wire:model="interior_cabin_inspection_comments" disabled rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                    @if($checkListDetails['check_power_steering_fluid_level'] || $checkListDetails['check_power_steering_tank_cap_properly_fixed'] || $checkListDetails['check_brake_fluid_level'] || $checkListDetails['brake_fluid_tank_cap_properly_fixed'] || $checkListDetails['check_engine_oil_level'] || $checkListDetails['check_radiator_cap_properly_fixed'] || $checkListDetails['top_off_windshield_washer_fluid']
-                     || $checkListDetails['check_windshield_cap_properly_fixed']
-                     || $checkListDetails['underHoodInspectionComments'])
-                    <div class="col-12 col-md-6 col-xl-4 my-4">
-                        <div class="card h-100">
-                            <div class="card-header text-left pt-4 pb-3">
-                                <h5 class="font-weight-bold mt-2">Under Hood Inspection</h5>
-                            </div>
-                            <div class="card-body text-left pt-0">
-                                <div class="row"> 
-                                    <label>Check Power Steering Fluid Level</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_fluid_level" value="1" id="check_power_steering_fluid_level1" disabled>
-                                            <label class="custom-control-label" for="check_power_steering_fluid_level1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_fluid_level" value="2" id="check_power_steering_fluid_level2" disabled>
-                                            <label class="custom-control-label" for="check_power_steering_fluid_level2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_fluid_level" value="3" id="check_power_steering_fluid_level3" disabled>
-                                            <label class="custom-control-label" for="check_power_steering_fluid_level3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_power_steering_fluid_level') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check Power Steering tank Cap properly fixed</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_tank_cap_properly_fixed" value="1" id="check_power_steering_tank_cap_properly_fixed1" disabled>
-                                            <label class="custom-control-label" for="check_power_steering_tank_cap_properly_fixed1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_tank_cap_properly_fixed" value="2" id="check_power_steering_tank_cap_properly_fixed2" disabled>
-                                            <label class="custom-control-label" for="check_power_steering_tank_cap_properly_fixed2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_power_steering_tank_cap_properly_fixed" value="3" id="check_power_steering_tank_cap_properly_fixed3" disabled>
-                                            <label class="custom-control-label" for="check_power_steering_tank_cap_properly_fixed3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_power_steering_tank_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check Brake fluid level</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_brake_fluid_level" value="1" id="check_brake_fluid_level1" disabled>
-                                            <label class="custom-control-label" for="check_brake_fluid_level1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_brake_fluid_level" value="2" id="check_brake_fluid_level2" disabled>
-                                            <label class="custom-control-label" for="check_brake_fluid_level2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_brake_fluid_level" value="3" id="check_brake_fluid_level3" disabled>
-                                            <label class="custom-control-label" for="check_brake_fluid_level3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_brake_fluid_level') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check Brake fluid tank Cap properly fixed</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="brake_fluid_tank_cap_properly_fixed" value="1" id="brake_fluid_tank_cap_properly_fixed1" disabled>
-                                            <label class="custom-control-label" for="brake_fluid_tank_cap_properly_fixed1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="brake_fluid_tank_cap_properly_fixed" value="2" id="brake_fluid_tank_cap_properly_fixed2" disabled>
-                                            <label class="custom-control-label" for="brake_fluid_tank_cap_properly_fixed2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="brake_fluid_tank_cap_properly_fixed" value="3" id="brake_fluid_tank_cap_properly_fixed3" disabled>
-                                            <label class="custom-control-label" for="brake_fluid_tank_cap_properly_fixed3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('brake_fluid_tank_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check Engine Oil Level</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_engine_oil_level" value="1" id="check_engine_oil_level1" disabled>
-                                            <label class="custom-control-label" for="check_engine_oil_level1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_engine_oil_level" value="2" id="check_engine_oil_level2" disabled>
-                                            <label class="custom-control-label" for="check_engine_oil_level2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_engine_oil_level" value="3" id="check_engine_oil_level3" disabled>
-                                            <label class="custom-control-label" for="check_engine_oil_level3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_engine_oil_level') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check Radiator Coolant Level</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_radiator_coolant_level" value="1" id="check_radiator_coolant_level1" disabled>
-                                            <label class="custom-control-label" for="check_radiator_coolant_level1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_radiator_coolant_level" value="2" id="check_radiator_coolant_level2" disabled>
-                                            <label class="custom-control-label" for="check_radiator_coolant_level2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_radiator_coolant_level" value="3" id="check_radiator_coolant_level3" disabled>
-                                            <label class="custom-control-label" for="check_radiator_coolant_level3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_radiator_coolant_level') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check Radiator Cap properly fixed</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_radiator_cap_properly_fixed" value="1" id="check_radiator_cap_properly_fixed1" disabled>
-                                            <label class="custom-control-label" for="check_radiator_cap_properly_fixed1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_radiator_cap_properly_fixed" value="2" id="check_radiator_cap_properly_fixed2" disabled>
-                                            <label class="custom-control-label" for="check_radiator_cap_properly_fixed2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_radiator_cap_properly_fixed" value="3" id="check_radiator_cap_properly_fixed3" disabled>
-                                            <label class="custom-control-label" for="check_radiator_cap_properly_fixed3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_radiator_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Top off windshield washer fluid</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="top_off_windshield_washer_fluid" value="1" id="top_off_windshield_washer_fluid1" disabled>
-                                            <label class="custom-control-label" for="top_off_windshield_washer_fluid1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="top_off_windshield_washer_fluid" value="2" id="top_off_windshield_washer_fluid2" disabled>
-                                            <label class="custom-control-label" for="top_off_windshield_washer_fluid2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="top_off_windshield_washer_fluid" value="3" id="top_off_windshield_washer_fluid3" disabled>
-                                            <label class="custom-control-label" for="top_off_windshield_washer_fluid3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('top_off_windshield_washer_fluid') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check windshield Cap properly fixed</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_windshield_cap_properly_fixed" value="1" id="check_windshield_cap_properly_fixed1" disabled>
-                                            <label class="custom-control-label" for="check_windshield_cap_properly_fixed1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_windshield_cap_properly_fixed" value="2" id="check_windshield_cap_properly_fixed2" disabled>
-                                            <label class="custom-control-label" for="check_windshield_cap_properly_fixed2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_windshield_cap_properly_fixed" value="3" id="check_windshield_cap_properly_fixed3" disabled>
-                                            <label class="custom-control-label" for="check_windshield_cap_properly_fixed3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_windshield_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Comments</label>
-                                    <div class="col-md-12">
-                                        <div class="form-check mb-3 ps-0">
-                                            <textarea class="form-control" id="underHoodInspectionComments" wire:model="underHoodInspectionComments" disabled rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                    @if($checkListDetails['check_for_oil_leaks_engine_steering'] || $checkListDetails['check_for_oil_leak_oil_filtering'] || $checkListDetails['check_drain_lug_fixed_properly'] || $checkListDetails['check_oil_filter_fixed_properly'] || $checkListDetails['ubi_comments'])
-                    <div class="col-12 col-md-6 col-xl-4 my-4">
-                        <div class="card h-100">
-                            <div class="card-header text-left pt-4 pb-3">
-                                <h5 class="font-weight-bold mt-2">Under Body Inspection</h5>
-                            </div>
-                            <div class="card-body text-left pt-0">
-                                <div class="row"> 
-                                    <label>Check for Oil leaks - Engine, Steering</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leaks_engine_steering" value="1" id="check_for_oil_leaks_engine_steering1" disabled>
-                                            <label class="custom-control-label" for="check_for_oil_leaks_engine_steering1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leaks_engine_steering" value="2" id="check_for_oil_leaks_engine_steering2" disabled>
-                                            <label class="custom-control-label" for="check_for_oil_leaks_engine_steering2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leaks_engine_steering" value="3" id="check_for_oil_leaks_engine_steering3" disabled>
-                                            <label class="custom-control-label" for="check_for_oil_leaks_engine_steering3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_for_oil_leaks_engine_steering') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check for Oil Leak - Oil Filtering</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leak_oil_filtering" value="1" id="check_for_oil_leak_oil_filtering1" disabled>
-                                            <label class="custom-control-label" for="check_for_oil_leak_oil_filtering1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leak_oil_filtering" value="2" id="check_for_oil_leak_oil_filtering2" disabled>
-                                            <label class="custom-control-label" for="check_for_oil_leak_oil_filtering2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_for_oil_leak_oil_filtering" value="3" id="check_for_oil_leak_oil_filtering3" disabled>
-                                            <label class="custom-control-label" for="check_for_oil_leak_oil_filtering3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_for_oil_leak_oil_filtering') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check Drain Plug fixed properly</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_drain_lug_fixed_properly" value="1" id="check_drain_lug_fixed_properly1" disabled>
-                                            <label class="custom-control-label" for="check_drain_lug_fixed_properly1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_drain_lug_fixed_properly" value="2" id="check_drain_lug_fixed_properly2" disabled>
-                                            <label class="custom-control-label" for="check_drain_lug_fixed_properly2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_drain_lug_fixed_properly" value="3" id="check_drain_lug_fixed_properly3" disabled>
-                                            <label class="custom-control-label" for="check_drain_lug_fixed_properly3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_drain_lug_fixed_properly') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Check Oil Filter fixed properly</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_oil_filter_fixed_properly" value="1" id="check_oil_filter_fixed_properly1" disabled>
-                                            <label class="custom-control-label" for="check_oil_filter_fixed_properly1">Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_oil_filter_fixed_properly" value="2" id="check_oil_filter_fixed_properly2" disabled>
-                                            <label class="custom-control-label" for="check_oil_filter_fixed_properly2">Not Good</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" wire:model="check_oil_filter_fixed_properly" value="3" id="check_oil_filter_fixed_properly3" disabled>
-                                            <label class="custom-control-label" for="check_oil_filter_fixed_properly3">Not Applicable</label>
-                                        </div>
-                                    </div>
-                                    @error('check_oil_filter_fixed_properly') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="row"> 
-                                    <label>Comments</label>
-                                    <div class="col-md-12">
-                                        <div class="form-check mb-3 ps-0">
-                                            <textarea class="form-control" id="ubi_comments" wire:model="ubi_comments" rows="3" disabled></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                    
-                    
-                
-                    <div class="col-12 col-md-12 col-xl-6 my-4">
-                        <div class="card">
-                            <div class="card-header text-center pt-4 pb-3">
-                                <h5 class="font-weight-bold mt-2">Vehicle Exterior Images</h5>
-                            </div>
-                            <div class="card-body text-left pt-0">
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="w-75 float-end" id="img1" src="@if($vehicleSidesImages['vImageR1']) {{ url('public/storage/'.$vehicleSidesImages['vImageR1'])}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img1')" />
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="w-75 float-start" id="img2" src="@if ($vehicleSidesImages['vImageR2']) {{ url('public/storage/'.$vehicleSidesImages['vImageR2']) }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img2')" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="w-75 float-end" id="img3" src="@if ($vehicleSidesImages['vImageF']) {{ url('public/storage/'.$vehicleSidesImages['vImageF']) }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img3')" />
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="w-75 float-start" id="img4" src="@if ($vehicleSidesImages['vImageB']) {{ url('public/storage/'.$vehicleSidesImages['vImageB']) }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img4')" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="w-75 float-end" id="img5" src="@if ($vehicleSidesImages['vImageL1']) {{ url('public/storage/'.$vehicleSidesImages['vImageL1']) }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img5')" />
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="w-75 float-start" id="img6" src="@if ($vehicleSidesImages['vImageL2']) {{ url('public/storage/'.$vehicleSidesImages['vImageL2']) }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img6')" />
-                                    </div>
-                                </div>
-
-                                <h5 class="font-weight-bold mt-2">Interior Vehicle Images</h5>
-                                <div class="row m-4">
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="img-fluid img-thumbnail shadow" id="dashImage1" src="@if ($vehicleSidesImages['dash_image1']) {{ url('public/storage/'.$vehicleSidesImages['dash_image1']) }} @else {{asset('img/dashImage1.jpg')}} @endif" style="cursor:pointer"  />
-                                        @error('dash_image1') <span class="text-danger">Missing Image..!</span> @enderror
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="img-fluid img-thumbnail shadow" id="dashImage2" src="@if ($vehicleSidesImages['dash_image2']) {{ url('public/storage/'.$vehicleSidesImages['dash_image2']) }} @else {{asset('img/dashImage2.jpg')}} @endif" style="cursor:pointer"  />
-                                        @error('dash_image2') <span class="text-danger">Missing Image..!</span> @enderror
-                                    </div>
-                                    <hr>
-                                </div>
-                                <div class="row m-4">
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="img-fluid img-thumbnail shadow" id="passengerSeatImage" src="@if ($vehicleSidesImages['passenger_seat_image']) {{ url('public/storage/'.$vehicleSidesImages['passenger_seat_image']) }} @else {{asset('img/passangerSeat1.jpg')}} @endif" style="cursor:pointer"  />
-                                        @error('passenger_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="img-fluid img-thumbnail shadow" id="driverSeatImage" src="@if ($vehicleSidesImages['driver_seat_image']) {{ url('public/storage/'.$vehicleSidesImages['driver_seat_image']) }} @else {{asset('img/driverSeat1.jpg')}} @endif" style="cursor:pointer"  />
-                                        @error('driver_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
-                                    </div>
-                                    <hr>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="@if ($vehicleSidesImages['back_seat1']) {{ url('public/storage/'.$vehicleSidesImages['back_seat1']) }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
-                                        @error('back_seat1') <span class="text-danger">Missing Image..!</span> @enderror
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="img-fluid img-thumbnail shadow" id="backSeat2Image" src="@if ($vehicleSidesImages['back_seat2']) {{ url('public/storage/'.$vehicleSidesImages['back_seat2']) }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
-                                        @error('back_seat2') <span class="text-danger">Missing Image..!</span> @enderror
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="img-fluid img-thumbnail shadow" id="backSeat3Image" src="@if ($vehicleSidesImages['back_seat3']) {{ url('public/storage/'.$vehicleSidesImages['back_seat3']) }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
-                                        @error('back_seat3') <span class="text-danger">Missing Image..!</span> @enderror
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <img class="img-fluid img-thumbnail shadow" id="backSeat4Image1" src="@if ($vehicleSidesImages['back_seat4']) {{ url('public/storage/'.$vehicleSidesImages['back_seat4']) }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
-                                        @error('back_seat4') <span class="text-danger">Missing Image..!</span> @enderror
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12 col-sm-12">
-                                        <img class="img-fluid img-thumbnail shadow" id="backSeat3Image1" src="@if ($vehicleSidesImages['roof_images']) {{ url('public/storage/'.$vehicleSidesImages['roof_images']) }} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
-                                        @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if($customerSignatureShow)
                     <div class="row">
-                        <div class="col-md-6 mt-0">
-                            <div class="card card-blog card-plain">
-                                <div class="card-header text-left pt-4 pb-3">
-                                    <h5 class="font-weight-bold mt-2">Signature</h5>
+                        <div class="col-12 col-md-12 col-xl-4 my-4">
+                            <div class="card h-100">
+                                <div class="card-header pb-0 p-3">
+                                    
                                 </div>
-                                <div class="card-body px-1 pt-3">
-                                    <div class="position-relative">
-                                        <a class="d-block blur-shadow-image">
-                                            <img src="{{$customerSignatureShow}}" alt="img-blur-shadow" class="img-fluid shadow border-radius-lg">
-                                        </a>
+                                <div class="card-body p-3">
+                                    <h6 class="mb-0">Check List</h6>
+                                    <ul class="list-group">
+                                        @foreach($checklistLabels as $clKey => $checklist)
+                                        <li class="list-group-item border-0 px-0">
+                                            <div class="form-check form-switch ps-0">
+                                                <input class="form-check-input ms-auto" type="checkbox" id="checkList{{ str_replace(" ","",$checklist->checklist_label) }}" disabled @if(isset($vehicleCheckedChecklist[$checklist->id])) checked="" @endif>
+                                                <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="checkList{{ str_replace(" ","",$checklist->checklist_label) }}">{{$checklist->checklist_label}}</label>
+                                            </div>
+                                        </li>
+                                        @endforeach
+                                        <p>Note: Minor surface scratches defects, stone chipping, scratches on glasses etc. are included</p>
+                                    </ul>
+                                    <hr class="horizontal gray-light my-4 mb-4">
+                                    <h6 class="mb-0">Found</h6>
+                                    <p class="text-sm">{{$checkListDetails->scratches_found}}</p>
+
+                                    <h6 class="mt-3">Not Found</h6>
+                                    <p class="text-sm">{{$checkListDetails->scratches_notfound}}</p>
+                                    <hr class="horizontal gray-light my-4 mb-4">
+                                </div>
+                            </div>
+                        </div>
+                        @if($checkListDetails['turn_key_on_check_for_fault_codes'] || $checkListDetails['start_engine_observe_operation'] || $checkListDetails['reset_the_service_reminder_alert'] || $checkListDetails['stick_update_service_reminder_sticker_on_b_piller'] || $checkListDetails['interior_cabin_inspection_comments'])
+                        <div class="col-12 col-md-6 col-xl-4 my-4">
+                            <div class="card h-100">
+                                <div class="card-header pb-0 p-3">
+                                    
+                                </div>
+                                <div class="card-body p-3">
+                                    <h6 class="mt-4 mb-0">Interior Cabin Inspection</h6>
+                                    <div class="row"> 
+                                        <label>Turn key on - check for fault codes</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="turn_key_on_check_for_fault_codes" value="1" id="turn_key_on_check_for_fault_codes1" disabled>
+                                                <label class="custom-control-label" for="turn_key_on_check_for_fault_codes1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="turn_key_on_check_for_fault_codes" value="2" id="turn_key_on_check_for_fault_codes2" disabled>
+                                                <label class="custom-control-label" for="turn_key_on_check_for_fault_codes2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="turn_key_on_check_for_fault_codes" value="3" id="turn_key_on_check_for_fault_codes3" disabled>
+                                                <label class="custom-control-label" for="turn_key_on_check_for_fault_codes3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('turn_key_on_check_for_fault_codes') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Start Engine - observe operation</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="start_engine_observe_operation" value="1" id="start_engine_observe_operation1" disabled>
+                                                <label class="custom-control-label" for="start_engine_observe_operation1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="start_engine_observe_operation" value="2" id="start_engine_observe_operation2" disabled>
+                                                <label class="custom-control-label" for="start_engine_observe_operation2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="start_engine_observe_operation" value="3" id="start_engine_observe_operation3" disabled>
+                                                <label class="custom-control-label" for="start_engine_observe_operation3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('start_engine_observe_operation') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Reset the Service Reminder Alert</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="reset_the_service_reminder_alert" value="1" id="reset_the_service_reminder_alert1" disabled>
+                                                <label class="custom-control-label" for="reset_the_service_reminder_alert1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="reset_the_service_reminder_alert" value="2" id="reset_the_service_reminder_alert2" disabled>
+                                                <label class="custom-control-label" for="reset_the_service_reminder_alert2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="reset_the_service_reminder_alert" value="3" id="reset_the_service_reminder_alert3" disabled>
+                                                <label class="custom-control-label" for="reset_the_service_reminder_alert3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('reset_the_service_reminder_alert') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Stick & Update Service Reminder Sticker on B-Piller</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="stick_update_service_reminder_sticker_on_b_piller" value="1" id="stick_update_service_reminder_sticker_on_b_piller1" disabled>
+                                                <label class="custom-control-label" for="stick_update_service_reminder_sticker_on_b_piller1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="stick_update_service_reminder_sticker_on_b_piller" value="2" id="stick_update_service_reminder_sticker_on_b_piller2" disabled>
+                                                <label class="custom-control-label" for="stick_update_service_reminder_sticker_on_b_piller2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="stick_update_service_reminder_sticker_on_b_piller" value="3" id="stick_update_service_reminder_sticker_on_b_piller3" disabled>
+                                                <label class="custom-control-label" for="stick_update_service_reminder_sticker_on_b_piller3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('stick_update_service_reminder_sticker_on_b_piller') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Comments</label>
+                                        <div class="col-md-12">
+                                            <div class="form-check mb-3 ps-0">
+                                                <textarea class="form-control" id="interior_cabin_inspection_comments" wire:model="interior_cabin_inspection_comments" disabled rows="3"></textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        @endif
+                        @if($checkListDetails['check_power_steering_fluid_level'] || $checkListDetails['check_power_steering_tank_cap_properly_fixed'] || $checkListDetails['check_brake_fluid_level'] || $checkListDetails['brake_fluid_tank_cap_properly_fixed'] || $checkListDetails['check_engine_oil_level'] || $checkListDetails['check_radiator_cap_properly_fixed'] || $checkListDetails['top_off_windshield_washer_fluid']
+                         || $checkListDetails['check_windshield_cap_properly_fixed']
+                         || $checkListDetails['underHoodInspectionComments'])
+                        <div class="col-12 col-md-6 col-xl-4 my-4">
+                            <div class="card h-100">
+                                <div class="card-header text-left pt-4 pb-3">
+                                    <h5 class="font-weight-bold mt-2">Under Hood Inspection</h5>
+                                </div>
+                                <div class="card-body text-left pt-0">
+                                    <div class="row"> 
+                                        <label>Check Power Steering Fluid Level</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_power_steering_fluid_level" value="1" id="check_power_steering_fluid_level1" disabled>
+                                                <label class="custom-control-label" for="check_power_steering_fluid_level1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_power_steering_fluid_level" value="2" id="check_power_steering_fluid_level2" disabled>
+                                                <label class="custom-control-label" for="check_power_steering_fluid_level2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_power_steering_fluid_level" value="3" id="check_power_steering_fluid_level3" disabled>
+                                                <label class="custom-control-label" for="check_power_steering_fluid_level3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_power_steering_fluid_level') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check Power Steering tank Cap properly fixed</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_power_steering_tank_cap_properly_fixed" value="1" id="check_power_steering_tank_cap_properly_fixed1" disabled>
+                                                <label class="custom-control-label" for="check_power_steering_tank_cap_properly_fixed1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_power_steering_tank_cap_properly_fixed" value="2" id="check_power_steering_tank_cap_properly_fixed2" disabled>
+                                                <label class="custom-control-label" for="check_power_steering_tank_cap_properly_fixed2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_power_steering_tank_cap_properly_fixed" value="3" id="check_power_steering_tank_cap_properly_fixed3" disabled>
+                                                <label class="custom-control-label" for="check_power_steering_tank_cap_properly_fixed3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_power_steering_tank_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check Brake fluid level</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_brake_fluid_level" value="1" id="check_brake_fluid_level1" disabled>
+                                                <label class="custom-control-label" for="check_brake_fluid_level1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_brake_fluid_level" value="2" id="check_brake_fluid_level2" disabled>
+                                                <label class="custom-control-label" for="check_brake_fluid_level2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_brake_fluid_level" value="3" id="check_brake_fluid_level3" disabled>
+                                                <label class="custom-control-label" for="check_brake_fluid_level3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_brake_fluid_level') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check Brake fluid tank Cap properly fixed</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="brake_fluid_tank_cap_properly_fixed" value="1" id="brake_fluid_tank_cap_properly_fixed1" disabled>
+                                                <label class="custom-control-label" for="brake_fluid_tank_cap_properly_fixed1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="brake_fluid_tank_cap_properly_fixed" value="2" id="brake_fluid_tank_cap_properly_fixed2" disabled>
+                                                <label class="custom-control-label" for="brake_fluid_tank_cap_properly_fixed2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="brake_fluid_tank_cap_properly_fixed" value="3" id="brake_fluid_tank_cap_properly_fixed3" disabled>
+                                                <label class="custom-control-label" for="brake_fluid_tank_cap_properly_fixed3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('brake_fluid_tank_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check Engine Oil Level</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_engine_oil_level" value="1" id="check_engine_oil_level1" disabled>
+                                                <label class="custom-control-label" for="check_engine_oil_level1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_engine_oil_level" value="2" id="check_engine_oil_level2" disabled>
+                                                <label class="custom-control-label" for="check_engine_oil_level2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_engine_oil_level" value="3" id="check_engine_oil_level3" disabled>
+                                                <label class="custom-control-label" for="check_engine_oil_level3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_engine_oil_level') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check Radiator Coolant Level</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_radiator_coolant_level" value="1" id="check_radiator_coolant_level1" disabled>
+                                                <label class="custom-control-label" for="check_radiator_coolant_level1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_radiator_coolant_level" value="2" id="check_radiator_coolant_level2" disabled>
+                                                <label class="custom-control-label" for="check_radiator_coolant_level2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_radiator_coolant_level" value="3" id="check_radiator_coolant_level3" disabled>
+                                                <label class="custom-control-label" for="check_radiator_coolant_level3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_radiator_coolant_level') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check Radiator Cap properly fixed</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_radiator_cap_properly_fixed" value="1" id="check_radiator_cap_properly_fixed1" disabled>
+                                                <label class="custom-control-label" for="check_radiator_cap_properly_fixed1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_radiator_cap_properly_fixed" value="2" id="check_radiator_cap_properly_fixed2" disabled>
+                                                <label class="custom-control-label" for="check_radiator_cap_properly_fixed2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_radiator_cap_properly_fixed" value="3" id="check_radiator_cap_properly_fixed3" disabled>
+                                                <label class="custom-control-label" for="check_radiator_cap_properly_fixed3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_radiator_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Top off windshield washer fluid</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="top_off_windshield_washer_fluid" value="1" id="top_off_windshield_washer_fluid1" disabled>
+                                                <label class="custom-control-label" for="top_off_windshield_washer_fluid1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="top_off_windshield_washer_fluid" value="2" id="top_off_windshield_washer_fluid2" disabled>
+                                                <label class="custom-control-label" for="top_off_windshield_washer_fluid2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="top_off_windshield_washer_fluid" value="3" id="top_off_windshield_washer_fluid3" disabled>
+                                                <label class="custom-control-label" for="top_off_windshield_washer_fluid3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('top_off_windshield_washer_fluid') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check windshield Cap properly fixed</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_windshield_cap_properly_fixed" value="1" id="check_windshield_cap_properly_fixed1" disabled>
+                                                <label class="custom-control-label" for="check_windshield_cap_properly_fixed1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_windshield_cap_properly_fixed" value="2" id="check_windshield_cap_properly_fixed2" disabled>
+                                                <label class="custom-control-label" for="check_windshield_cap_properly_fixed2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_windshield_cap_properly_fixed" value="3" id="check_windshield_cap_properly_fixed3" disabled>
+                                                <label class="custom-control-label" for="check_windshield_cap_properly_fixed3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_windshield_cap_properly_fixed') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Comments</label>
+                                        <div class="col-md-12">
+                                            <div class="form-check mb-3 ps-0">
+                                                <textarea class="form-control" id="underHoodInspectionComments" wire:model="underHoodInspectionComments" disabled rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        @if($checkListDetails['check_for_oil_leaks_engine_steering'] || $checkListDetails['check_for_oil_leak_oil_filtering'] || $checkListDetails['check_drain_lug_fixed_properly'] || $checkListDetails['check_oil_filter_fixed_properly'] || $checkListDetails['ubi_comments'])
+                        <div class="col-12 col-md-6 col-xl-4 my-4">
+                            <div class="card h-100">
+                                <div class="card-header text-left pt-4 pb-3">
+                                    <h5 class="font-weight-bold mt-2">Under Body Inspection</h5>
+                                </div>
+                                <div class="card-body text-left pt-0">
+                                    <div class="row"> 
+                                        <label>Check for Oil leaks - Engine, Steering</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_for_oil_leaks_engine_steering" value="1" id="check_for_oil_leaks_engine_steering1" disabled>
+                                                <label class="custom-control-label" for="check_for_oil_leaks_engine_steering1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_for_oil_leaks_engine_steering" value="2" id="check_for_oil_leaks_engine_steering2" disabled>
+                                                <label class="custom-control-label" for="check_for_oil_leaks_engine_steering2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_for_oil_leaks_engine_steering" value="3" id="check_for_oil_leaks_engine_steering3" disabled>
+                                                <label class="custom-control-label" for="check_for_oil_leaks_engine_steering3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_for_oil_leaks_engine_steering') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check for Oil Leak - Oil Filtering</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_for_oil_leak_oil_filtering" value="1" id="check_for_oil_leak_oil_filtering1" disabled>
+                                                <label class="custom-control-label" for="check_for_oil_leak_oil_filtering1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_for_oil_leak_oil_filtering" value="2" id="check_for_oil_leak_oil_filtering2" disabled>
+                                                <label class="custom-control-label" for="check_for_oil_leak_oil_filtering2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_for_oil_leak_oil_filtering" value="3" id="check_for_oil_leak_oil_filtering3" disabled>
+                                                <label class="custom-control-label" for="check_for_oil_leak_oil_filtering3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_for_oil_leak_oil_filtering') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check Drain Plug fixed properly</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_drain_lug_fixed_properly" value="1" id="check_drain_lug_fixed_properly1" disabled>
+                                                <label class="custom-control-label" for="check_drain_lug_fixed_properly1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_drain_lug_fixed_properly" value="2" id="check_drain_lug_fixed_properly2" disabled>
+                                                <label class="custom-control-label" for="check_drain_lug_fixed_properly2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_drain_lug_fixed_properly" value="3" id="check_drain_lug_fixed_properly3" disabled>
+                                                <label class="custom-control-label" for="check_drain_lug_fixed_properly3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_drain_lug_fixed_properly') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Check Oil Filter fixed properly</label>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_oil_filter_fixed_properly" value="1" id="check_oil_filter_fixed_properly1" disabled>
+                                                <label class="custom-control-label" for="check_oil_filter_fixed_properly1">Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_oil_filter_fixed_properly" value="2" id="check_oil_filter_fixed_properly2" disabled>
+                                                <label class="custom-control-label" for="check_oil_filter_fixed_properly2">Not Good</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" wire:model="check_oil_filter_fixed_properly" value="3" id="check_oil_filter_fixed_properly3" disabled>
+                                                <label class="custom-control-label" for="check_oil_filter_fixed_properly3">Not Applicable</label>
+                                            </div>
+                                        </div>
+                                        @error('check_oil_filter_fixed_properly') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="row"> 
+                                        <label>Comments</label>
+                                        <div class="col-md-12">
+                                            <div class="form-check mb-3 ps-0">
+                                                <textarea class="form-control" id="ubi_comments" wire:model="ubi_comments" rows="3" disabled></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        
+                        
+                    
+                        <div class="col-12 col-md-12 col-xl-6 my-4">
+                            <div class="card">
+                                <div class="card-header text-center pt-4 pb-3">
+                                    <h5 class="font-weight-bold mt-2">Vehicle Exterior Images</h5>
+                                </div>
+                                <div class="card-body text-left pt-0">
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="w-75 float-end" id="img1" src="@if($vehicleSidesImages['vImageR1']) {{ url('public/storage/'.$vehicleSidesImages['vImageR1'])}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img1')" />
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="w-75 float-start" id="img2" src="@if ($vehicleSidesImages['vImageR2']) {{ url('public/storage/'.$vehicleSidesImages['vImageR2']) }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img2')" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="w-75 float-end" id="img3" src="@if ($vehicleSidesImages['vImageF']) {{ url('public/storage/'.$vehicleSidesImages['vImageF']) }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img3')" />
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="w-75 float-start" id="img4" src="@if ($vehicleSidesImages['vImageB']) {{ url('public/storage/'.$vehicleSidesImages['vImageB']) }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img4')" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="w-75 float-end" id="img5" src="@if ($vehicleSidesImages['vImageL1']) {{ url('public/storage/'.$vehicleSidesImages['vImageL1']) }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img5')" />
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="w-75 float-start" id="img6" src="@if ($vehicleSidesImages['vImageL2']) {{ url('public/storage/'.$vehicleSidesImages['vImageL2']) }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img6')" />
+                                        </div>
+                                    </div>
+
+                                    <h5 class="font-weight-bold mt-2">Interior Vehicle Images</h5>
+                                    <div class="row m-4">
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="img-fluid img-thumbnail shadow" id="dashImage1" src="@if ($vehicleSidesImages['dash_image1']) {{ url('public/storage/'.$vehicleSidesImages['dash_image1']) }} @else {{asset('img/dashImage1.jpg')}} @endif" style="cursor:pointer"  />
+                                            @error('dash_image1') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="img-fluid img-thumbnail shadow" id="dashImage2" src="@if ($vehicleSidesImages['dash_image2']) {{ url('public/storage/'.$vehicleSidesImages['dash_image2']) }} @else {{asset('img/dashImage2.jpg')}} @endif" style="cursor:pointer"  />
+                                            @error('dash_image2') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <hr>
+                                    </div>
+                                    <div class="row m-4">
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="img-fluid img-thumbnail shadow" id="passengerSeatImage" src="@if ($vehicleSidesImages['passenger_seat_image']) {{ url('public/storage/'.$vehicleSidesImages['passenger_seat_image']) }} @else {{asset('img/passangerSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                            @error('passenger_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="img-fluid img-thumbnail shadow" id="driverSeatImage" src="@if ($vehicleSidesImages['driver_seat_image']) {{ url('public/storage/'.$vehicleSidesImages['driver_seat_image']) }} @else {{asset('img/driverSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                            @error('driver_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <hr>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="@if ($vehicleSidesImages['back_seat1']) {{ url('public/storage/'.$vehicleSidesImages['back_seat1']) }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                            @error('back_seat1') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat2Image" src="@if ($vehicleSidesImages['back_seat2']) {{ url('public/storage/'.$vehicleSidesImages['back_seat2']) }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
+                                            @error('back_seat2') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat3Image" src="@if ($vehicleSidesImages['back_seat3']) {{ url('public/storage/'.$vehicleSidesImages['back_seat3']) }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                            @error('back_seat3') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat4Image1" src="@if ($vehicleSidesImages['back_seat4']) {{ url('public/storage/'.$vehicleSidesImages['back_seat4']) }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
+                                            @error('back_seat4') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12">
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat3Image1" src="@if ($vehicleSidesImages['roof_images']) {{ url('public/storage/'.$vehicleSidesImages['roof_images']) }} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
+                                            @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if($customerSignatureShow)
+                        <div class="row">
+                            <div class="col-md-6 mt-0">
+                                <div class="card card-blog card-plain">
+                                    <div class="card-header text-left pt-4 pb-3">
+                                        <h5 class="font-weight-bold mt-2">Signature</h5>
+                                    </div>
+                                    <div class="card-body px-1 pt-3">
+                                        <div class="position-relative">
+                                            <a class="d-block blur-shadow-image">
+                                                <img src="{{$customerSignatureShow}}" alt="img-blur-shadow" class="img-fluid shadow border-radius-lg">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
-                    @endif
-                </div>
                 @endif
 
                 <div class="row">

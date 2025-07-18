@@ -95,9 +95,26 @@
                                 <div class="col-lg-8">
                                     <div class="card h-100">
                                         
+                                        @if ($message = Session::get('cartsuccess'))
+                                        <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
+                                            <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                            <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        @endif
+                                        @if ($message = Session::get('carterror'))
+                                        <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                            <span class="alert-text"><strong>!</strong> {{ $message }}</span>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        @endif
                                         <div class="card-body p-3 pb-0">
                                             <ul class="list-group">
-                                                <?php $total = 0;$totalDiscount=0; ?>
+                                                <?php $total = 0;$totalDiscount=0; $package_job=false; $manualDiscountAvailable=false; $aprovalWaiting=false;?>
                                                 @foreach ($cartItems as $item)
 
                                                     <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
@@ -110,26 +127,31 @@
                                                                 <br><span class="text-xs text-dark">Note: {{ $item->extra_note }}</span>
                                                                 @endif
                                                             </h6>
-                                                            
+
+                                                            @if($item->isWarranty)
+                                                            <div><span class="badge bg-gradient-primary">{{$item->warrantyPeriod}} Months Warranty</span></div>
+                                                            @endif
+
                                                             @if($item->customer_group_code)
                                                             <label wire:click.prevent="removeLineDiscount({{$item->id}})" class="badge bg-gradient-info cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
                                                             @else
-                                                            <span><label wire:click.prevent="applyLineDiscount({{$item}})" class="badge bg-gradient-dark cursor-pointer">Apply Discount </label></span>
-                                                            <div wire:loading wire:target="applyLineDiscount">
-                                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                    <div class="la-ball-beat">
-                                                                        <div></div>
-                                                                        <div></div>
-                                                                        <div></div>
+                                                                <span><label wire:click.prevent="applyLineDiscount({{$item}})" class="badge bg-gradient-dark cursor-pointer">Apply Discount </label></span>
+                                                                <div wire:loading wire:target="applyLineDiscount">
+                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                        <div class="la-ball-beat">
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                            <div></div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
                                                             @endif
 
                                                             @if($confirming===$item->id)
                                                             <p>
-                                                                <label class="p-0 text-success bg-red-600 cursor-pointer float-start" wire:click.prevent="kill({{ $item->id }},{{ $item->item_id }})"><i class="fa fa-trash"></i> Yes</label>
-                                                                <label class="p-0 text-info bg-red-600 cursor-pointer float-end" wire:click.prevent="safe({{ $item->id }})"><i class="fa fa-trash"></i> No</label>
+                                                                <span><label wire:click.prevent="kill({{ $item->id }},{{ $item->item_id }})" class="badge bg-gradient-success cursor-pointer"><i class="fa fa-trash"></i> Yes</label></span>
+                                                                <span><label wire:click.prevent="safe({{ $item->id }})" class="badge bg-gradient-info cursor-pointer"><i class="fa fa-trash"></i> No</label></span>
+                                                                
                                                                 <div wire:loading wire:target="kill">
                                                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                                         <div class="la-ball-beat">
@@ -151,9 +173,16 @@
                                                             </p>
 
                                                             @else
-                                                                
-                                                                    <label class="p-0 text-danger bg-red-600 cursor-pointer" wire:click.prevent="confirmDelete({{ $item->id }})"><i class="fa fa-trash"></i> Remove</label>
-                                                                
+                                                            <span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
+                                                            <div wire:loading wire:target="confirmDelete">
+                                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                    <div class="la-ball-beat">
+                                                                        <div></div>
+                                                                        <div></div>
+                                                                        <div></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             @endif
 
                                                         </div>
@@ -172,7 +201,7 @@
                                                                             <i class="fa-solid fa-square-minus fa-xl"></i>
                                                                         </span>
                                                                     @endif
-                                                                    {{$item->quantity}}
+                                                                    <label class="mb-0">{{$item->quantity}}</label>
                                                                     <span class="px-2 cursor-pointer" wire:click="cartSetUpQty({{ $item->id }})">
                                                                         <i class="fa-solid fa-square-plus fa-xl"></i>
                                                                     </span>
@@ -182,11 +211,21 @@
                                                             @else
                                                                 {{$item->quantity}}
                                                             @endif
+                                                            <div wire:loading wire:target="cartSetDownQty,cartSetUpQty">
+                                                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                                    <div class="la-ball-beat">
+                                                                        <div></div>
+                                                                        <div></div>
+                                                                        <div></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <div class="d-flex align-items-center text-sm">
                                                             <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">{{config('global.CURRENCY')}}
                                                             @if($item->customer_group_code)
                                                             {{ custom_round($item->unit_price-(($item->discount_perc/100)*($item->unit_price)))*$item->quantity }}
+                                                            
                                                             @else
                                                             {{custom_round($item->unit_price*$item->quantity)}}
                                                             @endif</button>
@@ -201,6 +240,11 @@
                                                         $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*$item->unit_price)*$item->quantity);
                                                         //echo $totalDiscount;
                                                     }
+                                                    
+                                                    if($item->is_package==1){
+                                                        $package_job=true;
+
+                                                    }
                                                     ?>
                                                 @endforeach
                                                 <?php
@@ -213,11 +257,54 @@
                                                 {
                                                     $tax = 0;
                                                 }
+
+                                                if($package_job)
+                                                {
+                                                    $tax = 0;
+                                                }
                                                 $grand_total = $totalAfterDisc+$tax;
                                                 ?>
                                             </ul>
                                             
-                                            <button class="btn bg-gradient-danger btn-sm float-end" wire:click.prevent="clearAllCart">Remove All Cart</button>
+                                            @if($confirmingRA)
+                                            <p>
+                                                <span><label wire:click.prevent="clearAllCart" class="badge bg-gradient-success cursor-pointer"><i class="fa fa-trash"></i> Yes</label></span>
+                                                <span><label wire:click.prevent="safeRA" class="badge bg-gradient-info cursor-pointer"><i class="fa fa-trash"></i> No</label></span>
+                                                
+                                                <div wire:loading wire:target="clearAllCart">
+                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                        <div class="la-ball-beat">
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div wire:loading wire:target="safeRA">
+                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                        <div class="la-ball-beat">
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p>
+
+                                            @else
+                                            <span><label wire:click.prevent="confirmDeleteRA" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove All</label></span>
+                                            <div wire:loading wire:target="confirmDeleteRA">
+                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                                        <div class="la-ball-beat">
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            <button class="d-none btn bg-gradient-danger btn-sm float-end" wire:click.prevent="clearAllCart">Remove All Cart</button>
                                         </div>
                                     </div>
                                 </div>
@@ -296,6 +383,7 @@
                 <div class="col-md-12 col-sm-12">
                     <button type="button" class="btn @if($department_name=='Quick Lube') bg-gradient-primary opacity-10 @else bg-gradient-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Quick Lube Section" data-container="body" data-animation="true" wire:click="selectSection(1)">Quick Lube</button>
                     <button type="button" class="btn @if($department_name=='Mechanical') bg-gradient-primary opacity-10 @else bg-gradient-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mechanical Section" data-container="body" data-animation="true" wire:click="selectSection(2)">Mechanical</button>
+                    <button type="button" class="d-none btn @if($department_name=='Misc Sales') bg-gradient-primary opacity-10 @else bg-gradient-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Misc Sales" data-container="body" data-animation="true" wire:click="selectSection(3)">Misc Sales</button>
                     <div wire:loading wire:target="selectSection">
                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                             <div class="la-ball-beat">
@@ -417,6 +505,14 @@
                                         <span class="alert-icon"><i class="ni ni-like-2 text-success"></i></span>
                                         <span class="alert-text text-success"><strong>Success!</strong> Added serves!</span>
                                         <button type="button" class="btn-close text-success" data-bs-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @endif
+                                @if(@$serviceStockErrShow[$servicesItem->ItemCode])
+                                    <div class="text-center">
+                                        <span class="alert-text text-danger"><strong>!</strong> Available Stock: {{$serviceStockErrMessgae[$servicesItem->ItemCode]}}</span>
+                                        <button type="button" class="btn-close text-danger" data-bs-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
