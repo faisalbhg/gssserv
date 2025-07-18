@@ -64,7 +64,7 @@ class CustomerServiceJob extends Component
     public $showVehicleAvailable, $selectedVehicleInfo, $selected_vehicle_id, $customer_id;
     public $servicesGroupList, $service_group_id, $service_group_name, $service_group_code, $station, $section_service_search, $propertyCode, $selectedSectionName;
     public $selectServiceItems, $sectionsLists;
-    public $serviceAddedMessgae=[], $serviceStockErrShow=[], $serviceStockErrMessgae=[],$cartItems = [], $cardShow=false, $ql_item_qty, $ceramic_dicount, $showManulDiscount=[],$manualDiscountInput;
+    public $serviceAddedMessgae=[], $serviceStockErrShow=[], $serviceStockErrMessgae=[],$cartItems = [], $cardShow=false, $ql_item_qty=[], $ceramic_dicount, $showManulDiscount=[],$manualDiscountInput;
     public $itemCategories=[], $itemSubCategories=[], $itemBrandsLists=[], $item_search_category, $item_search_subcategory, $item_search_brand, $item_search_name, $item_search_code, $serviceItemsList=[];
     public $quickLubeItemsList = [], $qlBrandsLists=[], $ql_search_brand, $ql_km_range, $ql_search_category, $itemQlCategories=[], $quickLubeItemSearch, $quickLubeItemCode;
     public $customerGroupLists;
@@ -812,6 +812,7 @@ class CustomerServiceJob extends Component
                         {
                             $qlItemPriceLists[$key]['discountDetails']=null;
                         }
+                        $this->ql_item_qty[$qlItemsList->ItemId]=1;
                         
                     }
                     $this->quickLubeItemsList = $qlItemPriceLists;
@@ -914,6 +915,7 @@ class CustomerServiceJob extends Component
                             {
                                 $qlMakeModelCatItmDetails[$key]['discountDetails']=null;
                             }
+                            $this->ql_item_qty[$qlMakeModelCatItm->ItemId]=1;
 
                         }
                     }

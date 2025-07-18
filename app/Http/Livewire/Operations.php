@@ -117,11 +117,17 @@ class Operations extends Component
 
     public function render()
     {
-        /*dd(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027167'])->get());
-        foreach(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027446'])->get() as $jobsservice)
+        //dd(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027167'])->get());
+        /*foreach(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027167'])->get() as $jobsservice)
         {
-            $customerJobServiceData = json_decode($jobsservice->job_description,true);
-            CustomerJobCardServices::create($customerJobServiceData);
+            if($jobsservice->id==326112){
+                $customerJobServiceData = json_decode($jobsservice->job_description,true);
+                CustomerJobCardServices::create($customerJobServiceData);
+            }
+            if($jobsservice->id==326113){
+                $customerJobServiceData = json_decode($jobsservice->job_description,true);
+                CustomerJobCardServices::create($customerJobServiceData);
+            }
 
         }*/
         //dd(CustomerJobCardServices::limit(1)->first());
