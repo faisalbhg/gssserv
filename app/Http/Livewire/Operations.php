@@ -364,12 +364,7 @@ class Operations extends Component
         $validatedData = $this->validate([
             'cancelationReason' => 'required',
         ]);
-        CustomerJobCards::where(['job_number'=>$job_number])->update([
-            'job_status'=>5,
-            'cancellation_reson'=>$this->cancelationReason,
-            'cancelled_by'=>auth()->user('user')->id,
-            'cancelled_date_time'=>Carbon::now()
-        ]);
+        
         //dd(CustomerJobCards::where(['job_number'=>$job_number])->first());
         //dd($this->jobcardDetails->meterialRequestResponse);
         if($this->jobcardDetails->meterialRequestResponse)
@@ -381,7 +376,7 @@ class Operations extends Component
             }
             else
             {
-                CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>5]);
+                $this->saveCancelJobData($job_number);
                 //MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
                 /*MaterialRequest::where(['sessionId'=>$this->job_number])->update([
                     'Status'=>'C',
@@ -393,9 +388,20 @@ class Operations extends Component
             
         }
         else{
-            CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>5]);
+            $this->saveCancelJobData($job_number);
         }
         $this->customerJobUpdate($job_number);
+    }
+
+    public function saveCancelJobData($job_number)
+    {
+        CustomerJobCards::where(['job_number'=>$job_number])->update([
+            'job_status'=>6,
+            'cancellation_reson'=>$this->cancelationReason,
+            'cancelled_by'=>auth()->user('user')->id,
+            'cancelled_date_time'=>Carbon::now()
+        ]);
+        CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>6]);
     }
 
     public function checklistToggleSelectAll($services)
