@@ -852,9 +852,10 @@ class Operations extends Component
                 \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
                 \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
+                \DB::raw('count(case when job_status = 6 then job_status end) cancelledrequest'),
             )
         )->where(['job_number'=>$job_number])->first();
-        //dd($getCountSalesJobStatus);
+        dd($getCountSalesJobStatus);
         $mainSTatus=1;
         if($getCountSalesJobStatus->working_progress>0){
             $mainSTatus=1;
@@ -870,7 +871,10 @@ class Operations extends Component
         }
         else if($getCountSalesJobStatus->cancelled>0){
             $mainSTatus=5;
+        }else if($getCountSalesJobStatus->cancelledrequest>0){
+            $mainSTatus=6;
         }
+        //dd($mainSTatus);
         
         $mianJobUpdate = [
             'job_status'=>$mainSTatus,

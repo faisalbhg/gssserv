@@ -20,7 +20,7 @@
                     </div>
                     <div class="d-flex">
                     @if($jobcardDetails->payment_status==0)
-                        @if($jobcardDetails->job_status<3)
+                        @if($jobcardDetails->job_status<=3)
                             @if($canceljobReasonButton)
                             <textarea wire:model="cancelationReason" class="form-control" placeholder="Cancelation Reason..!"></textarea>
                             @error('cancelationReason') <span class="text-danger">{{ $message }}</span> @enderror
