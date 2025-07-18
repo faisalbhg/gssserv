@@ -402,6 +402,12 @@ class Operations extends Component
             'cancelled_date_time'=>Carbon::now()
         ]);
         CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>6]);
+        try {
+            DB::select("EXEC [SystemAdministration].[Workflow.Level.Change] 'SLCL', '".$job_number."', 1, 'N', ".auth()->user('user')->id.", NULL, NULL, NULL");
+        } catch (\Exception $e) {
+            //dd($e->getMessage());
+            //return $e->getMessage();
+        }
     }
 
     public function checklistToggleSelectAll($services)
@@ -855,7 +861,7 @@ class Operations extends Component
                 \DB::raw('count(case when job_status = 6 then job_status end) cancelledrequest'),
             )
         )->where(['job_number'=>$job_number])->first();
-        dd($getCountSalesJobStatus);
+        //dd($getCountSalesJobStatus);
         $mainSTatus=1;
         if($getCountSalesJobStatus->working_progress>0){
             $mainSTatus=1;
