@@ -383,6 +383,7 @@ class CustomerServiceItems extends Component
         $wareHouseDetails = ItemWarehouse::where(['DivisionId'=>auth()->user('user')->station_code])->first();
         $itemCurrentStock = ItemCurrentStock::where(['StoreId'=>$wareHouseDetails->WarehouseId,'ItemCode'=>$ItemCode])->first();
         $itemsInCart = CustomerServiceCart::where(['division_code'=>auth()->user('user')->station_code,'item_code'=>$ItemCode])->sum('quantity');
+        $itemsInCart=0;
         $totalAvailable = number_format($itemCurrentStock->QuantityInStock) - $itemsInCart;
         if($totalAvailable >= $qty){
             return true;
