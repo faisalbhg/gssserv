@@ -67,6 +67,12 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-8 me-auto text-left">
+                        <h5>KABI LLC Contract List On {{\Carbon\Carbon::parse($search_job_date)->format('dS M Y')}}</h5>
+                    </div>
+                    <hr>
+                </div>
+                <div class="row">
                     <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount total">
                         <div class="card bg-gradient-dark shadow text-white">
                             <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('total')">
@@ -116,12 +122,14 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="row">
-                    <div class="col-md-8 me-auto text-left">
-                        <h5>KABI LLC Contract List On {{\Carbon\Carbon::parse($search_job_date)->format('dS M Y')}}</h5>
+                    <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+                        <label>Job Date</label>
+                        <div class="form-group">
+                            <input type="date"  class="form-control" placeholder="Search Date" wire:model="search_job_date" />
+                        </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
                         <label>CT Number</label>
                         <div class="form-group">

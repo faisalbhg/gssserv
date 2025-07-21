@@ -51,6 +51,10 @@ class CarsTaxi extends Component
     public $canceljobReasonButton=false,$cancelError,$cancelationReason,$customerSignatureShow;
     public $onlyChaisisRequired=false;
 
+    function mount( Request $request) {
+        $this->search_job_date = Carbon::now()->format('Y-m-d');
+    }
+
     public function render()
     {
         //dd(LaborItemMaster::where(['Active'=>1])->whereIn('ItemCode', ['S255','S408'])->get());
@@ -67,7 +71,7 @@ class CarsTaxi extends Component
             $this->checklistLabels=[];
             $this->carTaxiServiceInfo=null;
 
-            $this->search_job_date = Carbon::now()->format('Y-m-d');
+            //$this->search_job_date = Carbon::now()->format('Y-m-d');
 
             $getCountCarTaxiJob = CustomerJobCards::select(
                 array(
@@ -85,6 +89,8 @@ class CarsTaxi extends Component
             if($this->filter){
                 $carTaxiJobs = $carTaxiJobs->whereIn('job_status', $this->filter);
             }
+            
+            
             if($this->search_ct_number)
             {
                 $carTaxiJobs = $carTaxiJobs->where('ct_number', 'like', "%{$this->search_ct_number}%");
