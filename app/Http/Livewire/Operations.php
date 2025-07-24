@@ -117,6 +117,7 @@ class Operations extends Component
 
     public function render()
     {
+        //dd(CustomerJobCards::where('customer_id','=',259)->update(['carTaxiJobs'=>1]));
         //dd(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027167'])->get());
         /*foreach(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027167'])->get() as $jobsservice)
         {
@@ -358,7 +359,7 @@ class Operations extends Component
         
     }
 
-    public function confirmCancelJob($job_number){
+    public function confirmCancelJob($job_number,$job_status){
         //dd(MaterialRequest::limit(1)->get());
         //dd($job_number);
         $validatedData = $this->validate([
@@ -376,7 +377,7 @@ class Operations extends Component
             }
             else
             {
-                $this->saveCancelJobData($job_number);
+                $this->saveCancelJobData($job_number,$job_status);
                 //MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
                 /*MaterialRequest::where(['sessionId'=>$this->job_number])->update([
                     'Status'=>'C',
@@ -388,20 +389,21 @@ class Operations extends Component
             
         }
         else{
-            $this->saveCancelJobData($job_number);
+            $this->saveCancelJobData($job_number,$job_status);
         }
         $this->customerJobUpdate($job_number);
     }
 
-    public function saveCancelJobData($job_number)
+    public function saveCancelJobData($job_number,$job_status)
     {
         CustomerJobCards::where(['job_number'=>$job_number])->update([
-            'job_status'=>6,
+            'last_job_status'=>$job_status,
+            'cancel_req_status'=>'W',
             'cancellation_reson'=>$this->cancelationReason,
             'cancelled_by'=>auth()->user('user')->id,
             'cancelled_date_time'=>Carbon::now()
         ]);
-        CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>6]);
+        //CustomerJobCardServices::where(['job_number'=>$job_number])->update(['job_status'=>6]);
         try {
             DB::select("EXEC [SystemAdministration].[Workflow.Level.Change] 'SLCL', '".$job_number."', 1, 'N', ".auth()->user('user')->id.", NULL, NULL, NULL");
         } catch (\Exception $e) {

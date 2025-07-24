@@ -19,18 +19,30 @@
                         <small>{{ \Carbon\Carbon::parse($jobcardDetails->job_date_time)->format('dS M Y h:i A') }}</small>
                     </div>
                     <div class="d-flex">
+
                     @if($jobcardDetails->payment_status==0)
                         @if($jobcardDetails->job_status<=3)
                             @if($canceljobReasonButton)
                             <textarea wire:model="cancelationReason" class="form-control" placeholder="Cancelation Reason..!"></textarea>
                             @error('cancelationReason') <span class="text-danger">{{ $message }}</span> @enderror
-                            <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
+                            <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}','{{$jobcardDetails->job_statuss}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
                             @else
-                                @if(auth()->user('user')->cancellation_access)
-                                <button type="button" wire:click="cancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-danger px-2 mx-2">Cancel Job</button>
+                                @if($jobcardDetails->cancel_req_status==null || $jobcardDetails->cancel_req_status=="R")
+                                <div>
+                                    <button type="button" wire:click="cancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-danger px-2 mx-2">Cancel Job</button>
+
+                                    @if($jobcardDetails->cancel_req_status=="R")
+                                        <label class="mt-2 text-danger px-2 mx-2">Rejected cancellation request</button>
+                                    @endif
+                                </div>
+                                @elseif($jobcardDetails->cancel_req_status=='W')
+                                <button type="button" class="mt-2 btn btn-sm btn-outline-danger px-2 mx-2">Pending Cancelation Request</button>
                                 @endif
                             @if($cancelError)<br><span class="text-danger">{{$cancelError}}</span>@endif
                             @endif
+                        @endif
+                        @if($jobcardDetails->cancel_req_status=='A')
+                        <button type="button" class="mt-2 btn btn-sm btn-outline-success px-2 mx-2">Approved Cancelation Request</button>
                         @endif
                         <button type="button" wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-primary px-2">Add New Service/Items</button>
                     @endif
@@ -76,8 +88,11 @@
                                                         <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
                                                     </div>
                                                     @if($jobcardDetails->job_status)
-                                                    <h6 class="my-2 text-sm text-white"><span class="text-sm badge badge-sm {{config('global.jobs.status_btn_class')[$jobcardDetails->job_status]}} pb-2">{{config('global.jobs.status')[$jobcardDetails->job_status]}}</span> 
-                                                    </h6>
+                                                        <h6 class="my-2 text-sm text-white"><span class="text-sm badge badge-sm {{config('global.jobs.status_btn_class')[$jobcardDetails->job_status]}} pb-2">{{config('global.jobs.status')[$jobcardDetails->job_status]}}</span> 
+                                                        @if($jobcardDetails->cancel_req_status=='W')
+                                                            <button type="button" class="mt-2 btn btn-sm btn-outline-danger px-2 mx-2">Pending Cancelation Request</button>
+                                                        @endif
+                                                        </h6>
                                                     @endif
                                                 </div>
                                             </div>
@@ -93,7 +108,8 @@
                                                         @endif
                                                     </div>
                                                     <h6 class="my-2 text-sm text-white">
-                                                        @if($jobcardDetails->payment_type) <span class="badge badge-sm {{config('global.payment.status_class')[$jobcardDetails->payment_status]}} text-sm btn-sm"> {{config('global.payment.type')[$jobcardDetails->payment_type]}} {{config('global.payment.status')[$jobcardDetails->payment_status]}}</span>
+                                                        @if($jobcardDetails->payment_type)
+                                                            <span class="badge badge-sm {{config('global.payment.status_class')[$jobcardDetails->payment_status]}} text-sm btn-sm"> {{config('global.payment.type')[$jobcardDetails->payment_type]}} {{config('global.payment.status')[$jobcardDetails->payment_status]}}</span>
                                                         @endif
                                                         @if($jobcardDetails->payment_status==0)
                                                             <button wire:click="checkOnlinePaymentStatus('{{$jobcardDetails->job_number}}','{{$jobcardDetails->stationInfo['StationID']}}')" type="button" class="mt-2 btn btn-sm bg-gradient-info px-2">Check Payment Status</button>
@@ -879,297 +895,318 @@
                             $qlServiceUpdate=false;
                             $mechServiceUpdate=false;
                             ?>
-                            @forelse( $jobcardDetails->customerJobServices as $services)
-                                @if($services->section_name == 'Mechanical')
-                                    @if(!$mechServiceUpdate)
-                                        <?php $mechServiceUpdate=true; ?>
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <h6 class="mb-0 text-md">
-                                                    {{$services->section_name}}
-                                                </h6>
-                                                <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
-                                                    <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
-                                                </div>
-                                                @if($services->job_status)
-                                                <h6 class="my-2 text-sm">
-                                                    Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
-                                                </h6>
-                                                @endif
+                            @if($jobcardDetails->cancel_req_status==null || $jobcardDetails->cancel_req_status==null)
+                                @forelse( $jobcardDetails->customerJobServices as $services)
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h6 class="mb-0 text-md">
+                                                {{$services->section_name}}
+                                            </h6>
+                                            <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
+                                                <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
                                             </div>
-                                            <div class="col-md-4">
-                                                @if($services->job_status==1)
-                                                    @include('components.checklist.serviceTimer')
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
-                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> MEchanical {{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                    </a>
-                                                @elseif($services->job_status>=2 && $services->job_status<3)
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'mech')">
-                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @endif
-                                    @if($services->job_status==1)
-                                        @if($showchecklist[$services->id])
-                                            @if(in_array($services->section_name, config('global.check_list.mechanical.services')))
-
-                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'mech')">
-                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> Mechanical {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                </a>
-                                            @endif
-                                        @endif
-                                    @endif
-                                    <div class="col-md-4 mb-4">
-                                        <div class="card">
-                                            <div class="card-header text-center pt-4 pb-3">
-                                                <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
-                                                <h5 class="text-dark">
-                                                    @if($services->quantity>1)
-                                                        {{$services->quantity.' x '}}
-                                                    @endif
-                                                    {{$services->item_name}}
-                                                </h5>
-                                            </div>
-                                            <div class="card-body text-lg-left text-center pt-0">
-                                                <div class="d-flex justify-content-lg-start justify-content-center p-2">
-                                                    <div class="icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center">
-                                                        <i class="fas fa-check opacity-10" aria-hidden="true"></i>
-                                                    </div>
-                                                    <div>
-                                                        <span class="ps-3 {{config('global.jobs.status_text_class')[$services->job_status]}}">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <h6 class="my-2 text-sm">
+                                                Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
+                                            </h6>
                                         </div>
                                     </div>
-                                @elseif($services->department_name == 'Quick Lube')
-                                    @if(!$qlServiceUpdate)
-                                        <?php $qlServiceUpdate=true; ?>
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <h6 class="mb-0 text-md">
-                                                    {{$services->section_name}}
-                                                </h6>
-                                                <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
-                                                    <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
-                                                </div>
-                                                @if($services->job_status)
-                                                <h6 class="my-2 text-sm">
-                                                    Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
-                                                </h6>
-                                                @endif
-                                            </div>
-                                            <div class="col-md-4">
-                                                @if($services->job_status==1)
-                                                    @include('components.checklist.qlServiceTimer')
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
-                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">Quick Lube {{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                    </a>
-                                                @elseif($services->job_status>=2 && $services->job_status<3)
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
-                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                    </a>
-                                                @endif
-                                            </div>
+                                @empty
+                                    <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                                        <div class="d-flex flex-column">
+                                            <h6 class="mb-3 text-sm text-danger">Empty..!</h6>
                                         </div>
-                                    @endif
-                                    @if($services->job_status==1)
-                                        @if($showchecklist[$services->id])
-                                            
-                                            @if(in_array($services->department_name, config('global.check_list.oilChange.services')))
-
-                                                @include('components.checklist.oilChange-checklist')
-                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
-                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> Quick Lube {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                </a>
-                                            @endif
-                                        @endif
-                                    
-                                    @endif
-                                    <div class="col-md-4 mb-4">
-                                        <div class="card">
-                                            <div class="card-header text-center pt-4 pb-3">
-                                                <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
-                                                <h5 class="text-dark">
-                                                    @if($services->quantity>1)
-                                                        {{$services->quantity.' x '}}
-                                                    @endif
-                                                    {{$services->item_name}}
-                                                    
-                                                </h5>
-                                            </div>
-                                            <div class="card-body text-lg-left text-center pt-0">
-                                                <div class="d-flex justify-content-lg-start justify-content-center p-2">
-                                                    <div class="icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center">
-                                                        <i class="fas fa-check opacity-10" aria-hidden="true"></i>
-                                                    </div>
-                                                    <div>
-                                                        <span class="ps-3 {{config('global.jobs.status_text_class')[$services->job_status]}}">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @else
-                                    <li class="list-group-item border-0  p-2 mb-2 border-radius-lg">
-                                        @if($services->service_item_type==1 || $services->service_item_type==3)
-                                            <div class="card">
-                                                <div class="card-body p-2">
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="d-none float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center mx-2">
-                                                                <i class="{{config('global.job_status_icon')[$services->job_status]}} opacity-10" aria-hidden="true"></i>
-                                                            </div>
-                                                            <h6 class="mb-0 text-md">
-                                                                @if($services->quantity>1)
-                                                                {{$services->quantity.' x '}}
-                                                                @endif
-                                                                {{$services->item_name}}
-                                                                <span class=" bg-gradient-dark text-gradient text-sm font-weight-bold">({{$services->department_code}})</span>
-                                                            </h6>
-                                                            <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
-                                                                <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
-                                                            </div>
-                                                            @if($services->job_status)
-                                                            <h6 class="my-2 text-sm">
-                                                                Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
-                                                            </h6>
-                                                            @endif
-                                                            
-                                                            <!-- <p class="text-sm font-weight-bold mb-0">
-                                                                <span class="mb-2 text-xs">Price: <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($services->total_price)}}</span></span>
-                                                            </p>
-                                                            <p class="text-sm font-weight-bold mb-0">
-                                                                <span class="text-xs">VAT: <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($services->vat)}}</span></span>
-                                                            </p>
-                                                            <p class="text-sm font-weight-bold mb-2">
-                                                                <span class="text-md text-dark">Grand Total: <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($services->grand_total)}}</span></span>
-                                                            </p> -->
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            @if($services->job_status==1)
-                                                                @include('components.checklist.serviceTimer')
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                                </a>
-                                                            @elseif($services->job_status>=2 && $services->job_status<3)
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                                </a>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                    <hr class="horizontal dark mt-0 mb-1">
-                                                    @if($services->job_status==1)
-                                                        @if($showchecklist[$services->id])
-                                                            <button type="button" class="btn btn-icon btn-3 btn-outline-primary" wire:click="checklistToggleSelectAll('{{$services}}')">
-                                                                <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
-                                                                Mark as all good
-                                                            </button>
-                                                            @if($services->item_code=="S255")
-                                                                @include('components.checklist.interiorCleaning-checklist')
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                </a>
-
-                                                            @elseif(in_array($services->section_name, config('global.check_list.wash.services')))
-                                                                @include('components.checklist.wash-checklist')
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                </a>
-                                                            @elseif(in_array($services->section_name, config('global.check_list.glazing.services')))
-                                                                @include('components.checklist.glazing-checklist')
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                </a>
-                                                            @elseif(in_array($services->section_name, config('global.check_list.interiorCleaning.services')))
-                                                                @include('components.checklist.interiorCleaning-checklist')
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                </a>
-                                                            @elseif(in_array($services->section_name, config('global.check_list.oilChange.services')))
-                                                                @include('components.checklist.oilChange-checklist')
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                </a>
-                                                            @elseif(in_array($services->section_name, config('global.check_list.tinting.services')))
-                                                                @include('components.checklist.tinting-checklist')
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                </a>
-                                                            @elseif(in_array($services->section_name, config('global.check_list.mechanical.services')))
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                </a>
-                                                            @else
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                </a>
-                                                            @endif
-                                                        @endif
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @else
-                                            <div class="card">
-                                                <div class="card-body p-2">
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="d-none float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center mx-2">
-                                                                <i class="{{config('global.job_status_icon')[$services->job_status]}} opacity-10" aria-hidden="true"></i>
-                                                            </div>
-                                                            <h6 class="mb-0 text-md">
-                                                                @if($services->quantity>1)
-                                                                {{$services->quantity.' x '}}
-                                                                @endif
-                                                                {{$services->item_name}}
-                                                                <span class=" bg-gradient-dark text-gradient text-sm font-weight-bold">({{$services->department_code}})</span>
-                                                            </h6>
-                                                            <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
-                                                                <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
-                                                            </div>
-                                                            @if($services->job_status)
-                                                            <h6 class="my-2 text-sm">
-                                                                Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
-                                                            </h6>
-                                                            @endif
-                                                            
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            @if($services->job_status==1)
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                                </a>
-                                                            @elseif($services->job_status>=2 && $services->job_status<3)
-                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                                </a>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                    <hr class="horizontal dark mt-0 mb-1">
-                                                    @if($services->job_status==1)
-                                                        @if($showchecklist[$services->id])
-                                                        
-                                                            <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                    <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                </a>
-                                                        @endif
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @endif
                                     </li>
-                                @endif
-                            @empty
-                                <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
-                                    <div class="d-flex flex-column">
-                                        <h6 class="mb-3 text-sm text-danger">Empty..!</h6>
-                                    </div>
-                                </li>
-                            @endforelse
+                                @endforelse 
+                            @else
+                                @forelse( $jobcardDetails->customerJobServices as $services)
+                                    @if($services->section_name == 'Mechanical')
+                                        @if(!$mechServiceUpdate)
+                                            <?php $mechServiceUpdate=true; ?>
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <h6 class="mb-0 text-md">
+                                                        {{$services->section_name}}
+                                                    </h6>
+                                                    <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
+                                                        <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
+                                                    </div>
+                                                    @if($services->job_status)
+                                                    <h6 class="my-2 text-sm">
+                                                        Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
+                                                    </h6>
+                                                    @endif
+                                                </div>
+                                                <div class="col-md-4">
+                                                    @if($services->job_status==1)
+                                                        @include('components.checklist.serviceTimer')
+                                                        <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
+                                                            <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> MEchanical {{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                        </a>
+                                                    @elseif($services->job_status>=2 && $services->job_status<3)
+                                                        <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'mech')">
+                                                            <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if($services->job_status==1)
+                                            @if($showchecklist[$services->id])
+                                                @if(in_array($services->section_name, config('global.check_list.mechanical.services')))
+
+                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'mech')">
+                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> Mechanical {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                    </a>
+                                                @endif
+                                            @endif
+                                        @endif
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card">
+                                                <div class="card-header text-center pt-4 pb-3">
+                                                    <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
+                                                    <h5 class="text-dark">
+                                                        @if($services->quantity>1)
+                                                            {{$services->quantity.' x '}}
+                                                        @endif
+                                                        {{$services->item_name}}
+                                                    </h5>
+                                                </div>
+                                                <div class="card-body text-lg-left text-center pt-0">
+                                                    <div class="d-flex justify-content-lg-start justify-content-center p-2">
+                                                        <div class="icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center">
+                                                            <i class="fas fa-check opacity-10" aria-hidden="true"></i>
+                                                        </div>
+                                                        <div>
+                                                            <span class="ps-3 {{config('global.jobs.status_text_class')[$services->job_status]}}">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @elseif($services->department_name == 'Quick Lube')
+                                        @if(!$qlServiceUpdate)
+                                            <?php $qlServiceUpdate=true; ?>
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <h6 class="mb-0 text-md">
+                                                        {{$services->section_name}}
+                                                    </h6>
+                                                    <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
+                                                        <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
+                                                    </div>
+                                                    @if($services->job_status)
+                                                    <h6 class="my-2 text-sm">
+                                                        Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
+                                                    </h6>
+                                                    @endif
+                                                </div>
+                                                <div class="col-md-4">
+                                                    @if($services->job_status==1)
+                                                        @include('components.checklist.qlServiceTimer')
+                                                        <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
+                                                            <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">Quick Lube {{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                        </a>
+                                                    @elseif($services->job_status>=2 && $services->job_status<3)
+                                                        <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
+                                                            <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if($services->job_status==1)
+                                            @if($showchecklist[$services->id])
+                                                @if(in_array($services->department_name, config('global.check_list.oilChange.services')))
+                                                    @include('components.checklist.oilChange-checklist')
+                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
+                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> Quick Lube {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                    </a>
+                                                @endif
+                                            @endif
+                                        @endif
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card">
+                                                <div class="card-header text-center pt-4 pb-3">
+                                                    <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
+                                                    <h5 class="text-dark">
+                                                        @if($services->quantity>1)
+                                                            {{$services->quantity.' x '}}
+                                                        @endif
+                                                        {{$services->item_name}}
+                                                        
+                                                    </h5>
+                                                </div>
+                                                <div class="card-body text-lg-left text-center pt-0">
+                                                    <div class="d-flex justify-content-lg-start justify-content-center p-2">
+                                                        <div class="icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center">
+                                                            <i class="fas fa-check opacity-10" aria-hidden="true"></i>
+                                                        </div>
+                                                        <div>
+                                                            <span class="ps-3 {{config('global.jobs.status_text_class')[$services->job_status]}}">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <li class="list-group-item border-0  p-2 mb-2 border-radius-lg">
+                                            @if($services->service_item_type==1 || $services->service_item_type==3)
+                                                <div class="card">
+                                                    <div class="card-body p-2">
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="d-none float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center mx-2">
+                                                                    <i class="{{config('global.job_status_icon')[$services->job_status]}} opacity-10" aria-hidden="true"></i>
+                                                                </div>
+                                                                <h6 class="mb-0 text-md">
+                                                                    @if($services->quantity>1)
+                                                                    {{$services->quantity.' x '}}
+                                                                    @endif
+                                                                    {{$services->item_name}}
+                                                                    <span class=" bg-gradient-dark text-gradient text-sm font-weight-bold">({{$services->department_code}})</span>
+                                                                </h6>
+                                                                <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
+                                                                    <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
+                                                                </div>
+                                                                @if($services->job_status)
+                                                                <h6 class="my-2 text-sm">
+                                                                    Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
+                                                                </h6>
+                                                                @endif
+                                                                
+                                                                <!-- <p class="text-sm font-weight-bold mb-0">
+                                                                    <span class="mb-2 text-xs">Price: <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($services->total_price)}}</span></span>
+                                                                </p>
+                                                                <p class="text-sm font-weight-bold mb-0">
+                                                                    <span class="text-xs">VAT: <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($services->vat)}}</span></span>
+                                                                </p>
+                                                                <p class="text-sm font-weight-bold mb-2">
+                                                                    <span class="text-md text-dark">Grand Total: <span class="text-dark ms-2 font-weight-bold">AED {{custom_round($services->grand_total)}}</span></span>
+                                                                </p> -->
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                @if($services->job_status==1)
+                                                                    @include('components.checklist.serviceTimer')
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                                    </a>
+                                                                @elseif($services->job_status>=2 && $services->job_status<3)
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                                    </a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        <hr class="horizontal dark mt-0 mb-1">
+                                                        @if($services->job_status==1)
+                                                            @if($showchecklist[$services->id])
+                                                                <button type="button" class="btn btn-icon btn-3 btn-outline-primary" wire:click="checklistToggleSelectAll('{{$services}}')">
+                                                                    <span class="btn-inner--icon"><i class="ni ni-button-play"></i></span>
+                                                                    Mark as all good
+                                                                </button>
+                                                                @if($services->item_code=="S255")
+                                                                    @include('components.checklist.interiorCleaning-checklist')
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                                    </a>
+
+                                                                @elseif(in_array($services->section_name, config('global.check_list.wash.services')))
+                                                                    @include('components.checklist.wash-checklist')
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                                    </a>
+                                                                @elseif(in_array($services->section_name, config('global.check_list.glazing.services')))
+                                                                    @include('components.checklist.glazing-checklist')
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                                    </a>
+                                                                @elseif(in_array($services->section_name, config('global.check_list.interiorCleaning.services')))
+                                                                    @include('components.checklist.interiorCleaning-checklist')
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                                    </a>
+                                                                @elseif(in_array($services->section_name, config('global.check_list.oilChange.services')))
+                                                                    @include('components.checklist.oilChange-checklist')
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                                    </a>
+                                                                @elseif(in_array($services->section_name, config('global.check_list.tinting.services')))
+                                                                    @include('components.checklist.tinting-checklist')
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                                    </a>
+                                                                @elseif(in_array($services->section_name, config('global.check_list.mechanical.services')))
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                                    </a>
+                                                                @else
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                                    </a>
+                                                                @endif
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="card">
+                                                    <div class="card-body p-2">
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="d-none float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center mx-2">
+                                                                    <i class="{{config('global.job_status_icon')[$services->job_status]}} opacity-10" aria-hidden="true"></i>
+                                                                </div>
+                                                                <h6 class="mb-0 text-md">
+                                                                    @if($services->quantity>1)
+                                                                    {{$services->quantity.' x '}}
+                                                                    @endif
+                                                                    {{$services->item_name}}
+                                                                    <span class=" bg-gradient-dark text-gradient text-sm font-weight-bold">({{$services->department_code}})</span>
+                                                                </h6>
+                                                                <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
+                                                                    <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
+                                                                </div>
+                                                                @if($services->job_status)
+                                                                <h6 class="my-2 text-sm">
+                                                                    Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
+                                                                </h6>
+                                                                @endif
+                                                                
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                @if($services->job_status==1)
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                                    </a>
+                                                                @elseif($services->job_status>=2 && $services->job_status<3)
+                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
+                                                                    </a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        <hr class="horizontal dark mt-0 mb-1">
+                                                        @if($services->job_status==1)
+                                                            @if($showchecklist[$services->id])
+                                                            
+                                                                <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
+                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
+                                                                    </a>
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </li>
+                                    @endif
+                                @empty
+                                    <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                                        <div class="d-flex flex-column">
+                                            <h6 class="mb-3 text-sm text-danger">Empty..!</h6>
+                                        </div>
+                                    </li>
+                                @endforelse
+                            @endif
                         </ul>
                     </div>
                 </div>
@@ -1178,7 +1215,15 @@
             </div>
        </div>
     </div>
-    
+    <div wire:loading wire:target="confirmCancelJob">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
     <div wire:loading wire:target="openVehicleImageDetails">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
             <div class="la-ball-beat">

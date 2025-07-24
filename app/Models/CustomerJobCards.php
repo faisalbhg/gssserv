@@ -60,6 +60,7 @@ class CustomerJobCards extends Model
         'payment_link_synched',
         'job_create_status',
         'job_status',
+        'last_job_status',
         'job_departent',
         'cancellation_reson',
         'cancelled_by',
