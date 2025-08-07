@@ -142,6 +142,7 @@ class CustomerServiceJob extends Component
         $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','!=',4);
 
         $this->jobDetails =  $customerJobCardsQuery->first();
+        //dd($this->jobDetails);
         if($this->jobDetails){
             $this->customer_id = $this->jobDetails->customer_id;
             $this->vehicle_id = $this->jobDetails->vehicle_id;
@@ -186,7 +187,6 @@ class CustomerServiceJob extends Component
                     $cartInsert['start_date']=$customerJobServices->discount_start_date;
                     $cartInsert['end_date']=$customerJobServices->discount_end_date;
                     $cartInsert['discount_perc']=$customerJobServices->discount_percentage;
-
                     CustomerServiceCart::insert($cartInsert);
                 }
             }
@@ -449,7 +449,10 @@ class CustomerServiceJob extends Component
 
     public function render()
     {
-        /*foreach(CustomerServiceCart::with(['getJobInfo'])->where('job_number','!=',null)->get() as $job_numberDget)
+        /*$getJobLisTgbj = CustomerServiceCart::with(['getJobInfo'])->where(function ($query) {
+                            $query->whereRelation('getJobInfo', 'job_status', '=',4);
+                        })->where('job_number','!=',null)->get();
+        foreach($getJobLisTgbj as $job_numberDget)
         {
             if($job_numberDget->getJobInfo['job_status']>3){
                 CustomerServiceCart::where(['customer_id'=>$job_numberDget->customer_id,'vehicle_id'=>$job_numberDget->vehicle_id,'job_number'=>$job_numberDget->job_number])->delete();

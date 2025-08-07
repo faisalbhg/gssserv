@@ -205,9 +205,12 @@ class VehicleSearchSave extends Component
         //dd($customer_id.''.$vehicle_id);
         $existingJobs = CustomerJobCards::with(['makeInfo','modelInfo','customerJobServices'])->where([
             'vehicle_id'=>$vehicle_id,
-            'customer_id'=>$customer_id
-        ])->where('payment_status','!=',1)->where('job_status','!=',4);
-        //dd($existingJobs->exists());
+            'customer_id'=>$customer_id,
+            'station'=>auth()->user('user')['station_code'],
+        ])
+        //->where('customer_id','!=',null)
+        ->where('payment_status','!=',1)->where('job_status','!=',4);
+        //dd($existingJobs->get());
         if($existingJobs->exists())
         {
             $this->showPendingJobList=true;
