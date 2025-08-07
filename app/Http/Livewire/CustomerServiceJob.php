@@ -449,12 +449,12 @@ class CustomerServiceJob extends Component
 
     public function render()
     {
-        foreach(CustomerServiceCart::with(['getJobInfo'])->where('job_number','!=',null)->get() as $job_numberDget)
+        /*foreach(CustomerServiceCart::with(['getJobInfo'])->where('job_number','!=',null)->get() as $job_numberDget)
         {
             if($job_numberDget->getJobInfo['job_status']>3){
                 CustomerServiceCart::where(['customer_id'=>$job_numberDget->customer_id,'vehicle_id'=>$job_numberDget->vehicle_id,'job_number'=>$job_numberDget->job_number])->delete();
             }
-        }
+        }*/
         if($this->job_number==null){
             $this->checkExistingJobs();
         }
@@ -1622,7 +1622,6 @@ class CustomerServiceJob extends Component
 
     public function getCartInfo($value='')
     {
-        
         $customerServiceCartQuery = CustomerServiceCart::with(['manualDiscountServiceInfo','customerInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id]);
         if($this->job_number)
         {
