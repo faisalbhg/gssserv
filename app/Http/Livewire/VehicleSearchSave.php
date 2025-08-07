@@ -424,27 +424,30 @@ class VehicleSearchSave extends Component
         else
         {
             $onlyCustomer = TenantMasterCustomers::where('Mobile','like', "%$this->mobile%")->first();
-            $this->mobile= $onlyCustomer->Mobile;
-            $this->name = $onlyCustomer->TenantName;
-            $this->email = $onlyCustomer->Email;
-            $this->customer_id = $onlyCustomer->TenantId;
-            $this->customer_code = $onlyCustomer->TenantCode;
-            //dd($this->customer_id);
+            if($onlyCustomer)
+            {
+                $this->mobile= $onlyCustomer->Mobile;
+                $this->name = $onlyCustomer->TenantName;
+                $this->email = $onlyCustomer->Email;
+                $this->customer_id = $onlyCustomer->TenantId;
+                $this->customer_code = $onlyCustomer->TenantCode;
+                //dd($this->customer_id);
 
-            $this->showByMobileNumber=false;
-            $this->showCustomerForm=false;
+                $this->showByMobileNumber=false;
+                $this->showCustomerForm=false;
 
-            $this->showForms=true;
-            $this->searchByMobileNumber=true;
-            $this->showByMobileNumber=true;
-            $this->showSearchByPlateNumberButton=false;
-            $this->searchByChaisisForm=true;
-            $this->showSearchByChaisisButton=false;
-            $this->otherVehicleDetailsForm=true;
-            $this->updateVehicleFormBtn=false;
-            $this->addVehicleFormBtn=false;
-            $this->cancelEdidAddFormBtn=false;
-            $this->showSaveCustomerButton=true;
+                $this->showForms=true;
+                $this->searchByMobileNumber=true;
+                $this->showByMobileNumber=true;
+                $this->showSearchByPlateNumberButton=false;
+                $this->searchByChaisisForm=true;
+                $this->showSearchByChaisisButton=false;
+                $this->otherVehicleDetailsForm=true;
+                $this->updateVehicleFormBtn=false;
+                $this->addVehicleFormBtn=false;
+                $this->cancelEdidAddFormBtn=false;
+                $this->showSaveCustomerButton=true;
+            }
         }
     }
 
