@@ -1622,9 +1622,7 @@ class CustomerServiceJob extends Component
 
     public function getCartInfo($value='')
     {
-        dd(CustomerJobCards::where(['job_number'=>$this->job_number])->update(['customer_job_update'=>null]));
-        dd($this->job_number);
-        dd(CustomerServiceCart::with(['manualDiscountServiceInfo','customerInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get());
+        
         $customerServiceCartQuery = CustomerServiceCart::with(['manualDiscountServiceInfo','customerInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id]);
         if($this->job_number)
         {
