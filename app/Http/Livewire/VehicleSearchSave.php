@@ -24,6 +24,7 @@ use App\Models\VehicleMakes;
 use App\Models\Country;
 use App\Models\TenantMasterCustomers;
 use App\Models\CustomerServiceCart;
+use App\Models\CustomerJobCards;
 
 class VehicleSearchSave extends Component
 {
@@ -31,7 +32,7 @@ class VehicleSearchSave extends Component
     public $showWalkingCustomerPanel = true, $showContractCustomerPanel=false;
     public $searchByMobileNumber = true, $showSearchByMobileBtn=true, $searchByMobileNumberBtn=true,$searchByPlateBtn=false, $searchByChaisisBtn=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false, $searchByChaisis=false, $showAddMakeModelNew=false;
     public $showForms=true, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false, $numberPlateRequired=true, $searchByContractBtn=false, $showSearchContractCustomers=false, $showSaveContractCustomerVehicle=false, $showSaveCustomerVehicleOnly=false;
-    public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category=2, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km, $contract_customer_id;
+    public $mobile, $name, $email, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category=2, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km, $contract_customer_id, $customer_code;
     public $countryList = [], $stateList=[], $plateEmiratesCategories=[], $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[], $contractCustomersList=[];
     public $editCustomerAndVehicle=false;
     public $customers=[];
@@ -41,6 +42,7 @@ class VehicleSearchSave extends Component
     public $otherCountryPlateCode;
     //public $pendingCustomersCart;
     public $plateStateCodeLetter;
+    public $pendingExistingJobs=null, $showPendingJobList=false;
 
     public function render()
     {
@@ -189,11 +191,35 @@ class VehicleSearchSave extends Component
             //$this->getCustomerVehicleSearch('contract_customer_name');
         }
         
+        if($this->customer_id && $this->vehicle_id){
+            $this->checkExistingJobs();
+        }
         
         //$this->dispatchBrowserEvent('imageUpload');
         $this->dispatchBrowserEvent('selectSearchEvent');
         $this->emit('chosenUpdated');
         return view('livewire.vehicle-search-save');
+    }
+
+    public function selectVehicleProceed($customer_id, $vehicle_id){
+        //dd($customer_id.''.$vehicle_id);
+        $existingJobs = CustomerJobCards::with(['makeInfo','modelInfo','customerJobServices'])->where([
+            'vehicle_id'=>$vehicle_id,
+            'customer_id'=>$customer_id
+        ])->where('payment_status','!=',1)->where('job_status','!=',4);
+        //dd($existingJobs->exists());
+        if($existingJobs->exists())
+        {
+            $this->showPendingJobList=true;
+            $this->pendingExistingJobs = $existingJobs->get();
+            //dd($this->pendingExistingJobs);
+            $this->dispatchBrowserEvent('openPendingJobListModal');
+            //$existingJobs = $existingJobs->first();
+            //return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$existingJobs->job_number);
+        }
+        else{
+            return redirect()->to('customer-service-job/'.$customer_id.'/'.$vehicle_id);
+        }
     }
 
     public function customerPanelTab($tab)
@@ -391,7 +417,35 @@ class VehicleSearchSave extends Component
             
             $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('customer_id', '=', $this->contract_customer_id);
         }
-        $this->customers = $searchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1)->get();
+        $searchCustomerVehicleResult = $searchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1);
+        if($searchCustomerVehicleResult->exists()){
+            $this->customers = $searchCustomerVehicleResult->get();    
+        }
+        else
+        {
+            $onlyCustomer = TenantMasterCustomers::where('Mobile','like', "%$this->mobile%")->first();
+            $this->mobile= $onlyCustomer->Mobile;
+            $this->name = $onlyCustomer->TenantName;
+            $this->email = $onlyCustomer->Email;
+            $this->customer_id = $onlyCustomer->TenantId;
+            $this->customer_code = $onlyCustomer->TenantCode;
+            //dd($this->customer_id);
+
+            $this->showByMobileNumber=false;
+            $this->showCustomerForm=false;
+
+            $this->showForms=true;
+            $this->searchByMobileNumber=true;
+            $this->showByMobileNumber=true;
+            $this->showSearchByPlateNumberButton=false;
+            $this->searchByChaisisForm=true;
+            $this->showSearchByChaisisButton=false;
+            $this->otherVehicleDetailsForm=true;
+            $this->updateVehicleFormBtn=false;
+            $this->addVehicleFormBtn=false;
+            $this->cancelEdidAddFormBtn=false;
+            $this->showSaveCustomerButton=true;
+        }
     }
 
 
@@ -555,6 +609,7 @@ class VehicleSearchSave extends Component
         
 
         //Save Customer
+
         $insertCustmoerData['Mobile']=isset($this->mobile)?$this->mobile:'';
         $insertCustmoerData['TenantName']=isset($this->name)?$this->name:'Walk-In';
         if($this->email!=null)
@@ -579,30 +634,45 @@ class VehicleSearchSave extends Component
         $categoryC=1;
         $paymethod=1;
         $tenantCode_out= null ;
+        if($this->customer_id){
+            $tenantcode = $this->customer_code;
+            
+            //Call Procedure for Customer Edit
+            $customerSaveResult = DB::select('EXEC CustomerManage @tenantcode = ?, @tenantType = ?, @category = ?, @tenantName = ?, @shortName = ?, @mobile = ?, @email = ?, @active = ?, @paymethod = ?, @tenantCode_out = ?', [
+                $tenantcode,
+                $tenantType,
+                $category,
+                $tenantName,
+                $shortName,
+                $mobile,
+                $email,
+                $active,
+                $paymethod,
+                $tenantCode_out,
+            ]); 
+        }else{
 
-        //Call Procedure for Customer Save
-        $customerSaveResult = DB::select('EXEC CustomerManage @tenantcode = ?, @tenantType = ?, @category = ?, @tenantName = ?, @shortName = ?, @mobile = ?, @email = ?, @active = ?, @paymethod = ?, @tenantCode_out = ?', [
-            $tenantcode,
-            $tenantType,
-            $category,
-            $tenantName,
-            $shortName,
-            $mobile,
-            $email,
-            $active,
-            $paymethod,
-            $tenantCode_out,
-        ]);
+            //Call Procedure for Customer Save
+            $customerSaveResult = DB::select('EXEC CustomerManage @tenantcode = ?, @tenantType = ?, @category = ?, @tenantName = ?, @shortName = ?, @mobile = ?, @email = ?, @active = ?, @paymethod = ?, @tenantCode_out = ?', [
+                $tenantcode,
+                $tenantType,
+                $category,
+                $tenantName,
+                $shortName,
+                $mobile,
+                $email,
+                $active,
+                $paymethod,
+                $tenantCode_out,
+            ]);
 
-        $customerSaveResult = (array)$customerSaveResult[0];
-        //dd($customerSaveResult); 
-        $customerId = $customerSaveResult['TenantId'];
-        //dd($customerId);
-        //$customerInsert = TenantMasterCustomers::create($insertCustmoerData);
-        $this->customer_id = $customerId;
+            $customerSaveResult = (array)$customerSaveResult[0];
+            $customerId = $customerSaveResult['TenantId'];
+            $this->customer_id = $customerId;
+        }
 
         //Save Customer Vehicle
-        $customerVehicleData['customer_id']=$customerId;
+        $customerVehicleData['customer_id']=$this->customer_id;
         $customerVehicleData['vehicle_type']=$this->vehicle_type;
         $customerVehicleData['make']=$this->make;
         $customerVehicleData['model']=$this->model;

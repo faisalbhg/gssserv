@@ -26,19 +26,19 @@
                             <div class="card-header text-center pt-4 pb-3">
 
                                 <div class="card card-background move-on-hover">
-                                    <div class="full-background" style="background-image: url('{{url("public/storage/".$selectedVehicleInfo["vehicle_image"])}}')"></div>
+                                    <div class="full-background" style="background-image: url('{{url("public/storage/".$pendingJob->vehicle_image)}}')"></div>
                                     <div class="card-body pt-5">
                                         <h4 class="text-white mb-0 pb-0">
-                                            @if($selectedVehicleInfo['customerInfoMaster']['TenantName'])
-                                                {{$selectedVehicleInfo['customerInfoMaster']['TenantName']}}
+                                            @if($pendingJob->customer_name)
+                                                {{$pendingJob->customer_name}}
                                             @else
                                             Guest
                                             @endif
                                         </h4>
-                                        <p class="mt-0 pt-0"><small>{{$selectedVehicleInfo['customerInfoMaster']['Email']}}, {{$selectedVehicleInfo['customerInfoMaster']['Mobile']}}</small></p>
-                                        <p class="mb-0">{{isset($selectedVehicleInfo['makeInfo'])?$selectedVehicleInfo['makeInfo']['vehicle_name']:''}}, {{isset($selectedVehicleInfo['modelInfo']['vehicle_model_name'])?$selectedVehicleInfo['modelInfo']['vehicle_model_name']:''}}</p>
+                                        <p class="mt-0 pt-0"><small>{{$pendingJob->customer_name}}, {{$pendingJob->customer_mobile}}</small></p>
+                                        <p class="mb-0">{{$pendingJob->makeInfo['vehicle_name'] }} - {{$pendingJob->modelInfo['vehicle_model_name'] }}</p>
                                         <h4 class="text-white mb-0 pb-0">
-                                            {{$selectedVehicleInfo['plate_number_final']}}
+                                            {{$pendingJob->plate_number}}
                                         </h4>
                                     </div>
                                 </div>

@@ -50,7 +50,7 @@ class Operations extends Component
     public $search_job_number = '', $search_job_date;
     public $customerDetails = false;
     public $job_number, $job_date_time, $vehicle_image, $make, $model, $plate_number, $chassis_number, $vehicle_km, $name, $email, $mobile, $customerType, $payment_status=0, $payment_type=0, $job_status=0, $job_departent, $total_price, $vat, $grand_total, $tax;
-    public $filter = [0,1,2,3,4,5];
+    public $filter = [0,1,2,3,4,5,6,7,8];
 
     public $customerjobservices =array();
     public $customerjoblogs = array();
@@ -95,6 +95,11 @@ class Operations extends Component
     public $selectAll = false;
     public $vImageR1Cl1, $vImageR2Cl1, $vImageFCl1, $vImageBCl1, $vImageL1Cl1, $vImageL2Cl1, $customerSignatureCl1,$roof_imagesCl1, $dash_image1Cl1, $dash_image2Cl1, $passenger_seat_imageCl1, $driver_seat_imageCl1, $back_seat1Cl1, $back_seat2Cl1, $back_seat3Cl1, $back_seat4Cl1, $photoCl1, $car_roof_imagesCl1;
     public $canceljobReasonButton=false,$cancelError,$cancelationReason, $customerSignatureShow;
+    public $quickLubeServices = [], $mechanicalServices = [];
+    public $qLInspectionPending=false, $qLCustomerAprovePending=false, $qLServiceIssuePending=false, $qLServicePending=false, $qLServiceWorkingProgressPending = false, $qLServiceQualityCheckPending = false, $qLServiceReadyToDeliverPending=false;
+    public $mechInspectionPending=false, $mechCustomerAprovePending=false, $mechServiceIssuePending=false, $mechServicePending=false, $mechServiceWorkingProgressPending = false, $mechServiceQualityCheckPending = false, $mechServiceReadyToDeliverPending=false;
+    public $showQlQualityCheck=false, $showMechQualityCheck=false;
+    public $alreadyUpdationGOing=false;
 
 
     
@@ -104,6 +109,9 @@ class Operations extends Component
         if($job_number)
         {
             $this->showUpdateModel=true;
+            $this->showQlQualityCheck=false;
+            $this->showMechQualityCheck=false;
+
             $this->customerJobUpdate($job_number);
 
         }
@@ -325,6 +333,194 @@ class Operations extends Component
     public function qualityCheck($servicesId,$ql=null)
     {
         $this->showchecklist[$servicesId]=true;
+    }
+
+    public function qLQualityCheck($job_number){
+        $this->showQlQualityCheck=true;
+    }
+
+    public function mechQualityCheck($job_number){
+        $this->showMechQualityCheck=true;
+    }
+
+
+
+    public function updateQlMechJobService($job_number,$type,$status)
+    {
+        switch ($status) {
+            case '0':
+                if($type=='Quick Lube'){
+                    $this->qLServicePending=false;
+                    $this->qLServiceQualityCheckPending=true;
+                }
+                elseif($type=='Mechanical'){
+                    $this->mechServicePending=false;
+                    $this->mechServiceQualityCheckPending=true;
+                }
+                
+                $updateStatus = 1;
+                break;
+
+            case '1':
+
+                if($type=='Quick Lube'){
+                    $this->showQlQualityCheck=false;
+                    $this->qLServiceWorkingProgressPending=false;
+                    $this->qLServiceQualityCheckPending=true;
+                }
+                elseif($type=='Mechanical'){
+                    $this->showMechQualityCheck=false;
+                    $this->mechServiceWorkingProgressPending=false;
+                    $this->mechServiceQualityCheckPending=true;
+                }
+                
+                $updateStatus = 2;
+                break;
+
+            case '2':
+                if($type=='Quick Lube'){
+                    $this->qLServiceQualityCheckPending=false;
+                }
+                elseif($type=='Mechanical'){
+                    $this->mechServiceQualityCheckPending=false;
+                }
+
+                $updateStatus = 3;
+                break;
+
+            case '3':
+                $updateStatus = 4;
+                break;
+
+            case '6':
+                $updateStatus = 7;
+                if($type=='Quick Lube'){
+                    $this->qLInspectionPending=false;
+                    $this->qLCustomerAprovePending=true;
+                }
+                elseif($type=='Mechanical'){
+                    $this->mechInspectionPending=false;
+                    $this->mechCustomerAprovePending=true;
+                }
+                break;
+            
+            case '7':
+                $updateStatus = 8;
+                if($type=='Quick Lube'){
+                    $this->qLCustomerAprovePending=false;
+                    $this->qLServiceIssuePending=true;
+                }
+                elseif($type=='Mechanical'){
+                    $this->mechCustomerAprovePending=false;
+                    $this->mechServiceIssuePending=true;
+                }
+
+                break;
+
+            case '8':
+                $updateStatus = 0;
+                if($type=='Quick Lube'){
+                    $this->qLServiceIssuePending=false;
+                    $this->qLServicePending=true;
+                }
+                elseif($type=='Mechanical'){
+                    $this->mechServiceIssuePending=false;
+                    $this->mechServicePending=true;
+                }
+                break;
+
+            default:
+                $updateStatus = 0;
+                break;
+        }
+
+        foreach(CustomerJobCardServices::where(['job_number'=>$job_number,'section_name'=>$type,'job_status'=>$status])->get() as $jobCardService)
+        {
+            CustomerJobCardServices::where(['id'=>$jobCardService->id])->update([
+                'job_status'=>$updateStatus,
+                'job_departent'=>$updateStatus,
+            ]);
+
+            $updatesServiceChecklist = [
+                'job_number'=>$job_number,
+                'job_Service_id'=>$jobCardService->id,
+                //'checklist'=>json_encode($this->checklists['oilchange']),
+                //'checklist_notes'=>json_encode($this->checklist_comments['oilchange']),
+                'created_by'=>auth()->user('user')->id
+            ];
+
+            $updatesServiceChecklist['checklist']=isset($this->checklists['oilchange'])?json_encode($this->checklists['oilchange']):null;
+            $updatesServiceChecklist['checklist_notes']=isset($this->checklist_comments['oilchange'])?json_encode($this->checklist_comments['oilchange']):null;
+            JobCardChecklists::create($updatesServiceChecklist);
+
+            $serviceJobUpdateLog = [
+                'job_number'=>$job_number,
+                'customer_job__card_service_id'=>$jobCardService->id,
+                'job_status'=>$updateStatus,
+                'job_departent'=>$updateStatus,
+                'job_description'=>json_encode($this),
+                'created_by'=>auth()->user('user')->id,
+            ];
+            CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
+        }
+        $this->showQlQualityCheck=false;
+        $this->updateJobStatusSendSms($job_number);
+        $this->customerJobUpdate($job_number);
+    }
+
+    public function updateJobStatusSendSms($job_number){
+        $getCountSalesJobStatus = CustomerJobCardServices::select(
+            array(
+                \DB::raw('count(case when job_status = 0 then job_status end) new'),
+                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
+                \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
+                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
+                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+                \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
+                \DB::raw('count(case when job_status = 6 then job_status end) inspection'),
+                \DB::raw('count(case when job_status = 7 then job_status end) customer_aproved'),
+                \DB::raw('count(case when job_status = 8 then job_status end) issued'),
+            )
+        )->where(['job_number'=>$job_number])->first();
+        //dd($getCountSalesJobStatus);
+        $mainSTatus=1;
+        if($getCountSalesJobStatus->inspection>0){
+            $mainSTatus=6;
+        }
+        else if($getCountSalesJobStatus->customer_aproved>0){
+            $mainSTatus=7;
+        }
+        else if($getCountSalesJobStatus->issued>0){
+            $mainSTatus=8;
+        }
+        else if($getCountSalesJobStatus->working_progress>0){
+            $mainSTatus=1;
+        }
+        else if($getCountSalesJobStatus->qualitycheck>0){
+            $mainSTatus=2;
+        }
+        else if($getCountSalesJobStatus->ready_to_deliver>0){
+            $mainSTatus=3;
+        }
+        else if($getCountSalesJobStatus->delivered>0){
+            $mainSTatus=4;
+        }
+        else if($getCountSalesJobStatus->cancelled>0){
+            $mainSTatus=5;
+        }
+        if($mainSTatus==8 && CustomerJobCards::where(['job_number'=>$job_number, 'send_sms'=>null])->exists())
+        {
+            //dd($this->jobcardDetails);
+            $mobileNumber = isset($this->jobcardDetails->customer_mobile)?'971'.substr($this->jobcardDetails->customer_mobile, -9):null;
+            $customerName = isset($this->jobcardDetails->customer_name)?$this->jobcardDetails->customer_name:null;
+            $plate_number = isset($this->jobcardDetails->plate_number)?$this->jobcardDetails->plate_number:'';
+            if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+                $msgtext = urlencode('Dear Customer, '.$plate_number.' received at '.auth()->user('user')->stationName['ShortName'].'. Track or pay online: https://gsstations.ae/qr/'.$job_number.'. For help, call 800477823.');
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                
+            }
+        }
     }
 
     public function cancelJob($job_number)
@@ -643,20 +839,35 @@ class Operations extends Component
                 \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
                 \DB::raw('count(case when job_status = 5 then job_status end) cencelled'),
+                \DB::raw('count(case when job_status = 6 then job_status end) cencelledrequest'),
+                \DB::raw('count(case when job_status = 7 then job_status end) issue_pending'),
+                \DB::raw('count(case when job_status = 8 then job_status end) issued'),
             )
         )->where(['job_number'=>$services['job_number']])->first();
         //dd($getCountSalesJobStatus);
+        $mainSTatus=1;
         if($getCountSalesJobStatus->working_progress>0){
             $mainSTatus=1;
         }
         else if($getCountSalesJobStatus->qualitycheck>0){
             $mainSTatus=2;
         }
+        else if($getCountSalesJobStatus->issue_pending>0){
+            $mainSTatus=7;
+        }
+        else if($getCountSalesJobStatus->issued>0){
+            $mainSTatus=8;
+        }
         else if($getCountSalesJobStatus->ready_to_deliver>0){
             $mainSTatus=3;
         }
         else if($getCountSalesJobStatus->delivered>0){
             $mainSTatus=4;
+        }
+        else if($getCountSalesJobStatus->cancelled>0){
+            $mainSTatus=5;
+        }else if($getCountSalesJobStatus->cancelledrequest>0){
+            $mainSTatus=6;
         }
         $mianJobUpdate = [
             'job_status'=>$mainSTatus,
@@ -674,7 +885,7 @@ class Operations extends Component
         //dd($this->jobcardDetails);
         $this->customerjobservices = $job->customerJobServices;
 
-        if($mainSTatus==3)
+        if($mainSTatus==4)
         {
             
             try {
@@ -860,12 +1071,23 @@ class Operations extends Component
                 \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
                 \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
-                \DB::raw('count(case when job_status = 6 then job_status end) cancelledrequest'),
+                \DB::raw('count(case when job_status = 6 then job_status end) inspection'),
+                \DB::raw('count(case when job_status = 7 then job_status end) customer_aproved'),
+                \DB::raw('count(case when job_status = 8 then job_status end) issued'),
             )
         )->where(['job_number'=>$job_number])->first();
         //dd($getCountSalesJobStatus);
         $mainSTatus=1;
-        if($getCountSalesJobStatus->working_progress>0){
+        if($getCountSalesJobStatus->inspection>0){
+            $mainSTatus=6;
+        }
+        else if($getCountSalesJobStatus->customer_aproved>0){
+            $mainSTatus=7;
+        }
+        else if($getCountSalesJobStatus->issued>0){
+            $mainSTatus=8;
+        }
+        else if($getCountSalesJobStatus->working_progress>0){
             $mainSTatus=1;
         }
         else if($getCountSalesJobStatus->qualitycheck>0){
@@ -879,16 +1101,12 @@ class Operations extends Component
         }
         else if($getCountSalesJobStatus->cancelled>0){
             $mainSTatus=5;
-        }else if($getCountSalesJobStatus->cancelledrequest>0){
-            $mainSTatus=6;
         }
-        //dd($mainSTatus);
         
         $mianJobUpdate = [
             'job_status'=>$mainSTatus,
             'job_departent'=>$mainSTatus,
         ];
-        
         $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$job_number]);
         $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
 
@@ -898,12 +1116,91 @@ class Operations extends Component
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
         $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number])->first();
+        
+        $this->quickLubeServices = [];
+        $this->mechanicalServices = [];
         //dd($this->jobcardDetails);
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {
+            if($jobcardDetailsList->section_name=='Quick Lube'){
+                
+                $this->quickLubeServices[] = $jobcardDetailsList;
+                if($jobcardDetailsList->job_status == 6)
+                {
+                    $this->qLInspectionPending = true;
+                }
+
+                if($jobcardDetailsList->job_status == 7)
+                {
+                    $this->qLCustomerAprovePending = true;
+                }
+
+                if($jobcardDetailsList->job_status == 8)
+                {
+                    $this->qLServiceIssuePending = true;
+                }
+                
+                if($jobcardDetailsList->job_status == 0)
+                {
+                    $this->qLServicePending = true;
+                }
+
+                if($jobcardDetailsList->job_status == 1)
+                {
+                    $this->qLServiceWorkingProgressPending = true;
+                }
+
+                if($jobcardDetailsList->job_status == 2)
+                {
+                    $this->qLServiceQualityCheckPending = true;
+                }
+                if($jobcardDetailsList->job_status == 3)
+                {
+                    $this->qLServiceReadyToDeliverPending = true;
+                }
+            }
+            elseif($jobcardDetailsList->section_name=='Mechanical'){
+
+                
+                $this->mechanicalServices[] = $jobcardDetailsList;
+                if($jobcardDetailsList->job_status == 6)
+                {
+                    $this->mechInspectionPending = true;
+                }
+
+                if($jobcardDetailsList->job_status == 7)
+                {
+                    $this->mechCustomerAprovePending = true;
+                }
+
+                if($jobcardDetailsList->job_status == 8)
+                {
+                    $this->mechServiceIssuePending = true;
+                }
+                
+                if($jobcardDetailsList->job_status == 0)
+                {
+                    $this->mechServicePending = true;
+                }
+
+                if($jobcardDetailsList->job_status == 1)
+                {
+                    $this->mechServiceWorkingProgressPending = true;
+                }
+
+                if($jobcardDetailsList->job_status == 2)
+                {
+                    $this->mechServiceQualityCheckPending = true;
+                }
+                if($jobcardDetailsList->job_status == 3)
+                {
+                    $this->mechServiceReadyToDeliverPending = true;
+                }
+            }
             $this->showchecklist[$jobcardDetailsList->id]=false;
         }
-        
+
+        //dd($this->quickLubeServices);
         
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
             //$this->checkPaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->payment_link_order_ref,$this->jobcardDetails->stationInfo['StationID'], $this->jobcardDetails->plate_number);
@@ -1629,49 +1926,76 @@ class Operations extends Component
     }
 
     public function addNewServiceItemsJob($job_number){
-        CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'job_number'=>$job_number])->delete();
-        
-        foreach($this->jobcardDetails->customerJobServices as $customerJobServices)
+        if(CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'job_number'=>$job_number])->exists())
         {
-            $cartInsert = [
-                'customer_id'=>$this->jobcardDetails->customer_id,
-                'vehicle_id'=>$this->jobcardDetails->vehicle_id,
-                'item_id'=>$customerJobServices->item_id,
-                'item_code'=>$customerJobServices->item_code,
-                'cart_item_type'=>$customerJobServices->service_item_type,
-                'company_code'=>$customerJobServices->company_code,
-                'category_id'=>$customerJobServices->category_id,
-                'sub_category_id'=>$customerJobServices->sub_category_id,
-                'brand_id'=>$customerJobServices->brand_id,
-                'bar_code'=>$customerJobServices->bar_code,
-                'item_name'=>$customerJobServices->item_name,
-                'description'=>$customerJobServices->description,
-                'division_code'=>$customerJobServices->division_code,
-                'department_code'=>$customerJobServices->department_code,
-                'department_name'=>$customerJobServices->department_name,
-                'section_code'=>$customerJobServices->section_code,
-                'unit_price'=>$customerJobServices->total_price,
-                'quantity'=>$customerJobServices->quantity,
-                'created_by'=>auth()->user('user')->id,
-                'created_at'=>Carbon::now(),
-                'job_number'=>$customerJobServices->job_number,
-            ];
-            $cartInsert['price_id']=$customerJobServices->discount_id;
-            $cartInsert['customer_group_id']=$customerJobServices->discount_id;
-            $cartInsert['customer_group_code']=$customerJobServices->discount_code;
-            $cartInsert['min_price']=$customerJobServices->discount_amount;
-            $cartInsert['max_price']=$customerJobServices->discount_amount;
-            $cartInsert['start_date']=$customerJobServices->discount_start_date;
-            $cartInsert['end_date']=$customerJobServices->discount_end_date;
-            $cartInsert['discount_perc']=$customerJobServices->discount_percentage;
-
-            CustomerServiceCart::insert($cartInsert);
+            $this->alreadyUpdationGOing=true;
         }
-        return redirect()->to('customer-service-job/'.$this->jobcardDetails->customer_id.'/'.$this->jobcardDetails->vehicle_id.'/'.$job_number);
+        else{
+            //CustomerJobCards::where(['job_number'=>$job_number])->update(['customer_job_update'=>null]);
+            //dd(CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$job_number])->first());
+            //dd($this->jobcardDetails->job_status);
+
+             $this->addnewItemProceed($job_number);
+        }
+        
+        
 
     }
+
+    public function addnewItemProceed($job_number){
+        if($this->jobcardDetails->job_status!=4 && $this->jobcardDetails->payment_status != 1){
+                CustomerJobCards::where(['job_number'=>$job_number])->update(['customer_job_update'=>1]);
+                CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'job_number'=>$job_number])->delete();
+                foreach($this->jobcardDetails->customerJobServices as $customerJobServices)
+                {
+                    $cartInsert = [
+                        'customer_id'=>$this->jobcardDetails->customer_id,
+                        'vehicle_id'=>$this->jobcardDetails->vehicle_id,
+                        'item_id'=>$customerJobServices->item_id,
+                        'item_code'=>$customerJobServices->item_code,
+                        'cart_item_type'=>$customerJobServices->service_item_type,
+                        'company_code'=>$customerJobServices->company_code,
+                        'category_id'=>$customerJobServices->category_id,
+                        'sub_category_id'=>$customerJobServices->sub_category_id,
+                        'brand_id'=>$customerJobServices->brand_id,
+                        'bar_code'=>$customerJobServices->bar_code,
+                        'item_name'=>$customerJobServices->item_name,
+                        'description'=>$customerJobServices->description,
+                        'division_code'=>$customerJobServices->division_code,
+                        'department_code'=>$customerJobServices->department_code,
+                        'department_name'=>$customerJobServices->department_name,
+                        'section_code'=>$customerJobServices->section_code,
+                        'section_name'=>$customerJobServices->section_name,
+                        'unit_price'=>$customerJobServices->total_price,
+                        'quantity'=>$customerJobServices->quantity,
+                        'created_by'=>auth()->user('user')->id,
+                        'created_at'=>Carbon::now(),
+                        'job_number'=>$customerJobServices->job_number,
+                        'current_job_status'=>$customerJobServices->job_status,
+                    ];
+                    $cartInsert['price_id']=$customerJobServices->discount_id;
+                    $cartInsert['customer_group_id']=$customerJobServices->discount_id;
+                    $cartInsert['customer_group_code']=$customerJobServices->discount_code;
+                    $cartInsert['min_price']=$customerJobServices->discount_amount;
+                    $cartInsert['max_price']=$customerJobServices->discount_amount;
+                    $cartInsert['start_date']=$customerJobServices->discount_start_date;
+                    $cartInsert['end_date']=$customerJobServices->discount_end_date;
+                    $cartInsert['discount_perc']=$customerJobServices->discount_percentage;
+
+                    CustomerServiceCart::insert($cartInsert);
+                }
+                
+            }
+
+            return redirect()->to('customer-service-job/'.$this->jobcardDetails->customer_id.'/'.$this->jobcardDetails->vehicle_id.'/'.$job_number);
+    }
+
     public function markScrach($img){
         //
+    }
+
+    public function updateIssued($serviceId){
+        CustomerJobCardServices::where(['id'=>$serviceId])->update(['job_status'=>8]);
     }
 
 }

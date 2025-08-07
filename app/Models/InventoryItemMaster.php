@@ -23,5 +23,9 @@ class InventoryItemMaster extends Model
         return $this->belongsTo(InventorySalesPrices::class,'ItemId','ServiceItemId');
     }
 
+    public function getStock(){
+        return $this->belongsTo(ItemCurrentStock::class,'ItemCode','ItemCode');
+    }
+
 
 }

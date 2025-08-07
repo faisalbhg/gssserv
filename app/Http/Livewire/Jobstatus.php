@@ -84,6 +84,13 @@ class Jobstatus extends Component
             'updated_by'=>auth()->user('user')->id,
         ];
         CustomerJobCards::where(['job_number'=>$services['job_number']])->update($mianJobUpdate);
+
+        try {
+            DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$this->job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$this->customer_id.'" ');
+        } catch (\Exception $e) {
+            //dd($e->getMessage());
+            //return $e->getMessage();
+        }
         /*$getJobDetails = CustomerJobCards::where(['job_number'=>$services['job_number']])->first();
 
         if(auth()->user('user')->stationName['StationID']==4){

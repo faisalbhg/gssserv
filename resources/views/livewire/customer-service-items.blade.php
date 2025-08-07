@@ -470,6 +470,7 @@
             @if($showItemsSearchResults)
                 <div class="row">
                     @forelse($inventoryItemMasterLists as $servicesItem)
+                    
                         <div class="col-md-4 col-sm-6">
                             <div class="card mt-2">
                                 <div class="card-header text-center p-2">

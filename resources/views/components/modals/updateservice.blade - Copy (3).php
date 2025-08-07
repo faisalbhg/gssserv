@@ -12,16 +12,6 @@
     <div class="modal-dialog" role="document">
        <div class="modal-content">
             <div class="modal-header" style="display:inline !important;">
-                @if($alreadyUpdationGOing)
-                    <div class="d-sm-flex justify-content-right float-end">
-                        <div class="alert alert-warning" role="alert">
-                            <span class="alert-icon"><i class="ni ni-like-2"></i></span>
-                            <span class="alert-text"><strong>Warning!</strong> Job updation is pending,</span>
-                            <a class="btn btn-outline-danger" href="{{url('customer-service-job/'.$jobcardDetails->customer_id.'/'.$jobcardDetails->vehicle_id.'/'.$jobcardDetails->job_number)}}">Confinue New Update</a>
-                            <a class="btn btn-outline-dark" wire:click="addnewItemProceed('{{$jobcardDetails->job_number}}')">Open Existing Update</a>
-                        </div>
-                    </div>
-                @endif
                 <div class="d-sm-flex justify-content-between">
                     <div>
                       <h5 class=" modal-title" id="serviceUpdateModalLabel">#{{$jobcardDetails->job_number}}</h5>
@@ -29,37 +19,41 @@
                         <small>{{ \Carbon\Carbon::parse($jobcardDetails->job_date_time)->format('dS M Y h:i A') }}</small>
                     </div>
                     <div class="d-flex">
-                        @if($jobcardDetails->payment_status==0 && $jobcardDetails->job_status!=4 )
 
-                            @if($jobcardDetails->job_status==6 || $jobcardDetails->job_status == 7 || $jobcardDetails->job_status == 8 || $jobcardDetails->job_status == 1 || $jobcardDetails->job_status == 2 || $jobcardDetails->job_status == 3)
-                                @if($canceljobReasonButton)
-                                    <textarea wire:model="cancelationReason" class="form-control" placeholder="Cancelation Reason..!"></textarea>
-                                    @error('cancelationReason') <span class="text-danger">{{ $message }}</span> @enderror
-                                    <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}','{{$jobcardDetails->job_statuss}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
-                                @else
-                                    @if($jobcardDetails->cancel_req_status==null || $jobcardDetails->cancel_req_status=="R")
-                                        <div>
-                                            <button type="button" wire:click="cancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-danger px-2 mx-2">Cancel Job</button>
+                    @if($jobcardDetails->payment_status==0)
+                        @if($jobcardDetails->job_status<=3)
+                            @if($canceljobReasonButton)
+                            <textarea wire:model="cancelationReason" class="form-control" placeholder="Cancelation Reason..!"></textarea>
+                            @error('cancelationReason') <span class="text-danger">{{ $message }}</span> @enderror
+                            <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}','{{$jobcardDetails->job_statuss}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
+                            @else
+                                @if($jobcardDetails->cancel_req_status==null || $jobcardDetails->cancel_req_status=="R")
+                                <div>
+                                    <button type="button" wire:click="cancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-danger px-2 mx-2">Cancel Job</button>
 
-                                            @if($jobcardDetails->cancel_req_status=="R")
-                                                <label class="mt-2 text-danger px-2 mx-2">Rejected cancellation request</label>
-                                            @endif
-                                        </div>
-                                    @elseif($jobcardDetails->cancel_req_status=='W')
-                                    <button type="button" class="mt-2 btn btn-sm btn-outline-danger px-2 mx-2">Pending Cancelation Request</button>
+                                    @if($jobcardDetails->cancel_req_status=="R")
+                                        <label class="mt-2 text-danger px-2 mx-2">Rejected cancellation request</button>
                                     @endif
-                                    @if($cancelError)<br><span class="text-danger">{{$cancelError}}</span>@endif
+                                </div>
+                                @elseif($jobcardDetails->cancel_req_status=='W')
+                                <button type="button" class="mt-2 btn btn-sm btn-outline-danger px-2 mx-2">Pending Cancelation Request</button>
                                 @endif
+                            @if($cancelError)<br><span class="text-danger">{{$cancelError}}</span>@endif
                             @endif
-                            <button type="button" wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-primary px-2">Add New Service/Items</button>
-                            
                         @endif
-                            
-                        <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
+                        @if($jobcardDetails->cancel_req_status=='A')
+                        <button type="button" class="mt-2 btn btn-sm btn-outline-success px-2 mx-2">Approved Cancelation Request</button>
+                        @endif
+                        <button type="button" wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-primary px-2">Add New Service/Items</button>
+                    @endif
+                        
+                      <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>
                     </div>
                 </div>
             </div>
             <div class="modal-body">
+
+
                 <div class="row">
                     <div class="col-md-6">
                         <a href="javascript:;" class="">
@@ -901,210 +895,34 @@
                             $qlServiceUpdate=false;
                             $mechServiceUpdate=false;
                             ?>
-                            @if($jobcardDetails->cancel_req_status == "A" || $jobcardDetails->cancel_req_status == "W" || $jobcardDetails->job_status==5)
-                                <div class="row">
-                                    @forelse( $jobcardDetails->customerJobServices as $services)
-                                    
-                                        <div class="col-md-4 mb-4">
-                                            <div class="card">
-                                                <div class="card-header text-center pt-4 pb-3">
-                                                    <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
-                                                    <h5 class="text-dark">
-                                                        @if($services->quantity>1)
-                                                            {{$services->quantity.' x '}}
-                                                        @endif
-                                                        {{$services->item_name}}
-                                                    </h5>
-                                                </div>
-                                                <div class="card-body text-lg-left text-center pt-0">
-                                                    <div class="d-flex justify-content-lg-start justify-content-center p-2">
-                                                        <div class="icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center">
-                                                            <i class="fas fa-check opacity-10" aria-hidden="true"></i>
-                                                        </div>
-                                                        <div>
-                                                            <span class="ps-3 {{config('global.jobs.status_text_class')[$services->job_status]}}">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                            @if($jobcardDetails->cancel_req_status==null || $jobcardDetails->cancel_req_status==null)
+                                @forelse( $jobcardDetails->customerJobServices as $services)
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h6 class="mb-0 text-md">
+                                                {{$services->section_name}}
+                                            </h6>
+                                            <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
+                                                <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
                                             </div>
+                                            <h6 class="my-2 text-sm">
+                                                Job Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
+                                            </h6>
                                         </div>
-                                    
-                                    @empty
-                                        <div class="col-md-4 mb-4">
-                                            <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
-                                                <div class="d-flex flex-column">
-                                                    <h6 class="mb-3 text-sm text-danger">Empty..!</h6>
-                                                </div>
-                                            </li>
+                                    </div>
+                                @empty
+                                    <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                                        <div class="d-flex flex-column">
+                                            <h6 class="mb-3 text-sm text-danger">Empty..!</h6>
                                         </div>
-                                    @endforelse 
-                                </div>
+                                    </li>
+                                @endforelse 
                             @else
-                                @if(!empty($quickLubeServices))
-                                    <!--Quick lube Head-->
-                                    <div class="row" >
-                                        <div class="d-sm-flex justify-content-between">
-                                            <div>
-                                                <h5 class=" modal-title">Quick Lube</h5>
-                                            </div>
-                                            <div class="d-flex">
-                                                @if($qLInspectionPending)
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[6]}}" >Current Status: {{config('global.jobs.status')[6]}}</button>
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[6]}}" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Quick Lube','6')">Click to Complete {{config('global.jobs.status')[6]}}</button>
-                                                @elseif($qLCustomerAprovePending)
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[7]}}" >Current Status: {{config('global.jobs.status')[7]}}</button>
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[7]}}" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Quick Lube','7')">Complete {{config('global.jobs.status')[7]}}</button>
-                                                @elseif($qLServiceIssuePending)
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[8]}}" >Current Status: {{config('global.jobs.status')[8]}}</button>
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[8]}}" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Quick Lube','8')">Complete {{config('global.jobs.status')[8]}}</button>
-                                                @elseif($qLServicePending)
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[0]}}" >Current Status: {{config('global.jobs.status')[0]}}</button>
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Quick Lube','0')">
-                                                        <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[1]}}">Complete {{config('global.jobs.status')[1]}}</button>
-                                                    </a>
-                                                @elseif($qLServiceWorkingProgressPending)
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[1]}}" >Current Status: {{config('global.jobs.status')[1]}}</button>
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="qLQualityCheck('{{$jobcardDetails->job_number}}')" >
-                                                        <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[2]}}">Complete {{config('global.jobs.status')[2]}}</button>
-                                                    </a>
-                                                @elseif($qLServiceQualityCheckPending)
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[2]}}" >Current Status: {{config('global.jobs.status')[2]}}</button>
-                                                    <?php /*@include('components.checklist.qlServiceTimer') */ ?>
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Quick Lube','2')">
-                                                        <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[3]}}">Complete {{config('global.jobs.status')[3]}}</button>
-                                                    </a>
-                                                @elseif($qLServiceReadyToDeliverPending)
-                                                    <label class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[3]}}" >Current Status: {{config('global.jobs.status')[3]}}</label>
-                                                    <?php /*@include('components.checklist.qlServiceTimer') */ ?>
-                                                    <a class="btn btn-link text-dark p-0 m-0 d-none" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Quick Lube','3')">
-                                                        <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[3]}}">Complete {{config('global.jobs.status')[3]}}</button>
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <hr>
-                                    </div>
-                                    @if($showQlQualityCheck)
-                                        
-                                        @include('components.checklist.oilChange-checklist')
-                                        <a class="btn btn-link text-dark p-0 m-0" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Quick Lube','1')">
-                                            <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[2]}}"> Quick Lube {{config('global.jobs.status')[2]}} Complete</button>
-                                        </a>
-                                    @endif
-                                    @foreach( $quickLubeServices as $quickLubeService)
-                                        <div class="col-md-4 mb-4">
-                                            <div class="card">
-                                                <div class="card-header text-center pt-4 pb-3">
-                                                    <span class="badge rounded-pill bg-light text-dark">{{$quickLubeService['department_name']}} - {{$quickLubeService['section_name']}}</span>
-                                                    <h5 class="text-dark">
-                                                        @if($quickLubeService['quantity']>1)
-                                                            {{$quickLubeService['quantity'].' x '}}
-                                                        @endif
-                                                        {{$quickLubeService['item_name']}}
-                                                    </h5>
-                                                </div>
-                                                <div class="card-body text-lg-left text-center py-0">
-                                                    <div class="d-flex justify-content-lg-start justify-content-center p-2">
-                                                        <div class="icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$quickLubeService['job_status']]}} shadow text-center">
-                                                            <i class="fas fa-check opacity-10" aria-hidden="true"></i>
-                                                        </div>
-                                                        <div>
-                                                            <span class="ps-3 {{config('global.jobs.status_text_class')[$quickLubeService['job_status']]}}">Status: {{config('global.jobs.status')[$quickLubeService['job_status']]}}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                @endif
-
-                                @if(!empty($mechanicalServices))
-                                    <div class="row" >
-                                        <div class="d-sm-flex justify-content-between">
-                                            <div>
-                                                <h5 class=" modal-title">Mechanical</h5>
-                                            </div>
-                                            <div class="d-flex">
-                                                
-                                                @if($mechInspectionPending)
-                                                    <label class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[6]}}" >Current Status: {{config('global.jobs.status')[6]}}</label>
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[6]}}" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Mechanical','6')">Click to Complete {{config('global.jobs.status')[6]}}</button>
-                                                @elseif($mechCustomerAprovePending)
-                                                    <label class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[7]}}" >Current Status: {{config('global.jobs.status')[7]}}</label>
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[7]}}" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Mechanical','7')">Complete {{config('global.jobs.status')[7]}}</button>
-                                                @elseif($mechServiceIssuePending)
-                                                    <label class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[8]}}" >Current Status: {{config('global.jobs.status')[8]}}</label>
-                                                    <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[8]}}" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Mechanical','8')">Complete {{config('global.jobs.status')[8]}}</button>
-                                                @elseif($mechServicePending)
-                                                    <label class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[0]}}" >Current Status: {{config('global.jobs.status')[0]}}</label>
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Mechanical','0')">
-                                                        <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[1]}}">Complete {{config('global.jobs.status')[1]}}</button>
-                                                    </a>
-                                                @elseif($mechServiceWorkingProgressPending)
-                                                    <label class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[1]}}" >Current Status: {{config('global.jobs.status')[1]}}</label>
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="mechQualityCheck('{{$jobcardDetails->job_number}}')" >
-                                                        <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[2]}}">Complete {{config('global.jobs.status')[2]}}</button>
-                                                    </a>
-                                                @elseif($mechServiceQualityCheckPending)
-                                                    <label class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[2]}}" >Current Status: {{config('global.jobs.status')[2]}}</label>
-                                                    <?php /*@include('components.checklist.qlServiceTimer') */ ?>
-                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Mechanical','2')">
-                                                        <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[3]}}">Complete {{config('global.jobs.status')[3]}}</button>
-                                                    </a>
-                                                @elseif($mechServiceReadyToDeliverPending)
-                                                    <label class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_outline_class')[3]}}" >Current Status: {{config('global.jobs.status')[3]}}</label>
-                                                    <?php /*@include('components.checklist.qlServiceTimer') */ ?>
-                                                    <a class="btn btn-link text-dark p-0 m-0 d-none" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Mechanical','3')">
-                                                        <button class="mt-0 me-2 btn btn-sm {{config('global.jobs.status_btn_class')[3]}}">Complete {{config('global.jobs.status')[3]}}</button>
-                                                    </a>
-                                                @endif
-                                            
-                                            </div>
-                                        </div>
-                                        <hr>
-                                    </div>
-
-                                    @if($showMechQualityCheck)
-                                        <?php /*@include('components.checklist.mechanical-checklist') */ ?>
-                                        <a class="btn btn-link text-dark p-0 m-0" wire:click="updateQlMechJobService('{{$jobcardDetails->job_number}}','Mechanical','1')">
-                                            <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[2]}}"> Mechanical {{config('global.jobs.status')[2]}} Complete</button>
-                                        </a>
-                                    @endif
-
-                                    @foreach($mechanicalServices as $mechanicalService)
-                                        <div class="col-md-4 mb-4">
-                                            <div class="card">
-                                                <div class="card-header text-center pt-4 pb-3">
-                                                    <span class="badge rounded-pill bg-light text-dark">{{$mechanicalService['department_name']}} - {{$mechanicalService['section_name']}}</span>
-                                                    <h5 class="text-dark">
-                                                        @if($mechanicalService['quantity']>1)
-                                                            {{$mechanicalService['quantity'].' x '}}
-                                                        @endif
-                                                        {{$mechanicalService['item_name']}}
-                                                    </h5>
-                                                </div>
-                                                <div class="card-body text-lg-left text-center pt-0">
-                                                    <div class="d-flex justify-content-lg-start justify-content-center p-2">
-                                                        <div class="icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$mechanicalService['job_status']]}} shadow text-center">
-                                                            <i class="fas fa-check opacity-10" aria-hidden="true"></i>
-                                                        </div>
-                                                        <div>
-                                                            <span class="ps-3 {{config('global.jobs.status_text_class')[$mechanicalService['job_status']]}}">Status: {{config('global.jobs.status')[$mechanicalService['job_status']]}}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                @endif
-                                @forelse($jobcardDetails->customerJobServices as $services)
-
-
+                                @forelse( $jobcardDetails->customerJobServices as $services)
                                     @if($services->section_name == 'Mechanical')
                                         @if(!$mechServiceUpdate)
                                             <?php $mechServiceUpdate=true; ?>
-                                            <div class="row d-none">
+                                            <div class="row">
                                                 <div class="col-md-8">
                                                     <h6 class="mb-0 text-md">
                                                         {{$services->section_name}}
@@ -1136,13 +954,13 @@
                                             @if($showchecklist[$services->id])
                                                 @if(in_array($services->section_name, config('global.check_list.mechanical.services')))
 
-                                                    <a class="d-none btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'mech')">
+                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'mech')">
                                                         <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> Mechanical {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
                                                     </a>
                                                 @endif
                                             @endif
                                         @endif
-                                        <div class="d-none col-md-4 mb-4">
+                                        <div class="col-md-4 mb-4">
                                             <div class="card">
                                                 <div class="card-header text-center pt-4 pb-3">
                                                     <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
@@ -1165,10 +983,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @elseif($services->section_name == 'Quick Lube')
+                                    @elseif($services->department_name == 'Quick Lube')
                                         @if(!$qlServiceUpdate)
                                             <?php $qlServiceUpdate=true; ?>
-                                            <div class="d-none row">
+                                            <div class="row">
                                                 <div class="col-md-8">
                                                     <h6 class="mb-0 text-md">
                                                         {{$services->section_name}}
@@ -1200,13 +1018,13 @@
                                             @if($showchecklist[$services->id])
                                                 @if(in_array($services->department_name, config('global.check_list.oilChange.services')))
                                                     @include('components.checklist.oilChange-checklist')
-                                                    <a class="d-none btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
+                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}},'ql')">
                                                         <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> Quick Lube {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
                                                     </a>
                                                 @endif
                                             @endif
                                         @endif
-                                        <div class="d-none col-md-4 mb-4">
+                                        <div class="col-md-4 mb-4">
                                             <div class="card">
                                                 <div class="card-header text-center pt-4 pb-3">
                                                     <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
@@ -1237,7 +1055,9 @@
                                                     <div class="card-body p-2">
                                                         <div class="row">
                                                             <div class="col-md-8">
-                                                                
+                                                                <div class="d-none float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center mx-2">
+                                                                    <i class="{{config('global.job_status_icon')[$services->job_status]}} opacity-10" aria-hidden="true"></i>
+                                                                </div>
                                                                 <h6 class="mb-0 text-md">
                                                                     @if($services->quantity>1)
                                                                     {{$services->quantity.' x '}}
@@ -1245,20 +1065,12 @@
                                                                     {{$services->item_name}}
                                                                     <span class=" bg-gradient-dark text-gradient text-sm font-weight-bold">({{$services->department_code}})</span>
                                                                 </h6>
-                                                                
-                                                                @if($services->job_status)
                                                                 <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center m-2">
                                                                     <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
                                                                 </div>
+                                                                @if($services->job_status)
                                                                 <h6 class="my-2 text-sm">
                                                                     Status: <span class="text-sm {{config('global.jobs.status_text_class')[$services->job_status]}} pb-2">{{config('global.jobs.status')[$services->job_status]}}</span> 
-                                                                </h6>
-                                                                @else
-                                                                <div class="float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[0]}} shadow text-center m-2">
-                                                                    <i class="fa-solid fa-car-on  opacity-10" aria-hidden="true"></i>
-                                                                </div>
-                                                                <h6 class="my-2 text-sm">
-                                                                    Status: <span class="text-sm {{config('global.jobs.status_text_class')[0]}} pb-2">{{config('global.jobs.status')[0]}}</span> 
                                                                 </h6>
                                                                 @endif
                                                                 
@@ -1273,11 +1085,7 @@
                                                                 </p> -->
                                                             </div>
                                                             <div class="col-md-4">
-                                                                @if($services->job_status==0 || $services->job_status==null)
-                                                                    <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
-                                                                        <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
-                                                                    </a>
-                                                                @elseif($services->job_status==1 || $services->job_status==null)
+                                                                @if($services->job_status==1)
                                                                     @include('components.checklist.serviceTimer')
                                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="qualityCheck({{$services->id}})">
                                                                         <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}">{{config('global.jobs.status')[$services->job_status+1]}}</button>
@@ -1306,7 +1114,7 @@
                                                                     @include('components.checklist.wash-checklist')
                                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
                                                                         <button class="mt-4 btn btn-sm {{config('global.jobs.status_btn_class')[$services->job_status+1]}}"> {{config('global.jobs.status')[$services->job_status+1]}} Complete</button>
-                                                                    </a>    
+                                                                    </a>
                                                                 @elseif(in_array($services->section_name, config('global.check_list.glazing.services')))
                                                                     @include('components.checklist.glazing-checklist')
                                                                     <a class="btn btn-link text-dark p-0 m-0" wire:click="updateJobService({{$services}})">
@@ -1346,7 +1154,7 @@
                                                         <div class="row">
                                                             <div class="col-md-8">
                                                                 <div class="d-none float-start icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center mx-2">
-                                                                    <i class="{{config('global.jobs.status_icon')[$services->job_status]}} opacity-10" aria-hidden="true"></i>
+                                                                    <i class="{{config('global.job_status_icon')[$services->job_status]}} opacity-10" aria-hidden="true"></i>
                                                                 </div>
                                                                 <h6 class="mb-0 text-md">
                                                                     @if($services->quantity>1)
@@ -1406,33 +1214,6 @@
 
             </div>
        </div>
-    </div>
-    <div wire:loading wire:target="updateQlMechJobService">
-        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-            <div class="la-ball-beat">
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-    </div>
-    <div wire:loading wire:target="qLQualityCheck">
-        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-            <div class="la-ball-beat">
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-    </div>
-    <div wire:loading wire:target="mechQualityCheck">
-        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-            <div class="la-ball-beat">
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
     </div>
     <div wire:loading wire:target="confirmCancelJob">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >

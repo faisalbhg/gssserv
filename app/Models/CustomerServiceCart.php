@@ -51,6 +51,10 @@ class CustomerServiceCart extends Model
         'manual_discount_percentage',
         'manual_discount_applied_by',
         'manual_discount_applied_datetime',
+        'manual_discount_status',
+        'manual_discount_send_for_aproval',
+        'manual_discount_ref_no',
+        'current_job_status',
         'created_by',
         'updated_by',
         'created_at',
@@ -71,6 +75,10 @@ class CustomerServiceCart extends Model
     public function manualDiscountServiceInfo()
     {
         return $this->belongsTo(ManualDiscountServices::class,'id','cart_id');
+    }
+
+    public function getJobInfo(){
+        return $this->belongsTo(CustomerJobCards::class,'job_number','job_number');
     }
 
     

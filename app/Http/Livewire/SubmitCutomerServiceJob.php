@@ -117,7 +117,7 @@ class SubmitCutomerServiceJob extends Component
         $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo']);
         $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
         $customerJobCardsQuery = $customerJobCardsQuery->where('payment_status','!=',1);
-        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','<',3);
+        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','!=',4);
         $this->jobDetails =  $customerJobCardsQuery->first();
         if($this->jobDetails){
             //dd($this->jobDetails);
@@ -186,6 +186,7 @@ class SubmitCutomerServiceJob extends Component
             $totalDiscount=0;
             $serviceIncludeArray=[];
             $gsQlIn = false;
+            //dd($this->cartItems);
             foreach($this->cartItems as $item)
             {
                 $total = $total+($item->quantity*$item->unit_price);
@@ -197,12 +198,14 @@ class SubmitCutomerServiceJob extends Component
                     $discountGroupPrice = $item->customer_id;
                     $totalDiscount = $totalDiscount+custom_round((($item->discount_perc/100)*($item->unit_price*$item->quantity)));
                 }
-                if($item->department_name=='Quick Lube'  || $item->department_name=='General Service')
+                if($item->section_name=='Quick Lube'  || $item->section_name=='Mechanical')
                 {
                     $this->showCheckout =false;
                     $this->showCheckList=true;
                     $this->showSignaturePad=true;
                     $this->showTermsandCondition=true;
+                    $this->updatedSms=true;
+                    $this->jobUpdateSendSMS=='no';
                     $this->dispatchBrowserEvent('imageUpload');
                 }
                 if($item->is_package==1){
@@ -280,12 +283,18 @@ class SubmitCutomerServiceJob extends Component
 
     public function completePaymnet($mode){
         //stationName
-        if($this->job_number){
+        if($this->updatedSms)
+        {
             $validatedData = $this->validate([
                 'jobUpdateSendSMS' => 'required'
             ]);
         }
-        $this->createJob();
+        /*if($this->job_number){
+            $validatedData = $this->validate([
+                'jobUpdateSendSMS' => 'required'
+            ]);
+        }*/
+        $this->createJobEntry();
         $this->job_number;
         
         $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle','stationInfo'])->where(['job_number'=>$this->job_number])->first();
@@ -327,6 +336,12 @@ class SubmitCutomerServiceJob extends Component
             $paymentmode = "C";
             $createJobUpdate['payment_type']=3;
         }
+        else if($mode=='full_discount')
+        {
+            $paymentmode = "C";
+            $createJobUpdate['payment_type']=3;
+            $createJobUpdate['payment_status']=1;
+        }
         else if($mode=='empty')
         {
             $createJobUpdate['payment_type']=6;
@@ -336,14 +351,7 @@ class SubmitCutomerServiceJob extends Component
         $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update($createJobUpdate);
         
         //Cart empty..!
-        $customerServiceCartQuery = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'job_number'=>$this->job_number]);
-        if($customerServiceCartQuery->exists()){
-            $customerServiceCartQuery = $customerServiceCartQuery->delete();
-        }
-        else
-        {
-            CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
-        }
+        $customerServiceCartQuery = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
 
         $this->successPage=true;
         $this->showCheckout =false;
@@ -369,7 +377,7 @@ class SubmitCutomerServiceJob extends Component
 
     
 
-    public function createJob(){
+    public function createJobEntry(){
         $job_update = false;
         if($this->job_number){
             $job_update = true;
@@ -413,7 +421,7 @@ class SubmitCutomerServiceJob extends Component
             //dd($customerjobData);
             CustomerJobCards::where(['job_number'=>$this->job_number])->update($customerjobData);
             
-
+            CustomerJobCards::where(['job_number'=>$this->job_number])->update(['customer_job_update'=>null]);
             $customerjobId = $this->jobDetails->id;
         }
         else
@@ -541,6 +549,7 @@ class SubmitCutomerServiceJob extends Component
             ];
             
             
+            
             $customerJobServiceData['item_id']=$cartData->item_id;
             $customerJobServiceData['item_code']=$cartData->item_code;
             $customerJobServiceData['company_code']=$cartData->company_code;
@@ -559,6 +568,11 @@ class SubmitCutomerServiceJob extends Component
             $customerJobServiceData['extra_note']=$cartData->extra_note;
             $customerJobServiceData['service_item_type']=$cartData->cart_item_type;
             //dd($customerJobServiceData);
+
+            /*if($cartData->division_code !=auth()->user('user')->stationName['LandlordCode'])
+            {
+                dd($cartData);
+            }*/
             $customerJobServiceDiscountAmount=0;
             if($cartData->discount_perc){
                 
@@ -592,7 +606,7 @@ class SubmitCutomerServiceJob extends Component
             }
 
             /*if($cartData->cart_item_type==2){
-                $customerJobServiceData['job_status']=3;
+                $customerJobServiceData['job_status']=7;
             }*/
 
             
@@ -628,8 +642,26 @@ class SubmitCutomerServiceJob extends Component
                 $customerJobServiceData['warranty_ends'] = Carbon::now()->addMonths($cartData->warrantyPeriod)->format('Y-m-d H:i:s');
             }
 
+            if($cartData->section_name == 'Quick Lube' || $cartData->section_name == 'Mechanical')
+            {
+                $customerJobServiceData['job_status']=6;
+                $customerJobServiceData['job_departent']=6;
+            }
+
             if($job_update==true){
                 $customerJobServiceData['updated_by']=auth()->user('user')->id;
+                if($cartData->current_job_status!=null)
+                {
+                    $customerJobServiceData['job_status'] = $cartData->current_job_status;
+                }
+                else
+                {
+                    if($cartData->section_name == 'Quick Lube' || $cartData->section_name == 'Mechanical')
+                    {
+                        $customerJobServiceData['job_status']=6;
+                        $customerJobServiceData['job_departent']=6;
+                    }
+                }
                 /*$customerJobServiceQuery = CustomerJobCardServices::where([
                     'job_number'=>$this->job_number,
                     'job_id'=>$customerjobId,
@@ -667,8 +699,8 @@ class SubmitCutomerServiceJob extends Component
             
             CustomerJobCardServiceLogs::create([
                 'job_number'=>$this->job_number,
-                'job_status'=>1,
-                'job_departent'=>1,
+                'job_status'=>$customerJobServiceData['job_status'],
+                'job_departent'=>$customerJobServiceData['job_departent'],
                 'job_description'=>json_encode($customerJobServiceId),
                 'customer_job__card_service_id'=>$customerJobServiceId->id,
                 'created_by'=>auth()->user('user')->id,
@@ -1136,7 +1168,7 @@ class SubmitCutomerServiceJob extends Component
 
     public function payLater()
     {
-        $this->createJob();
+        $this->createJobEntry();
         CustomerJobCards::where(['job_number'=>$this->job_number])->update(['job_create_status'=>0]);
         CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
         $this->successPage=true;

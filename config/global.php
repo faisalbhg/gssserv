@@ -20,6 +20,7 @@ return [
             '2'=>"Pay By Card",
             '3'=>"Cash Payment",
             '4'=>"Pay By Credit",
+            '5'=>"Discount",
             '6'=>"Cash In Advance"
         ],
         'type_class'=>[
@@ -28,6 +29,7 @@ return [
             '2'=>'bg-gradient-success',
             '3'=>'bg-gradient-primary',
             '4'=>'bg-gradient-danger',
+            '5'=>'bg-gradient-inf0',
             '6'=>'bg-gradient-info',
         ],
         'icons'=>[
@@ -36,6 +38,7 @@ return [
             '2'=>"fa-solid fa-credit-card",
             '3'=>"fa-solid fa-money-bill-1",
             '4'=>"fa-solid fa-money-bill-1",
+            '5'=>"fa-solid fa-money-bill-1",
             '6'=>"fa-solid fa-money-bill-1",
         ],
         'text_class'=>[
@@ -44,6 +47,7 @@ return [
             '2'=>"text-danger",
             '3'=>"text-info",
             '4'=>"text-danger",
+            '5'=>"text-info",
             '6'=>"text-info",
         ],
         'status'=>[
@@ -52,6 +56,7 @@ return [
             '2'=>'Failed',
             '3'=>'Cancelled',
             '4'=>'Advanced',
+            '5'=>'Discount',
             '6'=>'Advanced',
         ],
         'status_class'=>[
@@ -60,6 +65,7 @@ return [
             '2'=>'bg-gradient-danger',
             '3'=>'bg-gradient-danger',
             '4'=>'bg-gradient-success',
+            '5'=>'bg-gradient-success',
             '6'=>'bg-gradient-success',
         ],
         'status_icon'=>[
@@ -68,6 +74,7 @@ return [
             '2'=>'fas fa-minus',
             '3'=>'fas fa-minus',
             '4'=>'fas fa-check',
+            '5'=>'fas fa-check',
             '6'=>'fas fa-check',
         ],
         'status_icon_class'=>[
@@ -76,6 +83,7 @@ return [
             '2'=>'btn-outline-danger',
             '3'=>'btn-outline-danger',
             '4'=>'btn-outline-success',
+            '5'=>'btn-outline-success',
             '6'=>'btn-outline-success',
         ],
         'status_update'=>[
@@ -96,16 +104,20 @@ return [
             '3'=>'Ready For Delivery',
             '4'=>'Delivered',
             '5'=>'Cancelled',
-            '6'=>'Request Cancelation',
+            '6'=>'Inspection',
+            '7'=>'Customer Aproved',
+            '8'=>'Item Issued'
         ],
         'status' => [
-            '0'=>'Created',
+            '0'=>'Job Created',
             '1'=>'Working Progress',
             '2'=>'Quality Check',
             '3'=>'Ready For Delivery',
             '4'=>'Delivered',
             '5'=>'Cancelled',
-            '6'=>'Request Cancelation',
+            '6'=>'Inspection',
+            '7'=>'Customer Aproved',
+            '8'=>'Item Issued'
         ],
         'status_icon' => [
             '0'=>'fa-solid fa-hourglass-start',
@@ -114,7 +126,9 @@ return [
             '3'=>'fas fa-check',
             '4'=>'fa-solid fa-flag-checkered',
             '5'=>'fa-solid fa-trash',
-            '6'=>'fa-solid fa-trash',
+            '6'=>'fas fa-check',
+            '7'=>'fas fa-check',
+            '8'=>'fas fa-check',
         ],
         'status_text_class' => [
             '0'=>'text-dark',
@@ -123,7 +137,9 @@ return [
             '3'=>'text-info',
             '4'=>'text-success',
             '5'=>'text-danger',
-            '6'=>'text-danger',
+            '6'=>'text-dark',
+            '7'=>'text-dark',
+            '8'=>'text-dark',
         ],
         'status_btn_class' => [
             '0'=>'bg-gradient-dark',
@@ -132,7 +148,9 @@ return [
             '3'=>'bg-gradient-info',
             '4'=>'bg-gradient-success',
             '5'=>'bg-gradient-danger',
-            '6'=>'bg-gradient-danger',
+            '6'=>'bg-gradient-dark',
+            '7'=>'bg-gradient-dark',
+            '8'=>'bg-gradient-dark',
         ],
         'status_perc' => [
             '0'=>'25%',
@@ -140,8 +158,10 @@ return [
             '2'=>'75%',
             '3'=>'90%',
             '4'=>'100%',
-            '5'=>'0%',
+            '5'=>'100%',
             '6'=>'0%',
+            '7'=>'0%',
+            '8'=>'10%',
         ],
         'status_perc_class' => [
             '0'=>'bg-gradient-dark',
@@ -150,7 +170,9 @@ return [
             '3'=>'bg-gradient-info',
             '4'=>'bg-gradient-success',
             '5'=>'bg-gradient-danger',
-            '6'=>'bg-gradient-danger',
+            '6'=>'bg-gradient-dark',
+            '7'=>'bg-gradient-dark',
+            '8'=>'bg-gradient-dark',
         ],
         'job_status_bg' => [
             '0'=>'bg-gradient-dark',
@@ -159,7 +181,20 @@ return [
             '3'=>'bg-gradient-info',
             '4'=>'bg-gradient-success',
             '5'=>'bg-gradient-danger',
-            '6'=>'bg-gradient-danger',
+            '6'=>'bg-gradient-dark',
+            '7'=>'bg-gradient-dark',
+            '8'=>'bg-gradient-dark',
+        ],
+        'status_outline_class'=>[
+            '0'=>'btn-outline-dark',
+            '1'=>'btn-outline-danger',
+            '2'=>'btn-outline-warning',
+            '3'=>'btn-outline-info',
+            '4'=>'btn-outline-success',
+            '5'=>'btn-outline-danger',
+            '6'=>'btn-outline-dark',
+            '7'=>'btn-outline-dark',
+            '8'=>'btn-outline-dark',
         ],
         'job_type' => [
             "1"=>"Quick Wash",
@@ -187,6 +222,12 @@ return [
             '1'=>'bg-gradient-warning',
             '2'=>'bg-gradient-success',
             '3'=>'bg-gradient-danger',
+        ],
+        'status_outline_class' => [
+            '0'=>'btn-outline-warning',
+            '1'=>'btn-outline-warning',
+            '2'=>'btn-outline-success',
+            '3'=>'btn-outline-danger',
         ],
     ],
 
@@ -1231,7 +1272,7 @@ return [
             ],
         ]
     ],
-    'extra_description_applied'=>['S380','S381','S382','S143'],
+    'extra_description_applied'=>['S380','S381','S382','S143','S408','S397'],
     'extra_notes_applied'=>['S364'],
 ]
   

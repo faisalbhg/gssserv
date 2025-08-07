@@ -41,7 +41,7 @@
             </div>
             <div class="col-md-6 px-1 mb-4">
                 <div class="form-group h-100 mb-2" style="display: grid;">
-                    <textarea class="form-control" id="textArea{{$chTypeKey}}{{$chSubTypeKey}}" wire:model="checklist_comments.{{$chSubTypeKey}}" rows="3" placeholder="{{$subtype_list['name']}} Comments"></textarea>
+                    <textarea class="form-control" id="textArea{{$chTypeKey}}{{$chSubTypeKey}}" wire:model="checklist_comments.oilchange.{{$chTypeKey}}.{{$chSubTypeKey}}" rows="3" placeholder="{{$subtype_list['name']}} Comments"></textarea>
                 </div>
             </div>
             @endforeach
@@ -80,7 +80,7 @@
                 </div>
                 <div class="col-md-6 px-1 mb-2">
                     <div class="form-group h-100 mb-2" style="display: grid;">
-                        <textarea class="form-control" id="textArea{{$chTypeKey}}{{$chSubTypeKey}}" wire:model="checklist_comments.{{$chSubTypeKey}}" rows="3" placeholder="{{$subtype_list}} Comments"></textarea>
+                        <textarea class="form-control" id="textArea{{$chTypeKey}}{{$chSubTypeKey}}" wire:model="checklist_comments.oilchange.{{$chTypeKey}}.{{$chSubTypeKey}}" rows="3" placeholder="{{$subtype_list}} Comments"></textarea>
                     </div>
                 </div>
             @endforeach

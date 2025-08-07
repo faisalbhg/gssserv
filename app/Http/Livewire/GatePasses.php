@@ -107,6 +107,13 @@ class GatePasses extends Component
         
         if($this->job_status==4)
         {
+            try {
+                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$customer_id.'" ');
+            } catch (\Exception $e) {
+                //dd($e->getMessage());
+                //return $e->getMessage();
+            }
+            
             /*try {
                 DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$customer_id.'" ');
             } catch (\Exception $e) {

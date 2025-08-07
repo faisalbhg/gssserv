@@ -168,7 +168,6 @@
         @if($showForms)
             <div class="card px-3 my-2" >
                 <div class="card-body p-0">
-                    
                     @if($showSearchContractCustomers)
                         <div class="row p-4">
                             <div class="col-md-6 col-sm-6">
@@ -183,9 +182,7 @@
                                 </div>
                                 @error('contract_customer_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                             </div>
-                        
-                        @if($showSaveContractCustomerVehicle)
-                            
+                            @if($showSaveContractCustomerVehicle)
                                 <div class="col-md-6 col-sm-6">
                                     <label for="saveContractCustomerNameButton"></label>
                                     <div class="input-group mt-1">
@@ -211,9 +208,8 @@
                                         </div>
                                     </div>
                                 </div>
-                           
-                        @endif
-                         </div>
+                            @endif
+                        </div>
                     @endif
 
                     @if($searchByMobileNumber)
@@ -603,7 +599,7 @@
                                 </span>
                                 @foreach($customers as $customer)
                                 <div class="col-xl-3 col-md-4 col-sm-6 mb-xl-0 my-4">
-                                    <a href="{{url('customer-service-job/'.$customer->customer_id.'/'.$customer->id)}}"  wire:click="nothing('unique_id')" wire:navigate>
+                                    <a class="cursor-pointer"  wire:click="selectVehicleProceed('{{$customer->customer_id}}','{{$customer->id}}')" wire:navigate>
                                         <div class="card card-background move-on-hover">
                                             <div class="full-background" style="background-image: url('{{url("public/storage/".$customer->vehicle_image)}}')"></div>
                                             <div class="card-body pt-5">
@@ -642,6 +638,15 @@
             </div>
         </div>
     </div>
+    <div wire:loading wire:target="selectVehicleProceed">
+        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+            <div class="la-ball-beat">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
     <div wire:loading wire:target="addMakeModel">
         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
             <div class="la-ball-beat">
@@ -654,12 +659,20 @@
     @if($showAddMakeModelNew)
     @include('components.modals.addMakeModelNew')
     @endif
+
+    @if($showPendingJobList)
+            @include('components.modals.pendingJobListModal')
+        @endif
 </main>
 
 @push('custom_script')
 
 
 <script type="text/javascript">
+    window.addEventListener('openPendingJobListModal',event=>{
+        $('#pendingJobListModal').modal('show');
+    });
+    
     window.addEventListener('mobile0Remove',event=>{
         $("#mobilenumberInput").on("input", function() {
             if (/^0/.test(this.value)) {

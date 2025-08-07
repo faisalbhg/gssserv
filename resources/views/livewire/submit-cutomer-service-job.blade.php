@@ -1249,6 +1249,9 @@
                                         <a wire:click="payLater('paylater')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-secondary d-lg-block mt-3 mb-0">Pay Later<i class="fa-regular fa-money-bill-1 ms-1"></i></a>
                                     </div>
                                 @else
+                                    <div class="form-check">
+                                        <a wire:click="completePaymnet('fulldiscount')" wire:loading.attr="disabled" class="btn btn-icon bg-gradient-danger d-lg-block mt-3 mb-0">Complete<i class="fa-solid fa-money-bill-1-wave ms-1" ></i></a>
+                                    </div>
                                     
                                 @endif
 
