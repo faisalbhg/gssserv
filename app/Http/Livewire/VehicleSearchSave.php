@@ -353,6 +353,8 @@ class VehicleSearchSave extends Component
     }
 
     public function searchResult(){
+        $this->customer_id = null;
+        $this->vehicle_id = null;
         $this->getCustomerVehicleSearch('mobile');
         if(count($this->customers)>0)
         {
@@ -388,6 +390,8 @@ class VehicleSearchSave extends Component
     }
 
     public function getCustomerVehicleSearch($serachBy){
+        $this->customer_id = null;
+        $this->vehicle_id = null;
         $searchCustomerVehicleQuery = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo']);
         if($serachBy=='mobile'){
             $validatedData = $this->validate([
