@@ -29,7 +29,7 @@
                         <small>{{ \Carbon\Carbon::parse($jobcardDetails->job_date_time)->format('dS M Y h:i A') }}</small>
                     </div>
                     <div class="d-flex">
-                        @if($jobcardDetails->payment_status!=1 && $jobcardDetails->job_status!=4  && $jobcardDetails->job_status!=5 )
+                        @if($jobcardDetails->payment_status!=1 && $jobcardDetails->job_status!=4  && $jobcardDetails->job_status!=5 && $updateJob)
 
                             @if($jobcardDetails->job_status==6 || $jobcardDetails->job_status == 7 || $jobcardDetails->job_status == 8 || $jobcardDetails->job_status == 1 || $jobcardDetails->job_status == 2 || $jobcardDetails->job_status == 3)
                                 @if($canceljobReasonButton)
@@ -52,7 +52,9 @@
                                 @endif
                             @endif
                             @if($jobcardDetails->cancel_req_status!='W' && $jobcardDetails->cancel_req_status!='A' || ( $jobcardDetails->cancel_req_status==null ))
+                                
                                 <button type="button" wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-primary px-2">Add New Service/Items</button>
+                                
                             @endif
                             
                         @endif

@@ -108,6 +108,13 @@ class SubmitCutomerServiceJob extends Component
             $this->customerSignature = $tempCustomerSignature->signature;
         }
         //
+
+        foreach($this->cartItems as $cartCheckItem){
+            if($cartCheckItem->division_code != auth()->user('user')->stationName['LandlordCode'])
+            {
+                dd('Error, Contact techincal team..!');
+            }
+        }
             
         return view('livewire.submit-cutomer-service-job');
     }

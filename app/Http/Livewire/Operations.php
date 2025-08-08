@@ -100,6 +100,7 @@ class Operations extends Component
     public $mechInspectionPending=false, $mechCustomerAprovePending=false, $mechServiceIssuePending=false, $mechServicePending=false, $mechServiceWorkingProgressPending = false, $mechServiceQualityCheckPending = false, $mechServiceReadyToDeliverPending=false;
     public $showQlQualityCheck=false, $showMechQualityCheck=false;
     public $alreadyUpdationGOing=false;
+    public $updateJob = true;
 
 
     

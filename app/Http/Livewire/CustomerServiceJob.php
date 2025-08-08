@@ -1644,6 +1644,12 @@ class CustomerServiceJob extends Component
         {
             $this->cardShow=false;
         }
+        foreach($this->cartItems as $cartCheckItem){
+            if($cartCheckItem->division_code != auth()->user('user')->stationName['LandlordCode'])
+            {
+                dd('Error, Contact techincal team..!');
+            }
+        }
 
         /*$this->cartItems = CustomerServiceCart::with(['manualDiscountServiceInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
         

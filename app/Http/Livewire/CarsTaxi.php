@@ -50,6 +50,8 @@ class CarsTaxi extends Component
     public $showchecklist=[],$checklist_comments,$checklists;
     public $canceljobReasonButton=false,$cancelError,$cancelationReason,$customerSignatureShow;
     public $onlyChaisisRequired=false;
+    public $alreadyUpdationGOing=false;
+    public $updateJob = false;
 
     function mount( Request $request) {
         $this->search_job_date = Carbon::now()->format('Y-m-d');
