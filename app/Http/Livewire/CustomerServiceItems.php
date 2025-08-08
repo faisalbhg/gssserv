@@ -114,7 +114,7 @@ class CustomerServiceItems extends Component
             $this->showTempCart = true;
             if($this->jobDetails->customer_job_update==null){
                 CustomerJobCards::where(['job_number'=>$this->job_number])->update(['customer_job_update'=>1]);
-                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'job_number'=>$this->job_number])->delete();
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'job_number'=>$this->job_number,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->delete();
                 //dd($this->jobDetails->customerJobServices);
                 foreach($this->jobDetails->customerJobServices as $customerJobServices)
                 {
@@ -265,18 +265,18 @@ class CustomerServiceItems extends Component
         if($this->checkItemStock($itemDetails['ItemId'], $itemDetails['ItemCode'], $qty)){
 
         
-            $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$itemDetails['ItemId']]);
+            $customerBasketCheck = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$itemDetails['ItemId'],'division_code'=>auth()->user('user')->stationName['LandlordCode']]);
             if($customerBasketCheck->exists())
             {
                 if($itemDetails['ItemCode']=='I09137')
                 {
-                    if(CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137'])->where('customer_group_id','!=',90)->exists()){
-                        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137'])->where('customer_group_id','!=',90)->increment('quantity', 4);    
-                    }else if(!CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137'])->where('customer_group_id','=',null)->increment('quantity', 4)){
-                        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137'])->where('customer_group_id','=',null)->increment('quantity', 4);    
+                    if(CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137','division_code'=>auth()->user('user')->stationName['LandlordCode']])->where('customer_group_id','!=',90)->exists()){
+                        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137','division_code'=>auth()->user('user')->stationName['LandlordCode']])->where('customer_group_id','!=',90)->increment('quantity', 4);    
+                    }else if(!CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137','division_code'=>auth()->user('user')->stationName['LandlordCode']])->where('customer_group_id','=',null)->increment('quantity', 4)){
+                        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137','division_code'=>auth()->user('user')->stationName['LandlordCode']])->where('customer_group_id','=',null)->increment('quantity', 4);    
                     }
                     
-                    CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137'])->where('customer_group_id','=',90)->increment('quantity', 1);
+                    CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_code'=>'I09137','division_code'=>auth()->user('user')->stationName['LandlordCode']])->where('customer_group_id','=',90)->increment('quantity', 1);
                 }
                 else
                 {
@@ -426,7 +426,7 @@ class CustomerServiceItems extends Component
         $cartUpdate['discount_perc']=null;
         //$this->getCartInfo();
 
-        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$serviceId])->update($cartUpdate);
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$serviceId,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
     }
 
     public function cartSetDownQty($cartId){
@@ -468,7 +468,7 @@ class CustomerServiceItems extends Component
 
     public function clearAllCart()
     {
-        CustomerServiceCart::where(['customer_id'=>$this->customer_id, 'vehicle_id'=>$this->vehicle_id])->delete();
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id, 'vehicle_id'=>$this->vehicle_id,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->delete();
         $this->confirmingRA = false;
         session()->flash('cartsuccess', 'All Service Cart Clear Successfully !');
     }
@@ -805,7 +805,7 @@ class CustomerServiceItems extends Component
     public function applyDIsountinItemService($discountPrice){
         //dd($discountPrice);
         $itemCartId = $this->lineItemDetails['id'];
-        $customerBasket = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$itemCartId])->first();
+        $customerBasket = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$itemCartId,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->first();
         $cartUpdate['price_id']=$discountPrice['PriceID'];
         $cartUpdate['customer_group_id']=$discountPrice['CustomerGroupId'];
         $cartUpdate['customer_group_code']=$discountPrice['CustomerGroupCode'];
@@ -814,7 +814,7 @@ class CustomerServiceItems extends Component
         $cartUpdate['start_date']=$discountPrice['StartDate'];
         $cartUpdate['end_date']=$discountPrice['EndDate'];
         $cartUpdate['discount_perc']=$discountPrice['DiscountPerc'];
-        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$itemCartId])->update($cartUpdate);
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$itemCartId,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
         
         $this->dispatchBrowserEvent('closePriceDiscountList');
         $this->lineDIscountItemId = null;
@@ -941,7 +941,7 @@ class CustomerServiceItems extends Component
                 //$cartUpdate['start_date']=$discountSalePrice->StartDate;
                 //$cartUpdate['end_date']=$discountSalePrice->EndDate;
                 $cartUpdate['discount_perc']=$discountSalePrice;
-                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$items->id])->update($cartUpdate);
+                CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$items->id,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
             }
         }
 
@@ -1048,13 +1048,13 @@ class CustomerServiceItems extends Component
         $cartUpdate['manual_discount_applied_by']=auth()->user('user')['id'];
         $cartUpdate['manual_discount_applied_datetime']=Carbon::now();
 
-        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$this->lineItemDetails['id']])->update($cartUpdate);
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$this->lineItemDetails['id'],'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
 
 
 
         
 
-        //CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId']])->update($cartUpdate);
+        //CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId'],'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
 
 
         $this->dispatchBrowserEvent('closePriceDiscountList');
