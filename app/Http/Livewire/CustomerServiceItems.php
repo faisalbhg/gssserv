@@ -177,7 +177,7 @@ class CustomerServiceItems extends Component
 
     public function getCartInfo($value='')
     {
-        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->get();
+        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->get();
         $this->cartItemCount = count($this->cartItems); 
         if($this->cartItemCount>0)
         {

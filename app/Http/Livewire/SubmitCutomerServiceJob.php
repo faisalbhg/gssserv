@@ -173,7 +173,7 @@ class SubmitCutomerServiceJob extends Component
     }
 
     public function getCustomerCart(){
-        $customerServiceCartQuery = CustomerServiceCart::with(['customerInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id]);
+        $customerServiceCartQuery = CustomerServiceCart::with(['customerInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'division_code'=>auth()->user('user')->stationName['LandlordCode']]);
         if($this->job_number)
         {
             $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>$this->job_number]);
