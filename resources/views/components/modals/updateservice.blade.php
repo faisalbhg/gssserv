@@ -35,7 +35,7 @@
                                 @if($canceljobReasonButton)
                                     <textarea wire:model="cancelationReason" class="form-control" placeholder="Cancelation Reason..!"></textarea>
                                     @error('cancelationReason') <span class="text-danger">{{ $message }}</span> @enderror
-                                    <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}','{{$jobcardDetails->job_statuss}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
+                                    <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}','{{$jobcardDetails->job_status}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
                                 @else
                                     @if($jobcardDetails->cancel_req_status==null || $jobcardDetails->cancel_req_status=="R")
                                         <div>

@@ -557,6 +557,7 @@ class Operations extends Component
     }
 
     public function confirmCancelJob($job_number,$job_status){
+        //dd($job_status);
         //dd(MaterialRequest::limit(1)->get());
         //dd($job_number);
         $validatedData = $this->validate([
