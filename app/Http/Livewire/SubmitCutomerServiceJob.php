@@ -43,7 +43,7 @@ class SubmitCutomerServiceJob extends Component
     public $staff_id,$staff_number,$show_staff_details=false;
     public $job_date_time;
     public $package_job=false;
-    public $showSignaturePad=false, $showvehicleImage=true, $showTermsandCondition=false, $jobUpdateSendSMS, $updatedSms=false;
+    public $showSignaturePad=false, $showvehicleImage=true, $showTermsandCondition=false, $jobUpdateSendSMS, $showSendSmsPannel=true, $doNotSendSms=false;
 
     function mount( Request $request) {
         $this->customer_id = $request->customer_id;
@@ -58,7 +58,7 @@ class SubmitCutomerServiceJob extends Component
 
         if($this->job_number)
         {
-            $this->updatedSms=true;
+            $this->showSendSmsPannel=true;
             $this->customerJobDetails();
         }
 
@@ -204,9 +204,10 @@ class SubmitCutomerServiceJob extends Component
                     $this->showCheckList=true;
                     $this->showSignaturePad=true;
                     $this->showTermsandCondition=true;
-                    $this->updatedSms=true;
-                    $this->jobUpdateSendSMS=='no';
+                    $this->doNotSendSms=true;
+                    $this->jobUpdateSendSMS='no';
                     $this->dispatchBrowserEvent('imageUpload');
+                    $showSendSmsPannel=false;
                 }
                 if($item->is_package==1){
                     $this->package_job=true;
@@ -283,11 +284,15 @@ class SubmitCutomerServiceJob extends Component
 
     public function completePaymnet($mode){
         //stationName
-        if($this->updatedSms)
+        if($this->showSendSmsPannel)
         {
             $validatedData = $this->validate([
                 'jobUpdateSendSMS' => 'required'
             ]);
+        }
+        else if($this->doNotSendSms)
+        {
+            $this->jobUpdateSendSMS = 'no';
         }
         /*if($this->job_number){
             $validatedData = $this->validate([
@@ -306,7 +311,7 @@ class SubmitCutomerServiceJob extends Component
             $msgtext = urlencode('Dear Customer, '.$plate_number.' received at '.auth()->user('user')->stationName['ShortName'].'. Track or pay online: https://gsstations.ae/qr/'.$this->job_number.'. For help, call 800477823.');
             //dd(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             
-            if(!$this->updatedSms)
+            if(!$this->showSendSmsPannel && !$this->doNotSendSms)
             {
                 $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
             }

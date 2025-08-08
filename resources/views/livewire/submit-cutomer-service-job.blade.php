@@ -1180,30 +1180,7 @@
         @if($customerSignature || $showCheckout)
             <div class="row mt-3" id="checkoutSignature">
                 <div class="col-md-12 mb-4" >
-                    @if($updatedSms)
-                    <div class="card p-2 mb-4">
-                        <div class="card-header text-left pt-4 pb-3">
-                            <h5 class="font-weight-bold mt-2">SMS Confirmation in Job Update</h5>
-                            <hr>
-                        </div>
-                        <div class="card-body text-lg-left text-left pt-0">
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="radio" wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS1" value="yes">
-                                        <label class="custom-control-label" for="customRadio1">Send SMS</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio"  wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS2" value="no">
-                                        <label class="custom-control-label" for="customRadio2">Do Not Send SMS</label>
-                                    </div>
-                                    @error('jobUpdateSendSMS') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
+                    
 
                     <div class="card p-2 mb-4">
                         <div class="card-header text-center pt-4 pb-3">
@@ -1214,17 +1191,55 @@
                             <hr>
                             
                         </div>
-                        <div class="card-body text-lg-left text-center pt-0">
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ custom_round($total) }}</span></p>
-                            @if($totalAfterDisc>0 )
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ custom_round($totalAfterDisc) }}</span></p>
-                            @endif
-                            <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ custom_round($tax) }}</span></p>
-                            <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ custom_round($grand_total) }}</span></p>
+                        <div class="card-body pt-0">
+                            <div class="d-flex justify-content-center">
+                                <div class="card p-2 mb-4">
+                                    <div class="card-body text-center pt-0">
 
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ custom_round($total) }}</span></p>
+                                                @if($totalAfterDisc>0 )
+                                                <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ custom_round($totalAfterDisc) }}</span></p>
+                                                @endif
+                                                <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ custom_round($tax) }}</span></p>
+                                                <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ custom_round($grand_total) }}</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             
+
+                            @if($showSendSmsPannel)
+                            <div class="d-flex justify-content-center">
+                                <div class="card p-2 mb-4">
+                                    <div class="card-header text-left pt-4 pb-3">
+                                        <h5 class="font-weight-bold mt-2">SMS Confirmation in Job Update</h5>
+                                        <hr>
+                                    </div>
+                                    <div class="card-body text-lg-left text-left pt-0">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input" type="radio" wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS1" value="yes">
+                                                    <label class="custom-control-label" for="customRadio1">Send SMS</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input " type="radio"  wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS2" value="no">
+                                                    <label class="custom-control-label text-danger" for="customRadio2">Do Not Send SMS</label>
+                                                </div>
+                                                @error('jobUpdateSendSMS') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                             
                         </div>
+
                         <div class="card-footer text-lg-left text-center pt-0">
                             <div class="d-flex justify-content-center p-2">
                                 @if($package_job)
