@@ -216,6 +216,14 @@ class SubmitCutomerServiceJob extends Component
                     $this->dispatchBrowserEvent('imageUpload');
                     $showSendSmsPannel=false;
                 }
+
+                if($item->department_name=='General Service')
+                {
+                    $this->showCheckout =false;
+                    $this->showCheckList=true;
+                    $this->showSignaturePad=true;
+                    $this->showTermsandCondition=true;
+                }
                 if($item->is_package==1){
                     $this->package_job=true;
 
