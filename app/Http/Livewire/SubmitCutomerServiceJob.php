@@ -66,7 +66,7 @@ class SubmitCutomerServiceJob extends Component
 
     public function render()
     {
-        $this->getCustomerCart();
+        
         $this->isValidInput = $this->getErrorBag()->count();
         if($this->isValidInput>0)
         {

@@ -1929,6 +1929,7 @@ class Operations extends Component
     }
 
     public function addNewServiceItemsJob($job_number){
+        //dd(CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'job_number'=>$job_number])->exists());
         if(CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'job_number'=>$job_number])->exists())
         {
             $this->alreadyUpdationGOing=true;
@@ -1949,6 +1950,7 @@ class Operations extends Component
         if($this->jobcardDetails->job_status!=4 && $this->jobcardDetails->payment_status != 1){
                 CustomerJobCards::where(['job_number'=>$job_number])->update(['customer_job_update'=>1]);
                 CustomerServiceCart::where(['customer_id'=>$this->jobcardDetails->customer_id,'vehicle_id'=>$this->jobcardDetails->vehicle_id,'job_number'=>$job_number])->delete();
+                //dd($this->jobcardDetails->customerJobServices);
                 foreach($this->jobcardDetails->customerJobServices as $customerJobServices)
                 {
                     $cartInsert = [
@@ -1961,7 +1963,7 @@ class Operations extends Component
                         'category_id'=>$customerJobServices->category_id,
                         'sub_category_id'=>$customerJobServices->sub_category_id,
                         'brand_id'=>$customerJobServices->brand_id,
-                        'bar_code'=>$customerJobServices->bar_code,
+                        'bar_code'=>$customerJobServicesn->bar_code,
                         'item_name'=>$customerJobServices->item_name,
                         'description'=>$customerJobServices->description,
                         'division_code'=>$customerJobServices->division_code,
@@ -1989,7 +1991,7 @@ class Operations extends Component
                 }
                 
             }
-
+            //dd($this->jobcardDetails);
             return redirect()->to('customer-service-job/'.$this->jobcardDetails->customer_id.'/'.$this->jobcardDetails->vehicle_id.'/'.$job_number);
     }
 
