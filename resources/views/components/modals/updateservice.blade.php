@@ -71,16 +71,16 @@
                                 <!-- move-on-hover-->
                                 <div class="full-background" style="background-image: url('{{url("public/storage/".$jobcardDetails->vehicle_image)}}')"></div>
                                 <div class="card-body pt-2">
-                                    @if($jobcardDetails->customerInfo['TenantName'])
-                                    <h4 class="text-white mb-0 pb-0 text-white">{{$jobcardDetails->customerInfo['TenantName']}}</h4>
+                                    @if($jobcardDetails->customer_name)
+                                    <h4 class="text-white mb-0 pb-0 text-white">{{$jobcardDetails->customer_name}}</h4>
                                     @else
                                     Guest
                                     @endif
-                                    @if($jobcardDetails->customerInfo['Mobile'])
-                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobcardDetails->customerInfo['Mobile']}}</small></p>
+                                    @if($jobcardDetails->customer_mobile)
+                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobcardDetails->customer_mobile}}</small></p>
                                     @endif
-                                    @if($jobcardDetails->customerInfo['Email'])
-                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobcardDetails->customerInfo['Email']}}</small></p>
+                                    @if($jobcardDetails->customer_email)
+                                        <p class="mt-0 pt-0 mb-0 pb-0 text-white"><small>{{$jobcardDetails->customer_email}}</small></p>
                                     @endif
                                     <!--ID image-->
                                     <hr class="horizontal dark mt-3">
