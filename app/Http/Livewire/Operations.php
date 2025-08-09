@@ -1065,6 +1065,7 @@ class Operations extends Component
 
     public function customerJobUpdate($job_number)
     {
+        $this->jobcardDetails = null;
         $getCountSalesJobStatus = CustomerJobCardServices::select(
             array(
                 \DB::raw('count(case when job_status = 0 then job_status end) new'),
