@@ -209,7 +209,7 @@ class VehicleSearchSave extends Component
             'station'=>auth()->user('user')['station_code'],
         ])
         //->where('customer_id','!=',null)
-        ->where('payment_status','!=',1)->where('job_status','!=',4);
+        ->where('payment_status','!=',1)->where('job_status','!=',4)->where('job_status','!=',5);
         //dd($existingJobs->get());
         if($existingJobs->exists())
         {

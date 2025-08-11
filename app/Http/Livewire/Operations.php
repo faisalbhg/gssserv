@@ -1122,6 +1122,21 @@ class Operations extends Component
         
         $this->quickLubeServices = [];
         $this->mechanicalServices = [];
+
+        
+        //ADd Missing Services
+        /*dd(CustomerJobCardServiceLogs::where(['job_number'=>$job_number])->get());
+        foreach(CustomerJobCardServiceLogs::where(['job_number'=>$job_number])->get() as $jobServiceDetails)
+        {
+            
+            $jobDetails = json_Decode($jobServiceDetails->job_description,true);
+            unset($jobDetails['id']);
+            CustomerJobCardServices::create($jobDetails);
+
+        }
+        dd('1');*/
+
+        //CustomerJobCards::where(['job_number'=>$job_number])->update(['cancel_req_status'=>null]);
         //dd($this->jobcardDetails);
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {

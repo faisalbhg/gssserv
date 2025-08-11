@@ -905,6 +905,7 @@
                             $qlServiceUpdate=false;
                             $mechServiceUpdate=false;
                             ?>
+                            
                             @if($jobcardDetails->cancel_req_status == "A" || $jobcardDetails->cancel_req_status == "W" || $jobcardDetails->job_status==5)
                                 <div class="row">
                                     @forelse( $jobcardDetails->customerJobServices as $services)
