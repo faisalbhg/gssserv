@@ -51,7 +51,7 @@ class SubmitCutomerServiceJob extends Component
         $this->job_numbber = $request->job_number;
         if($this->vehicle_id && $this->customer_id)
         {
-            $this->getCustomerCart();
+            
             $this->selectVehicle();
 
         }
@@ -116,7 +116,8 @@ class SubmitCutomerServiceJob extends Component
                 dd('Error, Contact techincal team..!');
             }
         }
-            
+        
+        $this->getCustomerCart();
         return view('livewire.submit-cutomer-service-job');
     }
 

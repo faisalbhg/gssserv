@@ -87,7 +87,7 @@ class CustomerServiceJob extends Component
     public $selectAdvanceCouponMenu=false, $showAdvanceCouponList=false, $showAdvanceCouponOtpVerify=false, $advance_coupon_number, $numberPlateRequired=true;
     public $lineDIscountItemId, $linePriceDiscount, $discountAvailability;
     public $showSelectedDiscount=false, $priceDiscountList, $lineItemDetails, $showLineDiscountItems=false; 
-    public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValue, $manulDiscountForm=false;
+    public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValue, $manulDiscountForm=false, $manualDiscountRefNo;
     public $pendingExistingJobs=null, $showPendingJobList=false;
     public $customerSignature, $showCustomerSignature=false;
     public $shoeJobHistoryModal=false, $jobsHistory;
@@ -1458,6 +1458,7 @@ class CustomerServiceJob extends Component
                         'manual_discount_percentage'=>$cartItems->manual_discount_percentage,
                         'manual_discount_applied_by'=>$cartItems->manual_discount_applied_by,
                         'manual_discount_applied_datetime'=>$cartItems->manual_discount_applied_datetime,
+                        'manual_discount_send_for_aproval'=>1,
                         'discount_status'=>1,
                         'updated_by'=>auth()->user('user')['id'],
                         'is_active'=>1,
@@ -1651,6 +1652,9 @@ class CustomerServiceJob extends Component
             if($cartCheckItem->division_code != auth()->user('user')->stationName['LandlordCode'])
             {
                 dd('Error, Contact techincal team..!');
+            }
+            if($cartCheckItem->manual_discount_ref_no){
+                $this->manualDiscountRefNo = $cartCheckItem->manual_discount_ref_no;
             }
         }
 

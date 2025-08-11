@@ -517,7 +517,7 @@
                                                     $waitingSendManulDiscountRequest=false;
                                                     $aprovedSendManulDiscountRequest=false;
                                                     $rejectedSendManulDiscountRequest=false;
-                                                    $manualDiscountRefNo=null;
+                                                    
                                                 ?>
                                                 @foreach ($cartItems as $item)
                                                     
@@ -543,7 +543,7 @@
                                                                 @if($item->manual_discount_send_for_aproval==null)
                                                                 <?php
                                                                     $pendingSendManulDiscountRequest = true;
-                                                                    $manualDiscountRefNo = $item->manual_discount_ref_no;
+                                                                    //$manualDiscountRefNo = $item->manual_discount_ref_no;
                                                                 ?>
                                                                 <label wire:click.prevent="removeManualLineDiscount({{$item->id}})" class="badge bg-gradient-warning cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
                                                                 @elseif($item->manual_discount_send_for_aproval==1)
