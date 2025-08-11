@@ -126,7 +126,7 @@ class SubmitCutomerServiceJob extends Component
         $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo']);
         $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
         $customerJobCardsQuery = $customerJobCardsQuery->where('payment_status','!=',1);
-        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','!=',4);
+        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','!=',4)->where('job_status','!=',5);
         $this->jobDetails =  $customerJobCardsQuery->first();
         if($this->jobDetails){
             //dd($this->jobDetails);
