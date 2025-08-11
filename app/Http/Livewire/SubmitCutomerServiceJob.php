@@ -117,7 +117,7 @@ class SubmitCutomerServiceJob extends Component
             }
         }
         
-        $this->getCustomerCart();
+        //$this->getCustomerCart();
         return view('livewire.submit-cutomer-service-job');
     }
 
