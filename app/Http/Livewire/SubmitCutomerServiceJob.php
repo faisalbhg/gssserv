@@ -385,6 +385,7 @@ class SubmitCutomerServiceJob extends Component
             $this->showPayLaterCheckout=false;
             $this->selectedCustomerVehicle=false;
         }
+        
         else
         {
             return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);

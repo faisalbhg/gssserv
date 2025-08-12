@@ -177,7 +177,39 @@ class CustomerServiceItems extends Component
 
     public function getCartInfo($value='')
     {
-        $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->get();
+
+        $customerServiceCartQuery = CustomerServiceCart::with(['manualDiscountServiceInfo','customerInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'division_code'=>auth()->user('user')->stationName['LandlordCode']]);
+        if($this->job_number)
+        {
+            $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>$this->job_number]);
+        }
+        else
+        {
+            $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>null]);
+        }
+
+        $this->cartItemCount = $customerServiceCartQuery->count();
+        if($this->cartItemCount>0){
+            $this->cartItems = $customerServiceCartQuery->get();
+            $this->cardShow=true;
+        }
+        else
+        {
+            $this->cardShow=false;
+        }
+        //dd($this->cartItems);
+        foreach($this->cartItems as $cartCheckItem){
+            if($cartCheckItem->division_code != auth()->user('user')->stationName['LandlordCode'])
+            {
+                dd('Error, Contact techincal team..!');
+            }
+            if($cartCheckItem->manual_discount_ref_no){
+                $this->manualDiscountRefNo = $cartCheckItem->manual_discount_ref_no;
+            }
+        }
+
+        /*$this->cartItems = CustomerServiceCart::with(['manualDiscountServiceInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->get();
+        
         $this->cartItemCount = count($this->cartItems); 
         if($this->cartItemCount>0)
         {
@@ -186,7 +218,10 @@ class CustomerServiceItems extends Component
         else
         {
             $this->cardShow=false;
-        }
+        }*/
+
+
+        
 
 
     }
