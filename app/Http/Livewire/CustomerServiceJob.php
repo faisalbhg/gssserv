@@ -1614,7 +1614,7 @@ class CustomerServiceJob extends Component
         $existingJobs = CustomerJobCards::with(['customerJobServices'])->where([
             'vehicle_id'=>$this->vehicle_id,
             'customer_id'=>$this->customer_id
-        ])->where('payment_status','!=',1)->where('job_status','<',3);
+        ])->where('payment_status','!=',1)->where('job_status','!=',4)->where('job_status','!=',5);
         if($existingJobs->exists())
         {
             $this->showPendingJobList=true;

@@ -316,71 +316,79 @@ class SubmitCutomerServiceJob extends Component
                 'jobUpdateSendSMS' => 'required'
             ]);
         }*/
-        $this->createJobEntry();
-        $this->job_number;
+        if($this->cartItemCount>0){
+
         
-        $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle','stationInfo'])->where(['job_number'=>$this->job_number])->first();
-        $mobileNumber = isset($customerjobs->customer_mobile)?'971'.substr($customerjobs->customer_mobile, -9):null;
-        $customerName = isset($customerjobs->customer_name)?$customerjobs->customer_name:null;
-        $plate_number = $customerjobs->plate_number;
-        $paymentmode = null;
-        if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
-            $msgtext = urlencode('Dear Customer, '.$plate_number.' received at '.auth()->user('user')->stationName['ShortName'].'. Track or pay online: https://gsstations.ae/qr/'.$this->job_number.'. For help, call 800477823.');
-            //dd(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+            $this->createJobEntry();
+            $this->job_number;
             
-            if(!$this->showSendSmsPannel && !$this->doNotSendSms)
-            {
-                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-            }
-            else
-            {
-                if($this->jobUpdateSendSMS=='yes')
+            $customerjobs = CustomerJobCards::with(['customerInfo','customerVehicle','stationInfo'])->where(['job_number'=>$this->job_number])->first();
+            $mobileNumber = isset($customerjobs->customer_mobile)?'971'.substr($customerjobs->customer_mobile, -9):null;
+            $customerName = isset($customerjobs->customer_name)?$customerjobs->customer_name:null;
+            $plate_number = $customerjobs->plate_number;
+            $paymentmode = null;
+            if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+                $msgtext = urlencode('Dear Customer, '.$plate_number.' received at '.auth()->user('user')->stationName['ShortName'].'. Track or pay online: https://gsstations.ae/qr/'.$this->job_number.'. For help, call 800477823.');
+                //dd(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                
+                if(!$this->showSendSmsPannel && !$this->doNotSendSms)
                 {
                     $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 }
+                else
+                {
+                    if($this->jobUpdateSendSMS=='yes')
+                    {
+                        $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+                    }
+                }
+                
             }
+
+            $createJobUpdate['job_create_status']=1;
+            if($mode=='link')
+            {
+                $paymentmode = "O";
+                $createJobUpdate['payment_type']=1;
+            }
+            else if($mode=='card')
+            {
+                $paymentmode = "O";
+                $createJobUpdate['payment_type']=2;
+            }
+            else if($mode=='cash')
+            {
+                $paymentmode = "C";
+                $createJobUpdate['payment_type']=3;
+            }
+            else if($mode=='full_discount')
+            {
+                $paymentmode = "C";
+                $createJobUpdate['payment_type']=3;
+                $createJobUpdate['payment_status']=1;
+            }
+            else if($mode=='empty')
+            {
+                $createJobUpdate['payment_type']=6;
+                $createJobUpdate['payment_status']=1;
+                $createJobUpdate['payment_request']='package';
+            }
+            $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update($createJobUpdate);
             
-        }
+            //Cart empty..!
+            $customerServiceCartQuery = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
 
-        $createJobUpdate['job_create_status']=1;
-        if($mode=='link')
-        {
-            $paymentmode = "O";
-            $createJobUpdate['payment_type']=1;
+            $this->successPage=true;
+            $this->showCheckout =false;
+            $this->cardShow=false;
+            $this->showServiceGroup=false;
+            $this->showPayLaterCheckout=false;
+            $this->selectedCustomerVehicle=false;
         }
-        else if($mode=='card')
+        else
         {
-            $paymentmode = "O";
-            $createJobUpdate['payment_type']=2;
+            return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
         }
-        else if($mode=='cash')
-        {
-            $paymentmode = "C";
-            $createJobUpdate['payment_type']=3;
-        }
-        else if($mode=='full_discount')
-        {
-            $paymentmode = "C";
-            $createJobUpdate['payment_type']=3;
-            $createJobUpdate['payment_status']=1;
-        }
-        else if($mode=='empty')
-        {
-            $createJobUpdate['payment_type']=6;
-            $createJobUpdate['payment_status']=1;
-            $createJobUpdate['payment_request']='package';
-        }
-        $customerjobId = CustomerJobCards::where(['job_number'=>$this->job_number])->update($createJobUpdate);
-        
-        //Cart empty..!
-        $customerServiceCartQuery = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->delete();
-
-        $this->successPage=true;
-        $this->showCheckout =false;
-        $this->cardShow=false;
-        $this->showServiceGroup=false;
-        $this->showPayLaterCheckout=false;
-        $this->selectedCustomerVehicle=false;
 
     }
 
