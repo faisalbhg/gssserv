@@ -389,11 +389,12 @@ class VehicleSearchSave extends Component
         $this->dispatchBrowserEvent('selectSearchEvent'); 
     }
 
-    public function getCustomerVehicleSearch($serachBy){
+    public function getCustomerVehicleSearch($searchBy){
         $this->customer_id = null;
         $this->vehicle_id = null;
+        $this->customers=[];
         $searchCustomerVehicleQuery = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo']);
-        if($serachBy=='mobile'){
+        if($searchBy=='mobile'){
             $validatedData = $this->validate([
                 'mobile'=> 'required|min:9|max:10',
             ]);
@@ -404,19 +405,19 @@ class VehicleSearchSave extends Component
                 $query->whereRelation('customerInfoMaster', 'Mobile', 'like', "%$this->mobile%");
             });
         }
-        if($serachBy=='plate'){
+        if($searchBy=='plate'){
             if($this->plate_code){
-                $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('plate_code', 'like', "%{$this->plate_code}%");
+                $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('plate_code', '=', $this->plate_code);
             }
             if($this->plate_number){
                 $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('plate_number', '=', $this->plate_number);    
             }
             
         }
-        if($serachBy=='chaisis'){
+        if($searchBy=='chaisis'){
             $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('chassis_number', 'like', "%{$this->chassis_number}%");
         }
-        if($serachBy=='contract_customer_name')
+        if($searchBy=='contract_customer_name')
         {
             $validatedData = $this->validate([
                 'contract_customer_id'=> 'required',
