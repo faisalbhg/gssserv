@@ -1136,7 +1136,7 @@ class Operations extends Component
         }
         dd('1');*/
 
-        //CustomerJobCards::where(['job_number'=>$job_number])->update(['cancel_req_status'=>null]);
+        //CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_status'=>1,'payment_type'=>2]);
         //dd($this->jobcardDetails);
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {

@@ -185,9 +185,7 @@ class SubmitCutomerServiceJob extends Component
             $customerServiceCartQuery = $customerServiceCartQuery->where(['job_number'=>null]);
         }
         $this->cartItemCount = $customerServiceCartQuery->count();
-        //dd($this->cartItemCount);
         
-        //$this->cartItemCustomer = $customerServiceCartQuery->first();
         if($this->cartItemCount>0){
             $this->cartItems = $customerServiceCartQuery->get();
             //dd($this->cartItems);
@@ -409,12 +407,18 @@ class SubmitCutomerServiceJob extends Component
     
 
     public function createJobEntry(){
+
+        if($this->cartItemCount==0){
+            dd('Contact IT..!');
+        }
+
         $job_update = false;
         if($this->job_number){
             $job_update = true;
             MaterialRequest::where(['sessionId'=>$this->job_number])->delete();
             $this->jobServiceTableUpdate();
         }
+
         $this->job_date_time =  Carbon::parse($this->job_date_time)->format('Y-m-d H:i:s');
         $customerjobData = [
             
