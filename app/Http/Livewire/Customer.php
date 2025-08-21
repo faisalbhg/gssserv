@@ -21,6 +21,20 @@ class Customer extends Component
 
     public function render()
     {
+        /*$duplicates = TenantMasterCustomers::select('Mobile',\DB::raw('COUNT(*) as count'))
+        ->groupBy('Mobile')
+        ->havingRaw('COUNT(*) > 1')
+        ->limit(5)
+        ->where('Mobile','!=','')
+        ->orderBy('count','DESC')
+        ->get();
+
+        dd($duplicates);*/
+
+        /*foreach(TenantMasterCustomers::where('Mobile','LIKE','05%')->where('Mobile','!=',null)->get() as $customerDtl)
+        {
+            dd($customerDtl);
+        }*/
         /*$duplicateEmails = TenantMasterCustomers::select('Mobile')
             ->groupBy('Mobile')
             ->havingRaw('COUNT(*) > 1')

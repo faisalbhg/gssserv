@@ -90,11 +90,10 @@
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 my-2" id="cartDisplayId">
                     @if($cardShow)
                         <div class="card card-profile card-plain">
-                            <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Order Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
+                            <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Pricing Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
                             <div class="row">
                                 <div class="col-lg-8">
                                     <div class="card h-100">
-                                        
                                         @if ($message = Session::get('cartsuccess'))
                                         <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
                                             <span class="alert-icon"><i class="ni ni-like-2"></i></span>
@@ -114,9 +113,19 @@
                                         @endif
                                         <div class="card-body p-3 pb-0">
                                             <ul class="list-group">
-                                                <?php $total = 0;$totalDiscount=0; $package_job=false; $manualDiscountAvailable=false; $aprovalWaiting=false;?>
+                                                <?php
+                                                    $total = 0;
+                                                    $totalDiscount=0;
+                                                    $package_job=false;
+                                                    $manualDiscountAvailable=false;
+                                                    $pendingSendManulDiscountRequest = false;
+                                                    $waitingSendManulDiscountRequest=false;
+                                                    $aprovedSendManulDiscountRequest=false;
+                                                    $rejectedSendManulDiscountRequest=false;
+                                                    
+                                                ?>
                                                 @foreach ($cartItems as $item)
-
+                                                    
                                                     <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
                                                         
                                                         <div class="d-flex flex-column">
@@ -132,20 +141,38 @@
                                                             <div><span class="badge bg-gradient-primary">{{$item->warrantyPeriod}} Months Warranty</span></div>
                                                             @endif
 
-                                                            @if($item->customer_group_code)
-                                                            <label wire:click.prevent="removeLineDiscount({{$item->id}})" class="badge bg-gradient-info cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
-                                                            @else
+                                                            @if($item->customer_group_code != null && $item->manual_discount_status == null && $item->manual_discount_send_for_aproval==null)
+                                                                <label wire:click.prevent="removeLineDiscount({{$item->id}})" class="badge bg-gradient-info cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
+                                                            @elseif($item->customer_group_code != null && $item->manual_discount_status == 1)
+                                                                <?php $manualDiscountAvailable=true; ?>
+                                                                @if($item->manual_discount_send_for_aproval==null)
+                                                                <?php
+                                                                    $pendingSendManulDiscountRequest = true;
+                                                                    //$manualDiscountRefNo = $item->manual_discount_ref_no;
+                                                                ?>
+                                                                <label wire:click.prevent="removeManualLineDiscount({{$item->id}})" class="badge bg-gradient-warning cursor-pointer">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off <i class="fa fa-trash text-danger"></i> </label>
+                                                                @elseif($item->manual_discount_send_for_aproval==1)
+                                                                <?php $waitingSendManulDiscountRequest = true; ?>
+                                                                <label class="btn btn-sm {{config('global.manualDiscount.status_outline_class')[$item->manual_discount_status]}} ">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off - {{config('global.manualDiscount.status')[$item->manual_discount_status]}}  </label>
+                                                                @endif
+                                                            @elseif($item->customer_group_code != null && $item->manual_discount_status == 2)
+                                                                <?php $aprovedSendManulDiscountRequest=true; ?>
+                                                                <label class="btn btn-sm {{config('global.manualDiscount.status_outline_class')[$item->manual_discount_status]}} ">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off - {{config('global.manualDiscount.status')[$item->manual_discount_status]}}  </label>
+                                                            @elseif($item->customer_group_code != null && $item->manual_discount_status == 3)
+                                                                <?php $rejectedSendManulDiscountRequest=true;?>
+                                                                <label class="btn btn-sm {{config('global.manualDiscount.status_outline_class')[$item->manual_discount_status]}} ">{{strtolower($item->customer_group_code)}} {{ $item->discount_perc }}% Off - {{config('global.manualDiscount.status')[$item->manual_discount_status]}}  </label>
                                                                 <span><label wire:click.prevent="applyLineDiscount({{$item}})" class="badge bg-gradient-dark cursor-pointer">Apply Discount </label></span>
-                                                                <div wire:loading wire:target="applyLineDiscount">
-                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                        <div class="la-ball-beat">
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                            @else
+                                                                @if($item->manual_discount_status == 3)
+                                                                    <label class="btn btn-sm {{config('global.manualDiscount.status_outline_class')[$item->manual_discount_status]}} ">Manual Discount - {{config('global.manualDiscount.status')[$item->manual_discount_status]}}  </label>
+                                                                @endif
+                                                                <span><label wire:click.prevent="applyLineDiscount({{$item}})" class="badge bg-gradient-dark cursor-pointer">Apply Discount </label></span>
                                                             @endif
+
+
+                                                            
+                                                            
+
 
                                                             @if($confirming===$item->id)
                                                             <p>
@@ -173,7 +200,14 @@
                                                             </p>
 
                                                             @else
+                                                            @if($item->job_number==null)
                                                             <span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
+                                                            @elseif(isset($item->current_job_status) || $item->current_job_status == 6 || $item->current_job_status == 1)
+
+                                                            <label class="mt-0 me-2 {{config('global.jobs.status_outline_class')[$item->current_job_status]}}" >Current Status: {{config('global.jobs.status')[$item->current_job_status]}}</label><span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
+                                                            @else
+                                                            <span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
+                                                            @endif
                                                             <div wire:loading wire:target="confirmDelete">
                                                                 <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                                     <div class="la-ball-beat">
@@ -292,7 +326,9 @@
                                             </p>
 
                                             @else
+                                            @if($item->job_number==null)
                                             <span><label wire:click.prevent="confirmDeleteRA" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove All</label></span>
+                                            @endif
                                             <div wire:loading wire:target="confirmDeleteRA">
                                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                                         <div class="la-ball-beat">
@@ -309,7 +345,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-12 ms-auto">
-                                    <h6 class="mb-3">Price Summary</h6>
+                                    <h6 class="mb-3">Order Summary</h6>
                                     <div class="d-flex justify-content-between">
                                         <span class="mb-2 text-sm">
                                         Product Price:
@@ -343,7 +379,26 @@
                                         <span class="text-dark text-lg ms-2 font-weight-bold">{{config('global.CURRENCY')}} {{custom_round($grand_total)}}</span>
                                     </div>
                                     @if($cardShow)
-                                    <button type="button" class="btn bg-gradient-success btn-sm float-end" wire:click="submitService()">Confirm & Continue</button>
+                                        @if($manualDiscountAvailable)
+                                            @if($pendingSendManulDiscountRequest)
+                                            <button type="button" class="btn bg-gradient-warning btn-sm float-end" wire:click="sendManualDiscountApproval({{$manualDiscountRefNo}})">Send for Manual Discount Approval</button>
+                                            @elseif($waitingSendManulDiscountRequest)
+                                            <button type="button" class="btn bg-gradient-warning btn-sm float-end" >Waiting Manual Discount Approval</button>
+                                            @elseif($aprovedSendManulDiscountRequest)
+                                            <button type="button" class="btn bg-gradient-success btn-sm float-end" wire:click="submitService()">Confirm & Continue</button>
+                                            @endif
+                                        @else
+                                        <button type="button" class="btn bg-gradient-success btn-sm float-end" wire:click="submitService()">Confirm & Continue</button>
+                                        @endif
+                                    <div wire:loading wire:target="sendManualDiscountApproval">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div wire:loading wire:target="submitService">
                                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                             <div class="la-ball-beat">
@@ -355,6 +410,15 @@
                                     </div>
                                     @endif
                                     <div wire:loading wire:target="removeLineDiscount">
+                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                            <div class="la-ball-beat">
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div wire:loading wire:target="removeManualLineDiscount">
                                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                             <div class="la-ball-beat">
                                                 <div></div>
@@ -585,179 +649,7 @@
                                 <hr>
                             @endif
                             @if($showSelectedDiscount)
-                            <div class="card  h-100 cursor-pointer">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-2 col-sm-4 my-2">
-                                            <button type="button" class="btn bg-gradient-primary" >{{str_replace("_"," ",strtolower($selectedDiscount['title']))}}</button>
-                                        </div>
-                                        <div class="col-lg-10 col-sm-8 text-center" >
-                                            @if($searchStaffId)
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="employeeId">Employee Id</label>
-                                                        <input type="text" class="form-control" wire:model="employeeId" id="employeeId" placeholder="Staff/Employee Id">
-                                                        @error('employeeId') <span class="text-danger">{{ $message }}</span> @enderror
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="col-md-12">
-                                                    <button type="button" class="btn bg-gradient-primary" wire:click="checkStaffDiscountGroup()">Check Employee</button>
-                                                    <div wire:loading wire:target="checkStaffDiscountGroup">
-                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                            <div class="la-ball-beat">
-                                                                <div></div>
-                                                                <div></div>
-                                                                <div></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                            @if($discountCardApplyForm)
-                                            <div class="row mb-0">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="discountCardImgae">Discount Card Imgae</label>
-                                                        <input type="file" class="form-control" wire:model.defer="discount_card_imgae">
-                                                        @error('discount_card_imgae') <span class="text-danger">{{ $message }}</span> @enderror
-                                                        @if ($discount_card_imgae)
-                                                        <img class="img-fluid border-radius-lg w-30" src="{{ $discount_card_imgae->temporaryUrl() }}">
-                                                        @endif
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="discountCardNumber">Discount Card Number</label>
-                                                        <input type="text" class="form-control" wire:model="discount_card_number" placeholder="Discount Card Number">
-                                                        @error('discount_card_number') <span class="text-danger">{{ $message }}</span> @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="discountCardValidity">Discount Card Validity</label>
-                                                        <input type="date" class="form-control" id="discountCardValidity" wire:model="discount_card_validity" name="discountCardValidity" placeholder="Discount Card Validity" min="<?php echo date("Y-m-d"); ?>">
-                                                        @error('discount_card_validity') <span class="text-danger">{{ $message }}</span> @enderror
-                                                    </div>
-                                                </div>
-                                            
-                                                <div class="col-md-12">
-                
-                                                    <button type="button" class="btn bg-gradient-dark cursor-pointer " wire:click="clickDiscountGroup()" formmethod="">Back</button>
-                                                    <button type="button" class="btn bg-gradient-primary " wire:click="saveSelectedDiscountGroup()">Save changes</button>
-                                                    <div wire:loading wire:target="clickDiscountGroup">
-                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                            <div class="la-ball-beat">
-                                                                <div></div>
-                                                                <div></div>
-                                                                <div></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div wire:loading wire:target="saveSelectedDiscountGroup">
-                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                            <div class="la-ball-beat">
-                                                                <div></div>
-                                                                <div></div>
-                                                                <div></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                            @if($engineOilDiscountForm)
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilDiscount(10)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">10%</h2>
-                                                                <p class="text-white">
-                                                                10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilDiscount(15)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">15%</h2>
-                                                                <p class="text-white">
-                                                                15% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilDiscount(20)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">20%</h2>
-                                                                <p class="text-white">
-                                                                20% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilDiscount(25)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">25%</h2>
-                                                                <p class="text-white">
-                                                                25% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div wire:loading wire:target="selectEngineOilDiscount">
-                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                        <div class="la-ball-beat">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                            @if($manulDiscountForm)
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <h4 >Manual Discount Percentage</h4>
-                                                        <div class="row">
-                                                            <div class="col-6">
-                                                                <div class="form-group">
-                                                                    <input type="number" class="form-control" wire:model="manualDiscountValue" id="manualDiscountValue" placeholder="Manual Discount Percentage">
-                                                                    @error('manualDiscountValue') <span class="text-danger">{{ $message }}</span> @enderror
-                                                                </div>
-                                                            </div>
-                                                        
-                                                            <div class="col-6">
-                                                                <button type="button" class="btn bg-gradient-primary" wire:click="saveManulDiscountAproval()">Apply Discount</button>
-                                                                <div wire:loading wire:target="saveManulDiscountAproval">
-                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                        <div class="la-ball-beat">
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                 </div>
-                             </div>
+                            @include('components.customerDiscount')
                             @endif
                             
                             @if(empty($selectedDiscount))

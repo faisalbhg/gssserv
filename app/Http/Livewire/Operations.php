@@ -518,10 +518,11 @@ class Operations extends Component
             if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
                 $msgtext = urlencode('Dear Customer, '.$plate_number.' received at '.auth()->user('user')->stationName['ShortName'].'. Track or pay online: https://gsstations.ae/qr/'.$job_number.'. For help, call 800477823.');
                 $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
                 
             }
         }
+        
+
     }
 
     public function cancelJob($job_number)
@@ -1136,7 +1137,7 @@ class Operations extends Component
         }
         dd('1');*/
 
-        //CustomerJobCards::where(['job_number'=>$job_number])->update(['payment_status'=>1,'payment_type'=>2]);
+        //CustomerJobCards::where(['job_number'=>$job_number])->update(['customer_job_update'=>null]);
         //dd($this->jobcardDetails);
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {

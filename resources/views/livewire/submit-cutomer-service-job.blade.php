@@ -116,7 +116,7 @@
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 my-2">
                     @if(count($cartItems)>0)
                         <div class="card card-profile card-plain">
-                            <h6 class="text-uppercase text-body text-lg font-weight-bolder mt-2">Pricing Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
+                            <h6 class="text-uppercase text-body text-dark text-lg font-weight-bolder mt-2">Service/Items Summary <span class="float-end text-sm text-danger text-capitalize">{{ count($cartItems) }} Services selected</span></h6>
                             <div class="row">
                                 <div class="col-lg-12 col-sm-12">
                                     <div class="card h-100">
@@ -204,6 +204,7 @@
 
         @if($showCheckList)
             <div class="row mt-3">
+
                 @if($showFuelScratchCheckList)
                     <div class="col-xxs-12 col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 mb-4">
                         <div class="card">
@@ -700,15 +701,11 @@
         
         @if($showvehicleImage)
             <div class="row mt-3">
+                <h6 class="text-uppercase text-body text-dark text-lg font-weight-bolder mt-2">Exterior Vehicle Images</h6>
                 <div class="col-md-12 mb-4">
                     <div class="card">
-                        <div class="card-header text-center pt-4 pb-3">
-                            <h5 class="font-weight-bold mt-2">Vehicle Images</h5>
-                        </div>
                         <div class="card-body text-left pt-0">
-                            <h5 class="font-weight-bold mt-2">Exterior Vehicle Images</h5>
                             <div class="row">
-
                                 <div class="col-md-6 col-sm-6">
                                     <div 
                                     x-data="{ isUploading: false, progress: 0 }" 
@@ -873,7 +870,14 @@
                                     @error('vImageL2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
                             </div>
-                            <h5 class="font-weight-bold mt-2">Interior Vehicle Images</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="text-uppercase text-body text-dark text-lg font-weight-bolder mt-2">Interior Vehicle Images</h6>
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-body text-left pt-0">
                             <div class="row m-4">
                                 <div class="col-md-6 col-sm-6">
                                     <div 
@@ -892,12 +896,13 @@
                                             </div>
                                         </div> -->
                                         <!-- File Input -->
-                                        <input type="file" id="dashImage1File" wire:model="dash_image1" accept="image/*" capture style="display:block"/>
+                                        <input type="file" id="dashImage1File" wire:model="dash_image1" accept="image/*" capture style="display:none"/>
                                         <!-- Progress Bar -->
                                         <div x-show="isUploading">
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
+
                                     
                                     <img class="img-fluid img-thumbnail shadow" id="dashImage1" src="@if($dash_image1) {{$dash_image1->temporaryUrl()}} @elseif($existingdash_image1) {{ url('public/storage/'.$existingdash_image1)}} @else {{asset('img/dashImage1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('dash_image1') <span class="text-danger">Missing Image..!</span> @enderror
@@ -919,16 +924,16 @@
                                             </div>
                                         </div> -->
                                         <!-- File Input -->
-                                        <input type="file" id="dashImage2File" wire:model="dash_image2" accept="image/*" capture style="display:block"/>
+                                        <input type="file" id="dashImage2File" wire:model="dash_image2" accept="image/*" capture style="display:none"/>
                                         <!-- Progress Bar -->
                                         <div x-show="isUploading">
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
+
                                     <img class="img-fluid img-thumbnail shadow" id="dashImage2" src="@if ($dash_image2) {{$dash_image2->temporaryUrl()}} @elseif($existingdash_image2) {{ url('public/storage/'.$existingdash_image2)}} @else {{asset('img/dashImage2.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('dash_image2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
-                                <hr>
                             </div>
                             <div class="row m-4">
                                 <div class="col-md-6 col-sm-6">
@@ -948,12 +953,13 @@
                                             </div>
                                         </div> -->
                                         <!-- File Input -->
-                                        <input type="file" id="passengerSeatImageFile" wire:model="passenger_seat_image" accept="image/*" capture style="display:block"/>
+                                        <input type="file" id="passengerSeatImageFile" wire:model="passenger_seat_image" accept="image/*" capture style="display:none"/>
                                         <!-- Progress Bar -->
                                         <div x-show="isUploading">
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
+                                    
                                     <img class="img-fluid img-thumbnail shadow" id="passengerSeatImage" src="@if($passenger_seat_image) {{$passenger_seat_image->temporaryUrl()}} @elseif($existingpassenger_seat_image) {{ url('public/storage/'.$existingpassenger_seat_image)}} @else {{asset('img/passangerSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('passenger_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
@@ -974,16 +980,16 @@
                                             </div>
                                         </div> -->
                                         <!-- File Input -->
-                                        <input type="file" id="driverSeatImageFile" wire:model="driver_seat_image" accept="image/*" capture style="display:block"/>
+                                        <input type="file" id="driverSeatImageFile" wire:model="driver_seat_image" accept="image/*" capture style="display:none;"/>
                                         <!-- Progress Bar -->
                                         <div x-show="isUploading">
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
+                                    
                                     <img class="img-fluid img-thumbnail shadow" id="driverSeatImage" src="@if($driver_seat_image) {{$driver_seat_image->temporaryUrl()}} @elseif($existingdriver_seat_image) {{ url('public/storage/'.$driver_seat_image)}} @else {{asset('img/driverSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('driver_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
-                                <hr>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-sm-6">
@@ -1003,12 +1009,13 @@
                                             </div>
                                         </div> -->
                                         <!-- File Input -->
-                                        <input type="file" id="backSeat1ImageFile" wire:model="back_seat1" accept="image/*" capture style="display:block"/>
+                                        <input type="file" id="backSeat1ImageFile" wire:model="back_seat1" accept="image/*" capture style="display:none;"/>
                                         <!-- Progress Bar -->
                                         <div x-show="isUploading">
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
+
                                     <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="@if($back_seat1) {{$back_seat1->temporaryUrl()}} @elseif($existingback_seat1) {{ url('public/storage/'.$existingback_seat1)}} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('back_seat1') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
@@ -1029,12 +1036,13 @@
                                             </div>
                                         </div> -->
                                         <!-- File Input -->
-                                        <input type="file" id="backSeat2ImageFile" wire:model="back_seat2" accept="image/*" capture style="display:block"/>
+                                        <input type="file" id="backSeat2ImageFile" wire:model="back_seat2" accept="image/*" capture style="display:none;"/>
                                         <!-- Progress Bar -->
                                         <div x-show="isUploading">
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
+
                                     <img class="img-fluid img-thumbnail shadow" id="backSeat2Image" src="@if($back_seat2) {{$back_seat2->temporaryUrl()}} @elseif($existingback_seat2) {{ url('public/storage/'.$existingback_seat2)}} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
                                     @error('back_seat2') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
@@ -1057,12 +1065,13 @@
                                             </div>
                                         </div> -->
                                         <!-- File Input -->
-                                        <input type="file" id="backSeat3ImageFile" wire:model="back_seat3" accept="image/*" capture style="display:block"/>
+                                        <input type="file" id="backSeat3ImageFile" wire:model="back_seat3" accept="image/*" capture style="display:none;"/>
                                         <!-- Progress Bar -->
                                         <div x-show="isUploading">
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
+
                                     <img class="img-fluid img-thumbnail shadow" id="backSeat3Image" src="@if($back_seat3) {{$back_seat3->temporaryUrl()}} @elseif($existingback_seat3) {{ url('public/storage/'.$existingback_seat3)}} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('back_seat3') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
@@ -1083,12 +1092,13 @@
                                             </div>
                                         </div> -->
                                         <!-- File Input -->
-                                        <input type="file" id="backSeat4ImageFile1" wire:model="back_seat4" accept="image/*" capture style="display:block"/>
+                                        <input type="file" id="backSeat4ImageFile1" wire:model="back_seat4" accept="image/*" capture style="display:none;"/>
                                         <!-- Progress Bar -->
                                         <div x-show="isUploading">
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
+                                    
                                     <img class="img-fluid img-thumbnail shadow" id="backSeat4Image1" src="@if($back_seat4) {{$back_seat4->temporaryUrl()}} @elseif($existingback_seat4) {{ url('public/storage/'.$existingback_seat4)}} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
                                     @error('back_seat4') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
@@ -1111,12 +1121,13 @@
                                             </div>
                                         </div> -->
                                         <!-- File Input -->
-                                        <input type="file" id="backSeat3ImageFile1" wire:model="roof_images" accept="image/*" capture style="display:block"/>
+                                        <input type="file" id="backSeat3ImageFile1" wire:model="roof_images" accept="image/*" capture style="display:none;"/>
                                         <!-- Progress Bar -->
                                         <div x-show="isUploading">
                                             <progress max="100" x-bind:value="progress"></progress>
                                         </div>
                                     </div>
+
                                     <img class="img-fluid img-thumbnail shadow" id="backSeat3Image1" src="@if($roof_images) {{$roof_images->temporaryUrl()}} @elseif($existingroof_images) {{ url('public/storage/'.$existingroof_images)}} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
                                     @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
                                 </div>
@@ -1129,6 +1140,7 @@
 
         @if($showTermsandCondition)
             <div class="row mt-3">
+                <h6 class="text-uppercase text-body text-dark text-lg font-weight-bolder mt-2">Terms & Conditions</h6>
                 <div class="col-md-12 mb-4">
                     <div class="card">
                         <div class="card-body text-left pt-4">
@@ -1147,97 +1159,82 @@
         @if($showSignaturePad)
             <!--Signature pad -->
             <div class="row mt-3">
-                <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 mb-4">
-                    <div class="card">
-                        <div class="card-header text-left pt-4 pb-3">
-                            <h5 class="font-weight-bold mt-2">Signature</h5>
-                        </div>
-                        <div class="card-body text-left pt-0">
-                            <button type="button" class="btn btn-primary btn-lg" wire:click="clickShowSignature()">Customer Signature</button>
-                            <div wire:loading wire:target="clickShowSignature">
-                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                    <div class="la-ball-beat">
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                    </div>
-                                </div>
+                <h6 class="text-uppercase text-body text-dark text-lg font-weight-bolder mt-2">Customer Signature</h6>
+                <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 float-end">
+                    <button type="button" class="btn btn-primary btn-lg mb-0 float-end" wire:click="clickShowSignature()">Customer Signature</button>
+                    <div wire:loading wire:target="clickShowSignature">
+                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                            <div class="la-ball-beat">
+                                <div></div>
+                                <div></div>
+                                <div></div>
                             </div>
-                            @if($customerSignature)
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <img class="w-100" src="{{$customerSignature}}" />
-                                </div>
-                            </div>
-                            
-                            @endif
                         </div>
-                        
                     </div>
+                </div>
+                <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 mb-4  float-end">
+                    @if($customerSignature)
+                    <div class="position-relative float-end">
+                        <a class="d-block blur-shadow-image">
+                            <img src="{{$customerSignature}}" alt="img-blur-shadow" class="img-fluid shadow border-radius-lg">
+                        </a>
+                    </div>
+                    @endif
                 </div>
             </div>
         @endif
         @if($customerSignature || $showCheckout)
             <div class="row mt-3" id="checkoutSignature">
+                <h6 class="text-uppercase text-body text-dark text-lg font-weight-bolder mt-2">Paymnet Confirmation</h6>
                 <div class="col-md-12 mb-4" >
-                    
-
                     <div class="card p-2 mb-4">
-                        <div class="card-header text-center pt-4 pb-3">
-                            
-                            <h1 class="font-weight-bold mt-2">
-                                Payment Confirmation
-                            </h1>
-                            <hr>
-                            
-                        </div>
                         <div class="card-body pt-0">
-                            <div class="d-flex justify-content-center">
-                                <div class="card p-2 mb-4">
-                                    <div class="card-body text-center pt-0">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card p-2 mb-0">
+                                        <div class="card-body text-center pt-0">
 
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ custom_round($total) }}</span></p>
-                                                @if($totalAfterDisc>0 )
-                                                <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ custom_round($totalAfterDisc) }}</span></p>
-                                                @endif
-                                                <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ custom_round($tax) }}</span></p>
-                                                <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ custom_round($grand_total) }}</span></p>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p><span class="badge rounded-pill bg-light text-dark text-md">Total: <small>AED</small> {{ custom_round($total) }}</span></p>
+                                                    @if($totalAfterDisc>0 )
+                                                    <p><span class="badge rounded-pill bg-light text-dark text-md">Discount: <small>AED</small> {{ custom_round($totalAfterDisc) }}</span></p>
+                                                    @endif
+                                                    <p><span class="badge rounded-pill bg-light text-dark text-md">VAT: <small>AED</small> {{ custom_round($tax) }}</span></p>
+                                                    <p><span class="badge rounded-pill bg-dark text-light text-lg text-bold">Grand total: <small>AED</small> {{ custom_round($grand_total) }}</span></p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            
 
-                            @if($showSendSmsPannel)
-                            <div class="d-flex justify-content-center">
-                                <div class="card p-2 mb-4">
-                                    <div class="card-header text-left pt-4 pb-3">
-                                        <h5 class="font-weight-bold mt-2">SMS Confirmation in Job Update</h5>
-                                        <hr>
-                                    </div>
-                                    <div class="card-body text-lg-left text-left pt-0">
+                                @if($showSendSmsPannel)
+                                <div class="col-md-6">
+                                    <div class="card p-2 mb-0">
+                                        <div class="card-header text-left pt-4 pb-3">
+                                            <h6 class="mt-2">SMS Confirmation in Job Update</h6>
+                                            <hr>
+                                        </div>
+                                        <div class="card-body text-lg-left text-left pt-0">
 
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-check mb-3">
-                                                    <input class="form-check-input" type="radio" wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS1" value="yes">
-                                                    <label class="custom-control-label" for="customRadio1">Send SMS</label>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="radio" wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS1" value="yes">
+                                                        <label class="custom-control-label" for="customRadio1">Send SMS</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input " type="radio"  wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS2" value="no">
+                                                        <label class="custom-control-label text-danger" for="customRadio2">Do Not Send SMS</label>
+                                                    </div>
+                                                    @error('jobUpdateSendSMS') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input " type="radio"  wire:model="jobUpdateSendSMS" name="flexRadioDefault" id="jobUpdateSendSMS2" value="no">
-                                                    <label class="custom-control-label text-danger" for="customRadio2">Do Not Send SMS</label>
-                                                </div>
-                                                @error('jobUpdateSendSMS') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                @endif
                             </div>
-                            @endif
-                            
                         </div>
 
                         <div class="card-footer text-lg-left text-center pt-0">
@@ -1350,6 +1347,33 @@
         $("#upfile6").click(function () {
             $("#file6").trigger('click');
         });
+        $("#dashImage1").click(function () {
+            $("#dashImage1File").trigger('click');
+        });
+        $("#dashImage2").click(function () {
+            $("#dashImage2File").trigger('click');
+        });
+        $("#passengerSeatImage").click(function () {
+            $("#passengerSeatImageFile").trigger('click');
+        });
+        $("#driverSeatImage").click(function () {
+            $("#driverSeatImageFile").trigger('click');
+        });
+        $("#backSeat1Image").click(function () {
+            $("#backSeat1ImageFile").trigger('click');
+        });
+        $("#backSeat2Image").click(function () {
+            $("#backSeat2ImageFile").trigger('click');
+        });
+        $("#backSeat3Image").click(function () {
+            $("#backSeat3ImageFile").trigger('click');
+        });
+        $("#backSeat4Image1").click(function () {
+            $("#backSeat4ImageFile1").trigger('click');
+        });
+        $("#backSeat3Image1").click(function () {
+            $("#backSeat3ImageFile1").trigger('click');
+        });
     });
     $("#upfile1").click(function () {
         $("#file1").trigger('click');
@@ -1368,6 +1392,33 @@
     });
     $("#upfile6").click(function () {
         $("#file6").trigger('click');
+    });
+    $("#dashImage1").click(function () {
+        $("#dashImage1File").trigger('click');
+    });
+    $("#dashImage2").click(function () {
+        $("#dashImage2File").trigger('click');
+    });
+    $("#passengerSeatImage").click(function () {
+        $("#passengerSeatImageFile").trigger('click');
+    });
+    $("#driverSeatImage").click(function () {
+        $("#driverSeatImageFile").trigger('click');
+    });
+    $("#backSeat1Image").click(function () {
+        $("#backSeat1ImageFile").trigger('click');
+    });
+    $("#backSeat2Image").click(function () {
+        $("#backSeat2ImageFile").trigger('click');
+    });
+    $("#backSeat3Image").click(function () {
+        $("#backSeat3ImageFile").trigger('click');
+    });
+    $("#backSeat4Image1").click(function () {
+        $("#backSeat4ImageFile1").trigger('click');
+    });
+    $("#backSeat3Image1").click(function () {
+        $("#backSeat3ImageFile1").trigger('click');
     });
 </script>
 

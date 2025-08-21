@@ -48,9 +48,15 @@
                             <div class="card-body text-lg-left text-left pt-0">
                                 @foreach($pendingJob->customerJobServices as $custJobService)
                                     <div class="d-flex justify-content-lg-start justify-content-left p-2">
+                                        @if($custJobService->job_status)
                                         <div class="icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$custJobService->job_status]}} shadow text-center">
                                             <i class="fas fa-check opacity-10" aria-hidden="true"></i>
                                         </div>
+                                        @else
+                                        <div class="icon icon-shape icon-xs rounded-circle bg-gradient-default shadow text-center">
+                                            <i class="fas fa-check opacity-10" aria-hidden="true"></i>
+                                        </div>
+                                        @endif
                                         <div>
                                             <span class="ps-3">{{$custJobService->item_name}}<small>({{$custJobService->item_code}})</small></span>
                                         </div>

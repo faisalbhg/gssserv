@@ -57,6 +57,7 @@
                                 
                             @endif
                             
+                            
                         @endif
                             
                         <a  class="cursor-pointer" data-bs-dismiss="modal"><i class="text-danger fa-solid fa-circle-xmark fa-xxl" style="font-size:2rem;"></i></a>

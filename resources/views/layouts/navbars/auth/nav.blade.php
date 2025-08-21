@@ -91,7 +91,7 @@
                     </li>
 
                     <li class="nav-item px-0 d-flex align-items-center"  >
-                        <a class="nav-link" href="{{ route('job-start') }}"  wire:click="nothing('unique_id')" wire:navigate>
+                        <a class="nav-link" href="{{ route('customer-receive') }}"  wire:click="nothing('unique_id')" wire:navigate>
                             <button class="btn btn-icon btn-sm btn-3 bg-gradient-primary" type="button" wire:click="newVehicleOpen">
                                 <span class="btn-inner--icon"><i style="font-size: 1.5em;" class="fa-solid fa-car fa-xl"></i></span>
                                 <span class="btn-inner--text">New Job</span>

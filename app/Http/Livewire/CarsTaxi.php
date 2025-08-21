@@ -801,7 +801,7 @@ class CarsTaxi extends Component
         $this->showVehicleImageDetails=false;
         $this->updateService=true;
         $this->jobcardDetails = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo','stationInfo'])->where(['job_number'=>$job_number,'is_contract'=>1])->first();
-        //dd($this->jobcardDetails);
+
         $this->jobOrderReference=null;
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {

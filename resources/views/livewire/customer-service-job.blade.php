@@ -23,6 +23,13 @@
         </div>
         @endif
 
+        @if($job_number)
+            <button type="button" class="btn btn-danger">
+                <span>Job Number: </span>
+                <span class=" badge-primary text-xl">#{{$job_number}}</span>
+            </button>
+        @endif
+
         @if($showForms)
             <div class="card px-3 my-2" >
                 <div class="card-body p-0">
@@ -30,7 +37,7 @@
                     @if($searchByMobileNumber)
                         <div class="row">
                             @if($showByMobileNumber)
-                                <div class="col-md-4 col-sm-6">
+                                <div class="col-md-6 col-sm-6">
                                     <div class="form-group">
                                         <label for="mobilenumberInput">Mobile Number </label>
                                         <div class="input-group mb-0">
@@ -42,13 +49,13 @@
                                 </div>
                             @endif
                             @if ($showCustomerForm)
-                                <div class="col-md-4  col-sm-6">
+                                <div class="col-md-6  col-sm-6">
                                     <div class="form-group openDiv">
                                         <label for="nameInput">Name</label>
                                         <input type="text" class="form-control @error('name') btn-outline-danger @enderror" wire:model.defer="name" name="name" placeholder="Name" id="nameInput">
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-6">
+                                <div class="col-md-6 col-sm-6">
                                     <div class="form-group openName">
                                         <label for="emailInput">Email</label>
                                         <input type="email" wire:model.defer="email" name="email" class="form-control @error('email') btn-outline-danger @enderror" id="emailInput" placeholder="Email">
@@ -60,19 +67,19 @@
                     @endif
                     @if($showPlateNumber)
                         <div class="row">
-                            <div class="col-2">
+                            <div class="col-md-2 col-sm-3">
                                 <label for="plateImageFile" >Plate Image</label>
                                 <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
-                                    <!-- <div class="row">
+                                    <div class="row">
                                         <div class="col-md-12">
                                             
                                             <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
                                                 <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                             </button>
                                         </div>
-                                    </div> -->
+                                    </div>
                                     <!-- File Input -->
-                                    <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: block;" />
+                                    <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: none;" />
                                     <!-- Progress Bar -->
                                     <div x-show="isUploading">
                                         <progress max="100" x-bind:value="progress"></progress>
@@ -82,7 +89,7 @@
                                     <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
                                 @endif
                             </div>
-                            <div class="col-md-3 col-sm-4">
+                            <div class="col-md-5 col-sm-6">
                                 <div class="form-group">
                                     <label for="plateCountry">Country</label>
                                     <select class="form-control chosen-select" wire:model="plate_country"  id="plateCountry" name="plate_country" aria-invalid="false"><option value="">Select</option>
@@ -92,7 +99,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-5 col-sm-6">
                                 <div class="form-group">
                                     <label for="plateEmirates">Plate Emirates</label>
                                     <select class="form-control chosen-select" wire:model="plate_state" name="plate_state" id="plateEmirates" style="padding:0.5rem 0.3rem !important;" >
@@ -103,7 +110,16 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-2 col-sm-4">
+                                <div class="form-group">
+                                    <label  for="platNumberRequired">Plate Number</label>
+                                    <div class="form-check form-switch mt-1">
+                                        <input class="form-check-input" type="checkbox" id="platNumberRequired" wire:model="numberPlateRequired">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5 col-sm-6">
                                 <div class="form-group">
                                     <label for="plateCode">Plate Code</label>
                                     <select class="form-control chosen-select" wire:model="plate_code" name="plateCode" id="plateCode" style="padding:0.5rem 0.3rem !important;" >
@@ -116,21 +132,13 @@
                                 @error('plate_code') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                             </div>
                             
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-5 col-sm-6">
                                 <div class="form-group">
                                     <label for="plateNumber">Plate Number</label>
                                     <input style="padding:0.5rem 0.3rem !important;" type="number" id="plateNumber" class="form-control @error('plate_number') btn-outline-danger @enderror" wire:model="plate_number" name="plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Number">
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-4">
-                                <div class="form-group">
-                                    <label for="plateNumber"></label>
-                                    <div class="form-check form-switch mt-1">
-                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" wire:model="numberPlateRequired">
-                                        <label class="form-check-label" for="flexSwitchCheckDefault">Plate Number Required</label>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                         @if($showSearchByPlateNumberButton)
                             <div class="row">
@@ -152,19 +160,19 @@
                     @endif
                     @if($otherVehicleDetailsForm)
                         <div class="row">
-                            <div class="col-md-2 col-sm-2">
+                            <div class="col-md-2 col-sm-4">
                                 <label for="vehicleImageFile">Vehicle Image</label>
                                 <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
-                                    <!-- <div class="row">
+                                    <div class="row">
                                         <div class="col-md-12">
                                             
                                             <button class="btn btn-icon btn-2 btn-primary float-start" id="vehicleImage" type="button">
                                                 <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                             </button>
                                         </div>
-                                    </div> -->
+                                    </div>
                                     <!-- File Input -->
-                                    <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture style="display: block;" />
+                                    <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture style="display: none;" />
                                     <!-- Progress Bar -->
                                     <div x-show="isUploading">
                                         <progress max="100" x-bind:value="progress"></progress>
@@ -175,7 +183,7 @@
                                 @endif
                                 @error('vehicle_image') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
-                            <div class="col-md-3 col-sm-5">
+                            <div class="col-md-5 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleTypeInput">Vehicle Type</label>
                                     <select class="form-control chosen-select  @error('vehicle_type') btn-outline-danger @enderror" id="vehicleTypeInput" wire:model="vehicle_type">
@@ -187,13 +195,20 @@
                                     @error('vehicle_type') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-4">
-                                <label for="AddVehicleMakeInput mb-2"></label>
+                            <div class="col-md-5 col-sm-6">
                                 <div class="form-group">
-                                    <button type="button" wire:click="addMakeModel()" class="btn btn-info btn-sm mt-2" id="AddVehicleMakeInput">Add Make Model</button>
+                                    <label for="vehicleKmInput">K.M Reading</label>
+                                    <input type="number" class="form-control" id="vehicleKmInput" wire:model="vehicle_km" name="vehicle_km" placeholder="Chaisis Number">
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+
+                            <div class="col-md-2 col-sm-4">
+                                <label for="AddVehicleMakeInput mb-2"></label>
+                                <div class="form-group">
+                                    <button type="button" wire:click="addMakeModel()" class="btn btn-info btn-sm mt-2 p-1" id="AddVehicleMakeInput">Add Make/Model</button>
+                                </div>
+                            </div>
+                            <div class="col-md-5 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleMakeInput">Vehicle Make</label>
                                     <select class="form-control chosen-select" id="vehicleMakeInput" wire:model="make" >
@@ -205,7 +220,7 @@
                                     @error('make') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-5 col-sm-6">
                                 <div class="form-group">
                                     <label for="vehicleModelInput">Vehicle Model</label>
 
@@ -218,30 +233,25 @@
                                      @error('model') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="form-group">
-                                    <label for="vehicleKmInput">K.M Reading</label>
-                                    <input type="number" class="form-control" id="vehicleKmInput" wire:model="vehicle_km" name="vehicle_km" placeholder="Chaisis Number">
-                                </div>
-                            </div>
+                            
                         </div>
                     @endif
 
                     @if($searchByChaisisForm)
                         <div class="row">
-                            <div class="col-md-3 col-sm-2">
+                            <div class="col-md-2 col-sm-4">
                                 <label for="chaisisImageFile">Chaisis Picture</label>
                                 <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
-                                    <!-- <div class="row">
+                                    <div class="row">
                                         <div class="col-md-12">
                                             
                                             <button class="btn btn-icon btn-2 btn-primary float-start" id="chaisisImage" type="button">
                                                 <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                             </button>
                                         </div>
-                                    </div> -->
+                                    </div>
                                     <!-- File Input -->
-                                    <input type="file" id="chaisisImageFile" wire:model="chaisis_image" accept="image/*" capture style="display: block;" />
+                                    <input type="file" id="chaisisImageFile" wire:model="chaisis_image" accept="image/*" capture style="display: none;" />
                                     <!-- Progress Bar -->
                                     <div x-show="isUploading">
                                         <progress max="100" x-bind:value="progress"></progress>
@@ -252,33 +262,16 @@
                                     <!-- <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button> -->
                                 @endif
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-10 col-sm-8">
                                 <div class="form-group">
                                     <label for="chaisisNumberInput">Chaisis Number</label>
                                     <input type="text" class="form-control" id="chaisisNumberInput" wire:model="chassis_number" name="chassis_number" placeholder="Chassis Number">
                                 </div>
                             </div>
                         </div>
-                        @if($showSearchByChaisisButton)
-                            <div class="row">
-                                <div class="col-md-3 col-sm-2">
-                                    <button type="button" wire:click="clickSearchByChaisisNumber()" class="btn btn-primary btn-sm">Search By Chaisis Number</button>
-                                    <div wire:loading wire:target="clickSearchByChaisisNumber">
-                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                            <div class="la-ball-beat">
-                                                <div></div>
-                                                <div></div>
-                                                <div></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         @endif
-                        
-                    @endif
 
-                    <div class="row">
+                    <div class="row mt-4">
                         <div class="col-md-12">
                             @if($updateVehicleFormBtn)
                             <button type="button" wire:click="updateVehicleCustomer()" class="btn btn-primary btn-sm">Update Vehicle</button>
@@ -1195,160 +1188,7 @@
         @endif
         
         @if($showServiceSectionsList)
-            <!-- Modal -->
-            <style type="text/css">
-                .modal-body{
-                    max-height: calc(100vh - 300px);
-                    overflow-y: auto;
-                }
-            </style>
-            <div class="modal fade" id="servicePriceModal" tabindex="-1" role="dialog" aria-labelledby="servicePriceModalLabel" aria-hidden="true" wire:ignore.self style="z-index:99999;" >
-                <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:90%;">
-                    <div class="modal-content">
-                        
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="servicePriceModalLabel">{{$selectedSectionName}}</h5>
-                            <input type="text" class="form-control w-30" name="" wire:model="section_service_search">
-                            <div wire:loading wire:target="section_service_search">
-                                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                    <div class="la-ball-beat">
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="button" class="btn-close text-dark " style="font-size: 2.125rem !important;" data-bs-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true" class="text-xl">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body py-0">
-                            <div class="row">
-                                @forelse($sectionServiceLists as $sectionServiceList)
-                                    <?php $priceDetails = $sectionServiceList['priceDetails']; ?>
-                                    <?php $discountDetails = isset($sectionServiceList['discountDetails'])?$sectionServiceList['discountDetails']:null; ?>
-                                    @if($sectionServiceList->UnitPrice!=0)
-                                    <div class="col-md-6 col-sm-6">
-                                        
-                                        <div class="bg-gray-100 shadow my-3 p-2">
-                                            <div class="row mb-1">
-                                                <div class="col-12">
-                                                    <p class="text-sm text-center font-weight-bold text-dark">{{$sectionServiceList->ItemCode}} - {{$sectionServiceList->ItemName}}</p>
-                                                    
-                                                    @if(in_array($sectionServiceList->ItemCode,config('global.extra_description_applied')))
-                                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Descriptions..!" wire:model="extra_description.{{$sectionServiceList->ItemId}}"></textarea >
-                                                    @error('extra_description.'.$sectionServiceList->ItemId) <span class="text-danger">Descriptions Required..!</span> @enderror
-
-                                                    <input type="number" style="padding-left: 5px !important;display:none;" class="w-50 mt-2 form-control" placeholder="Discount Amount..!" wire:model="mechanical_discount.{{$sectionServiceList->ItemId}}" />
-
-                                                    @endif
-
-                                                    @if(in_array($sectionServiceList->ItemCode,config('global.extra_notes_applied')))
-                                                    <textarea style="padding-left: 5px !important;" class="form-control" placeholder="Notes..!" wire:model="extra_note.{{$sectionServiceList->ItemId}}"></textarea >
-                                                    @endif
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                @if($sectionServiceList->CustomizePrice==1)
-                                                
-                                                <div class="col-12">
-                                                    <input type="number" class="form-control w-50 float-start" placeholder="Price {{$sectionServiceList->MinPrice}} - {{$sectionServiceList->MaxPrice}}" wire:model="customise_service_item_price.{{$sectionServiceList->ItemId}}" style="padding-left:5px !important;" >
-                                                </div>
-                                                @error('customise_service_item_price.'.$sectionServiceList->ItemId) <span class="text-danger">Price Required..!</span> @enderror
-                                                @else
-                                                <div class="col-12">
-                                                    <div class="d-flex border-radius-lg p-0 mt-2">
-                                                        <p class="w-100 text-md font-weight-bold text-dark my-auto me-2 float-start">
-                                                        <span class="float-start" @if($discountDetails != null) style="text-decoration: line-through;" @endif >
-                                                            <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{custom_round($sectionServiceList->UnitPrice)}}
-                                                        </span>
-                                                        @if($discountDetails != null)
-                                                        <span  class="float-end">
-                                                        <span class=" text-sm me-1">{{config('global.CURRENCY')}}</span> {{ custom_round($sectionServiceList->UnitPrice-(($discountDetails['DiscountPerc']/100)*$sectionServiceList->UnitPrice)) }}
-                                                        </span>
-                                                        @endif
-                                                        </p>
-                                                        
-                                                    </div>
-                                                </div>
-                                                @endif
-                                                
-
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="d-flex border-radius-lg p-0 mt-2">
-                                                        @if($discountDetails != null)
-                                                        <span class="badge bg-gradient-info">{{custom_round($discountDetails['DiscountPerc'])}}%off</span>
-                                                        @endif
-                                                        @if($sectionServiceList->ItemCode==  config('global.ceramic.discount_in') && $selectedVehicleInfo->ceramic_wash_discount_count < 1)
-                                                        <input type="number" style="padding-left: 5px !important;" class="form-control w-50" placeholder="{{$sectionServiceList->ItemName}} Discount Count..!" wire:model="ceramic_dicount.{{$sectionServiceList->ItemId}}">
-                                                        @elseif($sectionServiceList->ItemCode==  config('global.ceramic.discount_in'))
-                                                        Balance: {{$selectedVehicleInfo->ceramic_wash_discount_count}}
-                                                        @endif
-                                                        
-                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="addtoCart('{{$sectionServiceList}}','{{$discountDetails}}')">Add Now</a>
-                                                        
-                                                        
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            
-                                            
-                                            
-                                            @if(@$serviceAddedMessgae[$sectionServiceList->ItemCode])
-                                            <div class="text-center">
-                                                <span class="alert-icon"><i class="ni ni-like-2 text-success"></i></span>
-                                                <span class="alert-text text-success"><strong>Success!</strong> Added serves!</span>
-                                                <button type="button" class="btn-close text-success" data-bs-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            @endif
-                                            @if(@$customizedErrorMessage[$sectionServiceList->ItemId])
-                                            <div class="text-center">
-                                                
-                                                <span class="alert-text text-danger"><strong>Error!</strong> Enter valied price!</span>
-                                                <button type="button" class="btn-close text-danger" data-bs-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            @endif
-
-                                        </div>
-                                    </div>
-                                    @endif
-                                @empty
-                                @endforelse
-                                <div wire:loading wire:target="addtoCart">
-                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                        <div class="la-ball-beat">
-                                            <div></div>
-                                            <div></div>
-                                            <div></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div wire:loading wire:target="addtoCartCP">
-                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                        <div class="la-ball-beat">
-                                            <div></div>
-                                            <div></div>
-                                            <div></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                            <!-- <button type="button" class="btn bg-gradient-primary">Save changes</button> -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @include('components.modals.serviceSectionListModal')
         @endif
 
         @if($showLineDiscountItems)
@@ -1406,179 +1246,7 @@
                                 <hr>
                             @endif
                             @if($showSelectedDiscount)
-                            <div class="card  h-100 cursor-pointer">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-2 col-sm-4 my-2">
-                                            <button type="button" class="btn bg-gradient-primary" >{{str_replace("_"," ",strtolower($selectedDiscount['title']))}}</button>
-                                        </div>
-                                        <div class="col-lg-10 col-sm-8 text-center" >
-                                            @if($searchStaffId)
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="employeeId">Employee Id</label>
-                                                        <input type="text" class="form-control" wire:model="employeeId" id="employeeId" placeholder="Staff/Employee Id">
-                                                        @error('employeeId') <span class="text-danger">{{ $message }}</span> @enderror
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="col-md-12">
-                                                    <button type="button" class="btn bg-gradient-primary" wire:click="checkLineStaffDiscountGroup()">Check Employee</button>
-                                                    <div wire:loading wire:target="checkLineStaffDiscountGroup">
-                                                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                            <div class="la-ball-beat">
-                                                                <div></div>
-                                                                <div></div>
-                                                                <div></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                            @if($discountCardApplyForm)
-                                                <div class="row mb-0">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="discountCardImgae">Discount Card Imgae</label>
-                                                            <input type="file" class="form-control" wire:model.defer="discount_card_imgae">
-                                                            @error('discount_card_imgae') <span class="text-danger">{{ $message }}</span> @enderror
-                                                            @if ($discount_card_imgae)
-                                                            <img class="img-fluid border-radius-lg w-30" src="{{ $discount_card_imgae->temporaryUrl() }}">
-                                                            @endif
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="discountCardNumber">Discount Card Number</label>
-                                                            <input type="text" class="form-control" wire:model="discount_card_number" placeholder="Discount Card Number">
-                                                            @error('discount_card_number') <span class="text-danger">{{ $message }}</span> @enderror
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="discountCardValidity">Discount Card Validity</label>
-                                                            <input type="date" class="form-control" id="discountCardValidity" wire:model="discount_card_validity" name="discountCardValidity" placeholder="Discount Card Validity" min="<?php echo date("Y-m-d"); ?>">
-                                                            @error('discount_card_validity') <span class="text-danger">{{ $message }}</span> @enderror
-                                                        </div>
-                                                    </div>
-                                                
-                                                    <div class="col-md-12">
-                    
-                                                        <button type="button" class="btn bg-gradient-dark cursor-pointer " wire:click="clickLineDiscountGroup()" formmethod="">Back</button>
-                                                        <button type="button" class="btn bg-gradient-primary " wire:click="saveSelectedLineDiscountGroup()">Save changes</button>
-                                                        <div wire:loading wire:target="clickLineDiscountGroup">
-                                                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                <div class="la-ball-beat">
-                                                                    <div></div>
-                                                                    <div></div>
-                                                                    <div></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div wire:loading wire:target="saveSelectedLineDiscountGroup">
-                                                            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                <div class="la-ball-beat">
-                                                                    <div></div>
-                                                                    <div></div>
-                                                                    <div></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                            @if($engineOilDiscountForm)
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilLineDiscount(10)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">10%</h2>
-                                                                <p class="text-white">
-                                                                10% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilLineDiscount(15)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">15%</h2>
-                                                                <p class="text-white">
-                                                                15% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilLineDiscount(20)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">20%</h2>
-                                                                <p class="text-white">
-                                                                20% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 my-2">
-                                                        <div wire:click="selectEngineOilLineDiscount(25)" class="card bg-cover text-center cursor-pointer" style="background-image: url('https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/curved-images/curved1.jpg')">
-                                                            <div class="card-body z-index-2 py-2">
-                                                                <h2 class="text-white">25%</h2>
-                                                                <p class="text-white">
-                                                                25% Discount on Special Selected Engine Oil & Selected Wash Service</p>
-                                                                <btn class="btn bg-gradient-dark text-light">Select & Apply</btn>
-                                                            </div>
-                                                            <div class="mask bg-gradient-primary border-radius-lg"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div wire:loading wire:target="selectEngineOilLineDiscount">
-                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                        <div class="la-ball-beat">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                            @if($manulDiscountForm)
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <h4 class="text-start" >Manual Discount Amount</h4>
-                                                        <div class="row">
-                                                            <div class="col-6">
-                                                                <div class="form-group">
-                                                                    <input type="number" class="form-control" wire:model="manualDiscountValue" id="manualDiscountValue" placeholder="Manual Discount Amount">
-                                                                    @error('manualDiscountValue') <span class="text-danger">{{ $message }}</span> @enderror
-                                                                </div>
-                                                            </div>
-                                                        
-                                                            <div class="col-6">
-                                                                <button type="button" class="btn bg-gradient-primary" wire:click="saveManulDiscountAproval()">Apply Discount</button>
-                                                                <div wire:loading wire:target="saveManulDiscountAproval">
-                                                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
-                                                                        <div class="la-ball-beat">
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                            <div></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                 </div>
-                            </div>
+                            @include('components.customerDiscount')
                             @endif
                             
                             @if(empty($selectedDiscount))
@@ -2313,6 +1981,10 @@
 @push('custom_script')
 
 <script type="text/javascript">
+
+    
+
+
     @if($showPendingJobList)
         $(document).ready(function(){
             $('#pendingJobListModal').modal('show');   
@@ -2457,4 +2129,82 @@ window.addEventListener('showSignature',event=>{
     });
 });
 </script>
+<script type="text/javascript">
+    window.addEventListener('imageUpload',event=>{
+        $('#vehicleImage').click(function(){
+            $("#vehicleImageFile").trigger('click');
+        });
+        $('#plateImage').click(function(){
+            $("#plateImageFile").trigger('click');
+        });
+        $('#chaisisImage').click(function(){
+            $("#chaisisImageFile").trigger('click');
+        });
+
+        let file = document.querySelector('input[type="file"]').files[0];
+        // Upload a file:
+        @this.upload('plate_number_image', file, (uploadedFilename) => {
+            // Success callback.
+        }, () => {
+            // Error callback.
+        }, (event) => {
+            // Progress callback.
+            // event.detail.progress contains a number between 1 and 100 as the upload progresses.
+        });
+
+        let file1 = document.querySelector('input[type="file"]').files[0];
+        // Upload a file:
+        @this.upload('vehicle_image', file1, (uploadedFilename) => {
+            // Success callback.
+        }, () => {
+            // Error callback.
+        }, (event) => {
+            // Progress callback.
+            // event.detail.progress contains a number between 1 and 100 as the upload progresses.
+        });
+
+        // Upload a file:
+        @this.upload('chaisis_image', file, (uploadedFilename) => {
+            // Success callback.
+        }, () => {
+            // Error callback.
+        }, (event) => {
+            // Progress callback.
+            // event.detail.progress contains a number between 1 and 100 as the upload progresses.
+        });
+        
+    });
+    let file = document.querySelector('input[type="file"]').files[0];
+    // Upload a file:
+    @this.upload('plate_number_image', file, (uploadedFilename) => {
+        // Success callback.
+    }, () => {
+        // Error callback.
+    }, (event) => {
+        // Progress callback.
+        // event.detail.progress contains a number between 1 and 100 as the upload progresses.
+    });
+
+    let file1 = document.querySelector('input[type="file"]').files[0];
+    // Upload a file:
+    @this.upload('vehicle_image', file1, (uploadedFilename) => {
+        // Success callback.
+    }, () => {
+        // Error callback.
+    }, (event) => {
+        // Progress callback.
+        // event.detail.progress contains a number between 1 and 100 as the upload progresses.
+    });
+
+    // Upload a file:
+    @this.upload('chaisis_image', file, (uploadedFilename) => {
+        // Success callback.
+    }, () => {
+        // Error callback.
+    }, (event) => {
+        // Progress callback.
+        // event.detail.progress contains a number between 1 and 100 as the upload progresses.
+    });
+</script>
+
 @endpush

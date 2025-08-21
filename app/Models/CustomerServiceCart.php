@@ -54,6 +54,7 @@ class CustomerServiceCart extends Model
         'manual_discount_status',
         'manual_discount_send_for_aproval',
         'manual_discount_ref_no',
+        'manual_discount_remark',
         'current_job_status',
         'created_by',
         'updated_by',

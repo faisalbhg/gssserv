@@ -31,6 +31,8 @@ use App\Models\CustomerJobCards;
 use App\Models\CustomerJobCardServices;
 use App\Models\ItemWarehouse;
 use App\Models\ItemCurrentStock;
+use App\Models\ManualDiscountAprovals;
+use App\Models\ManualDiscountServices;
 
 
 class CustomerServiceItems extends Component
@@ -48,7 +50,7 @@ class CustomerServiceItems extends Component
     public $discountCardApplyForm=false, $engineOilDiscountForm=false;
     public $engineOilDiscountPercentage, $customerDiscontGroupId, $customerDiscontGroupCode;
     public $lineDIscountItemId, $linePriceDiscount, $discountAvailability;
-    public $applyManualDiscount=false, $manualDiscountValue, $manulDiscountForm=false;
+    public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValueType='amount', $manualDiscountValue, $manualDiscountRemarks, $manulDiscountForm=false, $manualDiscountRefNo;
 
     public function render()
     {
@@ -103,7 +105,7 @@ class CustomerServiceItems extends Component
         $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
         $customerJobCardsQuery = $customerJobCardsQuery->where('payment_status','!=',1);
         //$customerJobCardsQuery = $customerJobCardsQuery->whereIn('job_status', ['1'])
-        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','!=',4);
+        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','!=',4)->where('job_status','!=',5);
 
         $this->jobDetails =  $customerJobCardsQuery->first();
         //dd($this->jobDetails);
@@ -1073,25 +1075,26 @@ class CustomerServiceItems extends Component
         $cartUpdate['price_id']=158;
         $cartUpdate['customer_group_id']=158;
         $cartUpdate['customer_group_code']='MANUAL_DISCOUNT';
-        $cartUpdate['min_price']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
-        $cartUpdate['max_price']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
+        if($this->manualDiscountValueType=='amount'){
+            $cartUpdate['min_price']=$this->lineItemDetails['unit_price']-$this->manualDiscountValue;
+            $cartUpdate['max_price']=$this->lineItemDetails['unit_price']-$this->manualDiscountValue;
+            $cartUpdate['discount_perc']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
+            $cartUpdate['manual_discount_percentage']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
+        }
+        else{
+            $cartUpdate['min_price']=custom_round($this->lineItemDetails['unit_price'] - (($this->lineItemDetails['unit_price'] * $this->manualDiscountValue) / 100));
+            $cartUpdate['max_price']=custom_round($this->lineItemDetails['unit_price'] - (($this->lineItemDetails['unit_price'] * $this->manualDiscountValue) / 100));
+            $cartUpdate['discount_perc']=custom_round($this->manualDiscountValue);
+            $cartUpdate['manual_discount_percentage']=custom_round($this->manualDiscountValue);
+        }
         $cartUpdate['start_date']=null;
         $cartUpdate['end_date']=null;
-        $cartUpdate['discount_perc']=$this->manualDiscountValue;
         $cartUpdate['manual_discount_value']=$this->manualDiscountValue;
-        $cartUpdate['manual_discount_percentage']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
         $cartUpdate['manual_discount_applied_by']=auth()->user('user')['id'];
         $cartUpdate['manual_discount_applied_datetime']=Carbon::now();
-
+        $cartUpdate['manual_discount_status']=1;
+        $cartUpdate['manual_discount_remark']=$this->manualDiscountRemarks;
         CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$this->lineItemDetails['id'],'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
-
-
-
-        
-
-        //CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'item_id'=>$servicePrice['ItemId'],'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
-
-
         $this->dispatchBrowserEvent('closePriceDiscountList');
         $this->lineDIscountItemId = null;
         $this->linePriceDiscount = null;
@@ -1099,6 +1102,124 @@ class CustomerServiceItems extends Component
 
         $this->discountCardApplyForm=false;
         $this->showSelectedDiscount=false;
+        $this->getCartInfo();
+    }
+
+    public function sendManualDiscountApproval($refNo=null){
+        if($refNo==null){
+            $manualDiscountAprovals = ManualDiscountAprovals::create([
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->vehicle_id,
+                'customer_name'=>$this->name,
+                'customer_mobile'=>$this->mobile,
+                'customer_email'=>$this->email,
+                'make'=>$this->selectedVehicleInfo->make,
+                'vehicle_image'=>$this->selectedVehicleInfo->vehicle_image,
+                'model'=>$this->selectedVehicleInfo->model,
+                'plate_number'=>$this->selectedVehicleInfo->plate_number_final,
+                'station'=>auth()->user('user')['station_code'],
+                'discount_status'=>1,
+                'created_by'=>auth()->user('user')['id'],
+                'is_active'=>1,
+            ]);
+            $refNo = $manualDiscountAprovals->id;
+        }
+
+
+        $cartTotal=0;
+        $manualDiscountTotal=0;
+        //dd($this->cartItems);
+        foreach($this->cartItems as $cartItems)
+        {
+            if($cartItems->manual_discount_status ==1 && $cartItems->manual_discount_send_for_aproval ==null){
+                $manualDiscountServicesGet = ManualDiscountServices::where(['manual_discount_ref_no'=>$refNo,
+                    'item_id'=>$cartItems->item_id,
+                    'cart_id'=>$cartItems->id,
+                    'item_code'=>$cartItems->item_code]);
+                if($manualDiscountServicesGet->exists()){
+                    $manualDiscountServicesResult = $manualDiscountServicesGet->first();
+                    ManualDiscountServices::where(['id'=>$manualDiscountServicesResult->id])->update([
+                        'manual_discount_ref_no'=>$refNo,
+                        'item_id'=>$cartItems->item_id,
+                        'cart_id'=>$cartItems->id,
+                        'item_code'=>$cartItems->item_code,
+                        'item_name'=>$cartItems->item_name,
+                        'service_item_type'=>$cartItems->cart_item_type,
+                        'department_code'=>$cartItems->department_code,
+                        'department_name'=>$cartItems->department_name,
+                        'section_code'=>$cartItems->section_code,
+                        'section_name'=>$cartItems->section_name,
+                        'unit_price'=>$cartItems->unit_price,
+                        'quantity'=>$cartItems->quantity,
+                        'manual_discount_value'=>$cartItems->manual_discount_value,
+                        'manual_discount_percentage'=>$cartItems->manual_discount_percentage,
+                        'manual_discount_applied_by'=>$cartItems->manual_discount_applied_by,
+                        'manual_discount_applied_datetime'=>$cartItems->manual_discount_applied_datetime,
+                        'manual_discount_send_for_aproval'=>1,
+                        'discount_status'=>1,
+                        'manual_discount_remark'=>$cartItems->manual_discount_remark,
+                        'updated_by'=>auth()->user('user')['id'],
+                        'is_active'=>1,
+                    ]);
+                    $manualDiscountTotal = $manualDiscountTotal+($cartItems->manual_discount_value*$cartItems->quantity);
+                    CustomerServiceCart::where(['id'=>$cartItems->id])->update([
+                        'manual_discount_send_for_aproval'=>1,
+                        'manual_discount_ref_no'=>$refNo,
+                    ]);
+
+                }else{
+                    ManualDiscountServices::create([
+                        'manual_discount_ref_no'=>$refNo,
+                        'item_id'=>$cartItems->item_id,
+                        'cart_id'=>$cartItems->id,
+                        'item_code'=>$cartItems->item_code,
+                        'item_name'=>$cartItems->item_name,
+                        'service_item_type'=>$cartItems->cart_item_type,
+                        'department_code'=>$cartItems->department_code,
+                        'department_name'=>$cartItems->department_name,
+                        'section_code'=>$cartItems->section_code,
+                        'section_name'=>$cartItems->section_name,
+                        'unit_price'=>$cartItems->unit_price,
+                        'quantity'=>$cartItems->quantity,
+                        'manual_discount_value'=>$cartItems->manual_discount_value,
+                        'manual_discount_percentage'=>$cartItems->manual_discount_percentage,
+                        'manual_discount_applied_by'=>$cartItems->manual_discount_applied_by,
+                        'manual_discount_applied_datetime'=>$cartItems->manual_discount_applied_datetime,
+                        'manual_discount_remark'=>$cartItems->manual_discount_remark,
+                        'discount_status'=>1,
+                        'created_by'=>auth()->user('user')['id'],
+                        'is_active'=>1,
+                    ]);
+                    $manualDiscountTotal = $manualDiscountTotal+($cartItems->manual_discount_value*$cartItems->quantity);
+
+                    CustomerServiceCart::where(['id'=>$cartItems->id])->update([
+                        'manual_discount_send_for_aproval'=>1,
+                        'manual_discount_ref_no'=>$refNo,
+                    ]);
+                }
+            }
+            $cartTotal = $cartTotal+($cartItems->unit_price*$cartItems->quantity);
+        }
+
+        $manualDiscountTotalPercentage = custom_round(($manualDiscountTotal/$cartTotal)*100);
+        ManualDiscountAprovals::where(['id'=>$refNo])->update([
+            'manual_discount_value'=>$manualDiscountTotal,
+            'manual_discount_percentage'=>$manualDiscountTotalPercentage,
+            'manual_discount_applied_by'=>auth()->user('user')['id'],
+            'manual_discount_applied_datetime'=>Carbon::now()
+        ]);
+
+        try {
+            DB::select('EXEC [dbo].[ManualDiscountJob] @referenceCodde = "'.$refNo.'", @doneby = "'.auth()->user('user')->id.'" ');
+        } catch (\Exception $e) {
+            //dd($e->getMessage());
+            //return $e->getMessage();
+        }
+
+        
+
+        session()->flash('cartsuccess', 'Manual discount successfully send for approval, please wait until the discount approved!');
+        $this->getCartInfo();
     }
 
 }

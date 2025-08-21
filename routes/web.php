@@ -52,6 +52,7 @@ use App\Http\Livewire\MaterialRequisition;
 use App\Http\Livewire\Packages;
 use App\Http\Livewire\CustomerServiceItems;
 use App\Http\Livewire\Numberplates;
+use App\Http\Livewire\CustomerReceive;
 
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
@@ -81,6 +82,9 @@ Route::get('/reset-password/{id}',ResetPassword::class)->name('reset-password')-
 Route::middleware('auth')->group(function () {
     Route::get('/', Dashboard::class);
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
+
+    //Customer Receive
+    Route::get('customer-receive',CustomerReceive::class)->name('customer-receive');
 
     //Job Start
     Route::get('job-start',VehicleSearchSave::class)->name('job-start');

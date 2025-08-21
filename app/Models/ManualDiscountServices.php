@@ -28,6 +28,7 @@ class ManualDiscountServices extends Model
         'manual_discount_applied_datetime',
         'manual_discount_send_for_aproval',
         'discount_status',
+        'manual_discount_remark',
         'created_by',
         'updated_by',
         'is_active',

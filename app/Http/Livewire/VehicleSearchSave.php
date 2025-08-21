@@ -598,6 +598,7 @@ class VehicleSearchSave extends Component
     }
 
     public function saveVehicleCustomer(){
+         
         if($this->numberPlateRequired)
         {
             $validateSaveVehicle['plate_country']='required';
@@ -624,7 +625,15 @@ class VehicleSearchSave extends Component
 
         //Save Customer
 
-        $insertCustmoerData['Mobile']=isset($this->mobile)?$this->mobile:'';
+        $insertCustmoerData['Mobile']=isset($this->mobile)?$this->mobile:null;
+        if($this->mobile!=null)
+        {
+            if($this->mobile[0]=='0'){
+                $this->mobile = ltrim($this->mobile, $this->mobile[0]);
+            }
+            $validateSaveVehicle['mobile'] = 'unique:TenantMaster,mobile';
+
+        }
         $insertCustmoerData['TenantName']=isset($this->name)?$this->name:'Walk-In';
         if($this->email!=null)
         {
@@ -713,7 +722,7 @@ class VehicleSearchSave extends Component
             $filename = uniqid() . '.' . $this->vehicle_image->getClientOriginalExtension();
             $this->vehicle_image->storeAs('public/uploads', $filename);
 
-            // Optional: Save path to DB or emit event
+            // Optional: Save path to DByy or emit event
             session()->flash('message', 'Image uploaded successfully!');
         } else {
             session()->flash('error', 'Invalid file.');

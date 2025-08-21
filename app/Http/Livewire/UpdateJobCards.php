@@ -663,7 +663,7 @@ class UpdateJobCards extends Component
         //dd($item_id);
         //dd($id);
         TempCustomerServiceCart::where(['id'=>$id])->delete();
-        CustomerJobCardServices::where(['job_number'=>$this->job_number,'item_id'=>$item_id])->delete();
+        //CustomerJobCardServices::where(['job_number'=>$this->job_number,'item_id'=>$item_id])->delete();
         $this->applyItemToTempCart();
         //CustomerJobCardServices::destroy($id);
     }

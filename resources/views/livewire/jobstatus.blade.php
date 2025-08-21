@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                             <div class="progress">
-                                <div class="progress-bar {{config('global.jobs.status_perc_class')[$jobDetails->job_status]}}" role="progressbar" aria-valuenow="{{config('global.jobs.status_perc')[$jobDetails->job_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.status_perc')[$jobDetails->job_status]}};"></div>
+                                <div class="progress-bar {{config('global.jobs.status_perc_class')[$jobDetails->job_status]}}" role="progressbar" aria-valuenow="{{config('global.jobs.status_perc')[$jobDetails->job_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.jobs.status_perc')[$jobDetails->job_status]}};"></div>
                             </div>
                         </div>
                         
@@ -72,4 +72,3 @@
         </div>
     </div>
 </main>
-
