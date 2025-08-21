@@ -674,13 +674,14 @@ class CustomerReceive extends Component
             'contract_customer_id'=> 'required',
         ]);
         $contractCustomerResult = TenantMasterCustomers::where(['TenantId'=>$this->contract_customer_id,'discountgroup'=>14])->orWhere(['Paymethod'=>2])->first();
+        $this->getCustomerVehicles();
         $this->customer_id=$contractCustomerResult->TenantId;
         $this->customer_code=$contractCustomerResult->TenantCode;
         $this->mobile=$contractCustomerResult->Mobile;
         $this->email=$contractCustomerResult->Email;
         $this->name=$contractCustomerResult->TenantName;
         $this->showSelectedContractCustomer=true;
-        $this->getCustomerVehicles();
+        
     }
 
     public function addNewContractCustomerVehicle(){
