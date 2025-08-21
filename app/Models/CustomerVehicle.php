@@ -78,7 +78,7 @@ class CustomerVehicle extends Model
 
     public function vehicleJobs()
     {
-        return $this->hasMany(CustomerJobCards::class,'vehicle_id','id');
+        return $this->hasMany(CustomerJobCards::class,'vehicle_id','id')->with(['customerJobServices']);
     }
 
     public function countryInfo(){
