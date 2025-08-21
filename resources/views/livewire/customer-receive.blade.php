@@ -203,6 +203,75 @@
             </div>
         @endif
 
+        @if($contractCustomerForm)
+            <div class="card px-3 my-2" >
+                <div class="card-body p-0">
+                    @if($contract_customer_id && $showSelectedContractCustomer)
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <label for="mobilenumberInput">Mobile Number </label>: {{$mobile}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <label for="mobilenumberInput">Name </label>: {{$name}}
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <label for="mobilenumberInput">Email </label>: {{$email}}
+                        </div>
+                        <div class="col-md-12 col-sm-12 mt-4">
+                            
+                            <button type="button" wire:click="addNewContractCustomerVehicle()" class="btn bg-gradient-danger btn-sm mx-3 float-end" id="addNewVehicleBtn">Add New Vehicle</button>
+                        </div>
+
+                    </div>
+
+                    @else
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <label for="saveContractCustomerNameButton">Contract Customer</label>
+                            <div class="form-group">
+                                <select class="form-control chosen-select" wire:model="contract_customer_id"  name="contract_customer_id" id="contractCustomerNameInput" style="padding-left:10px !important;">
+                                    <option value="">-Select Contract Customers--</option>
+                                    @foreach($contractCustomersList as $contractCustomer)
+                                    <option value="{{$contractCustomer->TenantId}}">{{$contractCustomer->TenantName}}</option>
+                                    @endforeach
+                                </select>
+                                @error('contract_customer_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="plateCodeOthCountry">Plate Code</label>
+                                <input type="text" class="form-control @error('contract_plate_code') btn-outline-danger @enderror" wire:model="contract_plate_code" name="plateCode" id="plateCodeOthCountry" placeholder="Plate Code" style="padding:0.5rem 0.3rem !important;" />
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="contractPlateNumber">Plate Number</label>
+                                <input style="padding:0.5rem 0.3rem !important;" type="number" id="contractPlateNumber" class="form-control @error('contract_plate_number') btn-outline-danger @enderror" wire:model="contract_plate_number" name="contract_plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Plate Number">
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="contractChaisisNumberInput">Chaisis Number</label>
+                                <input type="text" style="padding:0.5rem 0.3rem !important;" class="form-control @error('contract_chassis_number') btn-outline-danger @enderror" id="contractChaisisNumberInput" wire:model="contract_chassis_number" name="contract_chassis_number" placeholder="Chassis Number">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-4">
+                            <button type="button" wire:click="searchContractVehicle()" class="btn btn-primary btn-sm me-3">Search Vehicle</button>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        @endif
+
         @if($vehicleForm)
             <div class="card px-3 my-2" >
                 <div class="card-body p-0">
@@ -423,77 +492,7 @@
             </div>
         @endif
 
-        @if($contractCustomerForm)
-            <div class="card px-3 my-2" >
-                <div class="card-body p-0">
-                    @if($contract_customer_id && $showSelectedContractCustomer)
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                            <label for="mobilenumberInput">Mobile Number </label>: {{$mobile}}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                            <label for="mobilenumberInput">Name </label>: {{$name}}
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                            <label for="mobilenumberInput">Email </label>: {{$email}}
-                        </div>
-                        <div class="col-md-12 col-sm-12 mt-4">
-                            
-                            <button type="button" wire:click="addNewContractCustomerVehicle()" class="btn bg-gradient-danger btn-sm mx-3 float-end" id="addNewVehicleBtn">Add New Vehicle</button>
-                        </div>
-
-                    </div>
-
-                    @else
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <label for="saveContractCustomerNameButton">Contract Customer</label>
-                            <div class="form-group">
-                                <select class="form-control chosen-select" wire:model="contract_customer_id"  name="contract_customer_id" id="contractCustomerNameInput" style="padding-left:10px !important;">
-                                    <option value="">-Select Contract Customers--</option>
-                                    @foreach($contractCustomersList as $contractCustomer)
-                                    <option value="{{$contractCustomer->TenantId}}">{{$contractCustomer->TenantName}}</option>
-                                    @endforeach
-                                </select>
-                                @error('contract_customer_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
-                            </div>
-                            
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 col-sm-6">
-                            <div class="form-group">
-                                <label for="plateCodeOthCountry">Plate Code</label>
-                                <input type="text" class="form-control @error('contract_plate_code') btn-outline-danger @enderror" wire:model="contract_plate_code" name="plateCode" id="plateCodeOthCountry" placeholder="Plate Code" style="padding:0.5rem 0.3rem !important;" />
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-6">
-                            <div class="form-group">
-                                <label for="contractPlateNumber">Plate Number</label>
-                                <input style="padding:0.5rem 0.3rem !important;" type="number" id="contractPlateNumber" class="form-control @error('contract_plate_number') btn-outline-danger @enderror" wire:model="contract_plate_number" name="contract_plate_number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" minlength="1" maxlength="6" placeholder="Plate Number">
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-6">
-                            <div class="form-group">
-                                <label for="contractChaisisNumberInput">Chaisis Number</label>
-                                <input type="text" style="padding:0.5rem 0.3rem !important;" class="form-control @error('contract_chassis_number') btn-outline-danger @enderror" id="contractChaisisNumberInput" wire:model="contract_chassis_number" name="contract_chassis_number" placeholder="Chassis Number">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 mt-4">
-                            <button type="button" wire:click="searchContractVehicle()" class="btn btn-primary btn-sm me-3">Search Vehicle</button>
-                            @if($contract_customer_id)
-                            <button type="button" wire:click="addNewContractVehicle()" class="btn bg-gradient-danger btn-sm mx-3 float-end" id="addNewContractVehicleButton">Add New Vehicle</button>
-                            @endif
-                        </div>
-                    </div>
-                    @endif
-                </div>
-            </div>
-        @endif
+        
 
         @if(!empty($customerVehicles))
             <div class="row mb-2" id="customerSearchVehicleList">

@@ -21,6 +21,8 @@ class Customer extends Component
 
     public function render()
     {
+        
+        
         /*$duplicates = TenantMasterCustomers::select('Mobile',\DB::raw('COUNT(*) as count'))
         ->groupBy('Mobile')
         ->havingRaw('COUNT(*) > 1')
