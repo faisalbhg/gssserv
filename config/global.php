@@ -1272,7 +1272,7 @@ return [
             ],
         ]
     ],
-    'extra_description_applied'=>['S380','S381','S382','S143','S408','S397'],
+    'extra_description_applied'=>['S380','S381','S382','S143','S408','S397','S398','S399','S372'],
     'extra_notes_applied'=>['S364'],
 ]
   
