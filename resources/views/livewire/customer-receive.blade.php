@@ -268,6 +268,10 @@
                                 @elseif (!empty($search_contract_contract) && $filteredItems->count() === 0)
                                 <div class="no-results">No results found.</div>
                                 @endif
+                                @if ($selectedContract)
+                                <p>Selected: {{ $selectedContract }}</p>
+                                @endif
+                                @error('contract_customer_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                 
 
                                 <!-- <select class="form-control chosen-select d-none" wire:model="contract_customer_id"  name="contract_customer_id" id="contractCustomerNameInput" style="padding-left:10px !important;">
@@ -775,11 +779,11 @@
             //$('#vehicleModelInput').select2();
             //$('#plateCode').select2();
             //$('#contractCustomerNameInput').select2();
-            $('#contractCustomerNameInput').on('change', function (e) {
+           /* $('#contractCustomerNameInput').on('change', function (e) {
                 var contractCustomerVal = $('#contractCustomerNameInput').val();
                 alert(contractCustomerVal);
                 @this.set('contract_customer_id', contractCustomerVal);
-            });
+            });*/
             $('#plateCountry').on('change', function (e) {
                 var plateCountryVal = $('#plateCountry').val();
                 @this.set('plate_country', plateCountryVal);

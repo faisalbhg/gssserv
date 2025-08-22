@@ -44,7 +44,7 @@ class CustomerReceive extends Component
     public $confirmGuestCustSave;
 
     public $search_contract_contract = '';
-    public $selectedItem = null;
+    public $selectedContract = null;
     public $items = []; // Example data
 
     function mount( Request $request) {
@@ -136,13 +136,7 @@ class CustomerReceive extends Component
             $this->showAddNewModel=false;
         }
         
-        if($this->contractCustomerForm){
-            //$this->contractCustomersList = TenantMasterCustomers::where(['discountgroup'=>14])->orWhere(['Paymethod'=>2])->get();
-        }
-        else
-        {
-            $this->contractCustomersList = [];
-        }
+        
 
         if(!$this->markGusestCustomer)
         {
@@ -165,8 +159,16 @@ class CustomerReceive extends Component
     public function selectItem($item)
     {
         $this->contract_customer_id = $item;
+        $contractCustomerResult = TenantMasterCustomers::where(['TenantId'=>$this->contract_customer_id])->first();
+        $this->customer_id=$contractCustomerResult->TenantId;
+        $this->customer_code=$contractCustomerResult->TenantCode;
+        $this->mobile=$contractCustomerResult->Mobile;
+        $this->email=$contractCustomerResult->Email;
+        $this->name=$contractCustomerResult->TenantName;
+
+        $this->selectedContract = $contractCustomerResult->TenantName;
         $this->search_contract_contract = $item; // Display selected item in the input
-        $this->searchContractVehicle();
+        //$this->searchContractVehicle();
         $this->reset('search_contract_contract'); // Clear search to hide dropdown
     }
 
@@ -218,6 +220,9 @@ class CustomerReceive extends Component
         $this->contract_plate_number=null;
         $this->contract_chassis_number=null;
         $this->markGusestCustomer=false;
+        $this->search_contract_contract=null;
+        $this->selectedContract=null;
+        $this->showSelectedContractCustomer=false;
         $this->customerVehicles=[];
     }
 
@@ -368,7 +373,6 @@ class CustomerReceive extends Component
         $searchCustomerVehicleResult = $searchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1);
         
         
-
         if($searchCustomerVehicleResult->exists()){
             $this->customerVehicles = $searchCustomerVehicleResult->get();
             $this->dispatchBrowserEvent('scrollto', [
@@ -691,15 +695,43 @@ class CustomerReceive extends Component
     public function searchContractVehicle(){
         $validatedData = $this->validate([
             'contract_customer_id'=> 'required',
-            'search_contract_contract'=>'required',
         ]);
-        $contractCustomerResult = TenantMasterCustomers::where(['TenantId'=>$this->contract_customer_id])->first();
-        $this->getCustomerVehicles();
-        $this->customer_id=$contractCustomerResult->TenantId;
-        $this->customer_code=$contractCustomerResult->TenantCode;
-        $this->mobile=$contractCustomerResult->Mobile;
-        $this->email=$contractCustomerResult->Email;
-        $this->name=$contractCustomerResult->TenantName;
+        
+        $searchCustomerVehicleQuery = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo']);
+        
+        //Search Contract Customer
+        if($this->contract_customer_id)
+        {
+            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('customer_id', '=', $this->contract_customer_id);
+        }
+        if($this->contract_plate_code)
+        {
+            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('plate_code', '=', $this->contract_plate_code);
+        }
+        if($this->contract_plate_number)
+        {
+            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('plate_number', '=', $this->contract_plate_number);
+        }
+        if($this->contract_chassis_number)
+        {
+            $searchCustomerVehicleQuery = $searchCustomerVehicleQuery->where('chassis_number', 'like', "%{$this->contract_chassis_number}%");
+        }
+        $searchCustomerVehicleResult = $searchCustomerVehicleQuery->where('customer_vehicles.is_active','=',1);
+        
+        if($searchCustomerVehicleResult->exists()){
+            $this->customerVehicles = $searchCustomerVehicleResult->get();
+            $this->dispatchBrowserEvent('scrollto', [
+                'scrollToId' => 'customerSearchVehicleList',
+            ]);
+        }
+        else
+        {
+            $this->addCustomerVehicle();
+            session()->flash('error', 'Customer Vehicle is missing for job creation, please create vehicle details..!');  
+            $this->customerVehicles = [];
+        }
+
+        
         $this->showSelectedContractCustomer=true;
         
     }
