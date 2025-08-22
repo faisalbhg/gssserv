@@ -673,7 +673,7 @@ class CustomerReceive extends Component
         $validatedData = $this->validate([
             'contract_customer_id'=> 'required',
         ]);
-        $contractCustomerResult = TenantMasterCustomers::where(['TenantId'=>$this->contract_customer_id,'discountgroup'=>14])->orWhere(['Paymethod'=>2])->first();
+        $contractCustomerResult = TenantMasterCustomers::where(['TenantId'=>$this->contract_customer_id])->first();
         $this->getCustomerVehicles();
         $this->customer_id=$contractCustomerResult->TenantId;
         $this->customer_code=$contractCustomerResult->TenantCode;
