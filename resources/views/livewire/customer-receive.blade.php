@@ -70,11 +70,36 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+
+.dropdown-list {
+  background: #eee;
+  position: absolute;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+
+
+.dropdown-list li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown-list li:hover {
+  background-color: #f0f0f0;
+}
+
 </style>
 @endpush
 <main class="main-content position-relative  border-radius-lg h-100">
     <div class="container-fluid py-2">
-         @if ($message = Session::get('success'))
+
+        
+
+        @if ($message = Session::get('success'))
         <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
             <span class="alert-icon"><i class="ni ni-like-2"></i></span>
             <span class="alert-text"><strong>Success!</strong> {{ $message }}</span>
@@ -229,15 +254,29 @@
                     @else
                     <div class="row">
                         <div class="col-md-6 col-sm-6">
+
                             <label for="saveContractCustomerNameButton">Contract Customer</label>
                             <div class="form-group">
-                                <select class="form-control chosen-select" wire:model="contract_customer_id"  name="contract_customer_id" id="contractCustomerNameInput" style="padding-left:10px !important;">
+                                <input type="text" wire:model.live="search_contract_contract" placeholder="Search..." class="form-control @error('search_contract_contract') btn-outline-danger @enderror">
+                                @if (!empty($search_contract_contract) && $filteredItems->count() > 0)
+
+                                <ul class="list-group dropdown-list">
+                                    @foreach ($filteredItems as $item)
+                                    <li class="list-item" wire:click="selectItem('{{ $item->TenantId }}')">{{ $item->TenantName }}</li>
+                                    @endforeach
+                                </ul>
+                                @elseif (!empty($search_contract_contract) && $filteredItems->count() === 0)
+                                <div class="no-results">No results found.</div>
+                                @endif
+                                
+
+                                <!-- <select class="form-control chosen-select d-none" wire:model="contract_customer_id"  name="contract_customer_id" id="contractCustomerNameInput" style="padding-left:10px !important;">
                                     <option value="">-Select Contract Customers--</option>
                                     @foreach($contractCustomersList as $contractCustomer)
                                     <option value="{{$contractCustomer->TenantId}}">{{$contractCustomer->TenantName}}</option>
                                     @endforeach
                                 </select>
-                                @error('contract_customer_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
+                                @error('contract_customer_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror -->
                             </div>
                             
                         </div>
@@ -738,6 +777,7 @@
             //$('#contractCustomerNameInput').select2();
             $('#contractCustomerNameInput').on('change', function (e) {
                 var contractCustomerVal = $('#contractCustomerNameInput').val();
+                alert(contractCustomerVal);
                 @this.set('contract_customer_id', contractCustomerVal);
             });
             $('#plateCountry').on('change', function (e) {

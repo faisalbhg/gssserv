@@ -43,6 +43,10 @@ class CustomerReceive extends Component
     public $contractCustomerForm=false,$contractCustomersList=[], $contract_plate_country, $showSelectedContractCustomer=false;
     public $confirmGuestCustSave;
 
+    public $search_contract_contract = '';
+    public $selectedItem = null;
+    public $items = []; // Example data
+
     function mount( Request $request) {
         $this->clearFormData();
     }
@@ -133,7 +137,7 @@ class CustomerReceive extends Component
         }
         
         if($this->contractCustomerForm){
-            $this->contractCustomersList = TenantMasterCustomers::where(['discountgroup'=>14])->orWhere(['Paymethod'=>2])->get();
+            //$this->contractCustomersList = TenantMasterCustomers::where(['discountgroup'=>14])->orWhere(['Paymethod'=>2])->get();
         }
         else
         {
@@ -145,10 +149,25 @@ class CustomerReceive extends Component
             $this->notConfirmSaveAsGuest();
         }
 
+        $this->contractCustomersList = TenantMasterCustomers::where(['discountgroup'=>14])->orWhere(['Paymethod'=>2])->get();
+        $filteredItems = collect($this->contractCustomersList)->filter(function ($item) {
+            return stripos($item, $this->search_contract_contract) !== false;
+        });
+
         $this->dispatchBrowserEvent('selectSearchEvent');
         $this->dispatchBrowserEvent('imageUpload');
         $this->emit('chosenUpdated');
-        return view('livewire.customer-receive');
+        return view('livewire.customer-receive', [
+            'filteredItems' => $filteredItems,
+        ]);
+    }
+
+    public function selectItem($item)
+    {
+        $this->contract_customer_id = $item;
+        $this->search_contract_contract = $item; // Display selected item in the input
+        $this->searchContractVehicle();
+        $this->reset('search_contract_contract'); // Clear search to hide dropdown
     }
 
     
@@ -672,6 +691,7 @@ class CustomerReceive extends Component
     public function searchContractVehicle(){
         $validatedData = $this->validate([
             'contract_customer_id'=> 'required',
+            'search_contract_contract'=>'required',
         ]);
         $contractCustomerResult = TenantMasterCustomers::where(['TenantId'=>$this->contract_customer_id])->first();
         $this->getCustomerVehicles();
