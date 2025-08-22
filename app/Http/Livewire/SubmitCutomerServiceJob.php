@@ -977,10 +977,7 @@ class SubmitCutomerServiceJob extends Component
                     //return $e->getMessage();
                 }
             }
-            else if($this->jobDetails->meterialRequestResponse)
-            {
-                
-            }
+            
         }
         
   

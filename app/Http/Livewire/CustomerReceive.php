@@ -417,7 +417,8 @@ class CustomerReceive extends Component
 
                 if(TenantMasterCustomers::where('Mobile','LIKE',$this->mobile)->exists())
                 {
-                    $this->getCustomerDetailsMobile();
+                    $selectCustommer = TenantMasterCustomers::where('Mobile','LIKE',$this->mobile)->first();
+                    $this->getCustomerDetailsMobile($selectCustommer->TenantId);
                     $this->getCustomerVehicles();
                     //session()->flash('success', 'Customer available, Pleae enter the vehicle details and continue..!');  
                 }
@@ -428,7 +429,7 @@ class CustomerReceive extends Component
             }
 
         }else{
-            $this->getCustomerDetailsMobile();
+            $this->getCustomerDetailsMobile($this->customer_id);
             $this->showSelectedCustomer=true;
             session()->flash('error', $this->customer_id.' Customer Available,please contact IT..!');  
         }
@@ -473,18 +474,17 @@ class CustomerReceive extends Component
         $customerSaveResult = (array)$customerSaveResult[0];
         $customerId = $customerSaveResult['TenantId'];
         $this->customer_id = $customerId;
-        $this->getCustomerDetailsMobile();
+        $this->getCustomerDetailsMobile($this->customer_id);
         session()->flash('success', 'Customer created, Pleae enter the vehicle details and continue..!');
         $this->addCustomerVehicle();
     }
 
-    public function getCustomerDetailsMobile(){
-        if($this->mobile){
-            $availableCUstomer = TenantMasterCustomers::where('Mobile','LIKE',$this->mobile)->orderBy('TenantId','DESC')->first();
-        }
-        else
-        {
+    public function getCustomerDetailsMobile($customerId){
+        if($customerId){
             $availableCUstomer = TenantMasterCustomers::where('TenantId','LIKE',$this->customer_id)->orderBy('TenantId','DESC')->first();
+        }
+        else if($this->mobile){
+            $availableCUstomer = TenantMasterCustomers::where('Mobile','LIKE',$this->mobile)->orderBy('TenantId','DESC')->first();
         }
         $this->customer_id=$availableCUstomer->TenantId;
         $this->customer_code=$availableCUstomer->TenantCode;
@@ -591,14 +591,18 @@ class CustomerReceive extends Component
         }
         else
         {
-            $this->validateVehicleSave();
+            session()->flash('error', 'Customer not available, save customer & continue.');
+            $this->customers = null;
+            $this->customerVehicles=[];
+
+           /* $this->validateVehicleSave();
             if(!$this->getCustomerVehicles()){
                 $this->customerVehicleSaveEntry();
             }
             else
             {
-                //dd('save not ok');
-            }
+                
+            }*/
             //$this->customerForm=true;
             //session()->flash('error', 'Select customer and save vehicle..!');  
         }
