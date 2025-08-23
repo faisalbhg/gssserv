@@ -690,8 +690,9 @@ class CustomerServiceJob extends Component
                         $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->first();
                         $itemPriceLists[$key]['discountDetails'] = $qlInventorySalesPricesQuery;
                     }
-                    else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
+                    else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14 || $this->selectedVehicleInfo->customerInfoMaster['Paymethod']==2)
                     {
+
                         $qlInventorySalesPricesQuery = InventorySalesPrices::where([
                             'ServiceItemId'=>$itemMasterList->ItemId,
                             'CustomerGroupCode'=>$this->selectedVehicleInfo->customerInfoMaster['TenantCode'],
@@ -764,7 +765,7 @@ class CustomerServiceJob extends Component
                             $qlItemPriceLists[$key]['discountDetails'] =  $qlKMInventorySalesPricesQuery->first();
                             
                         }
-                        else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
+                        else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14 || $this->selectedVehicleInfo->customerInfoMaster['Paymethod']==2)
                         {
                             $qlKMInventorySalesPricesQuery = InventorySalesPrices::where([
                                 'ServiceItemId'=>$qlItemsList->ItemId,
@@ -826,7 +827,7 @@ class CustomerServiceJob extends Component
                                 }
                                 
                             }
-                            else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14)
+                            else if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14  || $this->selectedVehicleInfo->customerInfoMaster['Paymethod']==2)
                             {
                                 $qlMakeModelCatItmDetails[$key]['discountDetails'] = InventorySalesPrices::where([
                                         'ServiceItemId'=>$qlMakeModelCatItm->ItemId,
