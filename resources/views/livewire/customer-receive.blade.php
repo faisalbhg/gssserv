@@ -209,15 +209,19 @@
                                 @if($updateCustomerDetails)
                                 <button type="button" wire:click="updateCustomer()" class="btn bg-gradient-warning btn-sm" id="updateCustomerButton">Update Customer</button>
                                 @else
+                                    @if($customerSearchBtn)
                                     <button type="button" wire:click="searchCustomer()" class="btn bg-gradient-warning btn-sm" id="searchCustomerButton">Search Customer</button>
-                                    @if($confirmGuestCustSave)
-                                    <p class="float-end">Continue Save as Guest
-                                        <span><label wire:click.prevent="confirmSaveAsGuest()" class="badge bg-gradient-success cursor-pointer"> Yes</label></span>
-                                        <span><label wire:click.prevent="notConfirmSaveAsGuest()" class="badge bg-gradient-danger cursor-pointer"> No</label></span>
+                                    @endif
+                                    @if($customerSaveBtn)
+                                        @if($confirmGuestCustSave)
+                                        <p class="float-end">Continue Save as Guest
+                                            <span><label wire:click.prevent="confirmSaveAsGuest()" class="badge bg-gradient-success cursor-pointer"> Yes</label></span>
+                                            <span><label wire:click.prevent="notConfirmSaveAsGuest()" class="badge bg-gradient-danger cursor-pointer"> No</label></span>
 
-                                    </p>
-                                    @else
-                                    <button type="button" wire:click="saveCustomer()" class="btn bg-gradient-info btn-sm mx-3 float-end" id="saveCustomerButton">Save Customer & Continue</button>
+                                        </p>
+                                        @else
+                                        <button type="button" wire:click="saveCustomer()" class="btn bg-gradient-info btn-sm mx-3 float-end" id="saveCustomerButton">Save Customer & Continue</button>
+                                        @endif
                                     @endif
                                 @endif
                                 

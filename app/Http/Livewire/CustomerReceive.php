@@ -30,7 +30,7 @@ class CustomerReceive extends Component
     use WithFileUploads;
     public $showWalkingCustomerPanel = true, $showContractCustomerPanel=false;
     public $searchByCustomer=true, $searchByVehicle=false, $searchByContractCustomer=false;
-    public $customerForm=true,$vehicleForm=false, $vehicleSearchForm = false, $vehicleSearchBtn=false, $vehicleSaveBtn=false, $vehicleDetailsForm = false, $showVehicleAvailable=false, $showSelectedCustomer=false, $updateCustomerDetails=false;
+    public $customerForm=true, $customerSearchBtn =true, $customerSaveBtn =false, $vehicleForm=false, $vehicleSearchForm = false, $vehicleSearchBtn=false, $vehicleSaveBtn=false, $vehicleDetailsForm = false, $showVehicleAvailable=false, $showSelectedCustomer=false, $updateCustomerDetails=false;
     public $mobile, $name, $email, $markGusestCustomer=false;
     public $plate_number_image, $plate_country='AE', $otherCountryPlateCode=true, $plateStateCode=2, $plate_state='Dubai', $plateStateCodeLetter='DXB', $plate_category=2, $plate_code, $plate_number, $numberPlateRequired=true;
     public $countryList=[], $stateList=[], $plateEmiratesCategories=[], $plateEmiratesCodes=[], $vehicleTypesList=[], $listVehiclesMake = [], $vehiclesModelList=[];
@@ -235,6 +235,8 @@ class CustomerReceive extends Component
 
                 $this->searchByVehicle=false;
                 $this->customerForm=true;
+                $this->customerSearchBtn =true;
+                $this->customerSaveBtn =false;
                 $this->vehicleForm=false;
 
                 $this->searchByContractCustomer=false;
@@ -297,12 +299,14 @@ class CustomerReceive extends Component
             $this->email=$customerResult->Email;
             $this->name=$customerResult->TenantName;
             $this->showSelectedCustomer=true;
-
+            $this->customerSaveBtn =false;
             $this->getCustomerVehicles();
             
         }
         else
         {
+            $this->customerSaveBtn =true;
+
             session()->flash('error', 'Customer not available, save customer & continue.');
             $this->customers = null;
             $this->customerVehicles=[];
@@ -414,7 +418,6 @@ class CustomerReceive extends Component
                     $validateSaveVehicle['email'] = 'required|email';
                 }
                 $validatedData = $this->validate($validateSaveVehicle);
-
                 if(TenantMasterCustomers::where('Mobile','LIKE',$this->mobile)->exists())
                 {
                     $selectCustommer = TenantMasterCustomers::where('Mobile','LIKE',$this->mobile)->first();
