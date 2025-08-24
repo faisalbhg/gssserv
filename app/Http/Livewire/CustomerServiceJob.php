@@ -561,9 +561,9 @@ class CustomerServiceJob extends Component
             if($this->section_service_search){
                 $sectionServiceLists = $sectionServiceLists->where('ItemName','like',"%$this->section_service_search%");
             }
-
+            
             $sectionServiceLists = $sectionServiceLists->orderBy('SortIndex','ASC')->get();
-            if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14 || $this->selectedVehicleInfo->ceramic_wash_discount_count > 0){
+            if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14 || $this->selectedVehicleInfo->customerInfoMaster['Paymethod']==2 || $this->selectedVehicleInfo->ceramic_wash_discount_count > 0){
                 //$sectionServicePriceLists = [];
                 foreach($sectionServiceLists as $key => $sectionServiceList){
                     $discountLaborSalesPrices = LaborSalesPrices::where([
