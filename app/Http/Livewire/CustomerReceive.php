@@ -147,6 +147,10 @@ class CustomerReceive extends Component
         $filteredItems = collect($this->contractCustomersList)->filter(function ($item) {
             return stripos($item, $this->search_contract_contract) !== false;
         });
+        if($this->markGusestCustomer)
+        {
+            $this->customerSaveBtn=true;
+        }
 
         $this->dispatchBrowserEvent('selectSearchEvent');
         $this->dispatchBrowserEvent('imageUpload');
