@@ -920,6 +920,68 @@ class CustomerServiceItems extends Component
         }
     }
 
+    public function clickLineDiscountGroup(){
+        $this->selectedDiscount=null;
+        $this->discountCardApplyForm=false;
+        $this->showSelectedDiscount=false;
+        //$this->dispatchBrowserEvent('closeDiscountGroupModal');
+    }
+
+    public function saveSelectedLineDiscountGroup(){
+        $proceeddisctount=false;
+        $validatedData = $this->validate([
+            //'discount_card_imgae' => 'required',
+            'discount_card_number' => 'required',
+            'discount_card_validity' => 'required',
+        ]);
+        $customerDiscountGroupQuery = CustomerDiscountGroup::where([
+            'customer_id'=>$this->customer_id,
+            //'vehicle_id'=>$this->vehicle_id,
+            'discount_id'=>$this->selectedDiscount['id'],
+            'discount_card_number'=>$this->discount_card_number,
+            'is_active'=>1
+        ]);
+
+        if(!$customerDiscountGroupQuery->exists())
+        {
+        
+            $customerDiscontGroupInfo = [
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->vehicle_id,
+                'discount_id'=>$this->selectedDiscount['id'],
+                'discount_unit_id'=>$this->selectedDiscount['unitId'],
+                'discount_code'=>$this->selectedDiscount['code'],
+                'discount_title'=>$this->selectedDiscount['title'],
+                'discount_card_number'=>$this->discount_card_number,
+                'discount_card_validity'=>$this->discount_card_validity,
+                'groupType'=>$this->selectedDiscount['groupType'],
+                'is_active'=>1,
+                'is_default'=>1,
+                'created_at'=>Carbon::now(),
+            ];
+            
+            if($this->discount_card_imgae)
+            {
+                $customerDiscontGroupInfo['discount_card_imgae'] = $this->discount_card_imgae->store('discount_group', 'public');
+            }
+            //dd($customerDiscontGroupInfo);
+            $customerDiscontGroup = CustomerDiscountGroup::create($customerDiscontGroupInfo);
+        }
+        else{
+            $customerDiscountGroupQuery->update([
+                'discount_card_validity'=>$this->discount_card_validity,
+                'groupType'=>$this->selectedDiscount['groupType']
+            ]);
+            
+        }
+
+        $this->appliedDiscount = $this->selectedDiscount;
+        $this->applyDIsountinItemService($this->linePriceDiscount);
+        //$this->applyDiscountOnCart();
+        $this->dispatchBrowserEvent('closeDiscountGroupModal');
+
+    }
+
     
 
     public function clickDiscountGroup(){
