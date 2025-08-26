@@ -326,7 +326,6 @@
                         <div class="row">
                             <div class="col-md-2 col-sm-3">
                                 <label for="plateImageFile" >Plate Image</label>
-
                                 <div 
                                     x-data="{ isUploading: false, progress: 0 }"
                                     x-on:livewire-upload-start="isUploading = true"
