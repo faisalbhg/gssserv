@@ -45,6 +45,7 @@ use App\Http\Livewire\UpdateJobCards;
 use App\Http\Livewire\VehicleSearchSave;
 use App\Http\Livewire\CustomerServiceJob;
 use App\Http\Livewire\SubmitCutomerServiceJob;
+use App\Http\Livewire\CompletedJobCardCreation;
 use App\Http\Livewire\UpdateJobCardSubmit;
 use App\Http\Livewire\GatePasses;
 use App\Http\Livewire\PackagesBookings;
@@ -90,9 +91,13 @@ Route::middleware('auth')->group(function () {
     Route::get('job-start',VehicleSearchSave::class)->name('job-start');
     Route::get('customer-service-job/{customer_id}/{vehicle_id}',CustomerServiceJob::class)->name('customer-service-job');
     Route::get('submit-job/{customer_id}/{vehicle_id}', SubmitCutomerServiceJob::class)->name('submit-job');
+    Route::get('complete-jobcard/{customer_id}/{vehicle_id}', CompletedJobCardCreation::class)->name('complete-jobcard');
+
+
     //UpdateCustomerJobs
     Route::get('customer-service-job/{customer_id}/{vehicle_id}/{job_number}',CustomerServiceJob::class)->name('customer-service-job-update');
     Route::get('submit-job-update/{customer_id}/{vehicle_id}/{job_number}', SubmitCutomerServiceJob::class)->name('submit-job-update');
+    Route::get('complete-jobcard-update/{customer_id}/{vehicle_id}/{job_number}', CompletedJobCardCreation::class)->name('complete-jobcard-update');
 
     Route::get('customer-service-items/{customer_id}/{vehicle_id}', CustomerServiceItems::class)->name('customer-service-items');
     Route::get('customer-service-items/{customer_id}/{vehicle_id}/{job_number}', CustomerServiceItems::class)->name('customer-service-items-update');

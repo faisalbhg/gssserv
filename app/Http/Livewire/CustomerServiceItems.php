@@ -1051,10 +1051,10 @@ class CustomerServiceItems extends Component
 
     public function submitService(){
         if($this->job_number){
-            return redirect()->to('submit-job-update/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$this->job_number);
+            return redirect()->to('complete-jobcard-update/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$this->job_number);
         }
         else{
-            return redirect()->to('submit-job/'.$this->customer_id.'/'.$this->vehicle_id);
+            return redirect()->to('complete-jobcard/'.$this->customer_id.'/'.$this->vehicle_id);
         }
     }
 

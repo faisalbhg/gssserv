@@ -28,7 +28,7 @@ use App\Models\PackageBookingServiceLogs;
 use App\Models\JobCardsDeletedServices;
 use App\Models\TempCustomerSignature;
 
-class SubmitCutomerServiceJob extends Component
+class CompletedJobCardCreation extends Component
 {
     use WithFileUploads;
     public $customer_id, $vehicle_id, $mobile, $name, $email, $selectedVehicleInfo;
@@ -38,7 +38,7 @@ class SubmitCutomerServiceJob extends Component
     public $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $dash_image1, $dash_image2, $passenger_seat_image, $driver_seat_image, $back_seat1, $back_seat2, $back_seat3, $back_seat4, $roof_images;
     public $existingImageR1, $existingImageR2, $existingImageF, $existingImageB, $existingImageL1, $existingImageL2, $existingdash_image1, $existingdash_image2, $existingpassenger_seat_image, $existingdriver_seat_image, $existingback_seat1, $existingback_seat2, $existingback_seat3, $existingback_seat4, $existingroof_images;
 
-    public $customerSignature, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
+    public $customerSignature, $saveCustomerSignature=false, $checklistLabels = [], $checklistLabel = [], $fuel, $scratchesFound, $scratchesNotFound;
     public $turn_key_on_check_for_fault_codes, $start_engine_observe_operation, $reset_the_service_reminder_alert, $stick_update_service_reminder_sticker_on_b_piller, $interior_cabin_inspection_comments, $check_power_steering_fluid_level, $check_power_steering_tank_cap_properly_fixed, $check_brake_fluid_level, $brake_fluid_tank_cap_properly_fixed, $check_engine_oil_level, $check_radiator_coolant_level, $check_radiator_cap_properly_fixed, $top_off_windshield_washer_fluid, $check_windshield_cap_properly_fixed, $underHoodInspectionComments, $check_for_oil_leaks_engine_steering, $check_for_oil_leak_oil_filtering, $check_drain_lug_fixed_properly, $check_oil_filter_fixed_properly, $ubi_comments;
     public $staff_id,$staff_number,$show_staff_details=false;
     public $job_date_time;
@@ -51,9 +51,7 @@ class SubmitCutomerServiceJob extends Component
         $this->job_numbber = $request->job_number;
         if($this->vehicle_id && $this->customer_id)
         {
-            $this->getCustomerCart();
-            $this->selectVehicle();
-
+            $this->selectedVehicle();
         }
 
         if($this->job_number)
@@ -65,7 +63,6 @@ class SubmitCutomerServiceJob extends Component
 
     public function render()
     {
-        
         $this->isValidInput = $this->getErrorBag()->count();
         if($this->isValidInput>0)
         {
@@ -92,21 +89,25 @@ class SubmitCutomerServiceJob extends Component
             $this->checklistLabels= ServiceChecklist::get();
         }
         
-        if($this->customerSignature){
-            if(!TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists()){
-                TempCustomerSignature::create([
-                    'customer_id'=>$this->customer_id,
-                    'vehicle_id'=>$this->vehicle_id,
-                    'signature'=>$this->customerSignature,
-                    'is_active'=>1,
-                ]);
+        if($this->saveCustomerSignature){
+            TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->delete();
+            TempCustomerSignature::create([
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->vehicle_id,
+                'signature'=>$this->customerSignature,
+                'is_active'=>1,
+            ]);
+        }
+        else{
+            if(TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists())
+            {
+                $tempCustomerSignature = TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->first();
+                $this->customerSignature = $tempCustomerSignature->signature;
             }
         }
-        if(TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists())
-        {
-            $tempCustomerSignature = TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->first();
-            $this->customerSignature = $tempCustomerSignature->signature;
-        }
+
+        
+        
         //
 
         foreach($this->cartItems as $cartCheckItem){
@@ -115,69 +116,17 @@ class SubmitCutomerServiceJob extends Component
                 dd('Error, Contact techincal team..!');
             }
         }
-        
-        //$this->getCustomerCart();
-        return view('livewire.submit-cutomer-service-job');
+
+        return view('livewire.completed-job-card-creation');
     }
 
-    public function customerJobDetails(){
-        $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo']);
-        $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
-        $customerJobCardsQuery = $customerJobCardsQuery->where('payment_status','!=',1);
-        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','!=',4)->where('job_status','!=',5);
-        $this->jobDetails =  $customerJobCardsQuery->first();
-        if($this->jobDetails){
-            $this->showFuelScratchCheckList=true;
-            $this->checklistEntry = JobcardChecklistEntries::where(['job_number'=>$this->job_number])->first();
-            if($this->checklistEntry){
-                $this->checklistLabel = json_decode($this->checklistEntry->checklist,true);
-                $this->fuel = $this->checklistEntry->fuel;
-                
-                $this->vehicle_image = json_decode($this->checklistEntry->vehicle_image,true);
-                $this->existingImageR1 = $this->vehicle_image['vImageR1'];
-                $this->existingImageR2 = $this->vehicle_image['vImageR2'];
-                $this->existingImageF = $this->vehicle_image['vImageF'];
-                $this->existingImageB = $this->vehicle_image['vImageB'];
-                $this->existingImageL1 = $this->vehicle_image['vImageL1'];
-                $this->existingImageL2 = $this->vehicle_image['vImageL2'];
-                $this->existingdash_image1 = $this->vehicle_image['dash_image1'];
-                $this->existingdash_image2 = $this->vehicle_image['dash_image2'];
-                $this->existingpassenger_seat_image = $this->vehicle_image['passenger_seat_image'];
-                $this->existingdriver_seat_image = $this->vehicle_image['driver_seat_image'];
-                $this->existingback_seat1 = $this->vehicle_image['back_seat1'];
-                $this->existingback_seat2 = $this->vehicle_image['back_seat2'];
-                $this->existingback_seat3 = $this->vehicle_image['back_seat3'];
-                $this->existingback_seat4 = $this->vehicle_image['back_seat4'];
-                $this->existingroof_images = $this->vehicle_image['roof_images'];
-
-                $this->turn_key_on_check_for_fault_codes = $this->checklistEntry->turn_key_on_check_for_fault_codes;
-                $this->start_engine_observe_operation = $this->checklistEntry->start_engine_observe_operation;
-                $this->reset_the_service_reminder_alert = $this->checklistEntry->reset_the_service_reminder_alert;
-                $this->stick_update_service_reminder_sticker_on_b_piller = $this->checklistEntry->stick_update_service_reminder_sticker_on_b_piller;
-                $this->interior_cabin_inspection_comments = $this->checklistEntry->interior_cabin_inspection_comments;
-                $this->check_power_steering_fluid_level = $this->checklistEntry->check_power_steering_fluid_level;
-                $this->check_power_steering_tank_cap_properly_fixed = $this->checklistEntry->check_power_steering_tank_cap_properly_fixed;
-                $this->check_brake_fluid_level = $this->checklistEntry->check_brake_fluid_level;
-                $this->brake_fluid_tank_cap_properly_fixed = $this->checklistEntry->brake_fluid_tank_cap_properly_fixed;
-                $this->check_engine_oil_level = $this->checklistEntry->check_engine_oil_level;
-                $this->check_radiator_coolant_level = $this->checklistEntry->check_radiator_coolant_level;
-                $this->check_radiator_cap_properly_fixed = $this->checklistEntry->check_radiator_cap_properly_fixed;
-                $this->top_off_windshield_washer_fluid = $this->checklistEntry->top_off_windshield_washer_fluid;
-                $this->check_windshield_cap_properly_fixed = $this->checklistEntry->check_windshield_cap_properly_fixed;
-                $this->underHoodInspectionComments = $this->checklistEntry->underHoodInspectionComments;
-                $this->check_for_oil_leaks_engine_steering = $this->checklistEntry->check_for_oil_leaks_engine_steering;
-                $this->check_for_oil_leak_oil_filtering = $this->checklistEntry->check_for_oil_leak_oil_filtering;
-                $this->check_drain_lug_fixed_properly = $this->checklistEntry->check_drain_lug_fixed_properly;
-                $this->check_oil_filter_fixed_properly = $this->checklistEntry->check_oil_filter_fixed_properly;
-                $this->ubi_comments = $this->checklistEntry->ubi_comments;
-                $this->customerSignature = $this->checklistEntry->signature;
-            }
-        }
-        else
-        {
-            return redirect()->to('/customer-job-update/'.$this->job_number);
-        }
-        
+    public function selectedVehicle(){
+        $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->first();
+        $this->selectedVehicleInfo=$customers;
+        $this->mobile = $customers->customerInfoMaster['Mobile'];
+        $this->name = $customers->customerInfoMaster['TenantName'];
+        $this->email = $customers->customerInfoMaster['Email'];
+        $this->getCustomerCart();
     }
 
     public function getCustomerCart(){
@@ -251,17 +200,66 @@ class SubmitCutomerServiceJob extends Component
         {
             return redirect()->to('customer-service-job/'.$this->customer_id.'/'.$this->vehicle_id);
         }
-
-
     }
-    public function selectVehicle(){
-        $customers = CustomerVehicle::with(['customerInfoMaster','makeInfo','modelInfo','customerDiscountLists'])->where(['is_active'=>1,'id'=>$this->vehicle_id,'customer_id'=>$this->customer_id])->first();
-        $this->selectedVehicleInfo=$customers;
 
-        $this->mobile = $customers->customerInfoMaster['Mobile'];
-        $this->name = $customers->customerInfoMaster['TenantName'];
-        $this->email = $customers->customerInfoMaster['Email'];
-    }   
+    public function customerJobDetails(){
+        $customerJobCardsQuery = CustomerJobCards::with(['customerInfo','customerJobServices','checklistInfo','makeInfo','modelInfo']);
+        $customerJobCardsQuery = $customerJobCardsQuery->where(['job_number'=>$this->job_number]);
+        $customerJobCardsQuery = $customerJobCardsQuery->where('payment_status','!=',1);
+        $customerJobCardsQuery = $customerJobCardsQuery->where('job_status','!=',4)->where('job_status','!=',5);
+        $this->jobDetails =  $customerJobCardsQuery->first();
+        if($this->jobDetails){
+            $this->showFuelScratchCheckList=true;
+            $this->checklistEntry = JobcardChecklistEntries::where(['job_number'=>$this->job_number])->first();
+            if($this->checklistEntry){
+                $this->checklistLabel = json_decode($this->checklistEntry->checklist,true);
+                $this->fuel = $this->checklistEntry->fuel;
+                
+                $this->vehicle_image = json_decode($this->checklistEntry->vehicle_image,true);
+                $this->existingImageR1 = $this->vehicle_image['vImageR1'];
+                $this->existingImageR2 = $this->vehicle_image['vImageR2'];
+                $this->existingImageF = $this->vehicle_image['vImageF'];
+                $this->existingImageB = $this->vehicle_image['vImageB'];
+                $this->existingImageL1 = $this->vehicle_image['vImageL1'];
+                $this->existingImageL2 = $this->vehicle_image['vImageL2'];
+                $this->existingdash_image1 = $this->vehicle_image['dash_image1'];
+                $this->existingdash_image2 = $this->vehicle_image['dash_image2'];
+                $this->existingpassenger_seat_image = $this->vehicle_image['passenger_seat_image'];
+                $this->existingdriver_seat_image = $this->vehicle_image['driver_seat_image'];
+                $this->existingback_seat1 = $this->vehicle_image['back_seat1'];
+                $this->existingback_seat2 = $this->vehicle_image['back_seat2'];
+                $this->existingback_seat3 = $this->vehicle_image['back_seat3'];
+                $this->existingback_seat4 = $this->vehicle_image['back_seat4'];
+                $this->existingroof_images = $this->vehicle_image['roof_images'];
+
+                $this->turn_key_on_check_for_fault_codes = $this->checklistEntry->turn_key_on_check_for_fault_codes;
+                $this->start_engine_observe_operation = $this->checklistEntry->start_engine_observe_operation;
+                $this->reset_the_service_reminder_alert = $this->checklistEntry->reset_the_service_reminder_alert;
+                $this->stick_update_service_reminder_sticker_on_b_piller = $this->checklistEntry->stick_update_service_reminder_sticker_on_b_piller;
+                $this->interior_cabin_inspection_comments = $this->checklistEntry->interior_cabin_inspection_comments;
+                $this->check_power_steering_fluid_level = $this->checklistEntry->check_power_steering_fluid_level;
+                $this->check_power_steering_tank_cap_properly_fixed = $this->checklistEntry->check_power_steering_tank_cap_properly_fixed;
+                $this->check_brake_fluid_level = $this->checklistEntry->check_brake_fluid_level;
+                $this->brake_fluid_tank_cap_properly_fixed = $this->checklistEntry->brake_fluid_tank_cap_properly_fixed;
+                $this->check_engine_oil_level = $this->checklistEntry->check_engine_oil_level;
+                $this->check_radiator_coolant_level = $this->checklistEntry->check_radiator_coolant_level;
+                $this->check_radiator_cap_properly_fixed = $this->checklistEntry->check_radiator_cap_properly_fixed;
+                $this->top_off_windshield_washer_fluid = $this->checklistEntry->top_off_windshield_washer_fluid;
+                $this->check_windshield_cap_properly_fixed = $this->checklistEntry->check_windshield_cap_properly_fixed;
+                $this->underHoodInspectionComments = $this->checklistEntry->underHoodInspectionComments;
+                $this->check_for_oil_leaks_engine_steering = $this->checklistEntry->check_for_oil_leaks_engine_steering;
+                $this->check_for_oil_leak_oil_filtering = $this->checklistEntry->check_for_oil_leak_oil_filtering;
+                $this->check_drain_lug_fixed_properly = $this->checklistEntry->check_drain_lug_fixed_properly;
+                $this->check_oil_filter_fixed_properly = $this->checklistEntry->check_oil_filter_fixed_properly;
+                $this->ubi_comments = $this->checklistEntry->ubi_comments;
+                $this->customerSignature = $this->checklistEntry->signature;
+            }
+        }
+        else
+        {
+            return redirect()->to('/customer-job-update/'.$this->job_number);
+        }
+    }
 
     public function updateServiceItem(){
         if($this->job_number)
@@ -276,6 +274,7 @@ class SubmitCutomerServiceJob extends Component
 
     public function clickShowSignature()
     {
+        $this->saveCustomerSignature=false;
         if($this->selectedVehicleInfo->customerInfoMaster['Required_StaffDtls'])
         {
             if($this->selectedVehicleInfo['customerInfoMaster']['TenantId']=='6630'){
@@ -292,9 +291,7 @@ class SubmitCutomerServiceJob extends Component
                 ]);
             }
         }
-        
-        TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->delete();
-        $this->customerSignature=null;
+
         $this->showCustomerSignature=true;
         $this->dispatchBrowserEvent('showSignature');
 
@@ -312,11 +309,7 @@ class SubmitCutomerServiceJob extends Component
         {
             $this->jobUpdateSendSMS = 'no';
         }
-        /*if($this->job_number){
-            $validatedData = $this->validate([
-                'jobUpdateSendSMS' => 'required'
-            ]);
-        }*/
+        
         if($this->cartItemCount>0){
 
         
@@ -398,6 +391,7 @@ class SubmitCutomerServiceJob extends Component
         $missing = [];
         $fourPluOneRequested = false;
         foreach(CustomerJobCardServices::where(['job_number'=>$this->job_number])->get() as $tabKey => $customerJobCardServices){
+
             JobCardsDeletedServices::create($customerJobCardServices->toArray());
             //dd(CustomerJobCardServices::where(['id'=>$customerJobCardServices->id,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->get());
             CustomerJobCardServices::where(['id'=>$customerJobCardServices->id,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->delete();
@@ -405,13 +399,7 @@ class SubmitCutomerServiceJob extends Component
         
     }
 
-    
-
     public function createJobEntry(){
-
-        if($this->cartItemCount==0){
-            dd('Contact IT..!');
-        }
 
         $job_update = false;
         if($this->job_number){
@@ -461,6 +449,7 @@ class SubmitCutomerServiceJob extends Component
         {
 
             $customerjobData['created_by']=auth()->user('user')->id;
+            
             //Get Job Number
             $jobStartChar = 'JOB-'.auth()->user('user')->stationName['Abbreviation'].'-';
             $lastJobNumber = CustomerJobCards::where(['station'=>auth()->user('user')->station_code])->where('job_number','!=',null)->where('carTaxiJobs','=',null)->orderBy('id','DESC')->first();
@@ -507,6 +496,7 @@ class SubmitCutomerServiceJob extends Component
         $package_number=null;
         $fourPLuOneRequested=false;
         $packageGrand_total=0;
+
         foreach($this->cartItems as $cartData)
         {
             $customerJobServiceData = [
@@ -673,7 +663,6 @@ class SubmitCutomerServiceJob extends Component
 
 
             if($cartData->cart_item_type==3){
-                
                 PackageBookingServices::where([
                     'item_id'=>$cartData->item_id,
                     'item_code'=>$cartData->item_code,
@@ -686,8 +675,6 @@ class SubmitCutomerServiceJob extends Component
             }
 
             //Ceramic Wash Discount Count
-
-
             if(in_array($cartData->item_code,config('global.ceramic.service'))){
                 if(!$job_update){
                     CustomerVehicle::where([
@@ -718,8 +705,6 @@ class SubmitCutomerServiceJob extends Component
                     ])->update(['ceramic_wash_discount_count'=>$cartData->ceramic_wash_discount_count]);
                 }
             }
-
-
         }
 
         if($totalDiscountInJob>0)
@@ -1075,4 +1060,5 @@ class SubmitCutomerServiceJob extends Component
     {
         return redirect()->to('/customer-job-update/'.$job_number);
     }
+
 }

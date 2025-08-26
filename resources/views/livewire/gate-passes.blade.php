@@ -170,7 +170,7 @@
                                         @if($job->job_status==3)
                                             @if($job->payment_type!=4)
                                                 @if($job->payment_status==1)
-                                                    <button type="button"  wire:click="updateQwService('{{$job->job_number}}','4','{{$job->customerInfo['TenantId']}}')" class="w-100 btn {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}"  >Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
+                                                    <button type="button"  wire:click="updateQwService('{{$job->job_number}}','4','{{$job->customerInfo['TenantId']}}','{{$job->customerInfo['TenantCode']}}')" class="w-100 btn {!!config('global.jobs.status_btn_class')[$job->job_status+1]!!}"  >Mark as {{config('global.jobs.status')[$job->job_status+1]}}</button>
                                                 @endif
 
                                             @elseif($job->payment_type==4 && $job->payment_status==0)

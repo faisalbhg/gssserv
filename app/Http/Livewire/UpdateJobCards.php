@@ -1294,7 +1294,7 @@ class UpdateJobCards extends Component
 
     public function updateServiceConfirm(){
 
-        return redirect()->to('submit-jobcard-update/'.$this->job_number);
+        return redirect()->to('complete-jobcard-update/'.$this->job_number);
     }
 
 

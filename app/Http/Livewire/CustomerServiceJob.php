@@ -89,7 +89,7 @@ class CustomerServiceJob extends Component
     public $showSelectedDiscount=false, $priceDiscountList, $lineItemDetails, $showLineDiscountItems=false; 
     public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValueType='amount', $manualDiscountValue, $manualDiscountRemarks, $manulDiscountForm=false, $manualDiscountRefNo;
     public $pendingExistingJobs=null, $showPendingJobList=false;
-    public $customerSignature, $showCustomerSignature=false;
+    public $customerSignature, $saveCustomerSignature=false, $showCustomerSignature=false;
     public $shoeJobHistoryModal=false, $jobsHistory;
     
     
@@ -383,6 +383,7 @@ class CustomerServiceJob extends Component
             $this->itemBrandsLists=[];
             $this->showItemsSearchResults=false;
         }
+
         if($this->showQlItemSearch)
         {
             $this->qlBrandsLists = InventoryBrand::where(['Active'=>1,'show_engine_oil'=>1])->get();
@@ -606,25 +607,31 @@ class CustomerServiceJob extends Component
         $this->getCartInfo();
         $this->dispatchBrowserEvent('selectSearchEvent');
         $this->emit('chosenUpdated');
+        
         if($this->job_number)
         {
             //$this->customerJobDetails();
         }
-        if($this->customerSignature){
-            if(!TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists()){
-                TempCustomerSignature::create([
-                    'customer_id'=>$this->customer_id,
-                    'vehicle_id'=>$this->vehicle_id,
-                    'signature'=>$this->customerSignature,
-                    'is_active'=>1,
-                ]);
+
+        if($this->saveCustomerSignature){
+            TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->delete();
+            TempCustomerSignature::create([
+                'customer_id'=>$this->customer_id,
+                'vehicle_id'=>$this->vehicle_id,
+                'signature'=>$this->customerSignature,
+                'is_active'=>1,
+            ]);
+        }
+        else{
+            if(TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists())
+            {
+                $tempCustomerSignature = TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->first();
+                $this->customerSignature = $tempCustomerSignature->signature;
             }
         }
-        if(TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists())
-        {
-            $tempCustomerSignature = TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->first();
-            $this->customerSignature = $tempCustomerSignature->signature;
-        }
+        
+        
+        
 
         
 
@@ -633,8 +640,8 @@ class CustomerServiceJob extends Component
 
     public function clickShowSignature()
     {
-        TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->delete();
-        $this->customerSignature=null;
+
+        $this->saveCustomerSignature=false;
         $this->showCustomerSignature=true;
         $this->dispatchBrowserEvent('showSignature');
 
@@ -2742,10 +2749,10 @@ class CustomerServiceJob extends Component
 
     public function submitService(){
         if($this->job_number){
-            return redirect()->to('submit-job-update/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$this->job_number);
+            return redirect()->to('complete-jobcard-update/'.$this->customer_id.'/'.$this->vehicle_id.'/'.$this->job_number);
         }
         else{
-            return redirect()->to('submit-job/'.$this->customer_id.'/'.$this->vehicle_id);
+            return redirect()->to('complete-jobcard/'.$this->customer_id.'/'.$this->vehicle_id);
         }
     }
 

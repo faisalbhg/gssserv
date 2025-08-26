@@ -1854,6 +1854,7 @@ window.addEventListener('showSignature',event=>{
         var data = signaturePad.toDataURL('image/png');
         console.log(data);
         @this.set('customerSignature', data);
+        @this.set('saveCustomerSignature', true);
         $('#customerSignatureModal').modal('hide');
         // Send data to server instead...
         //window.open(data);

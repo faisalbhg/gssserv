@@ -73,9 +73,8 @@ class GatePasses extends Component
     }
 
 
-    public function updateQwService($job_number,$status,$customer_id)
+    public function updateQwService($job_number,$status,$customer_id,$customerCode)
     {
-        //dd($customer_id);
         $this->job_status = $status;
         $this->job_departent = $status;
         
@@ -108,7 +107,11 @@ class GatePasses extends Component
         if($this->job_status==4)
         {
             try {
-                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$customer_id.'" ');
+                //DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$customer_id.'" ');
+
+                DB::select('EXEC [dbo].[RevenueBookingJob] @JobCardNo = "'.$job_number.'", @DoneBy ="'.auth()->user('user')->id.'", @StationCode = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customercode = "'.$customerCode.'" ');
+
+
             } catch (\Exception $e) {
                 //dd($e->getMessage());
                 //return $e->getMessage();

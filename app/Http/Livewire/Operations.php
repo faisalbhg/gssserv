@@ -892,7 +892,10 @@ class Operations extends Component
         {
             
             try {
-                DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$job->customer_id.'" ');
+                //DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$services['job_number'].'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$job->customer_id.'" ');
+
+                DB::select('EXEC [dbo].[RevenueBookingJob] @JobCardNo = "'.$services['job_number'].'", @DoneBy ="'.auth()->user('user')->id.'", @StationCode = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customercode = "'.$job->customerJobServices['TenantCode'].'" ');
+
             } catch (\Exception $e) {
                 //dd($e->getMessage());
                 //return $e->getMessage();
@@ -1137,7 +1140,7 @@ class Operations extends Component
         }
         dd('1');*/
 
-        //CustomerJobCards::where(['job_number'=>$job_number])->update(['customer_job_update'=>null]);
+        //CustomerJobCards::where(['job_number'=>$job_number])->update(['job_status'=>3]);
         //dd($this->jobcardDetails);
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {
