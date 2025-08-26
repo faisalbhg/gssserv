@@ -326,25 +326,37 @@
                         <div class="row">
                             <div class="col-md-2 col-sm-3">
                                 <label for="plateImageFile" >Plate Image</label>
-                                <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
+
+                                <div 
+                                    x-data="{ isUploading: false, progress: 0 }"
+                                    x-on:livewire-upload-start="isUploading = true"
+                                    x-on:livewire-upload-finish="isUploading = false; progress = 0"
+                                    x-on:livewire-upload-error="isUploading = false"
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress"
+                                    class=""
+                                >
                                     <div class="row">
                                         <div class="col-md-12">
-                                            
-                                            <button class="btn btn-icon btn-2 btn-primary float-start" id="plateImage" type="button">
+                                            <button class="btn btn-icon btn-2 btn-primary float-start mb-0" id="plateImage" type="button">
                                                 <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                             </button>
                                         </div>
                                     </div>
                                     <!-- File Input -->
-                                    <input type="file" id="plateImageFile" wire:model="plate_number_image" accept="image/*" capture style="display: none;" class="@error('plate_number_image') btn-outline-danger @enderror" />
+                                    <input type="file" id="plateImageFile" wire:model="plate_number_image" class="mb-2" accept="image/*" capture style="display: none;">
+
                                     <!-- Progress Bar -->
-                                    <div x-show="isUploading">
-                                        <progress max="100" x-bind:value="progress"></progress>
+                                    <div x-show="isUploading" class="w-100">
+                                        <div class="btn bg-gradient-info h-1 rounded-full pt-1 mt-1" :style="'width: ' + progress + '%'"></div>
                                     </div>
+
+                                    <!-- Preview (if image) -->
+                                    @if ($plate_number_image)
+                                        <img src="{{ $plate_number_image->temporaryUrl() }}" class="img-fluid border-radius-lg w-50">
+                                    @endif
+                                    
+                                    @error('plate_number_image') <div class="text-red-500 text-sm">Plate number image is required..!</div>  @enderror
                                 </div>
-                                @if ($plate_number_image)
-                                    <img class="img-fluid border-radius-lg w-30" src="{{ $plate_number_image->temporaryUrl() }}">
-                                @endif
                             </div>
                             <div class="col-md-5 col-sm-5">
                                 <div class="form-group">
@@ -418,25 +430,36 @@
                         <div class="row">
                             <div class="col-md-2 col-sm-3">
                                 <label for="chaisisImageFile">Chaisis Picture</label>
-                                <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
+                                <div 
+                                    x-data="{ isUploading: false, progress: 0 }"
+                                    x-on:livewire-upload-start="isUploading = true"
+                                    x-on:livewire-upload-finish="isUploading = false; progress = 0"
+                                    x-on:livewire-upload-error="isUploading = false"
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress"
+                                    class=""
+                                >
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <button class="btn btn-icon btn-2 btn-primary float-start" id="chaisisImage" type="button">
+                                            <button class="btn btn-icon btn-2 btn-primary float-start mb-0" id="chaisisImage" type="button">
                                                 <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                             </button>
                                         </div>
                                     </div>
                                     <!-- File Input -->
-                                    <input type="file" id="chaisisImageFile" wire:model="chaisis_image" accept="image/*" capture style="display: none;" />
+                                    <input type="file" id="chaisisImageFile" wire:model="chaisis_image" class="mb-2" accept="image/*" capture style="display: none;">
+
                                     <!-- Progress Bar -->
-                                    <div x-show="isUploading">
-                                        <progress max="100" x-bind:value="progress"></progress>
+                                    <div x-show="isUploading" class="w-100">
+                                        <div class="btn bg-gradient-info h-1 rounded-full pt-1 mt-1" :style="'width: ' + progress + '%'"></div>
                                     </div>
+
+                                    <!-- Preview (if image) -->
+                                    @if ($chaisis_image)
+                                        <img src="{{ $chaisis_image->temporaryUrl() }}" class="img-fluid border-radius-lg w-50">
+                                    @endif
+                                    @error('chaisis_image') <span class="text-danger">Chaisis picture is required..!</span> @enderror
                                 </div>
-                                @if ($chaisis_image)
-                                    <img class="img-fluid border-radius-lg w-30" src="{{ $chaisis_image->temporaryUrl() }}">
-                                    <!-- <button type="button" class="btn bg-gradient-secondary btn-sm" wire:click="getChaisisNumber('{{$chaisis_image->temporaryUrl()}}')">Get Chaisis Number</button> -->
-                                @endif
+                                
                             </div>
                             <div class="col-md-10 col-sm-9">
                                 <div class="form-group">
@@ -451,25 +474,37 @@
                     <div class="row">
                         <div class="col-md-2 col-sm-3">
                             <label for="vehicleImageFile">Vehicle Image</label>
-                            <div  x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"  x-on:livewire-upload-finish="isUploading = false"  x-on:livewire-upload-error="isUploading = false"  x-on:livewire-upload-progress="progress = $event.detail.progress" >
+                            <div 
+                                x-data="{ isUploading: false, progress: 0 }"
+                                x-on:livewire-upload-start="isUploading = true"
+                                x-on:livewire-upload-finish="isUploading = false; progress = 0"
+                                x-on:livewire-upload-error="isUploading = false"
+                                x-on:livewire-upload-progress="progress = $event.detail.progress"
+                                class=""
+                            >
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button class="btn btn-icon btn-2 btn-primary float-start" id="vehicleImage" type="button">
+                                        <button class="btn btn-icon btn-2 btn-primary float-start mb-0" id="vehicleImage" type="button">
                                             <span class="btn-inner--icon"><i class="fa-solid fa-camera fa-xl text-white"></i></span>
                                         </button>
                                     </div>
                                 </div>
                                 <!-- File Input -->
-                                <input type="file" id="vehicleImageFile" wire:model="vehicle_image" accept="image/*" capture style="display: none;" class="" />
+                                <input type="file" id="vehicleImageFile" wire:model="vehicle_image" class="mb-2" accept="image/*" capture style="display: none;">
+                                
                                 <!-- Progress Bar -->
-                                <div x-show="isUploading">
-                                    <progress max="100" x-bind:value="progress"></progress>
+                                <div x-show="isUploading" class="w-100">
+                                    <div class="btn bg-gradient-info h-1 rounded-full pt-1 mt-1" :style="'width: ' + progress + '%'"></div>
                                 </div>
+
+                                <!-- Preview (if image) -->
+                                @if ($vehicle_image)
+                                    <img src="{{ $vehicle_image->temporaryUrl() }}" class="img-fluid border-radius-lg w-50">
+                                @endif
+                                @error('vehicle_image') <span class="text-danger">Vehicle picture required..!</span> @enderror
                             </div>
-                            @if ($vehicle_image)
-                            <img class="img-fluid border-radius-lg w-30" src="{{ $vehicle_image->temporaryUrl() }}">
-                            @endif
-                            @error('vehicle_image') <span class="text-danger">Vehicle Picture Required</span> @enderror
+                            
+                            
                         </div>
                         <div class="col-md-5 col-sm-5">
                             <div class="form-group">
@@ -830,70 +865,8 @@
             $("#chaisisImageFile").trigger('click');
         });
 
-        let file = document.querySelector('input[type="file"]').files[0];
-        // Upload a file:
-        @this.upload('plate_number_image', file, (uploadedFilename) => {
-            // Success callback.
-        }, () => {
-            // Error callback.
-        }, (event) => {
-            // Progress callback.
-            // event.detail.progress contains a number between 1 and 100 as the upload progresses.
-        });
-
-        let file1 = document.querySelector('input[type="file"]').files[0];
-        // Upload a file:
-        @this.upload('vehicle_image', file1, (uploadedFilename) => {
-            // Success callback.
-        }, () => {
-            // Error callback.
-        }, (event) => {
-            // Progress callback.
-            // event.detail.progress contains a number between 1 and 100 as the upload progresses.
-        });
-
-        // Upload a file:
-        @this.upload('chaisis_image', file, (uploadedFilename) => {
-            // Success callback.
-        }, () => {
-            // Error callback.
-        }, (event) => {
-            // Progress callback.
-            // event.detail.progress contains a number between 1 and 100 as the upload progresses.
-        });
-        
     });
-    let file = document.querySelector('input[type="file"]').files[0];
-    // Upload a file:
-    @this.upload('plate_number_image', file, (uploadedFilename) => {
-        // Success callback.
-    }, () => {
-        // Error callback.
-    }, (event) => {
-        // Progress callback.
-        // event.detail.progress contains a number between 1 and 100 as the upload progresses.
-    });
-
-    let file1 = document.querySelector('input[type="file"]').files[0];
-    // Upload a file:
-    @this.upload('vehicle_image', file1, (uploadedFilename) => {
-        // Success callback.
-    }, () => {
-        // Error callback.
-    }, (event) => {
-        // Progress callback.
-        // event.detail.progress contains a number between 1 and 100 as the upload progresses.
-    });
-
-    // Upload a file:
-    @this.upload('chaisis_image', file, (uploadedFilename) => {
-        // Success callback.
-    }, () => {
-        // Error callback.
-    }, (event) => {
-        // Progress callback.
-        // event.detail.progress contains a number between 1 and 100 as the upload progresses.
-    });
+    
 
 </script>
 @endpush

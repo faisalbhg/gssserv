@@ -13,6 +13,7 @@ use LaravelPayfort\Facades\Payfort;
 use Illuminate\Support\Facades\Hash;
 use DB;
 
+
 use App\Models\StateList;
 use App\Models\PlateCode;
 use App\Models\PlateEmiratesCategory;
@@ -28,6 +29,7 @@ use App\Models\CustomerJobCards;
 class CustomerReceive extends Component
 {
     use WithFileUploads;
+
     public $showWalkingCustomerPanel = true, $showContractCustomerPanel=false;
     public $searchByCustomer=true, $searchByVehicle=false, $searchByContractCustomer=false;
     public $customerForm=true, $customerSearchBtn =true, $customerSaveBtn =false, $vehicleForm=false, $vehicleSearchForm = false, $vehicleSearchBtn=false, $vehicleSaveBtn=false, $vehicleDetailsForm = false, $showVehicleAvailable=false, $showSelectedCustomer=false, $updateCustomerDetails=false;
@@ -153,7 +155,7 @@ class CustomerReceive extends Component
         }
 
         $this->dispatchBrowserEvent('selectSearchEvent');
-        $this->dispatchBrowserEvent('imageUpload');
+        //$this->dispatchBrowserEvent('imageUpload');
         $this->emit('chosenUpdated');
         return view('livewire.customer-receive', [
             'filteredItems' => $filteredItems,
@@ -543,6 +545,7 @@ class CustomerReceive extends Component
 
     public function addCustomerVehicle(){
         $this->vehicleForm=true;
+        $this->dispatchBrowserEvent('imageUpload');
         $this->vehicleSearchForm=true;
         $this->vehicleDetailsForm=true;
         $this->vehicleSearchBtn=false;
@@ -663,7 +666,12 @@ class CustomerReceive extends Component
         $customerVehicleData['is_active']=1;
         $customerVehicleData['created_by']=auth()->user('user')->id;
 
+
+        
+
+
         if($this->vehicle_image){
+
             $customerVehicleData['vehicle_image'] = $this->vehicle_image->store('vehicle', 'public');
             //$customerVehicleData['vehicle_image_base64']=base64_encode(file_get_contents($this->vehicle_image->getRealPath()));
         }
@@ -749,6 +757,7 @@ class CustomerReceive extends Component
 
     public function addNewContractCustomerVehicle(){
         $this->vehicleForm=true;
+        $this->dispatchBrowserEvent('imageUpload');
         $this->vehicleSearchForm=true;
         $this->vehicleDetailsForm=true;
         $this->vehicleSearchBtn=false;
