@@ -75,7 +75,7 @@ class CustomerServiceJob extends Component
 
     public $editCUstomerInformation=false, $addNewVehicleInformation=false, $showForms=false, $searchByMobileNumber = false, $editCustomerAndVehicle=false, $showByMobileNumber=true, $showCustomerForm=false, $showPlateNumber=false, $otherVehicleDetailsForm=false, $searchByChaisisForm=false, $updateVehicleFormBtn = false, $addVehicleFormBtn=false, $cancelEdidAddFormBtn=false, $showSaveCustomerButton=false, $showSearchByPlateNumberButton=false, $showSearchByChaisisButton=false;
     public $mobile, $name, $email, $customer_code, $plate_number_image, $plate_country = 'AE', $plateStateCode=2, $plate_state='Dubai', $plate_category, $plate_code, $plate_number, $vehicle_image, $vehicle_type, $make, $model, $chaisis_image, $chassis_number, $vehicle_km;
-    public $stateList, $plateEmiratesCodes, $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
+    public $stateList, $plateEmiratesCodes=[], $vehicleTypesList, $listVehiclesMake, $vehiclesModelList=[];
     public $servicePackages, $showPackageAddons=false;
     public $package_number, $package_code, $showPackageOtpVerify=false, $package_otp, $package_otp_message, $customerBookedPackages=[], $openPackageDetailsVerify,$showOpenPackageDetails=false, $sectionPackageServiceLists=[];
     public $customize_price=-1, $customise_service_item_price, $extra_note,$extra_description, $mechanical_discount;
@@ -629,7 +629,7 @@ class CustomerServiceJob extends Component
                 $this->customerSignature = $tempCustomerSignature->signature;
             }
         }
-        
+
         
         
 
