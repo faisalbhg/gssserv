@@ -17,8 +17,8 @@
                         <div class="alert alert-warning" role="alert">
                             <span class="alert-icon"><i class="ni ni-like-2"></i></span>
                             <span class="alert-text"><strong>Warning!</strong> Job updation is pending,</span>
-                            <a class="btn btn-outline-danger" href="{{url('customer-service-job/'.$jobcardDetails->customer_id.'/'.$jobcardDetails->vehicle_id.'/'.$jobcardDetails->job_number)}}">Confinue New Update</a>
-                            <a class="btn btn-outline-dark" wire:click="addnewItemProceed('{{$jobcardDetails->job_number}}')">Open Existing Update</a>
+                            <a class="btn btn-outline-danger"  wire:click="addnewItemProceed('{{$jobcardDetails->job_number}}')">Confinue New Update</a>
+                            <a href="{{url('customer-service-job/'.$jobcardDetails->customer_id.'/'.$jobcardDetails->vehicle_id.'/'.$jobcardDetails->job_number)}}" class="btn btn-outline-dark" >Open Existing Update</a>
                         </div>
                     </div>
                 @endif
