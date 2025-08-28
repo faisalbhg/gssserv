@@ -251,7 +251,7 @@
                     
                     <td class="align-middle">
 
-                      <button type="button" wire:click="customerJobUpdate('{{$jobs}}')" class="btn btn-link text-secondary mb-0">
+                      <button type="button" wire:click="customerJobDetails('{{$jobs->job_number}}')" class="btn btn-link text-secondary mb-0">
                         <i class="fa fa-edit fa-xl text-md"></i>
                       </button>
                       <!-- data-bs-toggle="modal" data-bs-target="#serviceUpdateModal" -->
@@ -270,7 +270,7 @@
         </div>
       </div>
     </div>
-    <div wire:loading wire:target="customerJobUpdate">
+    <div wire:loading wire:target="customerJobDetails">
       <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
           <div class="la-ball-beat">
               <div></div>

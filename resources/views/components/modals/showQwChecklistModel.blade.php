@@ -317,7 +317,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn bg-gradient-secondary" wire:click="customerJobUpdate('{{$job_number}}')" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn bg-gradient-secondary" wire:click="customerJobDetails('{{$job_number}}')" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn bg-gradient-primary">Submit</button>
             </div>
        </div>
