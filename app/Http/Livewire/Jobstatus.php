@@ -88,10 +88,10 @@ class Jobstatus extends Component
         try {
             //DB::select('EXEC [dbo].[CreateCashierFinancialEntries_2] @jobnumber = "'.$this->job_number.'", @doneby = "'.auth()->user('user')->id.'", @stationcode  = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customer_id = "'.$this->customer_id.'" ');
 
-            DB::select('EXEC [dbo].[RevenueBookingJob] @JobCardNo = "'.$this->job_number.'", @DoneBy ="'.auth()->user('user')->id.'", @StationCode = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customercode = "'.$this->jobDetails->customerJobServices['TenantCode'].'" ');
+            DB::select('EXEC [dbo].[RevenueBookingJob] @JobCardNo = "'.$this->job_number.'", @DoneBy ="'.auth()->user('user')->id.'", @StationCode = "'.auth()->user('user')->station_code.'", @paymentmode = "C", @customercode = "'.$this->jobDetails->customerInfo['TenantCode'].'" ');
 
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            //dd($e->getMessage());
             //return $e->getMessage();
         }
         /*$getJobDetails = CustomerJobCards::where(['job_number'=>$services['job_number']])->first();
