@@ -25,7 +25,7 @@ class GatePasses extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $filterTab='total', $filter = [0,1,2,3,4], $search_job_number = '', $search_job_date, $search_plate_number, $search_ct_number = '', $search_meter_number = '';
+    public $filterTab='total', $filter = [0,1,2,3,4], $search_job_number = '', $search_job_date, $search_plate_number, $search_ct_number = '', $search_meeter_number = '';
 
     public function render()
     {
@@ -49,9 +49,9 @@ class GatePasses extends Component
         {
             $jobsQuery = $jobsQuery->where('ct_number', 'like', "%{$this->search_ct_number}%");
         }
-        if($this->search_meter_number)
+        if($this->search_meeter_number)
         {
-            $jobsQuery = $jobsQuery->where('meter_id', 'like', "%{$this->search_meter_number}%");
+            $jobsQuery = $jobsQuery->where('meter_id', 'like', "%{$this->search_meeter_number}%");
         }
         
         $data['jobsResults'] = $jobsQuery->where('job_status','=',3)->where(['station'=>auth()->user('user')['station_code']])->orderBy('id','ASC')->paginate(25);
