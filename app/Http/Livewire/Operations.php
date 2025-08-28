@@ -47,7 +47,7 @@ class Operations extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $search_job_number = '', $search_job_date;
+    public $search_job_number = '', $search_job_date_from,$search_job_date_to;
     public $customerDetails = false;
     public $job_number, $job_date_time, $vehicle_image, $make, $model, $plate_number, $chassis_number, $vehicle_km, $name, $email, $mobile, $customerType, $payment_status=0, $payment_type=0, $job_status=0, $job_departent, $total_price, $vat, $grand_total, $tax;
     public $filter = [0,1,2,3,4,5,6,7,8];
@@ -67,7 +67,7 @@ class Operations extends Component
     public $cartItems = [], $cartItemCount=0, $quantity,$extra_note,$cartItemQty;
     public $cardShow=false;
 
-    public $selected_vehicle_id, $customer_type,$service_group_id,$station,$service_search, $search_paymentStatus;
+    public $selected_vehicle_id, $customer_type,$service_group_id,$station,$service_search, $search_paymentStatus, $search_jobStatus;
     public $service_group_name, $service_group_code;
 
     public $customer_id, $vehicle_id, $sCtmrVhlcustomer_vehicle_id, $sCtmrVhlvehicle_image, $sCtmrVhlvehicleName, $sCtmrVhlmake_model, $sCtmrVhlplate_number, $sCtmrVhlchassis_number, $sCtmrVhlvehicle_km, $sCtmrVhlname, $sCtmrVhlcustomerType, $sCtmrVhlemail, $sCtmrVhlmobile, $customer_vehicle_id, $vehicleName, $make_model;
@@ -81,7 +81,7 @@ class Operations extends Component
     public $jobcardDetails, $showaddServiceItems=false;
     public $showVehicleImageDetails=false;
     public $checkListDetails, $checklistLabels, $vehicleSidesImages, $vehicleCheckedChecklist, $vImageR1, $vImageR2, $vImageF, $vImageB, $vImageL1, $vImageL2, $customerSignature;
-    public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $plateEmiratesCodes=[], $search_plate_state, $search_plate_code, $search_plate_number, $search_station, $search_payment;
+    public $showNumberPlateFilter=false, $search_plate_country, $stateList=[], $plateEmiratesCodes=[], $search_plate_state, $search_plate_code, $search_plate_number, $search_station, $search_payment_type;
     public $selectedVehicleInfo, $selectedCustomerVehicle=false, $showSectionsList=false, $selectServiceItems, $showPackageList=false, $selectPackageMenu=false, $showServiceSectionsList=false;
     public $propertyCode, $selectedSectionName;
     public $servicesGroupList, $sectionsLists=[], $sectionServiceLists=[];
@@ -101,6 +101,7 @@ class Operations extends Component
     public $showQlQualityCheck=false, $showMechQualityCheck=false;
     public $alreadyUpdationGOing=false;
     public $updateJob = true;
+    public $change_payment_type=false, $change_payment_status=false;
 
 
     
@@ -124,9 +125,225 @@ class Operations extends Component
 
     }
 
+    
+
+    public function changePaymentType(){
+        $this->change_payment_type=true;
+    }
+    public function changePaymentstatus(){
+        $this->change_payment_status=true;
+    }
+
+    public function render()
+    {
+        $this->stationsList = Landlord::all();
+        
+        $getCountSalesJob = CustomerJobCards::select(
+            array(
+                \DB::raw('count(DISTINCT(customer_id)) customers'),
+                \DB::raw('count(job_number) jobs'),
+                \DB::raw('count(case when job_status = 0 then job_status end) new'),
+                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
+                \DB::raw('count(case when job_status = 2 then job_status end) work_finished'),
+                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
+                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+                \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
+                \DB::raw('count(case when job_status = 6 then job_status end) inspection'),
+                \DB::raw('count(case when job_status = 7 then job_status end) customer_aproved'),
+                \DB::raw('count(case when job_status = 8 then job_status end) item_issued'),
+                \DB::raw('count(case when job_status in (0,1,2,3,4,5,6,7,8) then job_status end) total'),
+                \DB::raw('SUM(grand_total) as saletotal'),
+            )
+        );
+
+        $getSumSalesJob = CustomerJobCards::select(
+            array(
+                \DB::raw('SUM(case when payment_type = 0 then grand_total end) pay_later'),
+                \DB::raw('SUM(case when payment_type = 1 then grand_total end) payment_link'),
+                \DB::raw('SUM(case when payment_type = 2 then grand_total end) pay_by_card'),
+                \DB::raw('SUM(case when payment_type = 3 then grand_total end) cash_payment'),
+                \DB::raw('SUM(case when payment_type = 4 then grand_total end) pay_by_credit'),
+                \DB::raw('SUM(case when payment_type = 5 then grand_total end) discount'),
+                \DB::raw('SUM(case when payment_type = 6 then grand_total end) cash_in_advance'),
+                \DB::raw('SUM(case when payment_type in (0,1,2,3,4,5,6) then grand_total end) total'),
+                \DB::raw('SUM(grand_total) as saletotal'),
+            )
+        );
+        $customerjobs = CustomerJobCards::with(['customerInfo','makeInfo','modelInfo','createdInfo']);
+
+        if($this->filter){
+            //dd($this->filter);
+            $customerjobs = $customerjobs->whereIn('job_status', $this->filter);
+            //$getSumSalesJob = $getSumSalesJob->whereIn('job_status', $this->filter);
+        }
+        if($this->search_job_number)
+        {
+            $customerjobs = $customerjobs->where('job_number', 'like', "%{$this->search_job_number}%");
+            $getCountSalesJob = $getCountSalesJob->where('job_number', 'like', "%{$this->search_job_number}%");
+            //$getSumSalesJob = $getSumSalesJob->where('job_number', 'like', "%{$this->search_job_number}%");
+        }
+        if($this->search_job_date_from){
+
+            $customerjobs = $customerjobs->whereBetween('job_date_time', [$this->search_job_date_from." 00:00:00",$this->search_job_date_to." 23:59:59"]);
+            $getCountSalesJob = $getCountSalesJob->whereBetween('job_date_time', [$this->search_job_date_from." 00:00:00",$this->search_job_date_to." 23:59:59"]);
+            $getSumSalesJob = $getSumSalesJob->whereBetween('job_date_time', [$this->search_job_date_from." 00:00:00",$this->search_job_date_to." 23:59:59"]);
+        }
+        /*if($this->search_job_date_to){
+            $customerjobs = $customerjobs->whereBetween('job_date_time', [$this->search_job_date." 00:00:00",$this->search_job_date." 23:59:59"]);
+            $getCountSalesJob = $getCountSalesJob->whereBetween('job_date_time', [$this->search_job_date." 00:00:00",$this->search_job_date." 23:59:59"]);
+        }*/
+        if($this->search_plate_number)
+        {
+            $customerjobs = $customerjobs->where('plate_number', 'like',"%{$this->search_plate_number}%");
+            //$getSumSalesJob = $getSumSalesJob->where('plate_number', 'like',"%{$this->search_plate_number}%");
+        }
+
+        if($this->change_payment_type){
+            if($this->search_payment_type == 0)
+            {
+                $customerjobs = $customerjobs->where('payment_type', '=',$this->search_payment_type);
+                $getCountSalesJob = $getCountSalesJob->where(['payment_type'=>$this->search_payment_type]);
+                //$getSumSalesJob = $getSumSalesJob->where('payment_type', '=',$this->search_payment_type);
+            }
+            else
+            {
+                $customerjobs = $customerjobs->where('payment_type', '=',$this->search_payment_type);
+                $getCountSalesJob = $getCountSalesJob->where(['payment_type'=>$this->search_payment_type]);
+                //$getSumSalesJob = $getSumSalesJob->where('payment_type', '=',$this->search_payment_type);
+            }
+        }
+        if($this->search_station){
+            $customerjobs = $customerjobs->where(['station'=>$this->search_station]);
+            $getCountSalesJob = $getCountSalesJob->where(['station'=>$this->search_station]);
+            $getSumSalesJob = $getSumSalesJob->where(['station'=>$this->search_station]);
+        }
+        if($this->search_jobType){
+            $customerjobs = $customerjobs->with(['customerJobServices'])->where(function ($query) {
+                $query->whereRelation('customerJobServices', 'department_name', '=', $this->search_jobType);
+            });
+        }
+
+        if($this->change_payment_status){
+            if($this->search_paymentStatus==0){
+                $customerjobs = $customerjobs->where(['payment_status'=>$this->search_paymentStatus]);
+                $getCountSalesJob = $getCountSalesJob->where(['payment_status'=>$this->search_paymentStatus]);
+                $getSumSalesJob = $getSumSalesJob->where(['payment_status'=>$this->search_paymentStatus]);
+            }
+            else{
+                $customerjobs = $customerjobs->where(['payment_status'=>$this->search_paymentStatus]);
+                $getCountSalesJob = $getCountSalesJob->where(['payment_status'=>$this->search_paymentStatus]);
+                $getSumSalesJob = $getSumSalesJob->where(['payment_status'=>$this->search_paymentStatus]);
+            }
+        }
+
+        if($this->search_jobStatus){
+            $customerjobs = $customerjobs->where(['job_status'=>$this->search_jobStatus]);
+            $getCountSalesJob = $getCountSalesJob->where(['job_status'=>$this->search_jobStatus]);
+            $getSumSalesJob = $getSumSalesJob->where(['job_status'=>$this->search_jobStatus]);
+        }
+        
+        
+        
+        
+        //dd($customerjobs);
+        $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null);
+        if(auth()->user('user')->user_type!=1){
+            $customerjobs = $customerjobs->where(['station'=>auth()->user('user')['station_code']]);
+            $getCountSalesJob = $getCountSalesJob->where(['station'=>auth()->user('user')['station_code']]); 
+            $getSumSalesJob = $getSumSalesJob->where(['station'=>auth()->user('user')['station_code']]); 
+            //$customerjobs=$customerjobs->with('createdInfo');
+        }
+        $customerjobs = $customerjobs->where('is_contract','=',null)->orderBy('id','DESC');
+        $customerjobs = $customerjobs->paginate(10);
+        
+        $getCountSalesJob = $getCountSalesJob->first();
+        $getSumSalesJob = $getSumSalesJob->first();
+        //dd($customerjobs);
+
+        /*$customerjobs = Customerjobs::
+            select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
+            
+            ->join('customers','customers.id','=','customerjobs.customer_id')
+            ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
+            
+            ->where('customerjobs.job_number', 'like', "%{$this->search}%")
+            ->whereIn('customerjobs.job_status', $this->filter)
+            ->paginate(20);*/
+        
+        
+        $data['getCountSalesJob'] = $getCountSalesJob;
+        $data['getSumSalesJob'] = $getSumSalesJob;
+        $data['customerjobs'] = $customerjobs;
+        $this->dispatchBrowserEvent('filterTab',['tabName'=>$this->filterTab]);
+
+        if($this->customer_id && $this->selected_vehicle_id){
+            $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->get();
+
+            $this->cartItemCount = count($this->cartItems); 
+            if(count($this->cartItems)>0)
+            {
+                $this->cardShow=true;
+            }
+            else
+            {
+                $this->cardShow=false;
+            }
+        }
+
+        return view('livewire.operations',$data);
+    }
+
     public function customerJobDetails($job_number)
     {
         $this->jobcardDetails = null;
+
+        $getCountSalesJobStatus = CustomerJobCardServices::select(
+            array(
+                \DB::raw('count(case when job_status = 0 then job_status end) new'),
+                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
+                \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
+                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
+                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
+                \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
+                \DB::raw('count(case when job_status = 6 then job_status end) inspection'),
+                \DB::raw('count(case when job_status = 7 then job_status end) customer_aproved'),
+                \DB::raw('count(case when job_status = 8 then job_status end) issued'),
+            )
+        )->where(['job_number'=>$job_number])->first();
+        //dd($getCountSalesJobStatus);
+        $mainSTatus=1;
+        if($getCountSalesJobStatus->inspection>0){
+            $mainSTatus=6;
+        }
+        else if($getCountSalesJobStatus->customer_aproved>0){
+            $mainSTatus=7;
+        }
+        else if($getCountSalesJobStatus->issued>0){
+            $mainSTatus=8;
+        }
+        else if($getCountSalesJobStatus->working_progress>0){
+            $mainSTatus=1;
+        }
+        else if($getCountSalesJobStatus->qualitycheck>0){
+            $mainSTatus=2;
+        }
+        else if($getCountSalesJobStatus->ready_to_deliver>0){
+            $mainSTatus=3;
+        }
+        else if($getCountSalesJobStatus->delivered>0){
+            $mainSTatus=4;
+        }
+        else if($getCountSalesJobStatus->cancelled>0){
+            $mainSTatus=5;
+        }
+        
+        $mianJobUpdate = [
+            'job_status'=>$mainSTatus,
+            'job_departent'=>$mainSTatus,
+        ];
+        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$job_number]);
+        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
+        
         $this->cancelError=null;
         $this->canceljobReasonButton=false;
         $this->showVehicleImageDetails=false;
@@ -237,176 +454,6 @@ class Operations extends Component
         }
         $this->dispatchBrowserEvent('showServiceUpdate');
         $this->dispatchBrowserEvent('hideQwChecklistModel');
-    }
-
-    public function render()
-    {
-        //dd(CustomerJobCards::where('customer_id','=',259)->update(['carTaxiJobs'=>1]));
-        //dd(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027167'])->get());
-        /*foreach(CustomerJobCardServiceLogs::where(['job_number'=>'JOB-GBD-00027167'])->get() as $jobsservice)
-        {
-            if($jobsservice->id==326112){
-                $customerJobServiceData = json_decode($jobsservice->job_description,true);
-                CustomerJobCardServices::create($customerJobServiceData);
-            }
-            if($jobsservice->id==326113){
-                $customerJobServiceData = json_decode($jobsservice->job_description,true);
-                CustomerJobCardServices::create($customerJobServiceData);
-            }
-
-        }*/
-        //dd(CustomerJobCardServices::limit(1)->first());
-        /*foreach(CustomerJobCards::where('customer_mobile','=',"566993709")->get() as $jobUpdate)
-        {
-            //dd($jobUpdate->job_number);
-            CustomerJobCardServices::where(['job_number'=>$jobUpdate->job_number])->update(["job_status" => 4, "job_departent"=>4]);
-            CustomerJobCards::where(['job_number'=>$jobUpdate->job_number])->update(["job_status" => 4, "job_departent"=>4]);
-        }*/
-        //dd(JobcardChecklistEntries::where(['job_number'=>'JOB-GBD-00006890'])->limit(1)->get());
-        //JOB-GWQ-00009383
-        //dd(CustomerJobCardServices::where(['job_number'=>'JOB-GWQ-00009383'])->get());
-        
-        /*dd(CustomerVehicle::where('ceramic_wash_discount_count','>',0)->get());
-        $ceramicJobNumber = [];
-        foreach(CustomerJobCardServices::with(['jobInfo'])->whereIn('item_code',  config('global.ceramic.service'))->get() as $ceramicJob){
-            if(!in_array($ceramicJob->job_number,$ceramicJobNumber)){
-                CustomerVehicle::where([
-                    'id'=>$ceramicJob->jobInfo['vehicle_id'],
-                    'customer_id'=>$ceramicJob->jobInfo['customer_id']
-                ])->update(['ceramic_wash_discount_count'=>10*$ceramicJob->quantity]);
-                array_push($ceramicJobNumber, $ceramicJob->job_number);
-            }
-        }*/
-        /*$getCountSalesJobStatus = CustomerJobCardServices::select(
-            array(
-                \DB::raw('count(case when job_status = 0 then job_status end) new'),
-                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
-                \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
-                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
-                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
-            )
-        )->where(['job_number'=>'JOB-GAJ-00004703'])->first();
-        //dd($getCountSalesJobStatus);
-        if($getCountSalesJobStatus->working_progress>0){
-            $mainSTatus=1;
-        }
-        else if($getCountSalesJobStatus->qualitycheck>0){
-            $mainSTatus=2;
-        }
-        else if($getCountSalesJobStatus->ready_to_deliver>0){
-            $mainSTatus=3;
-        }
-        else if($getCountSalesJobStatus->delivered>0){
-            $mainSTatus=4;
-        }
-        $mianJobUpdate = [
-            'job_status'=>$mainSTatus,
-            'job_departent'=>$mainSTatus,
-        ];
-        
-        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>'JOB-GAJ-00004703']);
-        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);*/
-
-        $this->stationsList = Landlord::all();
-        
-        $getCountSalesJob = CustomerJobCards::select(
-            array(
-                \DB::raw('count(DISTINCT(customer_id)) customers'),
-                \DB::raw('count(job_number) jobs'),
-                \DB::raw('count(case when job_status = 0 then job_status end) new'),
-                \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
-                \DB::raw('count(case when job_status = 2 then job_status end) work_finished'),
-                \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
-                \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
-                \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
-                \DB::raw('count(case when job_status in (0,1,2,3,4,5) then job_status end) total'),
-                \DB::raw('SUM(grand_total) as saletotal'),
-            )
-        );
-
-
-        $customerjobs = CustomerJobCards::with(['customerInfo','makeInfo','modelInfo','createdInfo']);
-        if($this->filter){
-            //dd($this->filter);
-            $customerjobs = $customerjobs->whereIn('job_status', $this->filter);
-        }
-        if($this->search_job_number)
-        {
-            $customerjobs = $customerjobs->where('job_number', 'like', "%{$this->search_job_number}%");
-            $getCountSalesJob = $getCountSalesJob->where('job_number', 'like', "%{$this->search_job_number}%");
-        }
-        if($this->search_job_date){
-            $customerjobs = $customerjobs->whereBetween('job_date_time', [$this->search_job_date." 00:00:00",$this->search_job_date." 23:59:59"]);
-            $getCountSalesJob = $getCountSalesJob->whereBetween('job_date_time', [$this->search_job_date." 00:00:00",$this->search_job_date." 23:59:59"]);
-        }
-        if($this->search_plate_number)
-        {
-            $customerjobs = $customerjobs->where('plate_number', 'like',"%{$this->search_plate_number}%");
-        }
-        if($this->search_payment)
-        {
-            $customerjobs = $customerjobs->where('payment_type', '=',$this->search_payment);
-        }
-        if($this->search_station){
-            $customerjobs = $customerjobs->where(['station'=>$this->search_station]);
-            $getCountSalesJob = $getCountSalesJob->where(['station'=>$this->search_station]);
-        }
-        if($this->search_jobType){
-            $customerjobs = $customerjobs->with(['customerJobServices'])->where(function ($query) {
-                $query->whereRelation('customerJobServices', 'department_name', '=', $this->search_jobType);
-            });
-        }
-        if($this->search_paymentStatus){
-            $customerjobs = $customerjobs->where(['payment_status'=>$this->search_paymentStatus]);
-            $getCountSalesJob = $getCountSalesJob->where(['payment_status'=>$this->search_paymentStatus]);
-        }
-        
-        
-        
-        
-        //dd($customerjobs);
-        $getCountSalesJob = $getCountSalesJob->where('is_contract','=',null);
-        if(auth()->user('user')->user_type!=1){
-            $customerjobs = $customerjobs->where(['station'=>auth()->user('user')['station_code']]);
-            $getCountSalesJob = $getCountSalesJob->where(['station'=>auth()->user('user')['station_code']]); 
-            //$customerjobs=$customerjobs->with('createdInfo');
-        }
-        $customerjobs = $customerjobs->where('is_contract','=',null)->orderBy('id','DESC');
-        $customerjobs = $customerjobs->paginate(10);
-        
-        $getCountSalesJob = $getCountSalesJob->first();
-        //dd($customerjobs);
-
-        /*$customerjobs = Customerjobs::
-            select('customerjobs.*','customers.name','customers.email','customers.mobile','customertypes.customer_type as customerType')
-            
-            ->join('customers','customers.id','=','customerjobs.customer_id')
-            ->join('customertypes','customertypes.id','=','customerjobs.customer_type')
-            
-            ->where('customerjobs.job_number', 'like', "%{$this->search}%")
-            ->whereIn('customerjobs.job_status', $this->filter)
-            ->paginate(20);*/
-        
-        
-        $data['getCountSalesJob'] = $getCountSalesJob;
-        $data['customerjobs'] = $customerjobs;
-        $this->dispatchBrowserEvent('filterTab',['tabName'=>$this->filterTab]);
-
-        if($this->customer_id && $this->selected_vehicle_id){
-            $this->cartItems = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->selected_vehicle_id])->get();
-
-            $this->cartItemCount = count($this->cartItems); 
-            if(count($this->cartItems)>0)
-            {
-                $this->cardShow=true;
-            }
-            else
-            {
-                $this->cardShow=false;
-            }
-        }
-
-        return view('livewire.operations',$data);
     }
 
     public function showSearchPlateNumber(){

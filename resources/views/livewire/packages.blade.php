@@ -17,9 +17,16 @@
         </div>
       </div>
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
-        <label>Package Date</label>
+        <label>From Package Date</label>
         <div class="form-group">
-          <input type="date"  class="form-control" placeholder="Search Package Date" wire:model="search_package_date" />
+          <input type="date"  class="form-control" placeholder="From Package Date" wire:model="search_package_date_from" />
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>To Package Date</label>
+        <div class="form-group">
+          <input type="date"  class="form-control" placeholder="to Package Date" wire:model="search_package_date_to" />
         </div>
       </div>
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
@@ -91,6 +98,81 @@
       </div>
       @endif
     </div>
+
+    @if(auth()->user('user')->user_type==1)
+    <div class="row">
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 ">
+        <div class="card bg-gradient-dark shadow text-white">
+            <div class="card-body p-3 cursor-pointer">
+                <div class="numbers">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Pay Later</p>
+                    <hr class="m-0">
+                    <h5 class="font-weight-bolder mb-0  text-white">{{$getSumSalesPackages->pay_later}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+          <div class="card bg-gradient-danger shadow text-white">
+              <div class="card-body p-3 cursor-pointer" >
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Payment Link</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{number_format($getSumSalesPackages->payment_link,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+          <div class="card bg-gradient-danger shadow text-white">
+              <div class="card-body p-3 cursor-pointer">
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Pay By Card</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{number_format($getSumSalesPackages->pay_by_card,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+          <div class="card bg-gradient-warning shadow text-white">
+              <div class="card-body p-3 cursor-pointer">
+                  <div class="row">
+                      <div class="col-12">
+                          <div class="numbers">
+                              <p class="text-sm mb-0 text-capitalize font-weight-bold">Cash Payment</p>
+                              <hr class="m-0">
+                              <h5 class="font-weight-bolder mb-0 text-white">{{number_format($getSumSalesPackages->cash_payment,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <div class="card bg-gradient-dark shadow text-white">
+            <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('total')">
+                <div class="numbers">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Pay By Credit</p>
+                    <hr class="m-0">
+                    <h5 class="font-weight-bolder mb-0  text-white">{{number_format($getSumSalesPackages->pay_by_credit,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+          <div class="card bg-gradient-danger shadow text-white">
+              <div class="card-body p-3 cursor-pointer" >
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Cash in Advance</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{number_format($getSumSalesPackages->cash_in_advance,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    @endif
   
 
     <div class="row">

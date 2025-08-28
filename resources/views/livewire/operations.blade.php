@@ -9,9 +9,15 @@
         </div>
       </div>
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
-        <label>Job Date</label>
+        <label>Job Date from</label>
         <div class="form-group">
-          <input type="date"  class="form-control" placeholder="Search Job Date" wire:model="search_job_date" />
+          <input type="date"  class="form-control" placeholder="Search Job Date" wire:model="search_job_date_from" />
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label>Job Date To</label>
+        <div class="form-group">
+          <input type="date"  class="form-control" placeholder="Search Job Date" wire:model="search_job_date_to" />
         </div>
       </div>
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
@@ -44,13 +50,13 @@
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
         <label for="selectPaymentType">Payment</label>
         <div class="form-group">
-          <select class="form-control" id="selectPaymentType" wire:model="search_payment">
+          <select class="form-control" id="selectPaymentType" wire:model="search_payment_type" wire:change="changePaymentType">
             <option value="">-Select-</option>
             @foreach(config('global.payment.type') as $ptKey => $paymentType)
             <option value="{{$ptKey}}">{{$paymentType}}</option>
             @endforeach
           </select>
-          <div wire:loading wire:target="search_payment">
+          <div wire:loading wire:target="search_payment_type">
             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                 <div class="la-ball-beat">
                     <div></div>
@@ -64,13 +70,33 @@
       <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
         <label for="selectPaymentStatus">Payment Status</label>
         <div class="form-group">
-          <select class="form-control" id="selectPaymentStatus" wire:model="search_paymentStatus">
+          <select class="form-control" id="selectPaymentStatus" wire:model="search_paymentStatus" wire:change="changePaymentstatus">
             <option value="">-Select-</option>
             @foreach(config('global.payment.status') as $pSKey => $paymentStatus)
             <option value="{{$pSKey}}">{{$paymentStatus}}</option>
             @endforeach
           </select>
           <div wire:loading wire:target="search_jobType">
+            <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                <div class="la-ball-beat">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <label for="selectPaymentStatus">Job Status</label>
+        <div class="form-group">
+          <select class="form-control" id="selectPaymentStatus" wire:model="search_jobStatus">
+            <option value="">-Select-</option>
+            @foreach(config('global.jobs.status') as $jSKey => $jobStatus)
+            <option value="{{$jSKey}}">{{$jobStatus}}</option>
+            @endforeach
+          </select>
+          <div wire:loading wire:target="search_jobStatus">
             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                 <div class="la-ball-beat">
                     <div></div>
@@ -103,7 +129,83 @@
       </div>
       @endif
     </div>
-  
+    
+    @if(auth()->user('user')->user_type==1)
+    <div class="row">
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 ">
+        <div class="card bg-gradient-dark shadow text-white">
+            <div class="card-body p-3 cursor-pointer">
+                <div class="numbers">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Pay Later</p>
+                    <hr class="m-0">
+                    <h5 class="font-weight-bolder mb-0  text-white">{{$getSumSalesJob->pay_later}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+          <div class="card bg-gradient-danger shadow text-white">
+              <div class="card-body p-3 cursor-pointer" >
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Payment Link</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{number_format($getSumSalesJob->payment_link,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+          <div class="card bg-gradient-danger shadow text-white">
+              <div class="card-body p-3 cursor-pointer">
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Pay By Card</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{number_format($getSumSalesJob->pay_by_card,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+          <div class="card bg-gradient-warning shadow text-white">
+              <div class="card-body p-3 cursor-pointer">
+                  <div class="row">
+                      <div class="col-12">
+                          <div class="numbers">
+                              <p class="text-sm mb-0 text-capitalize font-weight-bold">Cash Payment</p>
+                              <hr class="m-0">
+                              <h5 class="font-weight-bolder mb-0 text-white">{{number_format($getSumSalesJob->cash_payment,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+        <div class="card bg-gradient-dark shadow text-white">
+            <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('total')">
+                <div class="numbers">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Pay By Credit</p>
+                    <hr class="m-0">
+                    <h5 class="font-weight-bolder mb-0  text-white">{{number_format($getSumSalesJob->pay_by_credit,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
+          <div class="card bg-gradient-danger shadow text-white">
+              <div class="card-body p-3 cursor-pointer" >
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Cash in Advance</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{number_format($getCountSalesJob->cash_in_advance,2)}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    @endif
+
+
 
     <div class="row">
       <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount total">
