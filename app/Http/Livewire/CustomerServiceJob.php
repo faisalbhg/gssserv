@@ -247,21 +247,23 @@ class CustomerServiceJob extends Component
                         
                     }
 
+                    if($this->selectedVehicleInfo->ceramic_wash_discount_count > 0 && $sectionServiceList->ItemCode == 'S322')
+                    {
+                        $discountLaborSalesPrices = LaborSalesPrices::where([
+                                'ServiceItemId'=>$sectionServiceList->ItemId,
+                                'CustomerGroupCode'=>'CERAMIC_WASH',
+                            ]);
+                        $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
+                        //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
+                        $sectionServiceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
+                    }
+
                     
                     //dd($sectionServiceLists);
                     
                 }
             }
-            if($this->selectedVehicleInfo->ceramic_wash_discount_count > 0)
-            {
-                $discountLaborSalesPrices = LaborSalesPrices::where([
-                        'ServiceItemId'=>$sectionServiceList->ItemId,
-                        'CustomerGroupCode'=>'CERAMIC_WASH',
-                    ]);
-                $discountLaborSalesPrices = $discountLaborSalesPrices->where('StartDate', '<=', Carbon::now());
-                //$discountLaborSalesPrices = $discountLaborSalesPrices->where('EndDate', '>=', Carbon::now() );
-                $sectionServiceLists[$key]['discountDetails'] = $discountLaborSalesPrices->first();
-            }
+            
             //dd($sectionServiceLists);
             $this->sectionServiceLists = $sectionServiceLists;
         }
