@@ -113,7 +113,7 @@ class GatePasses extends Component
 
 
             } catch (\Exception $e) {
-                //dd($e->getMessage());
+                dd($e->getMessage());
                 //return $e->getMessage();
             }
             

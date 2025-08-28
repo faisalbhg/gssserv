@@ -186,7 +186,7 @@
 
                 <tbody>
                   @forelse( $customerjobs as $jobs)
-                  <tr class="cursor-pointer" wire:click="customerJobUpdate('{{$jobs->job_number}}')">
+                  <tr class="cursor-pointer" wire:click="customerJobDetails('{{$jobs->job_number}}')">
                     <td>
                       <div class="d-flex px-3 py-1">
                         <div>
