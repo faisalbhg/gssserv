@@ -1104,25 +1104,56 @@
                                         <?php $discountempty = true; ?>
                                     @endif
                                 @endif
-                                    @if($applyManualDiscount)
-                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
-                                            <div class="card card-profile mt-md-0 mt-5">
-                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
-                                                    <h4 class="mb-0">Manual Discount</h4>
-                                                    <span class="badge bg-gradient-info mb-2">Customized Manual Discount</span>
-                                                    <div class="row justify-content-center text-center">
-                                                        <div class="col-12 mx-auto">
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyManualLineDiscountSubmit('{{$lineItemDetails['id']}}','{{$lineItemDetails['item_code']}}')">Apply Now</a>
-                                                        </div>
+                                @if($applyManualDiscount)
+                                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
+                                        <div class="card card-profile mt-md-0 mt-5">
+                                            <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
+                                                <h4 class="mb-0">Manual Discount</h4>
+                                                <span class="badge bg-gradient-info mb-2">Customized Manual Discount</span>
+                                                <div class="row justify-content-center text-center">
+                                                    <div class="col-12 mx-auto">
+                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyManualLineDiscountSubmit('{{$lineItemDetails['id']}}','{{$lineItemDetails['item_code']}}')">Apply Now</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <?php $discountempty = false; ?>
-                                    @endif
+                                    </div>
+                                    <?php $discountempty = false; ?>
+                                @endif
+
+                                @if($showMechanical5PerDiscount)
+                                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
+                                        <div class="card card-profile mt-md-0 mt-5">
+                                            <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
+                                                <h4 class="mb-0 text-capitalize">{{ strtolower(str_replace('_', ' ', $mechanicalCampDiscount['Title'])) }}</h4>
+                                                <span class="badge bg-gradient-info">5%off</span>
+                                                <div class="row justify-content-center text-center">
+                                                    <div class="col-12 mx-auto">
+                                                        <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($lineItemDetails['unit_price'])}}</h4>
+                                                        <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-((5/100)*$lineItemDetails['unit_price'])) }}</h5>
+                                                        
+                                                        <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyMech5PerDiscount({{$mechanicalCampDiscount}})">Apply   Now</a>
+                                                        
+                                                            
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                
                                 @if($discountempty)
                                 <span class="text-danger text-center">Empty discount for this item..!</span>
                                 @endif
+                                <div wire:loading wire:target="applyMech5PerDiscount">
+                                    <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                                        <div class="la-ball-beat">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div wire:loading wire:target="applyManualLineDiscountSubmit">
                                     <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                                         <div class="la-ball-beat">

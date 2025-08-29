@@ -91,6 +91,7 @@ class CustomerServiceJob extends Component
     public $pendingExistingJobs=null, $showPendingJobList=false;
     public $customerSignature, $saveCustomerSignature=false, $showCustomerSignature=false;
     public $shoeJobHistoryModal=false, $jobsHistory;
+    public $cartTotalVal, $mechanicalCampDiscount=null, $showMechanical5PerDiscount=false;
     
     
 
@@ -981,6 +982,11 @@ class CustomerServiceJob extends Component
     
 
     public function applyLineDiscount($item){
+        $this->mechanicalCampDiscount=null;
+        if($this->cartTotalVal>=2000){
+            $this->showMechanical5PerDiscount = true;
+            $this->mechanicalCampDiscount = LaborCustomerGroup::where(['Code'=>'MECH_CAMP_5'])->first();
+        }
         //dd($item);
         $this->lineDIscountItemId = $item['id'];
         $this->selectedDiscount=null;
@@ -1300,6 +1306,38 @@ class CustomerServiceJob extends Component
         $this->showSelectedDiscount=false;
         
         $this->dispatchBrowserEvent('closePriceDiscountList');
+    }
+
+    public function applyMech5PerDiscount($discountGroup){
+        
+        $discountPrice['PriceID']=null;
+        $discountPrice['CustomerGroupId'] = $discountGroup['Id'];
+        $discountPrice['CustomerGroupCode'] = $discountGroup['Code'];
+        $discountPrice['MinPrice'] = null;
+        $discountPrice['MaxPrice'] = null;
+        $discountPrice['StartDate'] = null;
+        $discountPrice['EndDate'] = null;
+        $discountPrice['DiscountPerc']=5;
+
+        $itemCartId = $this->lineItemDetails['id'];
+        $customerBasket = CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$itemCartId,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->first();
+        $cartUpdate['price_id']=$discountPrice['PriceID'];
+        $cartUpdate['customer_group_id']=$discountPrice['CustomerGroupId'];
+        $cartUpdate['customer_group_code']=$discountPrice['CustomerGroupCode'];
+        $cartUpdate['min_price']=$discountPrice['MinPrice'];
+        $cartUpdate['max_price']=$discountPrice['MaxPrice'];
+        $cartUpdate['start_date']=$discountPrice['StartDate'];
+        $cartUpdate['end_date']=$discountPrice['EndDate'];
+        $cartUpdate['discount_perc']=$discountPrice['DiscountPerc'];
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$itemCartId,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
+        
+        $this->dispatchBrowserEvent('closePriceDiscountList');
+        $this->lineDIscountItemId = null;
+        $this->linePriceDiscount = null;
+        $this->selectedDiscount = null;
+
+        $this->discountCardApplyForm=false;
+        $this->showSelectedDiscount=false;
     }
 
     public function applyLineDiscountSubmit($itemDetails,$priceDiscount,$discountGroup){
@@ -1669,6 +1707,7 @@ class CustomerServiceJob extends Component
             $this->cardShow=false;
         }
         //dd($this->cartItems);
+        $this->cartTotalVal=null;
         foreach($this->cartItems as $cartCheckItem){
             if($cartCheckItem->division_code != auth()->user('user')->stationName['LandlordCode'])
             {
@@ -1676,6 +1715,10 @@ class CustomerServiceJob extends Component
             }
             if($cartCheckItem->manual_discount_ref_no){
                 $this->manualDiscountRefNo = $cartCheckItem->manual_discount_ref_no;
+            }
+            if($cartCheckItem->section_name == 'Mechanical')
+            {
+                $this->cartTotalVal = $this->cartTotalVal+$cartCheckItem->unit_price*$cartCheckItem->quantity;
             }
         }
 
