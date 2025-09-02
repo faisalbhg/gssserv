@@ -464,6 +464,9 @@ class Operations extends Component
     {
         switch($statusFilter){
             case 'total': $this->filter = [0,1,2,3,4,5];break;
+            case 'inspection': $this->filter = [6];break;
+            case 'customer_aprpoved': $this->filter = [7];break;
+            case 'item_issued': $this->filter = [8];break;
             case 'working_progress': $this->filter = [1];break;
             case 'work_finished': $this->filter = [2,3];break;
             case 'ready_to_deliver': $this->filter = [3];break;

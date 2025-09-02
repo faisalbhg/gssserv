@@ -182,7 +182,7 @@
       </div>
       <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2">
         <div class="card bg-gradient-dark shadow text-white">
-            <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('total')">
+            <div class="card-body p-3 cursor-pointer" >
                 <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Pay By Credit</p>
                     <hr class="m-0">
@@ -209,15 +209,48 @@
 
     <div class="row">
       <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount total">
-        <div class="card bg-gradient-dark shadow text-white">
+        <div class="card bg-gradient-default shadow text-dark">
             <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('total')">
                 <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Total jobs</p>
                     <hr class="m-0">
-                    <h5 class="font-weight-bolder mb-0  text-white">{{$getCountSalesJob->total}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                    <h5 class="font-weight-bolder mb-0  text-dark">{{$getCountSalesJob->total}}<span class="text-success text-sm font-weight-bolder"></span></h5>
                 </div>
             </div>
         </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount inspection">
+          <div class="card bg-gradient-dark shadow text-white">
+              <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('inspection')">
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Inspection</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->inspection}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount customer_aprpoved">
+          <div class="card bg-gradient-dark shadow text-white">
+              <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('customer_aprpoved')">
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Customer Approved</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->customer_aproved}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount item_issued">
+          <div class="card bg-gradient-dark shadow text-white">
+              <div class="card-body p-3 cursor-pointer" wire:click="filterJobListPage('item_issued')">
+                  <div class="numbers">
+                      <p class="text-sm mb-0 text-capitalize font-weight-bold">Item Issued</p>
+                      <hr class="m-0">
+                      <h5 class="font-weight-bolder mb-0 text-white">{{$getCountSalesJob->item_issued}}<span class="text-success text-sm font-weight-bolder"></span></h5>
+                  </div>
+              </div>
+          </div>
       </div>
       <div class="col-xl-2 col-md-3 col-sm-3 mb-xl-2 mb-2 jobscount working_progress">
           <div class="card bg-gradient-danger shadow text-white">
@@ -372,6 +405,15 @@
         </div>
       </div>
     </div>
+    <div wire:loading wire:target="filterJobListPage">
+      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+          <div class="la-ball-beat">
+              <div></div>
+              <div></div>
+              <div></div>
+          </div>
+      </div>
+    </div>
     <div wire:loading wire:target="customerJobDetails">
       <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
           <div class="la-ball-beat">
@@ -380,7 +422,7 @@
               <div></div>
           </div>
       </div>
-  </div>
+    </div>
   </div>
   @if($updateService)
   @include('components.modals.updateservice')
