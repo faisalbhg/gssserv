@@ -1219,7 +1219,7 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <div class="card">
+                                            <div class="card d-none">
                                                 <div class="card-body p-2">
                                                     <div class="row">
                                                         <div class="col-md-8">

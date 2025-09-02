@@ -686,6 +686,15 @@ class Operations extends Component
                 
             }
         }
+        else if($mainSTatus==3)
+        {
+            $mobileNumber = isset($this->jobcardDetails->customer_mobile)?'971'.substr($this->jobcardDetails->customer_mobile, -9):null;
+            $customerName = isset($this->jobcardDetails->customer_name)?$this->jobcardDetails->customer_name:null;
+            if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+                $msgtext = urlencode('Dear Customer, '.$this->jobcardDetails->plate_number.' is ready at '.auth()->user('user')->stationName['ShortName'].'. Please collect within 1 hr or AED30/hr parking will apply. Thank you for choosing GSS. For help 800477823.');
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+            }
+        }
         
 
     }
@@ -1075,6 +1084,16 @@ class Operations extends Component
         //dd($this->jobcardDetails);
         $this->customerjobservices = $job->customerJobServices;
 
+        if($mainSTatus==3)
+        {
+            $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
+            $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
+            if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
+                $msgtext = urlencode('Dear Customer, '.$this->jobcardDetails->plate_number.' is ready at '.auth()->user('user')->stationName['ShortName'].'. Please collect within 1 hr or AED30/hr parking will apply. Thank you for choosing GSS. For help 800477823.');
+                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
+            }
+        }
+
         if($mainSTatus==4)
         {
             
@@ -1094,15 +1113,7 @@ class Operations extends Component
             } catch (\Exception $e) {
                 //return $e->getMessage();
             }*/
-
-
             
-            $mobileNumber = isset($this->jobcardDetails['customer_mobile'])?'971'.substr($this->jobcardDetails['customer_mobile'], -9):null;
-            $customerName = isset($this->jobcardDetails['customer_name'])?$this->jobcardDetails['customer_name']:null;
-            if($mobileNumber!='' && auth()->user('user')->stationName['EnableSMS']==1){
-                $msgtext = urlencode('Dear Customer, '.$this->jobcardDetails->plate_number.' is ready at '.auth()->user('user')->stationName['ShortName'].'. Please collect within 1 hr or AED30/hr parking will apply. Thank you for choosing GSS. For help 800477823.');
-                $response = Http::get(config('global.sms')[1]['sms_url']."&mobileno=".$mobileNumber."&msgtext=".$msgtext."&CountryCode=ALL");
-            }
         }
         
         

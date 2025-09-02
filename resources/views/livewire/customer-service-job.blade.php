@@ -324,11 +324,14 @@
                                                             @else
                                                             @if($item->job_number==null)
                                                             <span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
-                                                            @elseif(isset($item->current_job_status) || $item->current_job_status == 6 || $item->current_job_status == 1)
-
-                                                            <label class="mt-0 me-2 {{config('global.jobs.status_outline_class')[$item->current_job_status]}}" >Current Status: {{config('global.jobs.status')[$item->current_job_status]}}</label><span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
+                                                            @elseif(isset($item->current_job_status))
+                                                                @if($item->current_job_status != 3)
+                                                                    <label class="mt-0 me-2 {{config('global.jobs.status_outline_class')[$item->current_job_status]}}" >Current Status: {{config('global.jobs.status')[$item->current_job_status]}}</label><span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
+                                                                @else
+                                                                    <label class="mt-0 me-2 {{config('global.jobs.status_outline_class')[$item->current_job_status]}}" >Current Status: {{config('global.jobs.status')[$item->current_job_status]}}</label>
+                                                                @endif
                                                             @else
-                                                            <span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
+                                                                <span><label wire:click.prevent="confirmDelete({{ $item->id }})" class="badge bg-gradient-danger cursor-pointer"><i class="fa fa-trash"></i> Remove </label></span>
                                                             @endif
                                                             <div wire:loading wire:target="confirmDelete">
                                                                 <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >

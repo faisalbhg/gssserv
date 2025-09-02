@@ -616,6 +616,7 @@ class CustomerServiceJob extends Component
             //$this->customerJobDetails();
         }
 
+
         if($this->saveCustomerSignature){
             TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->delete();
             TempCustomerSignature::create([
@@ -626,10 +627,12 @@ class CustomerServiceJob extends Component
             ]);
         }
         else{
-            if(TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists())
-            {
-                $tempCustomerSignature = TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->first();
-                $this->customerSignature = $tempCustomerSignature->signature;
+            if($this->job_number ==null){
+                if(TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->exists())
+                {
+                    $tempCustomerSignature = TempCustomerSignature::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'is_active'=>1])->first();
+                    $this->customerSignature = $tempCustomerSignature->signature;
+                }
             }
         }
 
@@ -677,6 +680,7 @@ class CustomerServiceJob extends Component
         if($this->jobDetails){
             $this->customer_id = $this->jobDetails->customer_id;
             $this->vehicle_id = $this->jobDetails->vehicle_id;
+            $this->customerSignature = $this->jobDetails->checklistInfo->signature;
 
             $this->showTempCart = true;
             if($this->jobDetails->customer_job_update==null){
