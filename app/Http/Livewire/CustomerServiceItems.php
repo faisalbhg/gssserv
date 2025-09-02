@@ -474,6 +474,25 @@ class CustomerServiceItems extends Component
         CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$serviceId,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
     }
 
+    public function removeManualLineDiscount($serviceId){
+        $cartUpdate['price_id']=null;
+        $cartUpdate['customer_group_id']=null;
+        $cartUpdate['customer_group_code']=null;
+        $cartUpdate['min_price']=null;
+        $cartUpdate['max_price']=null;
+        $cartUpdate['start_date']=null;
+        $cartUpdate['end_date']=null;
+        $cartUpdate['discount_perc']=null;
+        $cartUpdate['manual_discount_value']=null;
+        $cartUpdate['manual_discount_percentage']=null;
+        $cartUpdate['manual_discount_applied_by']=null;
+        $cartUpdate['manual_discount_applied_datetime']=null;
+        $cartUpdate['manual_discount_status']=null;
+        //$this->getCartInfo();
+
+        CustomerServiceCart::where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'id'=>$serviceId,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->update($cartUpdate);
+    }
+
     public function cartSetDownQty($cartId){
         $item = CustomerServiceCart::find($cartId); // or however you're retrieving it
         if ($item->quantity > 1) {
