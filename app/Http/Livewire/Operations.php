@@ -417,7 +417,7 @@ class Operations extends Component
                     $this->mechServiceReadyToDeliverPending = true;
                 }
             }
-            else{
+            else if($jobcardDetailsList->section_name=='' || $jobcardDetailsList->section_name==null){
                 if($jobcardDetailsList->section_code){
                     $sectionDetails = Sections::where(['PropertyCode'=>$jobcardDetailsList->section_code])->first();
                     CustomerJobCardServices::where(['id'=>$jobcardDetailsList->id])->update(['section_name' => $sectionDetails->PropertyName]);
