@@ -1526,13 +1526,10 @@ class CustomerServiceJob extends Component
                         'is_active'=>1,
                     ]);
                     $manualDiscountTotal = $manualDiscountTotal+($cartItems->manual_discount_value*$cartItems->quantity);
-                    CustomerServiceCart::where(['id'=>$cartItems->id])->update([
-                        'manual_discount_send_for_aproval'=>1,
-                        'manual_discount_ref_no'=>$refNo,
-                    ]);
+                    
 
                 }else{
-                    ManualDiscountServices::create([
+                    $manualDiscountServicesResult =  ManualDiscountServices::create([
                         'manual_discount_ref_no'=>$refNo,
                         'item_id'=>$cartItems->item_id,
                         'cart_id'=>$cartItems->id,
@@ -1556,11 +1553,36 @@ class CustomerServiceJob extends Component
                     ]);
                     $manualDiscountTotal = $manualDiscountTotal+($cartItems->manual_discount_value*$cartItems->quantity);
 
+                    
+                }
+                $stageCode=null;
+                if($cartItems->manual_discount_percentage <= 10)
+                {
+                    $stageCode = 'SLDA';
+                }
+                else if($cartItems->manual_discount_percentage > 10 && $cartItems->manual_discount_percentage <= 40){
+                    $stageCode = 'SLDO';
+                }
+                else if($cartItems->manual_discount_percentage > 40)
+                {
+                    $stageCode = 'SLDG';
+                }
+                try {
+                    DB::select('EXEC [SystemAdministration].[Workflow.Level.Change] @stageCode = "'.$stageCode.'", @documentCode = "'.$manualDiscountServicesResult->id.'", @levelNo = 1, @status = "N", @doneBy= "'.auth()->user('user')->id.'", @percentage = 0, @comments = NULL');
+
                     CustomerServiceCart::where(['id'=>$cartItems->id])->update([
                         'manual_discount_send_for_aproval'=>1,
                         'manual_discount_ref_no'=>$refNo,
                     ]);
+                        
+                } catch (\Exception $e) {
+                    //dd($e->getMessage());
+                    //return $e->getMessage();
                 }
+
+                
+                
+
             }
             $cartTotal = $cartTotal+($cartItems->unit_price*$cartItems->quantity);
         }
@@ -1574,7 +1596,7 @@ class CustomerServiceJob extends Component
         ]);
 
         try {
-            DB::select('EXEC [dbo].[ManualDiscountJob] @referenceCodde = "'.$refNo.'", @doneby = "'.auth()->user('user')->id.'" ');
+            //DB::select('EXEC [dbo].[ManualDiscountJob] @referenceCodde = "'.$refNo.'", @doneby = "'.auth()->user('user')->id.'" ');
         } catch (\Exception $e) {
             //dd($e->getMessage());
             //return $e->getMessage();
@@ -1713,6 +1735,7 @@ class CustomerServiceJob extends Component
         //dd($this->cartItems);
         $this->cartTotalVal=null;
         foreach($this->cartItems as $cartCheckItem){
+            //CustomerServiceCart::where(['id'=>$cartCheckItem->id])->update(['manual_discount_status'=>null,'manual_discount_send_for_aproval'=>null]);
             if($cartCheckItem->division_code != auth()->user('user')->stationName['LandlordCode'])
             {
                 dd('Error, Contact techincal team..!');

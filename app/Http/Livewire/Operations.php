@@ -417,6 +417,18 @@ class Operations extends Component
                     $this->mechServiceReadyToDeliverPending = true;
                 }
             }
+            else{
+                if($jobcardDetailsList->section_code){
+                    $sectionDetails = Sections::where(['PropertyCode'=>$jobcardDetailsList->section_code])->first();
+                    CustomerJobCardServices::where(['id'=>$jobcardDetailsList->id])->update(['section_name' => $sectionDetails->PropertyName]);
+                    $this->customerJobDetails($jobcardDetailsList->job_number);
+                }
+                else
+                {
+                    dd('Please contact IT');    
+                }
+                
+            }
             $this->showchecklist[$jobcardDetailsList->id]=false;
         }
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){

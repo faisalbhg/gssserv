@@ -47,9 +47,9 @@ class Customer extends Component
             $customersListQuery = $customersListQuery->where('TenantName', 'like', "%{$this->search_customer}%");
         }
         if($this->customer_mobile){
-            if($this->customer_mobile[0]=='0'){
+            /*if($this->customer_mobile[0]=='0'){
                 $this->customer_mobile = ltrim($this->customer_mobile, $this->customer_mobile[0]);
-            }
+            }*/
             $customersListQuery = $customersListQuery->where('Mobile', 'like', "%{$this->customer_mobile}%");
         }
         $customersList = $customersListQuery->paginate(10);
