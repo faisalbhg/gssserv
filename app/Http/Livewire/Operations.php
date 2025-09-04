@@ -418,7 +418,7 @@ class Operations extends Component
                 }
             }
             else{
-                if($jobcardDetailsList->section_code){
+                /*if($jobcardDetailsList->section_code){
                     $sectionDetails = Sections::where(['PropertyCode'=>$jobcardDetailsList->section_code])->first();
                     CustomerJobCardServices::where(['id'=>$jobcardDetailsList->id])->update(['section_name' => $sectionDetails->PropertyName]);
                     $this->customerJobDetails($jobcardDetailsList->job_number);
@@ -426,7 +426,7 @@ class Operations extends Component
                 else
                 {
                     dd('Please contact IT');    
-                }
+                }*/
                 
             }
             $this->showchecklist[$jobcardDetailsList->id]=false;
