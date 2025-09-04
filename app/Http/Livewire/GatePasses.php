@@ -53,8 +53,12 @@ class GatePasses extends Component
         {
             $jobsQuery = $jobsQuery->where('meter_id', 'like', "%{$this->search_meeter_number}%");
         }
+        if(auth()->user('user')->user_type!=1){
+            $jobsQuery = $jobsQuery->where(['station'=>auth()->user('user')['station_code']]);
+            //$customerjobs=$customerjobs->with('createdInfo');
+        }
         
-        $data['jobsResults'] = $jobsQuery->where('job_status','=',3)->where(['station'=>auth()->user('user')['station_code']])->orderBy('id','ASC')->paginate(25);
+        $data['jobsResults'] = $jobsQuery->where('job_status','=',3)->orderBy('id','ASC')->paginate(25);
         //dd($data);
         return view('livewire.gate-passes',$data);
     }

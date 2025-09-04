@@ -1110,7 +1110,9 @@
                                 @endif
                                 @forelse($jobcardDetails->customerJobServices as $services)
                                     <li class="list-group-item border-0  p-2 mb-2 border-radius-lg">
-                                        @if($services->service_item_type==1 || $services->service_item_type==3)
+
+
+                                        @if($services->section_name != 'Quick Lube' || $services->section_name != 'Mechanical' )
                                             <div class="card">
                                                 <div class="card-body p-2">
                                                     <div class="row">
