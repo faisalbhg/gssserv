@@ -169,7 +169,7 @@
                                                         Close Vehicle images and checklists
                                                         </button>
                                                         @else
-                                                        <button type="button" class="btn btn-sm bg-gradient-primary mb-0 me-2" wire:click="openVehicleImageDetails">
+                                                        <button type="button" class="btn btn-sm bg-gradient-primary mb-0 me-2" wire:click="openVehicleImageDetails('{{$jobcardDetails->job_number}}')">
                                                         Show Vehicle images and checklists
                                                         </button>
                                                         @endif
@@ -802,75 +802,75 @@
                                 <div class="card-body text-left pt-0">
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="w-75 float-end" id="img1" src="@if($vehicleSidesImages['vImageR1']) {{ url('public/storage/'.$vehicleSidesImages['vImageR1'])}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img1')" />
+                                            <img class="w-75 float-end" id="img1" src="@if(isset($vehicleSidesImages['vImageR1'])) {{ url('public/storage/'.$vehicleSidesImages['vImageR1'])}} @else {{asset('img/checklist/car1.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img1')" />
                                         </div>
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="w-75 float-start" id="img2" src="@if ($vehicleSidesImages['vImageR2']) {{ url('public/storage/'.$vehicleSidesImages['vImageR2']) }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img2')" />
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-6">
-                                            <img class="w-75 float-end" id="img3" src="@if ($vehicleSidesImages['vImageF']) {{ url('public/storage/'.$vehicleSidesImages['vImageF']) }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img3')" />
-                                        </div>
-                                        <div class="col-md-6 col-sm-6">
-                                            <img class="w-75 float-start" id="img4" src="@if ($vehicleSidesImages['vImageB']) {{ url('public/storage/'.$vehicleSidesImages['vImageB']) }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img4')" />
+                                            <img class="w-75 float-start" id="img2" src="@if (isset($vehicleSidesImages['vImageR2'])) {{ url('public/storage/'.$vehicleSidesImages['vImageR2']) }} @else {{asset('img/checklist/car2.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img2')" />
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="w-75 float-end" id="img5" src="@if ($vehicleSidesImages['vImageL1']) {{ url('public/storage/'.$vehicleSidesImages['vImageL1']) }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img5')" />
+                                            <img class="w-75 float-end" id="img3" src="@if (isset($vehicleSidesImages['vImageF'])) {{ url('public/storage/'.$vehicleSidesImages['vImageF']) }} @else {{asset('img/checklist/car3.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img3')" />
                                         </div>
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="w-75 float-start" id="img6" src="@if ($vehicleSidesImages['vImageL2']) {{ url('public/storage/'.$vehicleSidesImages['vImageL2']) }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img6')" />
+                                            <img class="w-75 float-start" id="img4" src="@if (isset($vehicleSidesImages['vImageB'])) {{ url('public/storage/'.$vehicleSidesImages['vImageB']) }} @else {{asset('img/checklist/car4.jpg')}} @endif" style="cursor:pointer" wire:click="markScrach('img4')" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="w-75 float-end" id="img5" src="@if (isset($vehicleSidesImages['vImageL1'])) {{ url('public/storage/'.$vehicleSidesImages['vImageL1']) }} @else {{asset('img/checklist/car5.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img5')" />
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <img class="w-75 float-start" id="img6" src="@if (isset($vehicleSidesImages['vImageL2'])) {{ url('public/storage/'.$vehicleSidesImages['vImageL2']) }} @else {{asset('img/checklist/car6.png')}} @endif" style="cursor:pointer" wire:click="markScrach('img6')" />
                                         </div>
                                     </div>
 
                                     <h5 class="font-weight-bold mt-2">Interior Vehicle Images</h5>
                                     <div class="row m-4">
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="img-fluid img-thumbnail shadow" id="dashImage1" src="@if ($vehicleSidesImages['dash_image1']) {{ url('public/storage/'.$vehicleSidesImages['dash_image1']) }} @else {{asset('img/dashImage1.jpg')}} @endif" style="cursor:pointer"  />
+                                            <img class="img-fluid img-thumbnail shadow" id="dashImage1" src="@if (isset($vehicleSidesImages['dash_image1'])) {{ url('public/storage/'.$vehicleSidesImages['dash_image1']) }} @else {{asset('img/dashImage1.jpg')}} @endif" style="cursor:pointer"  />
                                             @error('dash_image1') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="img-fluid img-thumbnail shadow" id="dashImage2" src="@if ($vehicleSidesImages['dash_image2']) {{ url('public/storage/'.$vehicleSidesImages['dash_image2']) }} @else {{asset('img/dashImage2.jpg')}} @endif" style="cursor:pointer"  />
+                                            <img class="img-fluid img-thumbnail shadow" id="dashImage2" src="@if (isset($vehicleSidesImages['dash_image2'])) {{ url('public/storage/'.$vehicleSidesImages['dash_image2']) }} @else {{asset('img/dashImage2.jpg')}} @endif" style="cursor:pointer"  />
                                             @error('dash_image2') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                         <hr>
                                     </div>
                                     <div class="row m-4">
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="img-fluid img-thumbnail shadow" id="passengerSeatImage" src="@if ($vehicleSidesImages['passenger_seat_image']) {{ url('public/storage/'.$vehicleSidesImages['passenger_seat_image']) }} @else {{asset('img/passangerSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                            <img class="img-fluid img-thumbnail shadow" id="passengerSeatImage" src="@if (isset($vehicleSidesImages['passenger_seat_image'])) {{ url('public/storage/'.$vehicleSidesImages['passenger_seat_image']) }} @else {{asset('img/passangerSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                             @error('passenger_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="img-fluid img-thumbnail shadow" id="driverSeatImage" src="@if ($vehicleSidesImages['driver_seat_image']) {{ url('public/storage/'.$vehicleSidesImages['driver_seat_image']) }} @else {{asset('img/driverSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                            <img class="img-fluid img-thumbnail shadow" id="driverSeatImage" src="@if (isset($vehicleSidesImages['driver_seat_image'])) {{ url('public/storage/'.$vehicleSidesImages['driver_seat_image']) }} @else {{asset('img/driverSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                             @error('driver_seat_image') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                         <hr>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="@if ($vehicleSidesImages['back_seat1']) {{ url('public/storage/'.$vehicleSidesImages['back_seat1']) }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat1Image" src="@if (isset($vehicleSidesImages['back_seat1'])) {{ url('public/storage/'.$vehicleSidesImages['back_seat1']) }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                             @error('back_seat1') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="img-fluid img-thumbnail shadow" id="backSeat2Image" src="@if ($vehicleSidesImages['back_seat2']) {{ url('public/storage/'.$vehicleSidesImages['back_seat2']) }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat2Image" src="@if (isset($vehicleSidesImages['back_seat2'])) {{ url('public/storage/'.$vehicleSidesImages['back_seat2']) }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
                                             @error('back_seat2') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="img-fluid img-thumbnail shadow" id="backSeat3Image" src="@if ($vehicleSidesImages['back_seat3']) {{ url('public/storage/'.$vehicleSidesImages['back_seat3']) }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat3Image" src="@if (isset($vehicleSidesImages['back_seat3'])) {{ url('public/storage/'.$vehicleSidesImages['back_seat3']) }} @else {{asset('img/backSeat1.jpg')}} @endif" style="cursor:pointer"  />
                                             @error('back_seat3') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                         <div class="col-md-6 col-sm-6">
-                                            <img class="img-fluid img-thumbnail shadow" id="backSeat4Image1" src="@if ($vehicleSidesImages['back_seat4']) {{ url('public/storage/'.$vehicleSidesImages['back_seat4']) }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat4Image1" src="@if (isset($vehicleSidesImages['back_seat4'])) {{ url('public/storage/'.$vehicleSidesImages['back_seat4']) }} @else {{asset('img/backSeat2.jpg')}} @endif" style="cursor:pointer"   />
                                             @error('back_seat4') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12">
-                                            <img class="img-fluid img-thumbnail shadow" id="backSeat3Image1" src="@if ($vehicleSidesImages['roof_images']) {{ url('public/storage/'.$vehicleSidesImages['roof_images']) }} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
+                                            <img class="img-fluid img-thumbnail shadow" id="backSeat3Image1" src="@if (isset($vehicleSidesImages['roof_images'])) {{ url('public/storage/'.$vehicleSidesImages['roof_images']) }} @else {{asset('img/roofimage1.jpg')}} @endif" style="cursor:pointer"  />
                                             @error('roof_images') <span class="text-danger">Missing Image..!</span> @enderror
                                         </div>
                                     </div>
