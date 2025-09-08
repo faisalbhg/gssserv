@@ -1,4 +1,4 @@
-<style>
+    <style>
     .modal-dialog {
         max-width: 90% !important;
     }
@@ -191,6 +191,17 @@
                                         </li>
                                         @endif
                                     </ul>
+                                    @if(auth()->user('user')->user_type==1)
+                                        @if($showJobsLogseDetails)
+                                            <button type="button" class="btn btn-sm bg-gradient-danger mb-0 me-2" wire:click="hideJobLogs('{{$jobcardDetails->job_number}}')">
+                                            Close Vehicle images and checklists
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-sm bg-gradient-primary mb-0 me-2" wire:click="showJobLogs('{{$jobcardDetails->job_number}}')">
+                                            Show Vehicle images and checklists
+                                            </button>
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         </a>
@@ -327,6 +338,10 @@
                         </div>
                     </div>
                 </div>
+                @if($showJobsLogseDetails)
+
+                @endif
+
                 @if($showVehicleImageDetails)
                     <div class="row">
                         <div class="col-12 col-md-12 col-xl-4 my-4">
@@ -906,8 +921,45 @@
                             $qlServiceUpdate=false;
                             $mechServiceUpdate=false;
                             ?>
-                            
-                            @if($jobcardDetails->cancel_req_status == "A" || $jobcardDetails->cancel_req_status == "W" || $jobcardDetails->job_status==5)
+                            @if($jobcardDetails->cancel_req_status == "A" || $jobcardDetails->job_status==5)
+                                <div class="row">
+                                    @forelse( $jobcardDetails->customerJobServices as $services)
+                                    
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card">
+                                                <div class="card-header text-center pt-4 pb-3">
+                                                    <span class="badge rounded-pill bg-light text-dark">{{$services->department_name}} - {{$services->section_name}}</span>
+                                                    <h5 class="text-dark">
+                                                        @if($services->quantity>1)
+                                                            {{$services->quantity.' x '}}
+                                                        @endif
+                                                        {{$services->item_name}}
+                                                    </h5>
+                                                </div>
+                                                <div class="card-body text-lg-left text-center pt-0">
+                                                    <div class="d-flex justify-content-lg-start justify-content-center p-2">
+                                                        <div class="icon icon-shape icon-xs rounded-circle {{config('global.jobs.status_btn_class')[$services->job_status]}} shadow text-center">
+                                                            <i class="fas fa-check opacity-10" aria-hidden="true"></i>
+                                                        </div>
+                                                        <div>
+                                                            <span class="ps-3 {{config('global.jobs.status_text_class')[$services->job_status]}}">Status: {{config('global.jobs.status')[$services->job_status]}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                    @empty
+                                        <div class="col-md-4 mb-4">
+                                            <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                                                <div class="d-flex flex-column">
+                                                    <h6 class="mb-3 text-sm text-danger">Empty..!</h6>
+                                                </div>
+                                            </li>
+                                        </div>
+                                    @endforelse 
+                                </div>
+                            @elseif($jobcardDetails->cancel_req_status == "W")
                                 <div class="row">
                                     @forelse( $jobcardDetails->customerJobServices as $services)
                                     

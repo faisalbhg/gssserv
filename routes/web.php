@@ -54,6 +54,7 @@ use App\Http\Livewire\Packages;
 use App\Http\Livewire\CustomerServiceItems;
 use App\Http\Livewire\Numberplates;
 use App\Http\Livewire\CustomerReceive;
+use App\Http\Livewire\ManualDiscounts;
 
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\UpdateJobCardsController;
@@ -102,7 +103,9 @@ Route::middleware('auth')->group(function () {
     Route::get('customer-service-items/{customer_id}/{vehicle_id}', CustomerServiceItems::class)->name('customer-service-items');
     Route::get('customer-service-items/{customer_id}/{vehicle_id}/{job_number}', CustomerServiceItems::class)->name('customer-service-items-update');
 
-    ;
+    //manual-discounts
+    Route::get('manual-discounts', ManualDiscounts::class)->name('manual-discounts');
+
 
 
     //PackagesBookings

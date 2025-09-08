@@ -102,6 +102,7 @@ class Operations extends Component
     public $alreadyUpdationGOing=false;
     public $updateJob = true;
     public $change_payment_type=false, $change_payment_status=false;
+    public $showJobsLogseDetails=false;
 
 
     
@@ -144,7 +145,7 @@ class Operations extends Component
                 \DB::raw('count(job_number) jobs'),
                 \DB::raw('count(case when job_status = 0 then job_status end) new'),
                 \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
-                \DB::raw('count(case when job_status = 2 then job_status end) work_finished'),
+                \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
                 \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
                 \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
@@ -435,12 +436,23 @@ class Operations extends Component
             $this->checkOnlinePaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->stationInfo['StationID']);
         }
 
-        //$this->customerJobServiceLogs = CustomerJobCardServices::with(['customerJobServiceLogs'])->where(['job_number'=>$job_number])->get();
+        //
         
         
         $this->dispatchBrowserEvent('showServiceUpdate');
         $this->dispatchBrowserEvent('hideQwChecklistModel');
     }
+
+    public function showJobLogs($job_number){
+        $this->showJobsLogseDetails=true;
+        $this->customerJobServiceLogs = null;
+        //$this->customerJobServiceLogs = CustomerJobCardServiceLogs::where(['job_number'=>$job_number])->get();
+    }
+    public function hideJobLogs($job_number){
+        $this->showJobsLogseDetails=false;
+        $this->customerJobServiceLogs = null;
+    }
+
 
     public function showSearchPlateNumber(){
         $this->showNumberPlateFilter=true;
@@ -454,7 +466,7 @@ class Operations extends Component
             case 'customer_aprpoved': $this->filter = [7];break;
             case 'item_issued': $this->filter = [8];break;
             case 'working_progress': $this->filter = [1];break;
-            case 'work_finished': $this->filter = [2,3];break;
+            case 'qualitycheck': $this->filter = [2];break;
             case 'ready_to_deliver': $this->filter = [3];break;
             case 'delivered': $this->filter = [4];break;
             case 'cancelled': $this->filter = [5];break;
