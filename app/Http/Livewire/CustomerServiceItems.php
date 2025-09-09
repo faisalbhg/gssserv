@@ -1159,6 +1159,7 @@ class CustomerServiceItems extends Component
     public function saveManulDiscountAproval(){
         $validatedData = $this->validate([
             'manualDiscountValue' => 'required',
+            'manualDiscountRemarks'=>'required',
         ]);
         
         $cartUpdate['price_id']=158;
@@ -1169,16 +1170,18 @@ class CustomerServiceItems extends Component
             $cartUpdate['max_price']=$this->lineItemDetails['unit_price']-$this->manualDiscountValue;
             $cartUpdate['discount_perc']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
             $cartUpdate['manual_discount_percentage']=custom_round(($this->manualDiscountValue/$this->lineItemDetails['unit_price'])*100);
+            $cartUpdate['manual_discount_value']=custom_round($this->manualDiscountValue);
         }
         else{
             $cartUpdate['min_price']=custom_round($this->lineItemDetails['unit_price'] - (($this->lineItemDetails['unit_price'] * $this->manualDiscountValue) / 100));
             $cartUpdate['max_price']=custom_round($this->lineItemDetails['unit_price'] - (($this->lineItemDetails['unit_price'] * $this->manualDiscountValue) / 100));
             $cartUpdate['discount_perc']=custom_round($this->manualDiscountValue);
             $cartUpdate['manual_discount_percentage']=custom_round($this->manualDiscountValue);
+            $cartUpdate['manual_discount_value']=custom_round((($this->lineItemDetails['unit_price'] * $this->manualDiscountValue) / 100));
         }
         $cartUpdate['start_date']=null;
         $cartUpdate['end_date']=null;
-        $cartUpdate['manual_discount_value']=$this->manualDiscountValue;
+        
         $cartUpdate['manual_discount_applied_by']=auth()->user('user')['id'];
         $cartUpdate['manual_discount_applied_datetime']=Carbon::now();
         $cartUpdate['manual_discount_status']=1;

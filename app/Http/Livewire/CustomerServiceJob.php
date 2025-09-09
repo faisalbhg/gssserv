@@ -1434,6 +1434,7 @@ class CustomerServiceJob extends Component
     public function saveManulDiscountAproval(){
         $validatedData = $this->validate([
             'manualDiscountValue' => 'required',
+            'manualDiscountRemarks'=>'required',
         ]);
         
         $cartUpdate['price_id']=158;
