@@ -52,6 +52,7 @@ class CarsTaxi extends Component
     public $onlyChaisisRequired=false;
     public $alreadyUpdationGOing=false;
     public $updateJob = false;
+    public $showJobsLogseDetails=false;
 
     function mount( Request $request) {
         $this->search_job_date = Carbon::now()->format('Y-m-d');
@@ -610,6 +611,16 @@ class CarsTaxi extends Component
         CustomerJobCards::where(['job_number'=>$job_number])->update($mianJobUpdate);
         
         
+    }
+
+     public function showJobLogs($job_number){
+        $this->showJobsLogseDetails=true;
+        $this->customerJobServiceLogs = null;
+        //$this->customerJobServiceLogs = CustomerJobCardServiceLogs::where(['job_number'=>$job_number])->get();
+    }
+    public function hideJobLogs($job_number){
+        $this->showJobsLogseDetails=false;
+        $this->customerJobServiceLogs = null;
     }
 
     public function updateJobService($services,$ql=null)
