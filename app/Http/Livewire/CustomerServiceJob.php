@@ -1573,16 +1573,16 @@ class CustomerServiceJob extends Component
                 try {
                     DB::select('EXEC [SystemAdministration].[Workflow.Level.Change] @stageCode = "'.$stageCode.'", @documentCode = "'.$manualDiscountServicesResult->id.'", @levelNo = 1, @status = "N", @doneBy= "'.auth()->user('user')->id.'", @percentage = 0, @comments = NULL');
 
-                    CustomerServiceCart::where(['id'=>$cartItems->id])->update([
-                        'manual_discount_send_for_aproval'=>1,
-                        'manual_discount_ref_no'=>$refNo,
-                    ]);
+                    
                         
                 } catch (\Exception $e) {
                     //dd($e->getMessage());
                     //return $e->getMessage();
                 }
-
+                CustomerServiceCart::where(['id'=>$cartItems->id])->update([
+                    'manual_discount_send_for_aproval'=>1,
+                    'manual_discount_ref_no'=>$refNo,
+                ]);
                 
                 
 
