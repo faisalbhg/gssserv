@@ -11,6 +11,14 @@ class Sections extends Model
 
     protected $table = 'property';
 
+
+    public function jobCards()
+    {
+        return $this->belongsToMany(CustomerJobCardServices::class)
+                    ->withPivot('quantity')
+                    ->withTimestamps();
+    }
+
     /*protected $fillable = [
         'section_code',
         'section_name',

@@ -2250,10 +2250,9 @@ class CustomerServiceJob extends Component
         
         $wareHouseDetails = ItemWarehouse::where(['DivisionId'=>auth()->user('user')->station_code])->first();
         $itemCurrentStock = ItemCurrentStock::where(['StoreId'=>$wareHouseDetails->WarehouseId,'ItemCode'=>$ItemCode])->first();
-        $itemsInCart = CustomerServiceCart::where(['division_code'=>auth()->user('user')->station_code,'item_code'=>$ItemCode])->sum('quantity');
-        $itemsInCart=0;
+        $itemsInCart = CustomerServiceCart::where(['division_code'=>auth()->user('user')->station_code,'item_code'=>$ItemCode,'customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->sum('quantity');
         $itemStock = (float)($itemCurrentStock->QuantityInStock);
-        $totalAvailable =  $itemStock - $itemsInCart;
+        $totalAvailable = $itemStock-$itemsInCart;
 
         if($totalAvailable >= $qty){
             return true;
@@ -2365,7 +2364,7 @@ class CustomerServiceJob extends Component
         $cartItemDetails = CustomerServiceCart::find($cartId);
         if($cartItemDetails->cart_item_type==2)
         {
-            if($this->checkItemStock($cartItemDetails->item_id, $cartItemDetails->item_code, 1))
+            if($this->checkItemStock($cartItemDetails->item_id, $cartItemDetails->item_code, $cartItemDetails->quantity+1))
             {
                 CustomerServiceCart::find($cartId)->increment('quantity');
                 session()->flash('cartsuccess', 'Updated Cart Successfully !');

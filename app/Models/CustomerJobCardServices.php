@@ -115,4 +115,13 @@ class CustomerJobCardServices extends Model
     public function laborItemMaster(){
         return $this->belongsTo(LaborItemMaster::class,'item_code','ItemCode')->with(['departmentName','sectionName']);
     }
+
+    public function departments()
+    {
+        return $this->belongsTo(Development::class,'department_code','DevelopmentCode');
+    }
+    public function sections()
+    {
+        return $this->belongsTo(Sections::class);
+    }
 }

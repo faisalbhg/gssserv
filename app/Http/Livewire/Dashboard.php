@@ -9,12 +9,15 @@ use App\Models\CustomerJobCardServices;
 use App\Models\CustomerJobCardServiceLogs;
 use App\Models\CustomerServiceCart;
 use App\Models\Landlord;
+use App\Models\Sections;
+use App\Models\Development;
 
 use Carbon\Carbon;
 use Session;
 use Illuminate\Support\Facades\Http;
 use LaravelPayfort\Facades\Payfort;
 use Illuminate\Support\Facades\Hash;
+use DB;
 
 
 class Dashboard extends Component
@@ -44,6 +47,16 @@ class Dashboard extends Component
 
     public function render()
     {
+        //dd(CustomerJobCardServices::first());
+        /*$ordersByCategoryCount = DB::table('customer_job_card_services')
+    ->join('development', 'customer_job_card_services.department_code', '=', 'development.DevelopmentCode')
+    ->select('development.DevelopmentName as department_name', DB::raw('count(customer_job_card_services.id) as order_count'))
+    ->groupBy('development.DevelopmentName')
+    ->get();
+    dd($ordersByCategoryCount);*/
+
+        $departmentSummary = CustomerJobCardServices::with(['departments'])->select('department_code',DB::raw('count(customer_job_card_services.id) as order_count'));
+
         $getCountSalesJobStatus = CustomerJobCards::select(
             array(
                 \DB::raw('count(DISTINCT(customer_id)) customers'),
@@ -62,6 +75,7 @@ class Dashboard extends Component
         if($this->selected_date){
             //$customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
             $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+            $departmentSummary = $departmentSummary->whereBetween('created_at', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
         }
         else
         {
@@ -69,12 +83,14 @@ class Dashboard extends Component
             $this->selected_date = Carbon::now()->format('Y-m-d');
             //$customerjobsQuery = $customerjobsQuery->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
             $getCountSalesJobStatus = $getCountSalesJobStatus->whereBetween('job_date_time', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+            $departmentSummary = $departmentSummary->whereBetween('created_at', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
         }
         
         if($this->search_station){
             $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>$this->search_station]);
             //$customerjobsQuery = $customerjobsQuery->where(['station'=>$this->search_station]);
             $this->dispatchBrowserEvent('datePicker');
+            $departmentSummary = $departmentSummary->where(['station'=>$this->search_station]);
         }
 
 
@@ -86,7 +102,13 @@ class Dashboard extends Component
         if(auth()->user('user')->user_type!=1){
             $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>auth()->user('user')['station_code']]);
             //$customerjobsQuery = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']]);
+            $departmentSummary = $departmentSummary->where(['division_code'=>auth()->user('user')['station_code']]);
         }
+
+        $departmentSummary = $departmentSummary->groupBy('department_code')->get();
+        //dd($departmentSummary);
+        
+
 
         $this->getCountSalesJob = $getCountSalesJobStatus->first();
         //$this->customerjobsLists = $customerjobsQuery->get();
