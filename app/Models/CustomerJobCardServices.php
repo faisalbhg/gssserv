@@ -122,6 +122,6 @@ class CustomerJobCardServices extends Model
     }
     public function sections()
     {
-        return $this->belongsTo(Sections::class);
+        return $this->belongsTo(Sections::class,'section_code','PropertyCode');
     }
 }

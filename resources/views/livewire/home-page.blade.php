@@ -29,137 +29,6 @@
     }
 </style>
 
-<style type="text/css">
-    .packages {
-  padding: 20px 10px;
-  margin: 20px;
-  width: 300px;
-  padding-bottom: 1.5em;
-  height: 100%;
-  background-color: #1e2321;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  border-radius: 20px;
-  box-shadow: 0 19px 38px rgba(30, 35, 33, 1), 0 15px 12px rgba(30, 35, 33, 0.2);
-  flex-wrap: wrap;
-  color: #f4f4f4;
-}
- 
- 
-.list li {
-  font-size: 20px;
-  list-style: none;
-  border-bottom: 1px solid #f4f4f4;
-  padding-inline-start: 0;
-  border-width: 1px;
-  padding: 10px;
-}
- 
-.first {
-  margin-top: 40px;
-  border-top: 1px solid #f4f4f4;
-}
- 
-.list {
-  width: 80%;
-}
- 
-
- 
-.top {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
- 
-
-.button {
-  padding: 10px 30px;
-  text-decoration: none;
-  font-size: 1.4em;
-  margin: 15px 15px;
-  border-radius: 50px;
-  color: #f4f4f4;
-  transition: all 0.3s ease 0s;
-}
- 
-.button:hover {
-  transform: scale(1.2);
-}
- 
-.button1 {
-  background-color: #00cc99;
-  box-shadow: 0 0 10px 0 #00cc99 inset, 0 0 20px 2px #00cc99;
-}
- 
-.button2 {
-  background-color: #ff007c;
-  box-shadow: 0 0 10px 0 #ff007c inset, 0 0 20px 2px #ff007c;
-}
- 
-.button3 {
-  background-color: #ffae42;
-  box-shadow: 0 0 10px 0 #ffae42 inset, 0 0 20px 2px #ffae42;
-}
- 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
- 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
- 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #1e2321;
-  -webkit-transition: 0.4s;
- 
-  box-shadow: 2px 6px 25px #1e2321;
-  transform: translate(0px, 0px);
-  transition: 0.6s ease transform, 0.6s box-shadow;
-}
- 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-}
- 
- 
-.slider.round {
-  border-radius: 34px;
-}
- 
-.slider.round:before {
-  border-radius: 50%;
-}
- 
-.package-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-</style>
 
 @endpush
 <main class="main-content position-relative  border-radius-lg">
@@ -306,7 +175,52 @@
             </div>
         </div>
         
-        
+        <div class="row">
+            @foreach($departmentSummary as $departmentCount)
+                <div class="col-md-4 mb-4">
+                    <div class="card card-pricing">
+                        <div class="card-header bg-gradient-dark text-center pt-4 pb-5 position-relative">
+                            <div class="z-index-1 position-relative">
+                                <h5 class="text-white">{{$departmentCount['departments']['DevelopmentName']}}</h5>
+                                <h1 class="text-white mt-2 mb-0">
+                                <small></small>{{$departmentCount['order_count']}}</h1>
+                                @if(auth()->user('user')->user_type==1)
+                                <h6 class="text-white">{{explode("-",$departmentCount['departments']['DevelopmentNo'])[0]}}</h6>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="position-relative mt-n5" style="height: 50px;">
+                            <div class="position-absolute w-100">
+                                <svg class="waves waves-sm" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 40" preserveAspectRatio="none" shape-rendering="auto">
+                                    <defs>
+                                        <path id="card-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></path>
+                                    </defs>
+                                    <g class="moving-waves">
+                                        <use xlink:href="#card-wave" x="48" y="-1" fill="rgba(255,255,255,0.30"></use>
+                                        <use xlink:href="#card-wave" x="48" y="3" fill="rgba(255,255,255,0.35)"></use>
+                                        <use xlink:href="#card-wave" x="48" y="5" fill="rgba(255,255,255,0.25)"></use>
+                                        <use xlink:href="#card-wave" x="48" y="8" fill="rgba(255,255,255,0.20)"></use>
+                                        <use xlink:href="#card-wave" x="48" y="13" fill="rgba(255,255,255,0.15)"></use>
+                                        <use xlink:href="#card-wave" x="48" y="16" fill="rgba(255,255,255,0.99)"></use>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="card-body text-center">
+                            <ul class="list-unstyled max-width-200 mx-auto">
+                                @foreach($departmentCount['sections'] as $sectionsDtls )
+                                <li>
+                                    <b>{{$sectionsDtls['order_count']}}</b> {{$sectionsDtls['sections']['PropertyName']}}
+                                    <hr class="horizontal dark">
+                                </li>
+                                @endforeach
+                            </ul>
+                            
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
         
         <div class="row">
             

@@ -25,6 +25,7 @@ class Dashboard extends Component
     public $getCountSalesJob, $customerjobsLists=[], $selected_date, $filterJobStatus, $jobList, $homeCountIconeBg='bg-gradient-dark';
     protected $listeners = ["selectDate" => 'getSelectedDate'];
     public $pendingCustomersCart, $search_station;
+    public $departmentSummary, $sectionSummary;
 
     function mount(){
         $user = auth()->user();
@@ -47,16 +48,8 @@ class Dashboard extends Component
 
     public function render()
     {
-        //dd(CustomerJobCardServices::first());
-        /*$ordersByCategoryCount = DB::table('customer_job_card_services')
-    ->join('development', 'customer_job_card_services.department_code', '=', 'development.DevelopmentCode')
-    ->select('development.DevelopmentName as department_name', DB::raw('count(customer_job_card_services.id) as order_count'))
-    ->groupBy('development.DevelopmentName')
-    ->get();
-    dd($ordersByCategoryCount);*/
-
-        $departmentSummary = CustomerJobCardServices::with(['departments'])->select('department_code',DB::raw('count(customer_job_card_services.id) as order_count'));
-
+        $departmentSummary = CustomerJobCardServices::with(['departments','jobInfo'])->select('department_code',DB::raw('count(customer_job_card_services.id) as order_count'));
+        
         $getCountSalesJobStatus = CustomerJobCards::select(
             array(
                 \DB::raw('count(DISTINCT(customer_id)) customers'),
@@ -94,21 +87,59 @@ class Dashboard extends Component
         }
 
 
-        if($this->filterJobStatus)
-        {
-            //$customerjobsQuery = $customerjobsQuery->where(['job_status'=>$this->filterJobStatus]);
-        }
-
+        
         if(auth()->user('user')->user_type!=1){
             $getCountSalesJobStatus = $getCountSalesJobStatus->where(['station'=>auth()->user('user')['station_code']]);
             //$customerjobsQuery = $customerjobsQuery->where(['station'=>auth()->user('user')['station_code']]);
             $departmentSummary = $departmentSummary->where(['division_code'=>auth()->user('user')['station_code']]);
+
+
+            $getCountSalesJobStatus = $getCountSalesJobStatus->where(['created_by'=>auth()->user('user')['id']]);
+            
+            $departmentSummary = $departmentSummary->where(function ($query) {
+                $query->whereRelation('jobInfo', 'created_by', '=', auth()->user('user')['id']);
+            });
+        }
+        else{
+
         }
 
         $departmentSummary = $departmentSummary->groupBy('department_code')->get();
         //dd($departmentSummary);
+        $departmentsList=[];
         
 
+        foreach($departmentSummary as $key => $departmentSummary)
+        {
+            $sectionSummary = CustomerJobCardServices::with(['sections','jobInfo'])->select('section_code',DB::raw('count(customer_job_card_services.id) as order_count'));
+            if($this->selected_date){
+                $sectionSummary = $sectionSummary->whereBetween('created_at', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+            }
+            else
+            {
+                $sectionSummary = $sectionSummary->whereBetween('created_at', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+            }
+            
+            if($this->search_station){
+                $sectionSummary = $sectionSummary->where(['station'=>$this->search_station]);
+            }
+            if(auth()->user('user')->user_type!=1){
+                $sectionSummary = $sectionSummary->where(['division_code'=>auth()->user('user')['station_code']]);
+                $sectionSummary = $sectionSummary->where(function ($query) {
+                $query->whereRelation('jobInfo', 'created_by', '=', auth()->user('user')['id']);
+            });
+            }
+            else{
+                $sectionSummary = $sectionSummary->with(['jobInfo']);
+            }
+            $sectionSummary1 = $sectionSummary->where(['department_code'=>$departmentSummary->department_code]);
+            $sectionResult = $sectionSummary1->groupBy('section_code')->get();
+            $departmentsList[$key]['departments'] = $departmentSummary->departments;
+            $departmentsList[$key]['order_count'] = $departmentSummary->order_count;
+            $departmentsList[$key]['sections'] = $sectionResult;
+        }
+        $this->departmentSummary=$departmentsList;
+        //dd($this->departmentSummary);
 
         $this->getCountSalesJob = $getCountSalesJobStatus->first();
         //$this->customerjobsLists = $customerjobsQuery->get();
