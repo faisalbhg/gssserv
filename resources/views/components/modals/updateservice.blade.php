@@ -1164,7 +1164,7 @@
                                     <li class="list-group-item border-0  p-2 mb-2 border-radius-lg">
 
 
-                                        @if($services->section_name != 'Quick Lube' || $services->section_name != 'Mechanical' )
+                                        @if($services->section_name != 'Quick Lube' && $services->section_name != 'Mechanical' )
                                             <div class="card">
                                                 <div class="card-body p-2">
                                                     <div class="row">
@@ -1273,6 +1273,7 @@
                                                 </div>
                                             </div>
                                         @else
+
                                             <div class="card d-none">
                                                 <div class="card-body p-2">
                                                     <div class="row">
