@@ -359,12 +359,10 @@
             </li> -->
             <hr class="horizontal dark mt-3">
             <li class="nav-item">
-                <a class="nav-link pb-0"
-                    href="">
-                    <i class="fa fa-user me-sm-1"></i>
-                    Welcome {{ ucfirst(auth()->user('user')->name)}}
-                </a>
-
+                <a class="nav-link pb-0" href=""> <i class="fa fa-user me-sm-1"></i>Welcome {{ ucfirst(auth()->user('user')->name)}}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link pt-0" href=""><i class="fa fa-company me-sm-1"></i>{{ ucfirst(auth()->user('user')['stationName']['CorporateName'])}}</a>
             </li>
             <livewire:auth.logout />
         </ul>
