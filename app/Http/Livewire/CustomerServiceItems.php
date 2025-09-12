@@ -387,6 +387,7 @@ class CustomerServiceItems extends Component
         $wareHouseDetails = ItemWarehouse::where(['DivisionId'=>auth()->user('user')->station_code])->first();
         $itemCurrentStock = ItemCurrentStock::where(['StoreId'=>$wareHouseDetails->WarehouseId,'ItemCode'=>$ItemCode])->first();
         $itemsInCart = CustomerServiceCart::where(['division_code'=>auth()->user('user')->station_code,'item_code'=>$ItemCode,'customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id])->sum('quantity');
+        $itemsInCart=0;
         if(is_numeric($itemCurrentStock->QuantityInStock))
         {
             $totalAvailable = $itemCurrentStock->QuantityInStock - $itemsInCart;    
