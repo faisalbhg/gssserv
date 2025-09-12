@@ -299,7 +299,7 @@ class CompletedJobCardCreation extends Component
 
     public function completePaymnet($mode){
         //stationName
-        if($this->showSendSmsPannel)
+        if($this->showSendSmsPannel &&  $this->mobile)
         {
             $validatedData = $this->validate([
                 'jobUpdateSendSMS' => 'required'
