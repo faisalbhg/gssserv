@@ -30,27 +30,27 @@
                     </div>
                     <div class="d-flex">
                         @if($jobcardDetails->payment_status!=1 && $jobcardDetails->job_status!=4  && $jobcardDetails->job_status!=5 && $updateJob)
+                            @if($canceljobReasonButton)
+                                <textarea wire:model="cancelationReason" class="form-control" placeholder="Cancelation Reason..!"></textarea>
+                                @error('cancelationReason') <span class="text-danger">{{ $message }}</span> @enderror
+                                <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}','{{$jobcardDetails->job_status}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
+                            @else
+                                @if($jobcardDetails->cancel_req_status==null || $jobcardDetails->cancel_req_status=="R" || $jobcardDetails->cancel_req_status == "A")
+                                    <div>
+                                        <button type="button" wire:click="cancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-danger px-2 mx-2">Cancel Job</button>
 
-                            @if($jobcardDetails->job_status==6 || $jobcardDetails->job_status == 7 || $jobcardDetails->job_status == 8 || $jobcardDetails->job_status == 1 || $jobcardDetails->job_status == 2 || $jobcardDetails->job_status == 3)
-                                @if($canceljobReasonButton)
-                                    <textarea wire:model="cancelationReason" class="form-control" placeholder="Cancelation Reason..!"></textarea>
-                                    @error('cancelationReason') <span class="text-danger">{{ $message }}</span> @enderror
-                                    <button type="button" wire:click="confirmCancelJob('{{$jobcardDetails->job_number}}','{{$jobcardDetails->job_status}}')" class="mt-2 btn btn-sm bg-gradient-info px-2 mx-2">Confirm Cancel Job</button>
-                                @else
-                                    @if($jobcardDetails->cancel_req_status==null || $jobcardDetails->cancel_req_status=="R")
-                                        <div>
-                                            <button type="button" wire:click="cancelJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-danger px-2 mx-2">Cancel Job</button>
-
-                                            @if($jobcardDetails->cancel_req_status=="R")
-                                                <label class="mt-2 text-danger px-2 mx-2">Rejected cancellation request</label>
-                                            @endif
-                                        </div>
-                                    @elseif($jobcardDetails->cancel_req_status=='W')
-                                    <button type="button" class="mt-2 btn btn-sm btn-outline-danger px-2 mx-2">Pending Cancelation Request</button>
-                                    @endif
-                                    @if($cancelError)<br><span class="text-danger">{{$cancelError}}</span>@endif
+                                        @if($jobcardDetails->cancel_req_status=="R")
+                                            <label class="mt-2 text-danger px-2 mx-2">Rejected cancellation request</label>
+                                        @endif
+                                    </div>
+                                @elseif($jobcardDetails->cancel_req_status=='W')
+                                <button type="button" class="mt-2 btn btn-sm btn-outline-danger px-2 mx-2">Pending Cancelation Request</button>
                                 @endif
+                                @if($cancelError)<br><span class="text-danger">{{$cancelError}}</span>@endif
                             @endif
+
+
+                            
                             @if($jobcardDetails->cancel_req_status!='W' && $jobcardDetails->cancel_req_status!='A' || ( $jobcardDetails->cancel_req_status==null ))
                                 
                                 <button type="button" wire:click="addNewServiceItemsJob('{{$jobcardDetails->job_number}}')" class="mt-2 btn btn-sm bg-gradient-primary px-2">Add New Service/Items</button>
@@ -194,11 +194,11 @@
                                     @if(auth()->user('user')->user_type==1)
                                         @if($showJobsLogseDetails)
                                             <button type="button" class="btn btn-sm bg-gradient-danger mb-0 me-2" wire:click="hideJobLogs('{{$jobcardDetails->job_number}}')">
-                                            Close Vehicle images and checklists
+                                            Close Job Card Logs
                                             </button>
                                         @else
                                             <button type="button" class="btn btn-sm bg-gradient-primary mb-0 me-2" wire:click="showJobLogs('{{$jobcardDetails->job_number}}')">
-                                            Show Vehicle images and checklists
+                                            Show Job Card Logs
                                             </button>
                                         @endif
                                     @endif

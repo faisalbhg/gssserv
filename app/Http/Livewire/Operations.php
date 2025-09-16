@@ -294,10 +294,7 @@ class Operations extends Component
         return view('livewire.operations',$data);
     }
 
-    public function customerJobDetails($job_number)
-    {
-        $this->jobcardDetails = null;
-
+    public function jobCardStatusUpdate($job_number){
         $getCountSalesJobStatus = CustomerJobCardServices::select(
             array(
                 \DB::raw('count(case when job_status = 0 then job_status end) new'),
@@ -342,8 +339,31 @@ class Operations extends Component
             'job_status'=>$mainSTatus,
             'job_departent'=>$mainSTatus,
         ];
-        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$job_number]);
+        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$job_number])->where('job_status','!=',5);
         $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
+    }
+
+    public function customerJobDetails($job_number)
+    {
+        //ADd Missing Services
+        //dd(CustomerJobCardServiceLogs::where(['job_number'=>$job_number])->get());
+        //dd(CustomerJobCardServiceLogs::where(['job_number'=>$job_number])->get());
+        /*foreach(CustomerJobCardServiceLogs::where(['job_number'=>$job_number])->get() as $jobServiceDetails)
+        {
+            //if($jobServiceDetails->id=='427960'){
+                
+                $jobDetails = json_Decode($jobServiceDetails->job_description,true);
+                unset($jobDetails['id']);
+                CustomerJobCardServices::create($jobDetails);
+            //}
+
+        }
+        dd('1');*/
+
+
+        $this->jobcardDetails = null;
+
+        
         
         $this->cancelError=null;
         $this->canceljobReasonButton=false;
@@ -353,6 +373,7 @@ class Operations extends Component
         
         $this->quickLubeServices = [];
         $this->mechanicalServices = [];
+        $updatedJobSection=false;
         foreach($this->jobcardDetails->customerJobServices as $jobcardDetailsList)
         {
             if($jobcardDetailsList->section_name=='Quick Lube'){
@@ -422,7 +443,8 @@ class Operations extends Component
                 if($jobcardDetailsList->section_code){
                     $sectionDetails = Sections::where(['PropertyCode'=>$jobcardDetailsList->section_code])->first();
                     CustomerJobCardServices::where(['id'=>$jobcardDetailsList->id])->update(['section_name' => $sectionDetails->PropertyName]);
-                    $this->customerJobDetails($jobcardDetailsList->job_number);
+                    
+                    $updatedJobSection=true;
                 }
                 else
                 {
@@ -430,7 +452,13 @@ class Operations extends Component
                 }
                 
             }
+
             $this->showchecklist[$jobcardDetailsList->id]=false;
+        }
+
+        if($updatedJobSection==true)
+        {
+            $this->customerJobDetails($jobcardDetailsList->job_number);
         }
         if($this->jobcardDetails->payment_type==1 && $this->jobcardDetails->payment_status == 0){
             $this->checkOnlinePaymentStatus($this->jobcardDetails->job_number,$this->jobcardDetails->stationInfo['StationID']);
@@ -629,6 +657,7 @@ class Operations extends Component
         }
         $this->showQlQualityCheck=false;
         $this->updateJobStatusSendSms($job_number);
+        $this->jobCardStatusUpdate($job_number);
         $this->customerJobDetails($job_number);
     }
 
