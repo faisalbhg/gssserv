@@ -243,7 +243,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
-                            <label for="mobilenumberInput">Name </label>: {{$name}}
+                            <label for="mobilenumberInput">Name </label>: {{$name}} - ({{$customer_code}})
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <label for="mobilenumberInput">Email </label>: {{$email}}
@@ -266,14 +266,14 @@
 
                                 <ul class="list-group dropdown-list">
                                     @foreach ($filteredItems as $item)
-                                    <li class="list-item" wire:click="selectItem('{{ $item->TenantId }}')">{{ $item->TenantName }}</li>
+                                    <li class="list-item" wire:click="selectItem('{{ $item->TenantId }}')">{{ $item->TenantName }} - {{ $item->TenantCode }}</li>
                                     @endforeach
                                 </ul>
                                 @elseif (!empty($search_contract_contract) && $filteredItems->count() === 0)
                                 <div class="no-results">No results found.</div>
                                 @endif
                                 @if ($selectedContract)
-                                <p>Selected: {{ $selectedContract }}</p>
+                                <p>Selected: {{ $selectedContract }} - ({{$customer_code}})</p>
                                 @endif
                                 @error('contract_customer_id') <span class="mb-4 text-danger">{{ $message }}</span> @enderror
                                 
