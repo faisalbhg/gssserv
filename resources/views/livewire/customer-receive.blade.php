@@ -289,6 +289,8 @@
                             
                         </div>
                     </div>
+                    
+                    @endif
                     <div class="row">
                         <div class="col-md-4 col-sm-6">
                             <div class="form-group">
@@ -314,7 +316,6 @@
                             <button type="button" wire:click="searchContractVehicle()" class="btn btn-primary btn-sm me-3">Search Vehicle</button>
                         </div>
                     </div>
-                    @endif
                 </div>
             </div>
         @endif
