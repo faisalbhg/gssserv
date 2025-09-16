@@ -658,41 +658,8 @@
                             @if(empty($selectedDiscount))
                             <div class="row">
                                 @forelse($priceDiscountList as $priceDiscount)
-                                    
-                                    @if($priceDiscount->customerDiscountGroup['GroupType'] == 1 && $priceDiscount->EndDate == null)
-                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
-                                            <div class="card card-profile mt-md-0 mt-5">
-                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
-                                                    <h4 class="mb-0 text-capitalize">{{ strtolower(str_replace('_', ' ', $priceDiscount->customerDiscountGroup['Title'])) }}</h4>
-                                                    <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
-                                                    <div class="row justify-content-center text-center">
-                                                        <div class="col-12 mx-auto">
-                                                            <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($lineItemDetails['unit_price'])}}</h4>
-                                                            <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$lineItemDetails['unit_price'])) }}</h5>
-                                                            
-                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$lineItemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
-                                                            
-                                                                
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @elseif($priceDiscount->customerDiscountGroup['GroupType']==2)
-                                        <?php
-                                        $endCampVali = \Carbon\Carbon::parse($priceDiscount->EndDate);
-                                        if(\Carbon\Carbon::now()->diffInDays($endCampVali, false)>=0)
-                                        {
-
-                                        /*}
-                                        $givenDate = \Carbon\Carbon::parse($priceDiscount->EndDate); // Replace with your date
-                                        $now = \Carbon\Carbon::now();
-                                        if ($givenDate->isPast()) {
-                                            //
-                                        }
-                                        else
-                                        {*/
-                                            ?>
+                                    @if(isset($priceDiscount->customerDiscountGroup))
+                                        @if($priceDiscount->customerDiscountGroup['GroupType'] == 1 && $priceDiscount->EndDate == null)
                                             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
                                                 <div class="card card-profile mt-md-0 mt-5">
                                                     <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
@@ -704,17 +671,66 @@
                                                                 <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$lineItemDetails['unit_price'])) }}</h5>
                                                                 
                                                                 <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$lineItemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
+                                                                
+                                                                    
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        @elseif($priceDiscount->customerDiscountGroup['GroupType']==2)
                                             <?php
-                                        }
-                                        
-                                        ?>
-                                        
+                                            $endCampVali = \Carbon\Carbon::parse($priceDiscount->EndDate);
+                                            if(\Carbon\Carbon::now()->diffInDays($endCampVali, false)>=0)
+                                            {
 
+                                            /*}
+                                            $givenDate = \Carbon\Carbon::parse($priceDiscount->EndDate); // Replace with your date
+                                            $now = \Carbon\Carbon::now();
+                                            if ($givenDate->isPast()) {
+                                                //
+                                            }
+                                            else
+                                            {*/
+                                                ?>
+                                                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
+                                                    <div class="card card-profile mt-md-0 mt-5">
+                                                        <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
+                                                            <h4 class="mb-0 text-capitalize">{{ strtolower(str_replace('_', ' ', $priceDiscount->customerDiscountGroup['Title'])) }}</h4>
+                                                            <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
+                                                            <div class="row justify-content-center text-center">
+                                                                <div class="col-12 mx-auto">
+                                                                    <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($lineItemDetails['unit_price'])}}</h4>
+                                                                    <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$lineItemDetails['unit_price'])) }}</h5>
+                                                                    
+                                                                    <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$lineItemDetails['id']}}',{{$priceDiscount}},{{$priceDiscount->customerDiscountGroup}})">Add Now</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <?php
+                                            }
+                                            
+                                            ?>
+                                        @endif
+                                    @else
+                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mt-4 mb-2">
+                                            <div class="card card-profile mt-md-0 mt-5">
+                                                <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md p-2">
+                                                    <h4 class="mb-0 text-capitalize">Contract Customer Discount</h4>
+                                                    <span class="badge bg-gradient-info">{{custom_round($priceDiscount->DiscountPerc)}}%off</span>
+                                                    <div class="row justify-content-center text-center">
+                                                        <div class="col-12 mx-auto">
+                                                            <h4 class="mt-2 text-sm text-default mb-0" style="text-decoration: line-through;">{{config('global.CURRENCY')}} {{custom_round($lineItemDetails['unit_price'])}}</h4>
+                                                            <h5 class="text-info mb-0"> {{config('global.CURRENCY')}} {{ custom_round($lineItemDetails['unit_price']-(($priceDiscount->DiscountPerc/100)*$lineItemDetails['unit_price'])) }}</h5>
+                                                            
+                                                            <a href="javascript:;" class="btn bg-gradient-primary mb-0 ms-auto btn-sm"  wire:click="applyLineDiscountSubmit('{{$lineItemDetails['id']}}',{{$priceDiscount}},'{{$priceDiscount->CustomerGroupCode}}','contract')">Add Now</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endif
                                         
                                 @empty

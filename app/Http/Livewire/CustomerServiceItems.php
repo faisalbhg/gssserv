@@ -558,19 +558,35 @@ class CustomerServiceItems extends Component
             $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
         }
         else if($item['cart_item_type']==2){
-            $inventorySalesPricesQuery = InventorySalesPrices::where([
-                'ServiceItemId'=>$item['item_id'],
-                //'CustomerGroupCode'=>$this->appliedDiscount['code'],
-                'DivisionCode'=>auth()->user('user')['station_code'],
-            ]);
-            $inventorySalesPricesQuery = $inventorySalesPricesQuery->with(['customerDiscountGroup'])->where(function ($query) {
-                $query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 4);
-                $query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 5);
-                $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
-            });
-            $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
+            if($this->selectedVehicleInfo->customerInfoMaster['discountgroup']==14 || $this->selectedVehicleInfo->customerInfoMaster['Paymethod']==2)
+            {
+                $qlInventorySalesPricesQuery = InventorySalesPrices::with(['customerDiscountGroup'])->where([
+                    'ServiceItemId'=>$item['item_id'],
+                    'CustomerGroupCode'=>$this->selectedVehicleInfo->customerInfoMaster['TenantCode'],
+                    'DivisionCode'=>auth()->user('user')->stationName['LandlordCode']
+                ]);
+                $qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->where('StartDate', '<=', Carbon::now());
+                //$qlInventorySalesPricesQuery = $qlInventorySalesPricesQuery->where('EndDate', '>=', Carbon::now() );
+                $inventorySalesPricesResult = $qlInventorySalesPricesQuery->get();
+            }
+            else{
+
+
+                $inventorySalesPricesQuery = InventorySalesPrices::where([
+                    'ServiceItemId'=>$item['item_id'],
+                    //'CustomerGroupCode'=>$this->appliedDiscount['code'],
+                    'DivisionCode'=>auth()->user('user')['station_code'],
+                ]);
+                $inventorySalesPricesQuery = $inventorySalesPricesQuery->with(['customerDiscountGroup'])->where(function ($query) {
+                    $query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 4);
+                    $query->whereRelation('customerDiscountGroup', 'GroupType', '!=', 5);
+                    $query->whereRelation('customerDiscountGroup', 'Active', '=', true);
+                });
+                $inventorySalesPricesResult = $inventorySalesPricesQuery->get();
+            }
             //dd($inventorySalesPricesResult);
         }
+        //dd($inventorySalesPricesResult);
         $this->lineItemDetails = $item;
         //dd($this->lineItemDetails['unit_price']);
         $this->priceDiscountList = $inventorySalesPricesResult;
@@ -758,59 +774,74 @@ class CustomerServiceItems extends Component
     }
 
 
-    public function applyLineDiscountSubmit($itemDetails,$priceDiscount,$discountGroup){
-        
-        $this->linePriceDiscount = $priceDiscount;
-        $this->selectedDiscount = [
-            'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
-            'code'=>$discountGroup['Code'],
-            'title'=>$discountGroup['Title'],
-            'id'=>$discountGroup['Id'],
-            'groupType'=>$discountGroup['GroupType'],
-        ];
-        $this->showSelectedDiscount=true;
-        if($discountGroup['GroupType']==2 || $discountGroup['GroupType']==6 )
-        {
-            $this->applyDIsountinItemService($priceDiscount);
+    public function applyLineDiscountSubmit($itemDetails,$priceDiscount,$discountGroup,$contract=null){
 
-            //$this->appliedDiscount = $this->selectedDiscount;
+        $this->linePriceDiscount = $priceDiscount;
+        if($contract!=null)
+        {
+            $this->selectedDiscount = [
+                'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
+                'code'=>$discountGroup,
+                'title'=>$discountGroup,
+                //'id'=>$discountGroup['Id'],
+                //'groupType'=>$discountGroup['GroupType'],
+            ];
+            $this->showSelectedDiscount=true;
+            $this->applyDIsountinItemService($priceDiscount);
         }
         else{
-            $this->discountForm=true;
-            if($discountGroup['Id']==8 || $discountGroup['Id']==9){
-                $this->searchStaffId=true;
-                $this->discountCardApplyForm=false;
-                $this->engineOilDiscountForm=false;
-                $this->manulDiscountForm=false;
-                $this->dispatchBrowserEvent('scrolltoInModal', [
-                    'scrollToId' => 'discountTop',
-                ]);
-            }
-            else if($discountGroup['Id']==41)
+            $this->selectedDiscount = [
+                'unitId'=>isset($discountGroup['UnitId'])?$discountGroup['UnitId']:null,
+                'code'=>$discountGroup['Code'],
+                'title'=>$discountGroup['Title'],
+                'id'=>$discountGroup['Id'],
+                'groupType'=>$discountGroup['GroupType'],
+            ];
+            $this->showSelectedDiscount=true;
+
+            if($discountGroup['GroupType']==2 || $discountGroup['GroupType']==6 )
             {
-                if(auth()->user('user')['station_id']!=1){
-                    $this->engineOilDiscountForm=true;
+                $this->applyDIsountinItemService($priceDiscount);
+
+                //$this->appliedDiscount = $this->selectedDiscount;
+            }
+            else{
+                $this->discountForm=true;
+                if($discountGroup['Id']==8 || $discountGroup['Id']==9){
+                    $this->searchStaffId=true;
                     $this->discountCardApplyForm=false;
-                    $this->searchStaffId=false;
+                    $this->engineOilDiscountForm=false;
                     $this->manulDiscountForm=false;
                     $this->dispatchBrowserEvent('scrolltoInModal', [
                         'scrollToId' => 'discountTop',
                     ]);
                 }
+                else if($discountGroup['Id']==41)
+                {
+                    if(auth()->user('user')['station_id']!=1){
+                        $this->engineOilDiscountForm=true;
+                        $this->discountCardApplyForm=false;
+                        $this->searchStaffId=false;
+                        $this->manulDiscountForm=false;
+                        $this->dispatchBrowserEvent('scrolltoInModal', [
+                            'scrollToId' => 'discountTop',
+                        ]);
+                    }
+                    else
+                    {
+                        $this->staffavailable="Discount Not Available..!";
+                    }
+                }
                 else
                 {
-                    $this->staffavailable="Discount Not Available..!";
+                    $this->discountCardApplyForm=true;
+                    $this->searchStaffId=false;
+                    $this->engineOilDiscountForm=false;
+                    $this->manulDiscountForm=false;
+                    $this->dispatchBrowserEvent('scrolltoInModal', [
+                        'scrollToId' => 'discountTop',
+                    ]);
                 }
-            }
-            else
-            {
-                $this->discountCardApplyForm=true;
-                $this->searchStaffId=false;
-                $this->engineOilDiscountForm=false;
-                $this->manulDiscountForm=false;
-                $this->dispatchBrowserEvent('scrolltoInModal', [
-                    'scrollToId' => 'discountTop',
-                ]);
             }
         }
 
