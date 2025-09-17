@@ -282,11 +282,11 @@ class PackagesBookings extends Component
         $this->selectedCustomerVehicle=false;
         $this->showCheckout=false;
 
-        try {
+        /*try {
         DB::select('EXEC [dbo].[ServicePackage.Purchase.FinancialEntries] @packagenumber = "'.$this->package_number.'", @doneby = "admin" ');
         } catch (\Exception $e) {
             //return $e->getMessage();
-        }
+        }*/
 
 
     }
