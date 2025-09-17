@@ -448,9 +448,30 @@
             </div>
             <div class="row" id="serviceItemsListDiv">
                 <div class="col-md-12 col-sm-12">
-                    <button type="button" class="btn @if($department_name=='Quick Lube') bg-gradient-primary opacity-10 @else bg-gradient-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Quick Lube Section" data-container="body" data-animation="true" wire:click="selectSection(1)">Quick Lube</button>
-                    <button type="button" class="btn @if($department_name=='Mechanical') bg-gradient-primary opacity-10 @else bg-gradient-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mechanical Section" data-container="body" data-animation="true" wire:click="selectSection(2)">Mechanical</button>
-                    <button type="button" class="d-none btn @if($department_name=='Misc Sales') bg-gradient-primary opacity-10 @else bg-gradient-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Misc Sales" data-container="body" data-animation="true" wire:click="selectSection(3)">Misc Sales</button>
+                    @foreach($servicesGroupList as $serviceGroup)
+                    <button type="button" class="btn @if($department_code==$serviceGroup->department_code) bg-gradient-primary opacity-10 @else bg-gradient-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Quick Lube Section" data-container="body" data-animation="true" wire:click="selectDepartment('{{$serviceGroup}}')">{{$serviceGroup->department_name}}</button>
+                    @endforeach
+                    @if($showSectionsList)
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">{{$department_name}}</h4>
+                        </div>
+                        <div class="card-body pt-0">
+                            @foreach($sectionsLists as $sectionInfo)
+                            <button type="button" class="btn @if($sectionInfo->PropertyCode==$section_code) btn-outline-primary opacity-10 @else btn-outline-secondary opacity-5 @endif btn-tooltip " data-bs-toggle="tooltip" data-bs-placement="bottom" title="Quick Lube Section" data-container="body" data-animation="true" wire:click="selectSection('{{$sectionInfo}}')">{{$sectionInfo->PropertyName}}</button>        
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                    <div wire:loading wire:target="selectDepartment">
+                        <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                            <div class="la-ball-beat">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
                     <div wire:loading wire:target="selectSection">
                         <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                             <div class="la-ball-beat">

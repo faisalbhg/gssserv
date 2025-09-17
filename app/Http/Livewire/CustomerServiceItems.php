@@ -51,9 +51,24 @@ class CustomerServiceItems extends Component
     public $engineOilDiscountPercentage, $customerDiscontGroupId, $customerDiscontGroupCode;
     public $lineDIscountItemId, $linePriceDiscount, $discountAvailability;
     public $applyManualDiscount=false, $selectedManualDiscountGroup, $manualDiscountValueType='amount', $manualDiscountValue, $manualDiscountRemarks, $manulDiscountForm=false, $manualDiscountRefNo;
+    public $showServicesGroups=true, $servicesGroupList, $showSectionsList=false, $sectionsLists;
 
     public function render()
     {
+
+        $this->servicesGroupList = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')->where(['Operation'=>true,'LandlordCode'=>auth()->user('user')['station_code']])->get();
+        
+        if($this->showSectionsList){
+            $this->sectionsLists = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')->where([
+                'DevelopmentCode'=>$this->department_code,
+                'Operation'=>true
+            ])->orderBy('SortIndex','ASC')->get();
+        }
+        else
+        {
+            $this->sectionsLists = null;
+        }
+
         $this->itemCategories = ItemCategories::where(['Active'=>1])->get();
         if($this->item_search_category){
             $this->itemSubCategories = InventorySubCategory::where(['CategoryId'=>$this->item_search_category])->get();
@@ -238,48 +253,17 @@ class CustomerServiceItems extends Component
 
     }
 
+    public function selectDepartment($departmentDetails){
+        $departmentDetails = json_decode($departmentDetails,true);
+        $this->department_code=$departmentDetails['department_code'];
+        $this->department_name=$departmentDetails['department_name'];
+        $this->showSectionsList=true;
+    }
+
     public function selectSection($section){
-        switch ($section) {
-            case '1':
-                $departmentName = 'Quick Lube';
-                // code...
-                break;
-
-            case '2':
-                $departmentName = 'General Service';
-                // code...
-                break;
-
-            case '3':
-                $departmentName = 'Misc Sales';
-                // code...
-                break;
-            
-            default:
-                // code...
-                break;
-        }
-        $departmentDetails = Development::select('DevelopmentCode as department_code','DevelopmentName as department_name','id','LandlordCode as station_code')
-            ->where([
-                'DevelopmentName'=>$departmentName,
-                'LandlordCode'=>auth()->user('user')['station_code']
-            ])->first();
-        //dd($departmentDetails);
-        $this->department_code=$departmentDetails->department_code;
-        $this->department_name=$departmentDetails->department_name;
-        if($this->department_name == 'General Service')
-        {
-            $this->department_name = 'Mechanical';    
-        }
-
-        $sectionsDetails = Sections::select('id','PropertyCode','DevelopmentCode','PropertyNo','PropertyName','Operation')
-            ->where([
-                'DevelopmentCode'=>$this->department_code,
-                'Operation'=>true,
-                'PropertyName'=>$this->department_name,
-            ])->first();
-        $this->section_code=$sectionsDetails->PropertyCode;
-        $this->section_name=$sectionsDetails->PropertyName;
+        $sectionsDetails = json_decode($section,true);
+        $this->section_code=$sectionsDetails['PropertyCode'];
+        $this->section_name=$sectionsDetails['PropertyName'];
         $this->selected_section=$this->section_name;
     }
 
