@@ -75,6 +75,11 @@ class CustomerServiceItems extends Component
         }
         $this->itemBrandsLists = InventoryBrand::where(['Active'=>1])->get();
         $data=[];
+        if(!$this->selected_section)
+        {
+            $data=[];
+            $this->showItemsSearchResults=false;
+        }
         if($this->showItemsSearchResults)
         {
             $inventoryItemMasterLists = InventoryItemMaster::where('Active','=',1)->where('UnitPrice','!=',0);
@@ -95,6 +100,7 @@ class CustomerServiceItems extends Component
             }
             $data['inventoryItemMasterLists']=$inventoryItemMasterLists->paginate(20);
         }
+
         $this->getCartInfo();
         return view('livewire.customer-service-items',$data);
     }
@@ -258,6 +264,9 @@ class CustomerServiceItems extends Component
         $this->department_code=$departmentDetails['department_code'];
         $this->department_name=$departmentDetails['department_name'];
         $this->showSectionsList=true;
+        $this->section_code=null;
+        $this->section_name=null;
+        $this->selected_section=null;
     }
 
     public function selectSection($section){
