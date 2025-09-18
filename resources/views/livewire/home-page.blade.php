@@ -165,6 +165,7 @@
                 </div>
             </div>
         </div>
+
         <div wire:loading wire:target="jobListPage">
             <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
                 <div class="la-ball-beat">
@@ -209,8 +210,8 @@
                         <div class="card-body text-center">
                             <ul class="list-unstyled max-width-200 mx-auto">
                                 @foreach($departmentCount['sections'] as $sectionsDtls )
-                                <li>
-                                    <b>{{$sectionsDtls['order_count']}}</b> {{$sectionsDtls['sections']['PropertyName']}}
+                                <li class="cursor-pointer" wire:click="sectionsDtlsJobs('{{$sectionsDtls}}')">
+                                    <b>{{$sectionsDtls['order_count']}}</b> -  {{$sectionsDtls['sections']['PropertyName']}}
                                     <hr class="horizontal dark">
                                 </li>
                                 @endforeach
@@ -220,7 +221,19 @@
                     </div>
                 </div>
             @endforeach
+            <div wire:loading wire:target="sectionsDtlsJobs">
+                <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+                    <div class="la-ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
         </div>
+        @if($showServiceItemSummary)
+            @include('components.modals.serviceItemSummary')
+        @endif
         
         <div class="row">
             
@@ -258,6 +271,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
 <script src="https://unpkg.com/lightpick@latest/lightpick.js"></script>
 <script type="text/javascript">
+    window.addEventListener('openServiceItemSummaryModal',event=>{
+        $('#serviceItemSummaryModal').modal('show');
+    });
+    window.addEventListener('closeServiceItemSummaryModal',event=>{
+        $('#serviceItemSummaryModal').modal('hide');
+    });
+
     var dateToday = new Date();
     window.addEventListener('datePicker',event=>{
         

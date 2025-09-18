@@ -25,7 +25,7 @@ class Dashboard extends Component
     public $getCountSalesJob, $customerjobsLists=[], $selected_date, $filterJobStatus, $jobList, $homeCountIconeBg='bg-gradient-dark';
     protected $listeners = ["selectDate" => 'getSelectedDate'];
     public $pendingCustomersCart, $search_station;
-    public $departmentSummary, $sectionSummary;
+    public $departmentSummary, $sectionSummary, $showServiceItemSummary=false, $serviceItemSummaryLists, $serviceSectionSelected;
 
     function mount(){
         $user = auth()->user();
@@ -154,6 +154,9 @@ class Dashboard extends Component
             
         }
         //dd($this->selected_date);
+
+        $this->serviceItemSummaryLists=[];
+        $this->showServiceItemSummary=false;
         
     }
 
@@ -193,6 +196,8 @@ class Dashboard extends Component
                 $this->filterJobStatus=null;
                 break;
         }
+        $this->serviceItemSummaryLists=[];
+        $this->showServiceItemSummary=false;
         //$this->dispatchBrowserEvent('datePicker');
     }
 
@@ -202,5 +207,37 @@ class Dashboard extends Component
 
     public function selectPendingVehicle($customer_id,$vehicle_id){
         return redirect()->to('/customer-service-job/'.$customer_id.'/'.$vehicle_id);
+    }
+
+    public function sectionsDtlsJobs($section){
+        $section = json_decode($section,true);
+        $this->serviceSectionSelected = $section['sections']['PropertyName'];
+        $serviceSummary = CustomerJobCardServices::with(['jobInfo','serviceMaster','itemMaster'])->select('item_code',DB::raw('count(customer_job_card_services.id) as order_count'));
+
+        if($this->selected_date){
+            $serviceSummary = $serviceSummary->whereBetween('created_at', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+        }
+        else
+        {
+            $serviceSummary = $serviceSummary->whereBetween('created_at', [$this->selected_date." 00:00:00",$this->selected_date." 23:59:59"]);
+        }
+        
+        if($this->search_station){
+            $serviceSummary = $serviceSummary->where(['station'=>$this->search_station]);
+        }
+        if(auth()->user('user')->user_type!=1){
+            $serviceSummary = $serviceSummary->where(['division_code'=>auth()->user('user')['station_code']]);
+                $serviceSummary = $serviceSummary->where(function ($query) {
+                $query->whereRelation('jobInfo', 'created_by', '=', auth()->user('user')['id']);
+            });
+        }
+        
+
+        $serviceSummary = $serviceSummary->where(['section_code'=>$section['section_code']]);
+        $serviceSummary = $serviceSummary->groupBy('item_code')->get();
+        $this->serviceItemSummaryLists=$serviceSummary;
+        //dd($this->serviceItemSummaryLists);
+        $this->showServiceItemSummary=true;
+        $this->dispatchBrowserEvent('openServiceItemSummaryModal');
     }
 }
