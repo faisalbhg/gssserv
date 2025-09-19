@@ -224,10 +224,11 @@
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder">Customer</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder">Status</th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder">Package</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder ps-2">Pricec</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder ps-2">Payment</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder">Customer</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder">Manage</th>
+                    
                   </tr>
                 </thead>
 
@@ -253,32 +254,6 @@
                           </p>
                         </div>
                       </div>
-                      
-                    </td>
-                    <td>
-                      <div class="">
-                        <span class="w-100 badge badge-sm {!!config('global.package.status_btn_class')[$package->payment_status]!!}">{{config('global.package.status')[$package->payment_status]}}</span>
-                        <div class="d-none d-flex align-items-center justify-content-center">
-                          <span class="me-2 text-xs font-weight-bold">{{config('global.package.status_perc')[$package->payment_status]}}</span>
-                          <div>
-                            <div class="progress">
-                              <div class="progress-bar {{config('global.package.status_perc_class')[$package->payment_status]}}" role="progressbar" aria-valuenow="{{config('global.package.status_perc')[$package->payment_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.status_perc')[$package->payment_status]}};"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="mt-2">
-                        <span class="exploder badge badge-sm bg-gradient-info cursor-pointer" wire:click="customerPackageDetails('{{$package->package_number}}')">
-                          <i class="fas fa-flag text-secondary text-white"></i> Package Redeem
-                        </span>
-                      </div>
-                      <div class="mt-2">
-                        <span class="exploder badge badge-sm bg-gradient-primary cursor-pointer">
-                            <i class="fas fa-eye text-secondary text-white"></i> Package Details
-                          </span>
-                      </div>
-
                     </td>
                     <td>
                         <div class="d-flex px-3 py-1">
@@ -289,10 +264,10 @@
                                     <small>Created By: {{$package->createdInfo['name']}}</small>
                                 @endif
                             </div>
+
                         </div>
-                        
+                        <span class="w-100 badge badge-sm {!!config('global.package.status_btn_class')[$package->payment_status]!!}">Package Status: {{config('global.package.status')[$package->payment_status]}}</span>
                     </td>
-                    
                     <td>
                         <div class="d-flex px-3 py-1">
                         <div class="d-flex flex-column justify-content-center">
@@ -309,6 +284,38 @@
                       </div>
                       <p class="text-sm font-weight-bold mb-0"></p>
                     </td>
+                    
+                    <td>
+                      <div class="">
+                        
+                        <div class="d-none d-flex align-items-center justify-content-center">
+                          <span class="me-2 text-xs font-weight-bold">{{config('global.package.status_perc')[$package->payment_status]}}</span>
+                          <div>
+                            <div class="progress">
+                              <div class="progress-bar {{config('global.package.status_perc_class')[$package->payment_status]}}" role="progressbar" aria-valuenow="{{config('global.package.status_perc')[$package->payment_status]}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config('global.status_perc')[$package->payment_status]}};"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-2">
+                        <span class="exploder badge badge-sm bg-gradient-info cursor-pointer" wire:click="customerPackageDetails('{{$package->package_number}}')">
+                          <i class="fas fa-flag text-secondary text-white"></i> Package Redeem
+                        </span>
+                      </div>
+                      <div class="mt-2">
+                        <span class="exploder badge badge-sm bg-gradient-primary cursor-pointer">
+                            <i class="fas fa-eye text-secondary text-white"></i> Package Details
+                          </span>
+                      </div>
+                      <div class="mt-2">
+                        <span class="badge badge-sm bg-gradient-dark cursor-pointer" wire:click="packageDetails('{{$package}}')">
+                            <i class="fas fa-pencil-alt text-secondary text-white"></i> Manage Package
+                          </span>
+                      </div>
+                    </td>
+                    
+                    
+                    
                     <!-- <td class="align-middle">
                       <button type="button" wire:click="customerPackageDetails('{{$package}}')" class="btn btn-link text-secondary mb-0">
                         <i class="fa fa-edit fa-xl text-md"></i>
@@ -477,10 +484,20 @@
               <div></div>
           </div>
       </div>
-  </div>
-  </div>
-  
     </div>
+    <div wire:loading wire:target="packageDetails">
+      <div style="display: flex; justify-content: center; align-items: center; background-color: black; position: fixed; top: 0px; left: 0px; z-index:999999; width:100%; height:100%; opacity: .75;" >
+          <div class="la-ball-beat">
+              <div></div>
+              <div></div>
+              <div></div>
+          </div>
+      </div>
+    </div>
+    @if($showPackageDetails)
+        @include('components.modals.packageDetails')
+    @endif
+  </div>
 </main>
 @push('custom_script')
   <script type="text/javascript">
@@ -496,6 +513,13 @@
           $(this).closest("tr").next("tr").children("td").slideDown(350);
         }
       });
+    });
+
+    window.addEventListener('openPackageDetails',event=>{
+        $('#packageDetailsModal').modal('show');
+    });
+    window.addEventListener('closePackageDetails',event=>{
+        $('#packageDetailsModal').modal('hide');
     });
   </script>
 @endpush

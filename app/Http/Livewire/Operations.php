@@ -341,6 +341,7 @@ class Operations extends Component
         ];
         $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$job_number])->where('job_status','!=',5);
         $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
+        $this->customerJobDetails($job_number);
     }
 
     public function customerJobDetails($job_number)

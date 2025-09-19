@@ -1750,6 +1750,13 @@ class CustomerServiceJob extends Component
             {
                 $this->cartTotalVal = $this->cartTotalVal+$cartCheckItem->unit_price*$cartCheckItem->quantity;
             }
+            if($cartCheckItem->manual_discount_ref_no){
+                $aprovalHistory = DB::select('EXEC [SystemAdministration].[Workflow.Approval.GetHistory] @documentCode = "'.$cartCheckItem->manual_discount_ref_no.'"', [
+                    $cartCheckItem->manual_discount_ref_no,
+                ]);
+                dd($aprovalHistory);
+            }
+
         }
 
         /*$this->cartItems = CustomerServiceCart::with(['manualDiscountServiceInfo'])->where(['customer_id'=>$this->customer_id,'vehicle_id'=>$this->vehicle_id,'division_code'=>auth()->user('user')->stationName['LandlordCode']])->get();

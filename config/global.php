@@ -322,6 +322,9 @@ return [
         "7"=>"Quality",
         "8"=>"Section Foreman",
         "9"=>"Mechanical",
+        "10"=>"Station Manager",
+        "11"=>"Area Manager",
+        "12"=>"Lube Service",
     ],
     "user_group" => [
         "1"=>"Service Adviser",

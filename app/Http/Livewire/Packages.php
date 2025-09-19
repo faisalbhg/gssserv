@@ -27,6 +27,7 @@ class Packages extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     public $search_package_number, $search_package_date_from, $search_package_date_to, $search_plate_number, $search_payment, $search_station, $search_paymentStatus;
+    public $selectedPackage, $showPackageDetails=false;
 
     public function render()
     {
@@ -131,6 +132,13 @@ class Packages extends Component
         $packageDetails->vehicle_id;
         return redirect()->to('customer-service-job/'.$packageDetails->customer_id.'/'.$packageDetails->vehicle_id);
         
+    }
+
+    public function packageDetails($package){
+        $this->selectedPackage = json_decode($package,true);
+        //dd($this->selectedPackage);
+        $this->showPackageDetails=true;
+        $this->dispatchBrowserEvent('openPackageDetails');
     }
 
     /*public function filterJobListPage($statusFilter)
