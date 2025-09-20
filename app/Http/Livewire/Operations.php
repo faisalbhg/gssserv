@@ -1061,34 +1061,35 @@ class Operations extends Component
         ];
         CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
 
-        $this->jobCardStatusUpdate($services['job_number']);
-
-        /*$getCountSalesJobStatus = CustomerJobCardServices::select(
+        $getCountSalesJobStatus = CustomerJobCardServices::select(
             array(
                 \DB::raw('count(case when job_status = 0 then job_status end) new'),
                 \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
                 \DB::raw('count(case when job_status = 2 then job_status end) qualitycheck'),
                 \DB::raw('count(case when job_status = 3 then job_status end) ready_to_deliver'),
                 \DB::raw('count(case when job_status = 4 then job_status end) delivered'),
-                \DB::raw('count(case when job_status = 5 then job_status end) cencelled'),
-                \DB::raw('count(case when job_status = 6 then job_status end) cencelledrequest'),
-                \DB::raw('count(case when job_status = 7 then job_status end) issue_pending'),
+                \DB::raw('count(case when job_status = 5 then job_status end) cancelled'),
+                \DB::raw('count(case when job_status = 6 then job_status end) inspection'),
+                \DB::raw('count(case when job_status = 7 then job_status end) customer_aproved'),
                 \DB::raw('count(case when job_status = 8 then job_status end) issued'),
             )
         )->where(['job_number'=>$services['job_number']])->first();
         //dd($getCountSalesJobStatus);
         $mainSTatus=1;
-        if($getCountSalesJobStatus->working_progress>0){
-            $mainSTatus=1;
+        if($getCountSalesJobStatus->inspection>0){
+            $mainSTatus=6;
         }
-        else if($getCountSalesJobStatus->qualitycheck>0){
-            $mainSTatus=2;
-        }
-        else if($getCountSalesJobStatus->issue_pending>0){
+        else if($getCountSalesJobStatus->customer_aproved>0){
             $mainSTatus=7;
         }
         else if($getCountSalesJobStatus->issued>0){
             $mainSTatus=8;
+        }
+        else if($getCountSalesJobStatus->working_progress>0){
+            $mainSTatus=1;
+        }
+        else if($getCountSalesJobStatus->qualitycheck>0){
+            $mainSTatus=2;
         }
         else if($getCountSalesJobStatus->ready_to_deliver>0){
             $mainSTatus=3;
@@ -1098,16 +1099,14 @@ class Operations extends Component
         }
         else if($getCountSalesJobStatus->cancelled>0){
             $mainSTatus=5;
-        }else if($getCountSalesJobStatus->cancelledrequest>0){
-            $mainSTatus=6;
         }
+        
         $mianJobUpdate = [
             'job_status'=>$mainSTatus,
             'job_departent'=>$mainSTatus,
         ];
-        
-        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$services['job_number']]);
-        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);*/
+        $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$services['job_number']])->where('job_status','!=',5);
+        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
 
         $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$services['job_number']])->first();
         $this->jobcardDetails = $job;
