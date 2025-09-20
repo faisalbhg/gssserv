@@ -1061,7 +1061,9 @@ class Operations extends Component
         ];
         CustomerJobCardServiceLogs::create($serviceJobUpdateLog);
 
-        $getCountSalesJobStatus = CustomerJobCardServices::select(
+        $this->jobCardStatusUpdate($services['job_number']);
+
+        /*$getCountSalesJobStatus = CustomerJobCardServices::select(
             array(
                 \DB::raw('count(case when job_status = 0 then job_status end) new'),
                 \DB::raw('count(case when job_status = 1 then job_status end) working_progress'),
@@ -1105,7 +1107,7 @@ class Operations extends Component
         ];
         
         $customerJobDetailsHeader = CustomerJobCards::where(['job_number'=>$services['job_number']]);
-        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);
+        $customerJobStatusUpdate = $customerJobDetailsHeader->update($mianJobUpdate);*/
 
         $job = CustomerJobCards::with(['customerInfo','customerJobServices'])->where(['job_number'=>$services['job_number']])->first();
         $this->jobcardDetails = $job;

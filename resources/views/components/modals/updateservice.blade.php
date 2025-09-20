@@ -105,9 +105,7 @@
                                                         @endif
                                                         </h6>
                                                     @endif
-                                                    @if(auth()->user('user')->user_type==1)
                                                     <span class="text-sm badge badge-sm {{config('global.jobs.status_btn_class')[$jobcardDetails->job_status]}} pb-2 float-end" wire:click="jobCardStatusUpdate('{{$jobcardDetails->job_number}}')">Update job Status</span>
-                                                    @endif
                                                 </div>
                                             </div>
                                         </li>
